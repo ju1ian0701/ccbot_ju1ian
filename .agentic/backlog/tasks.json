@@ -1,28 +1,201 @@
-﻿{
+{
   "tasks": [
     {
       "id": "REF-001",
       "title": "Extract shared auth + session resolution helper",
-      "priority": "high", "status": "done",
-      "categories": ["dry", "solid"],
-      "files": ["src/ccbot/bot.py", "src/ccbot/session.py"],
-      "related_nodes": ["file:src/ccbot/bot.py", "file:src/ccbot/session.py"],
-      "depends_on": [], "estimated_risk": "medium",
-      "acceptance_criteria": ["At least 8 handlers use the shared helper"]
+      "priority": "high",
+      "status": "done",
+      "categories": [
+        "dry",
+        "solid"
+      ],
+      "files": [
+        "src/ccbot/bot.py",
+        "src/ccbot/session.py"
+      ],
+      "related_nodes": [
+        "file:src/ccbot/bot.py",
+        "file:src/ccbot/session.py"
+      ],
+      "depends_on": [],
+      "estimated_risk": "medium",
+      "acceptance_criteria": [
+        "At least 8 handlers use the shared helper"
+      ]
     },
     {
-      "id": "REF-…ium",
-      "acceptance_criteria": ["Single MessageFormatter or context manager used across sender/queue"]
+      "id": "REF-002",
+      "title": "Split bot.py god module into handlers",
+      "priority": "high",
+      "status": "ready",
+      "categories": [
+        "solid",
+        "maintainability"
+      ],
+      "files": [
+        "src/ccbot/bot.py"
+      ],
+      "related_nodes": [
+        "file:src/ccbot/bot.py"
+      ],
+      "depends_on": [
+        "REF-001"
+      ],
+      "estimated_risk": "high",
+      "acceptance_criteria": [
+        "bot.py contains only registration and lifecycle"
+      ]
+    },
+    {
+      "id": "REF-003",
+      "title": "Replace broad except Exception with specific errors",
+      "priority": "high",
+      "status": "ready",
+      "categories": [
+        "error-handling"
+      ],
+      "files": [
+        "src/ccbot/bot.py",
+        "src/ccbot/handlers/message_queue.py",
+        "src/ccbot/handlers/message_sender.py",
+        "src/ccbot/tmux_manager.py"
+      ],
+      "related_nodes": [
+        "file:src/ccbot/handlers/message_sender.py"
+      ],
+      "depends_on": [],
+      "estimated_risk": "medium",
+      "acceptance_criteria": [
+        "No silent exception swallowing"
+      ]
+    },
+    {
+      "id": "REF-004",
+      "title": "Simplify session migration and stale ID logic",
+      "priority": "high",
+      "status": "ready",
+      "categories": [
+        "architecture"
+      ],
+      "files": [
+        "src/ccbot/session.py"
+      ],
+      "related_nodes": [
+        "file:src/ccbot/session.py"
+      ],
+      "depends_on": [],
+      "estimated_risk": "high",
+      "acceptance_criteria": [
+        "Remove legacy window_name support"
+      ]
+    },
+    {
+      "id": "REF-005",
+      "title": "Encapsulate global mutable state",
+      "priority": "high",
+      "status": "ready",
+      "categories": [
+        "concurrency"
+      ],
+      "files": [
+        "src/ccbot/handlers/message_queue.py"
+      ],
+      "related_nodes": [
+        "file:src/ccbot/handlers/message_queue.py"
+      ],
+      "depends_on": [],
+      "estimated_risk": "high",
+      "acceptance_criteria": [
+        "MessageQueueManager class added"
+      ]
+    },
+    {
+      "id": "REF-006",
+      "title": "Migrate callback_data parsing to dataclasses",
+      "priority": "medium",
+      "status": "ready",
+      "categories": [
+        "validation"
+      ],
+      "files": [
+        "src/ccbot/handlers/callback_data.py"
+      ],
+      "related_nodes": [
+        "file:src/ccbot/handlers/callback_data.py"
+      ],
+      "depends_on": [
+        "REF-002"
+      ],
+      "estimated_risk": "low",
+      "acceptance_criteria": [
+        "String split replaced with typed dataclasses"
+      ]
+    },
+    {
+      "id": "REF-007",
+      "title": "Rename ambiguous variables (wid/tid/skey)",
+      "priority": "medium",
+      "status": "done",
+      "categories": [
+        "readability"
+      ],
+      "files": [
+        "src/ccbot/bot.py",
+        "src/ccbot/session.py"
+      ],
+      "related_nodes": [
+        "file:src/ccbot/bot.py",
+        "file:src/ccbot/session.py"
+      ],
+      "depends_on": [
+        "REF-001"
+      ],
+      "estimated_risk": "low",
+      "acceptance_criteria": [
+        "wid->window_id, tid->thread_id globally"
+      ],
+      "status_updated_at": "2026-07-17T07:34:49.762127+00:00"
+    },
+    {
+      "id": "REF-008",
+      "title": "Unify Markdown/plain fallback and RetryAfter handling",
+      "priority": "medium",
+      "status": "ready",
+      "categories": [
+        "dry"
+      ],
+      "files": [
+        "src/ccbot/handlers/message_sender.py"
+      ],
+      "related_nodes": [
+        "file:src/ccbot/handlers/message_sender.py"
+      ],
+      "depends_on": [
+        "REF-003"
+      ],
+      "estimated_risk": "medium",
+      "acceptance_criteria": [
+        "Single MessageFormatter used"
+      ]
     },
     {
       "id": "REF-009",
       "title": "Fill test gaps for bot/tmux/queue hotspots",
-      "priority": "medium", "status": "ready",
-      "categories": ["testing"],
-      "files": ["tests/"],
-      "related_nodes": ["file:tests/"],
-      "depends_on": [], "estimated_risk": "low",
-      "acceptance_criteria": ["Coverage for uncovered hotspots from knowledge graph"]
+      "priority": "medium",
+      "status": "ready",
+      "categories": [
+        "testing"
+      ],
+      "files": [
+        "tests/"
+      ],
+      "related_nodes": [],
+      "depends_on": [],
+      "estimated_risk": "low",
+      "acceptance_criteria": [
+        "Coverage for uncovered hotspots"
+      ]
     }
-  ]
+  ],
+  "updated_at": "2026-07-17"
 }
