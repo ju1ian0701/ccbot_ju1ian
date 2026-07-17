@@ -1,0 +1,219 @@
+name: Agentic Implement
+
+# Dispatches Claude Code Action to implement one backlog task on a feature branch
+# and open a draft PR. Never pushes to main.
+
+on:
+  workflow_dispatch:
+    inputs:
+      task_id:
+        description: "Task id to implement (e.g. REF-001). Empty = auto-select highest score."
+        required: false
+        type: string
+      dry_run:
+        description: "If true, only analyze/plan/render prompts — do not call Claude"
+        required: false
+        type: boolean
+        default: false
+  workflow_call:
+    inputs:
+      task_id:
+        description: "Task id to implement"
+        required: false
+        type: string
+        default: ""
+      dry_run:
+        description: "Prepare only"
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  id-token: write
+  actions: read
+
+concurrency:
+  group: agentic-implement-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      task_id: ${{ steps.meta.outputs.task_id }}
+      branch: ${{ steps.meta.outputs.branch }}
+      has_task: ${{ steps.meta.outputs.has_task }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Analyze, select, render prompts
+        env:
+          TASK_ID: ${{ inputs.task_id }}
+        run: |
+          python scripts/agentic/cli.py analyze
+          if [ -n "$TASK_ID" ]; then
+            python scripts/agentic/cli.py select --task "$TASK_ID"
+          else
+            python scripts/agentic/cli.py select
+          fi
+
+      - name: Export task metadata
+        id: meta
+        run: |
+          if [ ! -f .agentic/out/selected-task.json ]; then
+            echo "has_task=false" >> "$GITHUB_OUTPUT"
+            echo "task_id=" >> "$GITHUB_OUTPUT"
+            echo "branch=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          TID=$(python -c "import json; print(json.load(open('.agentic/out/selected-task.json'))['id'])")
+          SLUG=$(python -c "import json,re; t=json.load(open('.agentic/out/selected-task.json')); s=re.sub(r'[^a-z0-9]+','-',t.get('title','').lower()).strip('-')[:40]; print(s or 'task')")
+          echo "has_task=true" >> "$GITHUB_OUTPUT"
+          echo "task_id=$TID" >> "$GITHUB_OUTPUT"
+          echo "branch=agentic/${TID}-${SLUG}" >> "$GITHUB_OUTPUT"
+
+      - name: Upload implement context
+        uses: actions/upload-artifact@v4
+        with:
+          name: agentic-implement-context-${{ github.run_id }}
+          path: .agentic/out/
+
+      - name: Summary
+        run: |
+          {
+            echo "## Prepare implement"
+            echo ""
+            echo "- task: \`${{ steps.meta.outputs.task_id }}\`"
+            echo "- branch: \`${{ steps.meta.outputs.branch }}\`"
+            echo "- dry_run: \`${{ inputs.dry_run }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  implement:
+    needs: prepare
+    if: needs.prepare.outputs.has_task == 'true' && inputs.dry_run != true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Download context
+        uses: actions/download-artifact@v4
+        with:
+          name: agentic-implement-context-${{ github.run_id }}
+          path: .agentic/out
+
+      - name: Create agentic branch
+        env:
+          BRANCH: ${{ needs.prepare.outputs.branch }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$BRANCH"
+
+      - name: Set up uv / Python
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install project (quality gates available to agent)
+        run: uv sync --all-extras
+
+      - name: Build Claude prompt (multiline output)
+        id: prompt
+        env:
+          TASK_ID: ${{ needs.prepare.outputs.task_id }}
+          BRANCH: ${{ needs.prepare.outputs.branch }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          REPO: ${{ github.repository }}
+        run: |
+          {
+            echo "prompt<<AGENTIC_PROMPT_EOF"
+            echo "You are implementing a single refactoring task for repository ${REPO}."
+            echo ""
+            echo "Working branch: ${BRANCH}"
+            echo "Base branch: ${DEFAULT_BRANCH}"
+            echo ""
+            echo "Follow the implementation protocol in the prompt below exactly."
+            echo "After changes, run:"
+            echo "  uv run ruff check src/ tests/"
+            echo "  uv run ruff format src/ tests/"
+            echo "  uv run pyright src/ccbot/"
+            echo "  uv run pytest --tb=short -q"
+            echo "Commit all changes and push the branch."
+            echo "Open a DRAFT pull request with body from .agentic/out/pr-body.md if it does not exist."
+            echo "PR title format: [agentic] ${TASK_ID}: <short summary>"
+            echo "Labels: agentic, refactor, automated"
+            echo ""
+            echo "Policies JSON:"
+            cat .agentic/policies.json
+            echo ""
+            echo "----- BEGIN IMPLEMENT PROMPT -----"
+            cat .agentic/out/implement-prompt.md
+            echo "----- END IMPLEMENT PROMPT -----"
+            echo "AGENTIC_PROMPT_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Run Claude Code (implement)
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          base_branch: ${{ github.event.repository.default_branch }}
+          branch_prefix: agentic/
+          additional_permissions: |
+            actions: read
+          prompt: ${{ steps.prompt.outputs.prompt }}
+          claude_args: "--allowedTools Bash Edit Write Read Glob Grep"
+
+      - name: Post-implement validation
+        if: always()
+        run: |
+          git fetch origin "${{ github.event.repository.default_branch }}" || true
+          python scripts/agentic/cli.py validate \
+            --base-ref "origin/${{ github.event.repository.default_branch }}" || true
+
+      - name: Upload validation
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: agentic-validation-${{ github.run_id }}
+          path: .agentic/out/validation.json
+          if-no-files-found: ignore
+
+  dry-run-summary:
+    needs: prepare
+    if: inputs.dry_run == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download context
+        uses: actions/download-artifact@v4
+        with:
+          name: agentic-implement-context-${{ github.run_id }}
+          path: .agentic/out
+      - name: Show selected task
+        run: |
+          {
+            echo "## Dry run — no code changes"
+            echo ""
+            echo "Would implement \`${{ needs.prepare.outputs.task_id }}\` on \`${{ needs.prepare.outputs.branch }}\`"
+            echo ""
+            if [ -f .agentic/out/implement-prompt.md ]; then
+              echo "<details><summary>Implement prompt</summary>"
+              echo ""
+              echo '```markdown'
+              head -n 120 .agentic/out/implement-prompt.md
+              echo '```'
+              echo "</details>"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,62 @@
+name: Agentic Analyze
+
+on:
+  schedule:
+    # Mondays 06:00 UTC — matches .agentic/config.json triggers.analyze_schedule
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+  push:
+    paths:
+      - ".understand-anything/knowledge-graph.json"
+      - ".agentic/backlog/tasks.json"
+      - "scripts/agentic/**"
+      - ".agentic/config.json"
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Analyze knowledge graph
+        run: python scripts/agentic/cli.py analyze
+
+      - name: Rank backlog (plan only)
+        run: python scripts/agentic/cli.py plan
+
+      - name: Upload analysis artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: agentic-analysis
+          path: |
+            .agentic/out/analysis-report.json
+            .agentic/out/analysis-report.md
+            .agentic/out/plan.json
+            .agentic/out/plan.md
+            .agentic/out/selected-task.json
+          if-no-files-found: error
+
+      - name: Job summary
+        if: always()
+        run: |
+          {
+            echo "## Agentic analysis"
+            echo ""
+            if [ -f .agentic/out/analysis-report.md ]; then
+              cat .agentic/out/analysis-report.md
+            fi
+            echo ""
+            if [ -f .agentic/out/plan.md ]; then
+              echo "---"
+              cat .agentic/out/plan.md
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,106 @@
+{
+  "generated_at": "2026-07-17T11:22:00.056497+00:00",
+  "guardrails": {
+    "changed_files": [
+      ".agentic/backlog/tasks.json",
+      "src/ccbot/bot.py",
+      "src/ccbot/handlers/__init__.py",
+      "src/ccbot/handlers/auth.py",
+      "src/ccbot/handlers/callback_router.py",
+      "src/ccbot/handlers/command_handlers.py",
+      "src/ccbot/handlers/message_handlers.py",
+      "src/ccbot/handlers/notifications.py",
+      "src/ccbot/handlers/screenshot_controls.py",
+      "src/ccbot/handlers/window_bind.py",
+      "src/ccbot/hook.py",
+      "src/ccbot/session.py",
+      "src/ccbot/session_monitor.py",
+      "src/ccbot/utils.py",
+      "tests/ccbot/test_forward_command.py",
+      "tests/ccbot/test_session_monitor.py",
+      "tests/conftest.py"
+    ],
+    "considered_files": [
+      ".agentic/backlog/tasks.json",
+      "src/ccbot/bot.py",
+      "src/ccbot/handlers/__init__.py",
+      "src/ccbot/handlers/auth.py",
+      "src/ccbot/handlers/callback_router.py",
+      "src/ccbot/handlers/command_handlers.py",
+      "src/ccbot/handlers/message_handlers.py",
+      "src/ccbot/handlers/notifications.py",
+      "src/ccbot/handlers/screenshot_controls.py",
+      "src/ccbot/handlers/window_bind.py",
+      "src/ccbot/hook.py",
+      "src/ccbot/session.py",
+      "src/ccbot/session_monitor.py",
+      "src/ccbot/utils.py",
+      "tests/ccbot/test_forward_command.py",
+      "tests/ccbot/test_session_monitor.py",
+      "tests/conftest.py"
+    ],
+    "changed_count": 17,
+    "ignored_paths": [],
+    "blocked_hits": [],
+    "disallowed_paths": [],
+    "violations": [],
+    "ok": true
+  },
+  "quality": [
+    {
+      "cmd": [
+        "uv",
+        "run",
+        "ruff",
+        "check",
+        "src/",
+        "tests/"
+      ],
+      "returncode": 0,
+      "ok": true,
+      "stdout_tail": "All checks passed!\n",
+      "stderr_tail": ""
+    },
+    {
+      "cmd": [
+        "uv",
+        "run",
+        "ruff",
+        "format",
+        "--check",
+        "src/",
+        "tests/"
+      ],
+      "returncode": 0,
+      "ok": true,
+      "stdout_tail": "52 files already formatted\n",
+      "stderr_tail": ""
+    },
+    {
+      "cmd": [
+        "uv",
+        "run",
+        "pyright",
+        "src/ccbot/"
+      ],
+      "returncode": 0,
+      "ok": true,
+      "stdout_tail": "0 errors, 0 warnings, 0 informations\n",
+      "stderr_tail": ""
+    },
+    {
+      "cmd": [
+        "uv",
+        "run",
+        "pytest",
+        "--tb=short",
+        "-q"
+      ],
+      "returncode": 0,
+      "ok": true,
+      "stdout_tail": "........................................................................ [ 27%]\n........................................................................ [ 55%]\n........................................................................ [ 83%]\n..........................................                               [100%]\n258 passed in 1.18s\n",
+      "stderr_tail": ""
+    }
+  ],
+  "ok": true
+}
