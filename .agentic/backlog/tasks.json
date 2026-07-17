@@ -27,7 +27,7 @@
       "id": "REF-002",
       "title": "Split bot.py god module into handlers",
       "priority": "high",
-      "status": "ready",
+      "status": "done",
       "categories": [
         "solid",
         "maintainability"
@@ -44,7 +44,8 @@
       "estimated_risk": "high",
       "acceptance_criteria": [
         "bot.py contains only registration and lifecycle"
-      ]
+      ],
+      "status_updated_at": "2026-07-17T11:22:16.745757+00:00"
     },
     {
       "id": "REF-003",
@@ -195,5 +196,6 @@
         "Coverage for uncovered hotspots"
       ]
     }
-  ]
+  ],
+  "updated_at": "2026-07-17"
 }
