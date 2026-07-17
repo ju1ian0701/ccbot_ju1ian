@@ -198,12 +198,16 @@ class SessionMonitor:
     ) -> list[dict]:
         """Read new lines from a session file using byte offset for efficiency.
 
+        Opens the file in binary mode so ``last_byte_offset`` is a true OS
+        byte position on every platform (Windows text mode would expand
+        ``\\n`` ↔ ``\\r\\n`` and desync offsets).
+
         Detects file truncation (e.g. after /clear) and resets offset.
         Recovers from corrupted offsets (mid-line) by scanning to next line.
         """
         new_entries = []
         try:
-            async with aiofiles.open(file_path, "r", encoding="utf-8") as f:
+            async with aiofiles.open(file_path, "rb") as f:
                 # Get file size to detect truncation
                 await f.seek(0, 2)  # Seek to end
                 file_size = await f.tell()
@@ -227,7 +231,7 @@ class SessionMonitor:
                 # the state file was manually edited or corrupted.
                 if session.last_byte_offset > 0:
                     first_char = await f.read(1)
-                    if first_char and first_char != "{":
+                    if first_char and first_char != b"{":
                         logger.warning(
                             "Corrupted offset %d in session %s (mid-line), "
                             "scanning to next line",
@@ -246,18 +250,37 @@ class SessionMonitor:
                 # (newline-terminated) that fails to parse is permanently
                 # corrupt; skip it, or it would stall this session forever.
                 safe_offset = session.last_byte_offset
-                async for line in f:
+                async for raw_line in f:
+                    try:
+                        line = raw_line.decode("utf-8")
+                    except UnicodeDecodeError:
+                        # Incomplete multi-byte sequence at EOF — retry next cycle
+                        if not raw_line.endswith(b"\n"):
+                            logger.debug(
+                                "Partial UTF-8 sequence in session %s, "
+                                "will retry next cycle",
+                                session.session_id,
+                            )
+                            break
+                        logger.warning(
+                            "Skipping undecodable JSONL line in session %s (%d bytes)",
+                            session.session_id,
+                            len(raw_line),
+                        )
+                        safe_offset = await f.tell()
+                        continue
+
                     data = TranscriptParser.parse_line(line)
                     if data:
                         new_entries.append(data)
                         safe_offset = await f.tell()
                     elif line.strip():
-                        if line.endswith("\n"):
+                        if raw_line.endswith(b"\n"):
                             logger.warning(
                                 "Skipping unparseable JSONL line in session %s "
                                 "(%d bytes)",
                                 session.session_id,
-                                len(line),
+                                len(raw_line),
                             )
                             safe_offset = await f.tell()
                         else:
