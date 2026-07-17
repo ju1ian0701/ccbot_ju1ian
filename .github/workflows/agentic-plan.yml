@@ -1,0 +1,82 @@
+name: Agentic Plan
+
+on:
+  workflow_dispatch:
+    inputs:
+      task_id:
+        description: "Optional force task id (e.g. REF-001). Empty = auto-select."
+        required: false
+        type: string
+      sync_issues:
+        description: "Create GitHub issues from backlog (requires labels)"
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Analyze + plan
+        env:
+          TASK_ID: ${{ inputs.task_id }}
+        run: |
+          python scripts/agentic/cli.py analyze
+          if [ -n "$TASK_ID" ]; then
+            python scripts/agentic/cli.py select --task "$TASK_ID"
+          else
+            python scripts/agentic/cli.py select
+          fi
+
+      - name: Ensure agentic labels exist
+        if: ${{ inputs.sync_issues }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          for label in agentic priority:high priority:medium priority:low category:dry category:solid category:error-handling category:architecture category:concurrency category:validation category:readability category:testing category:maintainability; do
+            gh label create "$label" --force 2>/dev/null || true
+          done
+
+      - name: Sync backlog → GitHub issues
+        if: ${{ inputs.sync_issues }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python scripts/agentic/cli.py sync-issues --apply
+
+      - name: Upload plan artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: agentic-plan
+          path: |
+            .agentic/out/
+          if-no-files-found: error
+
+      - name: Job summary
+        run: |
+          {
+            echo "## Selected task"
+            echo ""
+            if [ -f .agentic/out/selected-task.json ]; then
+              echo '```json'
+              cat .agentic/out/selected-task.json
+              echo '```'
+            else
+              echo "_No task selected_"
+            fi
+            echo ""
+            if [ -f .agentic/out/plan.md ]; then
+              cat .agentic/out/plan.md
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
