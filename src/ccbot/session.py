@@ -122,7 +122,10 @@ class SessionManager:
                 str(uid): offsets for uid, offsets in self.user_window_offsets.items()
             },
             "thread_bindings": {
-                str(uid): {str(tid): wid for tid, wid in bindings.items()}
+                str(uid): {
+                    str(thread_id): window_id
+                    for thread_id, window_id in bindings.items()
+                }
                 for uid, bindings in self.thread_bindings.items()
             },
             "window_display_names": self.window_display_names,
@@ -153,7 +156,10 @@ class SessionManager:
                     for uid, offsets in state.get("user_window_offsets", {}).items()
                 }
                 self.thread_bindings = {
-                    int(uid): {int(tid): wid for tid, wid in bindings.items()}
+                    int(uid): {
+                        int(thread_id): window_id
+                        for thread_id, window_id in bindings.items()
+                    }
                     for uid, bindings in state.get("thread_bindings", {}).items()
                 }
                 self.window_display_names = state.get("window_display_names", {})
@@ -169,8 +175,8 @@ class SessionManager:
                         break
                 if not needs_migration:
                     for bindings in self.thread_bindings.values():
-                        for wid in bindings.values():
-                            if not self._is_window_id(wid):
+                        for window_id in bindings.values():
+                            if not self._is_window_id(window_id):
                                 needs_migration = True
                                 break
                         if needs_migration:
@@ -264,10 +270,10 @@ class SessionManager:
         # --- Migrate thread_bindings ---
         for uid, bindings in self.thread_bindings.items():
             new_bindings: dict[int, str] = {}
-            for tid, val in bindings.items():
+            for thread_id, val in bindings.items():
                 if self._is_window_id(val):
                     if val in live_ids:
-                        new_bindings[tid] = val
+                        new_bindings[thread_id] = val
                     else:
                         display = old_names.get(val, val)
                         new_id = live_by_name.get(display)
@@ -278,14 +284,14 @@ class SessionManager:
                                 new_id,
                                 display,
                             )
-                            new_bindings[tid] = new_id
+                            new_bindings[thread_id] = new_id
                             self.window_display_names[new_id] = display
                             changed = True
                         else:
                             logger.info(
-                                "Dropping stale thread binding: user=%d, thread=%d, wid=%s",
+                                "Dropping stale thread binding: user=%d, thread=%d, window_id=%s",
                                 uid,
-                                tid,
+                                thread_id,
                                 val,
                             )
                             changed = True
@@ -294,14 +300,14 @@ class SessionManager:
                     new_id = live_by_name.get(val)
                     if new_id:
                         logger.info("Migrating thread binding %s -> %s", val, new_id)
-                        new_bindings[tid] = new_id
+                        new_bindings[thread_id] = new_id
                         self.window_display_names[new_id] = val
                         changed = True
                     else:
                         logger.info(
                             "Dropping old-format thread binding: user=%d, thread=%d, name=%s",
                             uid,
-                            tid,
+                            thread_id,
                             val,
                         )
                         changed = True
@@ -528,8 +534,8 @@ class SessionManager:
         Without it, all outbound messages in forum topics fail with
         "Message thread not found". See commit history: 5afc111 → 26cb81f → PR #23.
         """
-        tid = thread_id or 0
-        key = f"{user_id}:{tid}"
+        thread_key = thread_id or 0
+        key = f"{user_id}:{thread_key}"
         if self.group_chat_ids.get(key) != chat_id:
             self.group_chat_ids[key] = chat_id
             self._save_state()
@@ -628,7 +634,7 @@ class SessionManager:
                 atomic_write_json(config.session_map_file, session_map)
                 logger.info("Migrated old-format session_map keys during load")
 
-        valid_wids: set[str] = set()
+        valid_window_ids: set[str] = set()
         changed = False
 
         for key, info in session_map.items():
@@ -638,7 +644,7 @@ class SessionManager:
             window_id = key[len(prefix) :]
             if not self._is_window_id(window_id):
                 continue
-            valid_wids.add(window_id)
+            valid_window_ids.add(window_id)
             new_sid = info.get("session_id", "")
             new_cwd = info.get("cwd", "")
             new_wname = info.get("window_name", "")
@@ -663,10 +669,12 @@ class SessionManager:
                     changed = True
 
         # Clean up window_states entries not in current session_map.
-        stale_wids = [w for w in self.window_states if w and w not in valid_wids]
-        for wid in stale_wids:
-            logger.info("Removing stale window_state: %s", wid)
-            del self.window_states[wid]
+        stale_window_ids = [
+            w for w in self.window_states if w and w not in valid_window_ids
+        ]
+        for window_id in stale_window_ids:
+            logger.info("Removing stale window_state: %s", window_id)
+            del self.window_states[window_id]
             changed = True
 
         if changed:

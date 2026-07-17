@@ -422,7 +422,7 @@ class TmuxManager:
                     start_directory=str(path),
                 )
 
-                wid = window.window_id or ""
+                window_id = window.window_id or ""
 
                 # Prevent Claude Code from overriding window name
                 window.set_window_option("allow-rename", "off")
@@ -439,14 +439,14 @@ class TmuxManager:
                 logger.info(
                     "Created window '%s' (id=%s) at %s",
                     final_window_name,
-                    wid,
+                    window_id,
                     path,
                 )
                 return (
                     True,
                     f"Created window '{final_window_name}' at {path}",
                     final_window_name,
-                    wid,
+                    window_id,
                 )
 
             except Exception as e:

@@ -84,7 +84,7 @@ def build_window_picker(
 
     Returns: (text, keyboard, window_ids) where window_ids is the ordered list for caching.
     """
-    window_ids = [wid for wid, _, _ in windows]
+    window_ids = [window_id for window_id, _, _ in windows]
 
     lines = [
         "*Bind to Existing Window*\n",

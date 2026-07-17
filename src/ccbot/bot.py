@@ -168,10 +168,10 @@ def _get_thread_id(update: Update) -> int | None:
     )
     if msg is None:
         return None
-    tid = getattr(msg, "message_thread_id", None)
-    if tid is None or tid == 1:
+    thread_id = getattr(msg, "message_thread_id", None)
+    if thread_id is None or thread_id == 1:
         return None
-    return tid
+    return thread_id
 
 
 # --- Command handlers ---
@@ -203,12 +203,12 @@ async def history_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         return
 
     thread_id = _get_thread_id(update)
-    wid = session_manager.resolve_window_for_thread(user.id, thread_id)
-    if not wid:
+    window_id = session_manager.resolve_window_for_thread(user.id, thread_id)
+    if not window_id:
         await safe_reply(update.message, "❌ No session bound to this topic.")
         return
 
-    await send_history(update.message, wid)
+    await send_history(update.message, window_id)
 
 
 async def screenshot_command(
@@ -222,14 +222,14 @@ async def screenshot_command(
         return
 
     thread_id = _get_thread_id(update)
-    wid = session_manager.resolve_window_for_thread(user.id, thread_id)
-    if not wid:
+    window_id = session_manager.resolve_window_for_thread(user.id, thread_id)
+    if not window_id:
         await safe_reply(update.message, "❌ No session bound to this topic.")
         return
 
-    w = await tmux_manager.find_window_by_id(wid)
+    w = await tmux_manager.find_window_by_id(window_id)
     if not w:
-        display = session_manager.get_display_name(wid)
+        display = session_manager.get_display_name(window_id)
         await safe_reply(update.message, f"❌ Window '{display}' no longer exists.")
         return
 
@@ -239,7 +239,7 @@ async def screenshot_command(
         return
 
     png_bytes = await text_to_image(text, with_ansi=True)
-    keyboard = _build_screenshot_keyboard(wid)
+    keyboard = _build_screenshot_keyboard(window_id)
     await update.message.reply_document(
         document=io.BytesIO(png_bytes),
         filename="screenshot.png",
@@ -260,12 +260,12 @@ async def unbind_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         await safe_reply(update.message, "❌ This command only works in a topic.")
         return
 
-    wid = session_manager.get_window_for_thread(user.id, thread_id)
-    if not wid:
+    window_id = session_manager.get_window_for_thread(user.id, thread_id)
+    if not window_id:
         await safe_reply(update.message, "❌ No session bound to this topic.")
         return
 
-    display = session_manager.get_display_name(wid)
+    display = session_manager.get_display_name(window_id)
     session_manager.unbind_thread(user.id, thread_id)
     await clear_topic_state(user.id, thread_id, context.bot, context.user_data)
 
@@ -286,14 +286,14 @@ async def esc_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
         return
 
     thread_id = _get_thread_id(update)
-    wid = session_manager.resolve_window_for_thread(user.id, thread_id)
-    if not wid:
+    window_id = session_manager.resolve_window_for_thread(user.id, thread_id)
+    if not window_id:
         await safe_reply(update.message, "❌ No session bound to this topic.")
         return
 
-    w = await tmux_manager.find_window_by_id(wid)
+    w = await tmux_manager.find_window_by_id(window_id)
     if not w:
-        display = session_manager.get_display_name(wid)
+        display = session_manager.get_display_name(window_id)
         await safe_reply(update.message, f"❌ Window '{display}' no longer exists.")
         return
 
@@ -311,14 +311,14 @@ async def usage_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         return
 
     thread_id = _get_thread_id(update)
-    wid = session_manager.resolve_window_for_thread(user.id, thread_id)
-    if not wid:
+    window_id = session_manager.resolve_window_for_thread(user.id, thread_id)
+    if not window_id:
         await safe_reply(update.message, "No session bound to this topic.")
         return
 
-    w = await tmux_manager.find_window_by_id(wid)
+    w = await tmux_manager.find_window_by_id(window_id)
     if not w:
-        await safe_reply(update.message, f"Window '{wid}' no longer exists.")
+        await safe_reply(update.message, f"Window '{window_id}' no longer exists.")
         return
 
     # Send /usage command to Claude Code TUI
@@ -414,10 +414,10 @@ async def topic_closed_handler(
     if thread_id is None:
         return
 
-    wid = session_manager.get_window_for_thread(user.id, thread_id)
-    if wid:
-        display = session_manager.get_display_name(wid)
-        w = await tmux_manager.find_window_by_id(wid)
+    window_id = session_manager.get_window_for_thread(user.id, thread_id)
+    if window_id:
+        display = session_manager.get_display_name(window_id)
+        w = await tmux_manager.find_window_by_id(window_id)
         if w:
             await tmux_manager.kill_window(w.window_id)
             logger.info(
@@ -463,21 +463,21 @@ async def topic_edited_handler(
     if thread_id is None:
         return
 
-    wid = session_manager.get_window_for_thread(user.id, thread_id)
-    if not wid:
+    window_id = session_manager.get_window_for_thread(user.id, thread_id)
+    if not window_id:
         logger.debug(
             "Topic edited: no binding (user=%d, thread=%d)", user.id, thread_id
         )
         return
 
-    old_name = session_manager.get_display_name(wid)
-    await tmux_manager.rename_window(wid, new_name)
-    session_manager.update_display_name(wid, new_name)
+    old_name = session_manager.get_display_name(window_id)
+    await tmux_manager.rename_window(window_id, new_name)
+    session_manager.update_display_name(window_id, new_name)
     logger.info(
         "Topic renamed: '%s' -> '%s' (window=%s, user=%d, thread=%d)",
         old_name,
         new_name,
-        wid,
+        window_id,
         user.id,
         thread_id,
     )
@@ -505,18 +505,18 @@ async def forward_command_handler(
     cmd_text = update.message.text or ""
     # The full text is already a slash command like "/clear" or "/compact foo"
     cc_slash = cmd_text.split("@")[0]  # strip bot mention
-    wid = session_manager.resolve_window_for_thread(user.id, thread_id)
-    if not wid:
+    window_id = session_manager.resolve_window_for_thread(user.id, thread_id)
+    if not window_id:
         await safe_reply(update.message, "❌ No session bound to this topic.")
         return
 
-    w = await tmux_manager.find_window_by_id(wid)
+    w = await tmux_manager.find_window_by_id(window_id)
     if not w:
-        display = session_manager.get_display_name(wid)
+        display = session_manager.get_display_name(window_id)
         await safe_reply(update.message, f"❌ Window '{display}' no longer exists.")
         return
 
-    display = session_manager.get_display_name(wid)
+    display = session_manager.get_display_name(window_id)
     logger.info(
         "Forwarding command %s to window %s (user=%d)", cc_slash, display, user.id
     )
@@ -524,14 +524,14 @@ async def forward_command_handler(
         await update.message.chat.send_action(ChatAction.TYPING)
     except Exception as e:
         logger.warning("send_action(TYPING) failed, continuing to injection: %s", e)
-    success, message = await session_manager.send_to_window(wid, cc_slash)
+    success, message = await session_manager.send_to_window(window_id, cc_slash)
     if success:
         await safe_reply(update.message, f"⚡ [{display}] Sent: {cc_slash}")
         # If /clear command was sent, clear the session association
         # so we can detect the new session after first message
         if cc_slash.strip().lower() == "/clear":
             logger.info("Clearing session for window %s after /clear", display)
-            session_manager.clear_window_session(wid)
+            session_manager.clear_window_session(window_id)
 
         # Interactive commands (e.g. /model) render a terminal-based UI
         # with no JSONL tool_use entry.  The status poller already detects
@@ -587,17 +587,17 @@ async def photo_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         )
         return
 
-    wid = session_manager.get_window_for_thread(user.id, thread_id)
-    if wid is None:
+    window_id = session_manager.get_window_for_thread(user.id, thread_id)
+    if window_id is None:
         await safe_reply(
             update.message,
             "❌ No session bound to this topic. Send a text message first to create one.",
         )
         return
 
-    w = await tmux_manager.find_window_by_id(wid)
+    w = await tmux_manager.find_window_by_id(window_id)
     if not w:
-        display = session_manager.get_display_name(wid)
+        display = session_manager.get_display_name(window_id)
         session_manager.unbind_thread(user.id, thread_id)
         await safe_reply(
             update.message,
@@ -628,7 +628,7 @@ async def photo_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         logger.warning("send_action(TYPING) failed, continuing to injection: %s", e)
     clear_status_msg_info(user.id, thread_id)
 
-    success, message = await session_manager.send_to_window(wid, text_to_send)
+    success, message = await session_manager.send_to_window(window_id, text_to_send)
     if not success:
         await safe_reply(update.message, f"❌ {message}")
         return
@@ -668,17 +668,17 @@ async def voice_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         )
         return
 
-    wid = session_manager.get_window_for_thread(user.id, thread_id)
-    if wid is None:
+    window_id = session_manager.get_window_for_thread(user.id, thread_id)
+    if window_id is None:
         await safe_reply(
             update.message,
             "❌ No session bound to this topic. Send a text message first to create one.",
         )
         return
 
-    w = await tmux_manager.find_window_by_id(wid)
+    w = await tmux_manager.find_window_by_id(window_id)
     if not w:
-        display = session_manager.get_display_name(wid)
+        display = session_manager.get_display_name(window_id)
         session_manager.unbind_thread(user.id, thread_id)
         await safe_reply(
             update.message,
@@ -708,7 +708,7 @@ async def voice_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         logger.warning("send_action(TYPING) failed, continuing to injection: %s", e)
     clear_status_msg_info(user.id, thread_id)
 
-    success, message = await session_manager.send_to_window(wid, text)
+    success, message = await session_manager.send_to_window(window_id, text)
     if not success:
         await safe_reply(update.message, f"❌ {message}")
         return
@@ -886,11 +886,13 @@ async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         )
         return
 
-    wid = session_manager.get_window_for_thread(user.id, thread_id)
-    if wid is None:
+    window_id = session_manager.get_window_for_thread(user.id, thread_id)
+    if window_id is None:
         # Unbound topic — check for unbound windows first
         all_windows = await tmux_manager.list_windows()
-        bound_ids = {wid for _, _, wid in session_manager.iter_thread_bindings()}
+        bound_ids = {
+            window_id for _, _, window_id in session_manager.iter_thread_bindings()
+        }
         unbound = [
             (w.window_id, w.window_name, w.cwd)
             for w in all_windows
@@ -939,9 +941,9 @@ async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         return
 
     # Bound topic — forward to bound window
-    w = await tmux_manager.find_window_by_id(wid)
+    w = await tmux_manager.find_window_by_id(window_id)
     if not w:
-        display = session_manager.get_display_name(wid)
+        display = session_manager.get_display_name(window_id)
         logger.info(
             "Stale binding: window %s gone, unbinding (user=%d, thread=%d)",
             display,
@@ -967,7 +969,7 @@ async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         logger.warning("send_action(TYPING) failed, continuing to injection: %s", e)
     try:
         await enqueue_status_update(
-            context.bot, user.id, wid, None, thread_id=thread_id
+            context.bot, user.id, window_id, None, thread_id=thread_id
         )
     except Exception as e:
         logger.warning("enqueue_status_update failed, continuing to injection: %s", e)
@@ -988,13 +990,13 @@ async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
                 user.id,
                 thread_id,
             )
-            await handle_interactive_ui(context.bot, user.id, wid, thread_id)
+            await handle_interactive_ui(context.bot, user.id, window_id, thread_id)
             # Small delay to let UI render in Telegram before text arrives
             await asyncio.sleep(0.3)
     except Exception as e:
         logger.warning("interactive-UI precheck failed, continuing to injection: %s", e)
 
-    success, message = await session_manager.send_to_window(wid, text)
+    success, message = await session_manager.send_to_window(window_id, text)
     if not success:
         await safe_reply(update.message, f"❌ {message}")
         return
@@ -1003,15 +1005,15 @@ async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     if text.startswith("!") and len(text) > 1:
         bash_cmd = text[1:]  # strip leading "!"
         task = asyncio.create_task(
-            _capture_bash_output(context.bot, user.id, thread_id, wid, bash_cmd)
+            _capture_bash_output(context.bot, user.id, thread_id, window_id, bash_cmd)
         )
         _bash_capture_tasks[(user.id, thread_id)] = task
 
     # If in interactive mode, refresh the UI after sending text
     interactive_window = get_interactive_window(user.id, thread_id)
-    if interactive_window and interactive_window == wid:
+    if interactive_window and interactive_window == window_id:
         await asyncio.sleep(0.2)
-        await handle_interactive_ui(context.bot, user.id, wid, thread_id)
+        await handle_interactive_ui(context.bot, user.id, window_id, thread_id)
 
 
 # --- Window creation helper ---
@@ -1034,14 +1036,19 @@ async def _create_and_bind_window(
     assert isinstance(query, CallbackQuery)
     assert isinstance(user, User)
 
-    success, message, created_wname, created_wid = await tmux_manager.create_window(
+    (
+        success,
+        message,
+        created_wname,
+        created_window_id,
+    ) = await tmux_manager.create_window(
         selected_path, resume_session_id=resume_session_id
     )
     if success:
         logger.info(
             "Window created: %s (id=%s) at %s (user=%d, thread=%s, resume=%s)",
             created_wname,
-            created_wid,
+            created_window_id,
             selected_path,
             user.id,
             pending_thread_id,
@@ -1052,7 +1059,7 @@ async def _create_and_bind_window(
         # a longer timeout to avoid silently dropping messages.
         hook_timeout = 15.0 if resume_session_id else 5.0
         hook_ok = await session_manager.wait_for_session_map_entry(
-            created_wid, timeout=hook_timeout
+            created_window_id, timeout=hook_timeout
         )
 
         # --resume: messages keep writing to the resumed session's JSONL, and
@@ -1063,12 +1070,12 @@ async def _create_and_bind_window(
         # session_map drives the monitor's watch list, and load_session_map()
         # would revert a window_state-only override on the next poll cycle.
         if resume_session_id:
-            ws = session_manager.get_window_state(created_wid)
+            ws = session_manager.get_window_state(created_window_id)
             if not hook_ok:
                 logger.warning(
                     "Hook timed out for resume window %s, "
                     "manually setting session_id=%s cwd=%s",
-                    created_wid,
+                    created_window_id,
                     resume_session_id,
                     selected_path,
                 )
@@ -1079,14 +1086,14 @@ async def _create_and_bind_window(
             elif ws.session_id != resume_session_id:
                 logger.info(
                     "Resume override: window %s session_id %s -> %s",
-                    created_wid,
+                    created_window_id,
                     ws.session_id,
                     resume_session_id,
                 )
                 ws.session_id = resume_session_id
                 session_manager._save_state()
             await session_manager.override_session_map_entry(
-                created_wid,
+                created_window_id,
                 resume_session_id,
                 cwd=str(selected_path),
                 window_name=created_wname,
@@ -1095,7 +1102,7 @@ async def _create_and_bind_window(
         if pending_thread_id is not None:
             # Thread bind flow: bind thread to newly created window
             session_manager.bind_thread(
-                user.id, pending_thread_id, created_wid, window_name=created_wname
+                user.id, pending_thread_id, created_window_id, window_name=created_wname
             )
 
             status = "Resumed" if resume_session_id else "Created"
@@ -1120,7 +1127,7 @@ async def _create_and_bind_window(
                     context.user_data.pop("_pending_thread_text", None)
                     context.user_data.pop("_pending_thread_id", None)
                 send_ok, send_msg = await session_manager.send_to_window(
-                    created_wid,
+                    created_window_id,
                     pending_text,
                 )
                 if not send_ok:
@@ -1468,12 +1475,12 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         if idx < 0 or idx >= len(cached_windows):
             await query.answer("Window list changed, please retry", show_alert=True)
             return
-        selected_wid = cached_windows[idx]
+        selected_window_id = cached_windows[idx]
 
         # Verify window still exists
-        w = await tmux_manager.find_window_by_id(selected_wid)
+        w = await tmux_manager.find_window_by_id(selected_window_id)
         if not w:
-            display = session_manager.get_display_name(selected_wid)
+            display = session_manager.get_display_name(selected_window_id)
             await query.answer(f"Window '{display}' no longer exists", show_alert=True)
             return
 
@@ -1485,7 +1492,7 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         display = w.window_name
         clear_window_picker_state(context.user_data)
         session_manager.bind_thread(
-            user.id, thread_id, selected_wid, window_name=display
+            user.id, thread_id, selected_window_id, window_name=display
         )
 
         await safe_edit(
@@ -1502,7 +1509,7 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
             context.user_data.pop("_pending_thread_id", None)
         if pending_text:
             send_ok, send_msg = await session_manager.send_to_window(
-                selected_wid, pending_text
+                selected_window_id, pending_text
             )
             if not send_ok:
                 logger.warning("Failed to forward pending text: %s", send_msg)
@@ -1752,26 +1759,26 @@ async def handle_new_message(msg: NewMessage, bot: Bot) -> None:
         logger.info(f"No active users for session {msg.session_id}")
         return
 
-    for user_id, wid, thread_id in active_users:
+    for user_id, window_id, thread_id in active_users:
         # Handle interactive tools specially - capture terminal and send UI
         if msg.tool_name in INTERACTIVE_TOOL_NAMES and msg.content_type == "tool_use":
             # Mark interactive mode BEFORE sleeping so polling skips this window
-            set_interactive_mode(user_id, wid, thread_id)
+            set_interactive_mode(user_id, window_id, thread_id)
             # Flush pending messages (e.g. plan content) before sending interactive UI
             queue = get_message_queue(user_id)
             if queue:
                 await queue.join()
             # Wait briefly for Claude Code to render the question UI
             await asyncio.sleep(0.3)
-            handled = await handle_interactive_ui(bot, user_id, wid, thread_id)
+            handled = await handle_interactive_ui(bot, user_id, window_id, thread_id)
             if handled:
                 # Update user's read offset
-                session = await session_manager.resolve_session_for_window(wid)
+                session = await session_manager.resolve_session_for_window(window_id)
                 if session and session.file_path:
                     try:
                         file_size = Path(session.file_path).stat().st_size
                         session_manager.update_user_window_offset(
-                            user_id, wid, file_size
+                            user_id, window_id, file_size
                         )
                     except OSError:
                         pass
@@ -1805,7 +1812,7 @@ async def handle_new_message(msg: NewMessage, bot: Bot) -> None:
             await enqueue_content_message(
                 bot=bot,
                 user_id=user_id,
-                window_id=wid,
+                window_id=window_id,
                 parts=parts,
                 tool_use_id=msg.tool_use_id,
                 content_type=msg.content_type,
@@ -1816,11 +1823,13 @@ async def handle_new_message(msg: NewMessage, bot: Bot) -> None:
 
             # Update user's read offset to current file position
             # This marks these messages as "read" for this user
-            session = await session_manager.resolve_session_for_window(wid)
+            session = await session_manager.resolve_session_for_window(window_id)
             if session and session.file_path:
                 try:
                     file_size = Path(session.file_path).stat().st_size
-                    session_manager.update_user_window_offset(user_id, wid, file_size)
+                    session_manager.update_user_window_offset(
+                        user_id, window_id, file_size
+                    )
                 except OSError:
                     pass
 

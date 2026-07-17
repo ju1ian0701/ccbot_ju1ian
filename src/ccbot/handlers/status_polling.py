@@ -129,7 +129,7 @@ async def status_poll_loop(bot: Bot) -> None:
             now = time.monotonic()
             if now - last_topic_check >= TOPIC_CHECK_INTERVAL:
                 last_topic_check = now
-                for user_id, thread_id, wid in list(
+                for user_id, thread_id, window_id in list(
                     session_manager.iter_thread_bindings()
                 ):
                     try:
@@ -140,7 +140,7 @@ async def status_poll_loop(bot: Bot) -> None:
                     except BadRequest as e:
                         if "Topic_id_invalid" in str(e):
                             # Topic deleted — kill window, unbind, and clean up state
-                            w = await tmux_manager.find_window_by_id(wid)
+                            w = await tmux_manager.find_window_by_id(window_id)
                             if w:
                                 await tmux_manager.kill_window(w.window_id)
                             session_manager.unbind_thread(user_id, thread_id)
@@ -148,27 +148,29 @@ async def status_poll_loop(bot: Bot) -> None:
                             logger.info(
                                 "Topic deleted: killed window_id '%s' and "
                                 "unbound thread %d for user %d",
-                                wid,
+                                window_id,
                                 thread_id,
                                 user_id,
                             )
                         else:
                             logger.debug(
                                 "Topic probe error for %s: %s",
-                                wid,
+                                window_id,
                                 e,
                             )
                     except Exception as e:
                         logger.debug(
                             "Topic probe error for %s: %s",
-                            wid,
+                            window_id,
                             e,
                         )
 
-            for user_id, thread_id, wid in list(session_manager.iter_thread_bindings()):
+            for user_id, thread_id, window_id in list(
+                session_manager.iter_thread_bindings()
+            ):
                 try:
                     # Clean up stale bindings (window no longer exists)
-                    w = await tmux_manager.find_window_by_id(wid)
+                    w = await tmux_manager.find_window_by_id(window_id)
                     if not w:
                         session_manager.unbind_thread(user_id, thread_id)
                         await clear_topic_state(user_id, thread_id, bot)
@@ -176,7 +178,7 @@ async def status_poll_loop(bot: Bot) -> None:
                             "Cleaned up stale binding: user=%d thread=%d window_id=%s",
                             user_id,
                             thread_id,
-                            wid,
+                            window_id,
                         )
                         continue
 
@@ -189,7 +191,7 @@ async def status_poll_loop(bot: Bot) -> None:
                     await update_status_message(
                         bot,
                         user_id,
-                        wid,
+                        window_id,
                         thread_id=thread_id,
                         skip_status=skip_status,
                     )
