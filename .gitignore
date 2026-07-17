@@ -33,6 +33,7 @@ pip-log.txt
 pip-delete-this-directory.txt
 
 # Unit test / coverage reports
+test-clone/
 htmlcov/
 .tox/
 .nox/
@@ -45,6 +46,7 @@ coverage.xml
 *.py,cover
 .hypothesis/
 .pytest_cache/
+.ruff_cache/
 
 # Translations
 *.mo
@@ -68,4 +70,35 @@ venv.bak/
 
 # Project specific
 .uv/
-uv.lock
+# uv.lock
+
+# Agentic pipeline generated outputs (reports regenerated in CI)
+.agentic/out/
+.agentic/state/
+
+# OS-specific
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Claude Code (локальные конфиги и персональные заметки)
+.claude/
+CLAUDE.local.md
+
+# Logs and temp
+*.log
+coverage.json
+fix_tasks.py
+
+# Secrets (на всякий случай)
+*.key
+*.pem
+*.p12
+*.jks
+secrets.json
+credentials.json
+
+# Pytest async/cov artifacts
+.mypy_cache/
+.dmypy.json
+dmypy.json

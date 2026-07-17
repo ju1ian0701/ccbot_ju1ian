@@ -1,0 +1,146 @@
+{
+  "batch": 3,
+  "description": "Batch 3/9: Message delivery pipeline — MarkdownV2 conversion, transcript parsing, message splitting, response building, safe sending, and history pagination",
+  "nodes": [
+    {
+      "id": "src/ccbot/transcript_parser.py",
+      "type": "file",
+      "path": "src/ccbot/transcript_parser.py",
+      "lines": 776,
+      "summary": "JSONL transcript parser for Claude Code session files. Parses session JSONL lines into structured messages. Handles text, thinking, tool_use, tool_result, local_command, and user messages. Core classes: TranscriptParser (static methods), ParsedEntry, ParsedMessage, PendingToolInfo. Tool pairing: matches tool_use with tool_result via tool_use_id. Defines sentinel tokens for expandable blockquotes. Used by both session.py (history) and session_monitor.py (real-time).",
+      "tags": ["parser", "transcript", "jsonl", "claude-code", "tool-pairing", "message-extraction"]
+    },
+    {
+      "id": "src/ccbot/telegram_sender.py",
+      "type": "file",
+      "path": "src/ccbot/telegram_sender.py",
+      "lines": 122,
+      "summary": "Message splitting utility for Telegram's 4096-character limit. Provides split_message() which splits long text into Telegram-safe chunks, preferring newline boundaries and preserving code block integrity. Uses UTF-16 code unit length for accurate Telegram accounting. Handles forceful splitting of overlong lines and code block fence re-opening across chunks.",
+      "tags": ["splitting", "telegram", "message-size", "utf16", "code-block-integrity"]
+    },
+    {
+      "id": "src/ccbot/markdown_v2.py",
+      "type": "file",
+      "path": "src/ccbot/markdown_v2.py",
+      "lines": 205,
+      "summary": "Markdown to Telegram MarkdownV2 conversion layer. Wraps telegramify_markdown with custom rendering rules. Converts markdown tables to card-style key-value format (convert_markdown_tables). Handles expandable blockquotes delimited by TranscriptParser sentinel tokens (rendered as >...|| syntax with truncation). Escapes special characters for MarkdownV2. Disables indented code blocks, only fenced blocks are treated as code.",
+      "tags": ["markdown", "markdownv2", "telegram", "conversion", "escaping", "blockquotes", "table-conversion"]
+    },
+    {
+      "id": "src/ccbot/handlers/response_builder.py",
+      "type": "file",
+      "path": "src/ccbot/handlers/response_builder.py",
+      "lines": 97,
+      "summary": "Response message building for Telegram delivery. build_response_parts() creates paginated response messages from Claude Code output. Handles different content types: user messages (emoji prefix), thinking (truncated, with expandable quote), and assistant text. Splits long messages into pages within Telegram's limit, adding [1/N] suffixes. Preserves expandable quote atomicity (no splitting inside quotes). Converts tables to card-style before splitting.",
+      "tags": ["response-building", "pagination", "content-formatting", "message-assembly"]
+    },
+    {
+      "id": "src/ccbot/handlers/message_sender.py",
+      "type": "file",
+      "path": "src/ccbot/handlers/message_sender.py",
+      "lines": 198,
+      "summary": "Safe message sending helpers with MarkdownV2 fallback. Provides safe_reply, safe_edit, safe_send, send_with_fallback, and send_photo. Each method attempts formatted MarkdownV2 send first, falls back to plain text on failure. Strips expandable quote sentinel markers in fallback mode. Photo sending supports single images and media groups. RetryAfter exceptions are re-raised for caller handling.",
+      "tags": ["sending", "fallback", "markdownv2", "telegram-api", "error-handling", "photo-sending"]
+    },
+    {
+      "id": "src/ccbot/handlers/history.py",
+      "type": "file",
+      "path": "src/ccbot/handlers/history.py",
+      "lines": 235,
+      "summary": "Message history display with pagination. send_history() sends or edits message history for a window's session with page navigation. Supports both full history and unread message range views (via start_byte/end_byte). Filters messages based on config.show_user_messages. Formats messages with timestamps, role prefixes, and expandable quote sentinel stripping. _build_history_keyboard() creates inline keyboard with Older/Newer page buttons. Updates user read offset after viewing unread.",
+      "tags": ["history", "pagination", "inline-keyboard", "unread-tracking", "message-formatting"]
+    }
+  ],
+  "edges": [
+    {
+      "source": "src/ccbot/handlers/history.py",
+      "target": "src/ccbot/config.py",
+      "type": "imports",
+      "label": "config"
+    },
+    {
+      "source": "src/ccbot/handlers/history.py",
+      "target": "src/ccbot/session.py",
+      "type": "imports",
+      "label": "session_manager"
+    },
+    {
+      "source": "src/ccbot/handlers/history.py",
+      "target": "src/ccbot/telegram_sender.py",
+      "type": "imports",
+      "label": "split_message"
+    },
+    {
+      "source": "src/ccbot/handlers/history.py",
+      "target": "src/ccbot/transcript_parser.py",
+      "type": "imports",
+      "label": "TranscriptParser"
+    },
+    {
+      "source": "src/ccbot/handlers/history.py",
+      "target": "src/ccbot/handlers/callback_data.py",
+      "type": "imports",
+      "label": "CB_HISTORY_NEXT, CB_HISTORY_PREV"
+    },
+    {
+      "source": "src/ccbot/handlers/history.py",
+      "target": "src/ccbot/handlers/message_sender.py",
+      "type": "imports",
+      "label": "safe_edit, safe_reply, safe_send"
+    },
+    {
+      "source": "src/ccbot/handlers/message_sender.py",
+      "target": "src/ccbot/markdown_v2.py",
+      "type": "imports",
+      "label": "convert_markdown"
+    },
+    {
+      "source": "src/ccbot/handlers/message_sender.py",
+      "target": "src/ccbot/transcript_parser.py",
+      "type": "imports",
+      "label": "TranscriptParser (sentinels for strip_sentinels)"
+    },
+    {
+      "source": "src/ccbot/handlers/response_builder.py",
+      "target": "src/ccbot/markdown_v2.py",
+      "type": "imports",
+      "label": "convert_markdown_tables"
+    },
+    {
+      "source": "src/ccbot/handlers/response_builder.py",
+      "target": "src/ccbot/telegram_sender.py",
+      "type": "imports",
+      "label": "split_message"
+    },
+    {
+      "source": "src/ccbot/handlers/response_builder.py",
+      "target": "src/ccbot/transcript_parser.py",
+      "type": "imports",
+      "label": "TranscriptParser (sentinels)"
+    },
+    {
+      "source": "src/ccbot/markdown_v2.py",
+      "target": "src/ccbot/transcript_parser.py",
+      "type": "imports",
+      "label": "TranscriptParser (sentinels for expandable quote regex)"
+    },
+    {
+      "source": "src/ccbot/handlers/response_builder.py",
+      "target": "src/ccbot/handlers/message_sender.py",
+      "type": "depends_on",
+      "label": "response_builder outputs → message_sender send layer"
+    },
+    {
+      "source": "src/ccbot/handlers/history.py",
+      "target": "src/ccbot/markdown_v2.py",
+      "type": "depends_on",
+      "label": "history messages eventually converted by markdown_v2 via safe_edit/safe_send"
+    },
+    {
+      "source": "src/ccbot/markdown_v2.py",
+      "target": "src/ccbot/telegram_sender.py",
+      "type": "depends_on",
+      "label": "markdown_v2 output consumed by split_message at send layer"
+    }
+  ]
+}

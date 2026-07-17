@@ -1,0 +1,3981 @@
+{
+  "nodes": [
+    {
+      "id": "file:.understand-anything/.understandignore",
+      "type": "file",
+      "kind": "config",
+      "name": ".understandignore",
+      "tags": [
+        "ignore",
+        "config"
+      ]
+    },
+    {
+      "id": "file:doc/telegram-bot-features.md",
+      "type": "file",
+      "kind": "doc",
+      "name": "telegram-bot-features.md",
+      "tags": [
+        "docs",
+        "telegram",
+        "bot-api"
+      ]
+    },
+    {
+      "id": "file:doc/WEBSOCKET_PROTOCOL_REVERSED.md",
+      "type": "file",
+      "kind": "doc",
+      "name": "WEBSOCKET_PROTOCOL_REVERSED.md",
+      "tags": [
+        "docs",
+        "websocket",
+        "reverse-engineering"
+      ]
+    },
+    {
+      "id": "file:scripts/restart.sh",
+      "type": "file",
+      "kind": "script",
+      "name": "restart.sh",
+      "tags": [
+        "shell",
+        "script",
+        "deploy"
+      ]
+    },
+    {
+      "id": "file:src/ccbot/__init__.py",
+      "type": "file",
+      "kind": "code",
+      "name": "__init__.py",
+      "tags": [
+        "python",
+        "package"
+      ]
+    },
+    {
+      "id": "file:src/ccbot/fonts/NotoSansMonoCJKsc-Regular.otf",
+      "type": "file",
+      "kind": "binary",
+      "name": "NotoSansMonoCJKsc-Regular.otf",
+      "tags": [
+        "font",
+        "cjk",
+        "binary"
+      ]
+    },
+    {
+      "id": "file:src/ccbot/handlers/__init__.py",
+      "type": "file",
+      "kind": "code",
+      "name": "handlers/__init__.py",
+      "tags": [
+        "python",
+        "package"
+      ]
+    },
+    {
+      "id": "file:src/ccbot/hook.py",
+      "type": "file",
+      "kind": "code",
+      "name": "hook.py",
+      "tags": [
+        "python",
+        "hook",
+        "session-tracking"
+      ]
+    },
+    {
+      "id": "file:src/ccbot/main.py",
+      "type": "file",
+      "kind": "code",
+      "name": "main.py",
+      "tags": [
+        "python",
+        "entry-point"
+      ]
+    },
+    {
+      "id": "file:tests/ccbot/conftest.py",
+      "type": "file",
+      "kind": "code",
+      "name": "conftest.py",
+      "tags": [
+        "python",
+        "test",
+        "fixtures"
+      ]
+    },
+    {
+      "id": "file:tests/ccbot/handlers/test_interactive_ui.py",
+      "type": "file",
+      "kind": "code",
+      "name": "test_interactive_ui.py",
+      "tags": [
+        "python",
+        "test"
+      ]
+    },
+    {
+      "id": "file:tests/ccbot/handlers/test_response_builder.py",
+      "type": "file",
+      "kind": "code",
+      "name": "test_response_builder.py",
+      "tags": [
+        "python",
+        "test"
+      ]
+    },
+    {
+      "id": "file:tests/ccbot/handlers/test_status_polling.py",
+      "type": "file",
+      "kind": "code",
+      "name": "test_status_polling.py",
+      "tags": [
+        "python",
+        "test"
+      ]
+    },
+    {
+      "id": "file:tests/ccbot/test_config.py",
+      "type": "file",
+      "kind": "code",
+      "name": "test_config.py",
+      "tags": [
+        "python",
+        "test"
+      ]
+    },
+    {
+      "id": "file:tests/ccbot/test_forward_command.py",
+      "type": "file",
+      "kind": "code",
+      "name": "test_forward_command.py",
+      "tags": [
+        "python",
+        "test"
+      ]
+    },
+    {
+      "id": "file:tests/ccbot/test_hook.py",
+      "type": "file",
+      "kind": "code",
+      "name": "test_hook.py",
+      "tags": [
+        "python",
+        "test"
+      ]
+    },
+    {
+      "id": "file:tests/ccbot/test_markdown_v2.py",
+      "type": "file",
+      "kind": "code",
+      "name": "test_markdown_v2.py",
+      "tags": [
+        "python",
+        "test"
+      ]
+    },
+    {
+      "id": "file:tests/ccbot/test_monitor_state.py",
+      "type": "file",
+      "kind": "code",
+      "name": "test_monitor_state.py",
+      "tags": [
+        "python",
+        "test"
+      ]
+    },
+    {
+      "id": "file:tests/ccbot/test_session_monitor.py",
+      "type": "file",
+      "kind": "code",
+      "name": "test_session_monitor.py",
+      "tags": [
+        "python",
+        "test"
+      ]
+    },
+    {
+      "id": "file:tests/ccbot/test_session.py",
+      "type": "file",
+      "kind": "code",
+      "name": "test_session.py",
+      "tags": [
+        "python",
+        "test"
+      ]
+    },
+    {
+      "id": "file:tests/ccbot/test_telegram_sender.py",
+      "type": "file",
+      "kind": "code",
+      "name": "test_telegram_sender.py",
+      "tags": [
+        "python",
+        "test"
+      ]
+    },
+    {
+      "id": "file:tests/ccbot/test_terminal_parser.py",
+      "type": "file",
+      "kind": "code",
+      "name": "test_terminal_parser.py",
+      "tags": [
+        "python",
+        "test"
+      ]
+    },
+    {
+      "id": "file:tests/ccbot/test_transcribe.py",
+      "type": "file",
+      "kind": "code",
+      "name": "test_transcribe.py",
+      "tags": [
+        "python",
+        "test"
+      ]
+    },
+    {
+      "id": "file:tests/ccbot/test_transcript_parser.py",
+      "type": "file",
+      "kind": "code",
+      "name": "test_transcript_parser.py",
+      "tags": [
+        "python",
+        "test"
+      ]
+    },
+    {
+      "id": "file:tests/ccbot/test_utils.py",
+      "type": "file",
+      "kind": "code",
+      "name": "test_utils.py",
+      "tags": [
+        "python",
+        "test"
+      ]
+    },
+    {
+      "id": "sym:file:src/ccbot/__init__.py:__version__",
+      "type": "symbol",
+      "kind": "variable",
+      "name": "__version__",
+      "parent": "file:src/ccbot/__init__.py"
+    },
+    {
+      "id": "sym:file:src/ccbot/hook.py:_UUID_RE",
+      "type": "symbol",
+      "kind": "variable",
+      "name": "_UUID_RE",
+      "parent": "file:src/ccbot/hook.py"
+    },
+    {
+      "id": "sym:file:src/ccbot/hook.py:_CLAUDE_SETTINGS_FILE",
+      "type": "symbol",
+      "kind": "variable",
+      "name": "_CLAUDE_SETTINGS_FILE",
+      "parent": "file:src/ccbot/hook.py"
+    },
+    {
+      "id": "sym:file:src/ccbot/hook.py:_HOOK_COMMAND_SUFFIX",
+      "type": "symbol",
+      "kind": "variable",
+      "name": "_HOOK_COMMAND_SUFFIX",
+      "parent": "file:src/ccbot/hook.py"
+    },
+    {
+      "id": "sym:file:src/ccbot/hook.py:_find_ccbot_path",
+      "type": "symbol",
+      "kind": "function",
+      "name": "_find_ccbot_path",
+      "parent": "file:src/ccbot/hook.py"
+    },
+    {
+      "id": "sym:file:src/ccbot/hook.py:_is_hook_installed",
+      "type": "symbol",
+      "kind": "function",
+      "name": "_is_hook_installed",
+      "parent": "file:src/ccbot/hook.py"
+    },
+    {
+      "id": "sym:file:src/ccbot/hook.py:_install_hook",
+      "type": "symbol",
+      "kind": "function",
+      "name": "_install_hook",
+      "parent": "file:src/ccbot/hook.py"
+    },
+    {
+      "id": "sym:file:src/ccbot/hook.py:hook_main",
+      "type": "symbol",
+      "kind": "function",
+      "name": "hook_main",
+      "parent": "file:src/ccbot/hook.py"
+    },
+    {
+      "id": "sym:file:src/ccbot/main.py:main",
+      "type": "symbol",
+      "kind": "function",
+      "name": "main",
+      "parent": "file:src/ccbot/main.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/conftest.py:make_jsonl_entry",
+      "type": "symbol",
+      "kind": "fixture",
+      "name": "make_jsonl_entry",
+      "parent": "file:tests/ccbot/conftest.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/conftest.py:make_text_block",
+      "type": "symbol",
+      "kind": "fixture",
+      "name": "make_text_block",
+      "parent": "file:tests/ccbot/conftest.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/conftest.py:make_tool_use_block",
+      "type": "symbol",
+      "kind": "fixture",
+      "name": "make_tool_use_block",
+      "parent": "file:tests/ccbot/conftest.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/conftest.py:make_tool_result_block",
+      "type": "symbol",
+      "kind": "fixture",
+      "name": "make_tool_result_block",
+      "parent": "file:tests/ccbot/conftest.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/conftest.py:make_thinking_block",
+      "type": "symbol",
+      "kind": "fixture",
+      "name": "make_thinking_block",
+      "parent": "file:tests/ccbot/conftest.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/conftest.py:sample_pane_exit_plan",
+      "type": "symbol",
+      "kind": "fixture",
+      "name": "sample_pane_exit_plan",
+      "parent": "file:tests/ccbot/conftest.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/conftest.py:sample_pane_ask_user_multi_tab",
+      "type": "symbol",
+      "kind": "fixture",
+      "name": "sample_pane_ask_user_multi_tab",
+      "parent": "file:tests/ccbot/conftest.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/conftest.py:sample_pane_ask_user_single_tab",
+      "type": "symbol",
+      "kind": "fixture",
+      "name": "sample_pane_ask_user_single_tab",
+      "parent": "file:tests/ccbot/conftest.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/conftest.py:sample_pane_permission",
+      "type": "symbol",
+      "kind": "fixture",
+      "name": "sample_pane_permission",
+      "parent": "file:tests/ccbot/conftest.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/conftest.py:chrome",
+      "type": "symbol",
+      "kind": "fixture",
+      "name": "chrome",
+      "parent": "file:tests/ccbot/conftest.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/conftest.py:sample_pane_status_line",
+      "type": "symbol",
+      "kind": "fixture",
+      "name": "sample_pane_status_line",
+      "parent": "file:tests/ccbot/conftest.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/conftest.py:sample_pane_settings",
+      "type": "symbol",
+      "kind": "fixture",
+      "name": "sample_pane_settings",
+      "parent": "file:tests/ccbot/conftest.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/conftest.py:sample_pane_no_ui",
+      "type": "symbol",
+      "kind": "fixture",
+      "name": "sample_pane_no_ui",
+      "parent": "file:tests/ccbot/conftest.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/handlers/test_interactive_ui.py:mock_bot",
+      "type": "symbol",
+      "kind": "fixture",
+      "name": "mock_bot",
+      "parent": "file:tests/ccbot/handlers/test_interactive_ui.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/handlers/test_interactive_ui.py:_clear_interactive_state",
+      "type": "symbol",
+      "kind": "fixture",
+      "name": "_clear_interactive_state",
+      "parent": "file:tests/ccbot/handlers/test_interactive_ui.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/handlers/test_interactive_ui.py:TestHandleInteractiveUI",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestHandleInteractiveUI",
+      "parent": "file:tests/ccbot/handlers/test_interactive_ui.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/handlers/test_interactive_ui.py:TestHandleInteractiveUI.test_handle_settings_ui_sends_keyboard",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_handle_settings_ui_sends_keyboard",
+      "parent": "sym:file:tests/ccbot/handlers/test_interactive_ui.py:TestHandleInteractiveUI"
+    },
+    {
+      "id": "sym:file:tests/ccbot/handlers/test_interactive_ui.py:TestHandleInteractiveUI.test_handle_no_ui_returns_false",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_handle_no_ui_returns_false",
+      "parent": "sym:file:tests/ccbot/handlers/test_interactive_ui.py:TestHandleInteractiveUI"
+    },
+    {
+      "id": "sym:file:tests/ccbot/handlers/test_interactive_ui.py:TestKeyboardLayoutForSettings",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestKeyboardLayoutForSettings",
+      "parent": "file:tests/ccbot/handlers/test_interactive_ui.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/handlers/test_interactive_ui.py:TestKeyboardLayoutForSettings.test_settings_keyboard_includes_all_nav_keys",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_settings_keyboard_includes_all_nav_keys",
+      "parent": "sym:file:tests/ccbot/handlers/test_interactive_ui.py:TestKeyboardLayoutForSettings"
+    },
+    {
+      "id": "sym:file:tests/ccbot/handlers/test_response_builder.py:EXP_START",
+      "type": "symbol",
+      "kind": "variable",
+      "name": "EXP_START",
+      "parent": "file:tests/ccbot/handlers/test_response_builder.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/handlers/test_response_builder.py:EXP_END",
+      "type": "symbol",
+      "kind": "variable",
+      "name": "EXP_END",
+      "parent": "file:tests/ccbot/handlers/test_response_builder.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/handlers/test_response_builder.py:TestBuildResponseParts",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestBuildResponseParts",
+      "parent": "file:tests/ccbot/handlers/test_response_builder.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/handlers/test_response_builder.py:TestBuildResponseParts.test_user_message_has_emoji_prefix",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_user_message_has_emoji_prefix",
+      "parent": "sym:file:tests/ccbot/handlers/test_response_builder.py:TestBuildResponseParts"
+    },
+    {
+      "id": "sym:file:tests/ccbot/handlers/test_response_builder.py:TestBuildResponseParts.test_user_message_truncated_at_3000_chars",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_user_message_truncated_at_3000_chars",
+      "parent": "sym:file:tests/ccbot/handlers/test_response_builder.py:TestBuildResponseParts"
+    },
+    {
+      "id": "sym:file:tests/ccbot/handlers/test_response_builder.py:TestBuildResponseParts.test_thinking_content_truncated_at_500_chars",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_thinking_content_truncated_at_500_chars",
+      "parent": "sym:file:tests/ccbot/handlers/test_response_builder.py:TestBuildResponseParts"
+    },
+    {
+      "id": "sym:file:tests/ccbot/handlers/test_response_builder.py:TestBuildResponseParts.test_plain_text_single_part",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_plain_text_single_part",
+      "parent": "sym:file:tests/ccbot/handlers/test_response_builder.py:TestBuildResponseParts"
+    },
+    {
+      "id": "sym:file:tests/ccbot/handlers/test_response_builder.py:TestBuildResponseParts.test_plain_text_multi_part_has_page_suffix",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_plain_text_multi_part_has_page_suffix",
+      "parent": "sym:file:tests/ccbot/handlers/test_response_builder.py:TestBuildResponseParts"
+    },
+    {
+      "id": "sym:file:tests/ccbot/handlers/test_response_builder.py:TestBuildResponseParts.test_expandable_quote_stays_atomic",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_expandable_quote_stays_atomic",
+      "parent": "sym:file:tests/ccbot/handlers/test_response_builder.py:TestBuildResponseParts"
+    },
+    {
+      "id": "sym:file:tests/ccbot/handlers/test_response_builder.py:TestBuildResponseParts.test_thinking_has_prefix",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_thinking_has_prefix",
+      "parent": "sym:file:tests/ccbot/handlers/test_response_builder.py:TestBuildResponseParts"
+    },
+    {
+      "id": "sym:file:tests/ccbot/handlers/test_response_builder.py:TestBuildResponseParts.test_assistant_text_no_prefix",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_assistant_text_no_prefix",
+      "parent": "sym:file:tests/ccbot/handlers/test_response_builder.py:TestBuildResponseParts"
+    },
+    {
+      "id": "sym:file:tests/ccbot/handlers/test_status_polling.py:mock_bot",
+      "type": "symbol",
+      "kind": "fixture",
+      "name": "mock_bot",
+      "parent": "file:tests/ccbot/handlers/test_status_polling.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/handlers/test_status_polling.py:_clear_interactive_state",
+      "type": "symbol",
+      "kind": "fixture",
+      "name": "_clear_interactive_state",
+      "parent": "file:tests/ccbot/handlers/test_status_polling.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/handlers/test_status_polling.py:TestStatusPollerSettingsDetection",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestStatusPollerSettingsDetection",
+      "parent": "file:tests/ccbot/handlers/test_status_polling.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/handlers/test_status_polling.py:TestStatusPollerSettingsDetection.test_settings_ui_detected_and_keyboard_sent",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_settings_ui_detected_and_keyboard_sent",
+      "parent": "sym:file:tests/ccbot/handlers/test_status_polling.py:TestStatusPollerSettingsDetection"
+    },
+    {
+      "id": "sym:file:tests/ccbot/handlers/test_status_polling.py:TestStatusPollerSettingsDetection.test_normal_pane_no_interactive_ui",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_normal_pane_no_interactive_ui",
+      "parent": "sym:file:tests/ccbot/handlers/test_status_polling.py:TestStatusPollerSettingsDetection"
+    },
+    {
+      "id": "sym:file:tests/ccbot/handlers/test_status_polling.py:TestStatusPollerSettingsDetection.test_settings_ui_end_to_end_sends_telegram_keyboard",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_settings_ui_end_to_end_sends_telegram_keyboard",
+      "parent": "sym:file:tests/ccbot/handlers/test_status_polling.py:TestStatusPollerSettingsDetection"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_config.py:_base_env",
+      "type": "symbol",
+      "kind": "fixture",
+      "name": "_base_env",
+      "parent": "file:tests/ccbot/test_config.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_config.py:TestConfigValid",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestConfigValid",
+      "parent": "file:tests/ccbot/test_config.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_config.py:TestConfigValid.test_valid_config",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_valid_config",
+      "parent": "sym:file:tests/ccbot/test_config.py:TestConfigValid"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_config.py:TestConfigValid.test_custom_tmux_session_name",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_custom_tmux_session_name",
+      "parent": "sym:file:tests/ccbot/test_config.py:TestConfigValid"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_config.py:TestConfigValid.test_custom_monitor_poll_interval",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_custom_monitor_poll_interval",
+      "parent": "sym:file:tests/ccbot/test_config.py:TestConfigValid"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_config.py:TestConfigValid.test_is_user_allowed_true",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_is_user_allowed_true",
+      "parent": "sym:file:tests/ccbot/test_config.py:TestConfigValid"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_config.py:TestConfigValid.test_is_user_allowed_false",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_is_user_allowed_false",
+      "parent": "sym:file:tests/ccbot/test_config.py:TestConfigValid"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_config.py:TestConfigMissingEnv",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestConfigMissingEnv",
+      "parent": "file:tests/ccbot/test_config.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_config.py:TestConfigMissingEnv.test_missing_telegram_bot_token",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_missing_telegram_bot_token",
+      "parent": "sym:file:tests/ccbot/test_config.py:TestConfigMissingEnv"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_config.py:TestConfigMissingEnv.test_missing_allowed_users",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_missing_allowed_users",
+      "parent": "sym:file:tests/ccbot/test_config.py:TestConfigMissingEnv"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_config.py:TestConfigMissingEnv.test_non_numeric_allowed_users",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_non_numeric_allowed_users",
+      "parent": "sym:file:tests/ccbot/test_config.py:TestConfigMissingEnv"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_config.py:TestConfigClaudeProjectsPath",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestConfigClaudeProjectsPath",
+      "parent": "file:tests/ccbot/test_config.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_config.py:TestConfigClaudeProjectsPath.test_default_claude_projects_path",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_default_claude_projects_path",
+      "parent": "sym:file:tests/ccbot/test_config.py:TestConfigClaudeProjectsPath"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_config.py:TestConfigClaudeProjectsPath.test_custom_claude_projects_path",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_custom_claude_projects_path",
+      "parent": "sym:file:tests/ccbot/test_config.py:TestConfigClaudeProjectsPath"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_config.py:TestConfigClaudeProjectsPath.test_claude_config_dir_projects_path",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_claude_config_dir_projects_path",
+      "parent": "sym:file:tests/ccbot/test_config.py:TestConfigClaudeProjectsPath"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_config.py:TestConfigClaudeProjectsPath.test_ccbot_projects_path_takes_priority",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_ccbot_projects_path_takes_priority",
+      "parent": "sym:file:tests/ccbot/test_config.py:TestConfigClaudeProjectsPath"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_config.py:TestConfigOpenAI",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestConfigOpenAI",
+      "parent": "file:tests/ccbot/test_config.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_config.py:TestConfigOpenAI.test_openai_defaults",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_openai_defaults",
+      "parent": "sym:file:tests/ccbot/test_config.py:TestConfigOpenAI"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_config.py:TestConfigOpenAI.test_openai_api_key",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_openai_api_key",
+      "parent": "sym:file:tests/ccbot/test_config.py:TestConfigOpenAI"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_config.py:TestConfigOpenAI.test_openai_base_url",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_openai_base_url",
+      "parent": "sym:file:tests/ccbot/test_config.py:TestConfigOpenAI"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_config.py:TestConfigOpenAI.test_openai_api_key_scrubbed_from_env",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_openai_api_key_scrubbed_from_env",
+      "parent": "sym:file:tests/ccbot/test_config.py:TestConfigOpenAI"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_forward_command.py:_make_update",
+      "type": "symbol",
+      "kind": "function",
+      "name": "_make_update",
+      "parent": "file:tests/ccbot/test_forward_command.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_forward_command.py:_make_context",
+      "type": "symbol",
+      "kind": "function",
+      "name": "_make_context",
+      "parent": "file:tests/ccbot/test_forward_command.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_forward_command.py:TestForwardCommand",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestForwardCommand",
+      "parent": "file:tests/ccbot/test_forward_command.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_forward_command.py:TestForwardCommand.test_model_sends_command_to_tmux",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_model_sends_command_to_tmux",
+      "parent": "sym:file:tests/ccbot/test_forward_command.py:TestForwardCommand"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_forward_command.py:TestForwardCommand.test_cost_sends_command_to_tmux",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_cost_sends_command_to_tmux",
+      "parent": "sym:file:tests/ccbot/test_forward_command.py:TestForwardCommand"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_forward_command.py:TestForwardCommand.test_clear_clears_session",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_clear_clears_session",
+      "parent": "sym:file:tests/ccbot/test_forward_command.py:TestForwardCommand"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_hook.py:TestUuidRegex",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestUuidRegex",
+      "parent": "file:tests/ccbot/test_hook.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_hook.py:TestUuidRegex.test_valid_uuid_matches",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_valid_uuid_matches",
+      "parent": "sym:file:tests/ccbot/test_hook.py:TestUuidRegex"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_hook.py:TestUuidRegex.test_invalid_uuid_no_match",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_invalid_uuid_no_match",
+      "parent": "sym:file:tests/ccbot/test_hook.py:TestUuidRegex"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_hook.py:TestIsHookInstalled",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestIsHookInstalled",
+      "parent": "file:tests/ccbot/test_hook.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_hook.py:TestIsHookInstalled.test_hook_present",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_hook_present",
+      "parent": "sym:file:tests/ccbot/test_hook.py:TestIsHookInstalled"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_hook.py:TestIsHookInstalled.test_no_hooks_key",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_no_hooks_key",
+      "parent": "sym:file:tests/ccbot/test_hook.py:TestIsHookInstalled"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_hook.py:TestIsHookInstalled.test_different_hook_command",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_different_hook_command",
+      "parent": "sym:file:tests/ccbot/test_hook.py:TestIsHookInstalled"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_hook.py:TestIsHookInstalled.test_full_path_matches",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_full_path_matches",
+      "parent": "sym:file:tests/ccbot/test_hook.py:TestIsHookInstalled"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_hook.py:TestHookMainValidation",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestHookMainValidation",
+      "parent": "file:tests/ccbot/test_hook.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_hook.py:TestHookMainValidation._run_hook_main",
+      "type": "symbol",
+      "kind": "method",
+      "name": "_run_hook_main",
+      "parent": "sym:file:tests/ccbot/test_hook.py:TestHookMainValidation"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_hook.py:TestHookMainValidation.test_missing_session_id",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_missing_session_id",
+      "parent": "sym:file:tests/ccbot/test_hook.py:TestHookMainValidation"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_hook.py:TestHookMainValidation.test_invalid_uuid_format",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_invalid_uuid_format",
+      "parent": "sym:file:tests/ccbot/test_hook.py:TestHookMainValidation"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_hook.py:TestHookMainValidation.test_relative_cwd",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_relative_cwd",
+      "parent": "sym:file:tests/ccbot/test_hook.py:TestHookMainValidation"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_hook.py:TestHookMainValidation.test_non_session_start_event",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_non_session_start_event",
+      "parent": "sym:file:tests/ccbot/test_hook.py:TestHookMainValidation"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_markdown_v2.py:EXP_START",
+      "type": "symbol",
+      "kind": "variable",
+      "name": "EXP_START",
+      "parent": "file:tests/ccbot/test_markdown_v2.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_markdown_v2.py:EXP_END",
+      "type": "symbol",
+      "kind": "variable",
+      "name": "EXP_END",
+      "parent": "file:tests/ccbot/test_markdown_v2.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_markdown_v2.py:TestEscapeMdv2",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestEscapeMdv2",
+      "parent": "file:tests/ccbot/test_markdown_v2.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_markdown_v2.py:TestEscapeMdv2.test_escape",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_escape",
+      "parent": "sym:file:tests/ccbot/test_markdown_v2.py:TestEscapeMdv2"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_markdown_v2.py:TestConvertMarkdown",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestConvertMarkdown",
+      "parent": "file:tests/ccbot/test_markdown_v2.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_markdown_v2.py:TestConvertMarkdown.test_plain_text",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_plain_text",
+      "parent": "sym:file:tests/ccbot/test_markdown_v2.py:TestConvertMarkdown"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_markdown_v2.py:TestConvertMarkdown.test_bold",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_bold",
+      "parent": "sym:file:tests/ccbot/test_markdown_v2.py:TestConvertMarkdown"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_markdown_v2.py:TestConvertMarkdown.test_code_block_preserved",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_code_block_preserved",
+      "parent": "sym:file:tests/ccbot/test_markdown_v2.py:TestConvertMarkdown"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_markdown_v2.py:TestConvertMarkdown.test_expandable_quote_sentinels",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_expandable_quote_sentinels",
+      "parent": "sym:file:tests/ccbot/test_markdown_v2.py:TestConvertMarkdown"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_markdown_v2.py:TestConvertMarkdown.test_mixed_text_and_expandable_quote",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_mixed_text_and_expandable_quote",
+      "parent": "sym:file:tests/ccbot/test_markdown_v2.py:TestConvertMarkdown"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_monitor_state.py:TestTrackedSession",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestTrackedSession",
+      "parent": "file:tests/ccbot/test_monitor_state.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_monitor_state.py:TestTrackedSession.test_to_dict_from_dict_roundtrip",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_to_dict_from_dict_roundtrip",
+      "parent": "sym:file:tests/ccbot/test_monitor_state.py:TestTrackedSession"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_monitor_state.py:TestTrackedSession.test_from_dict_missing_fields_uses_defaults",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_from_dict_missing_fields_uses_defaults",
+      "parent": "sym:file:tests/ccbot/test_monitor_state.py:TestTrackedSession"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateLoad",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestMonitorStateLoad",
+      "parent": "file:tests/ccbot/test_monitor_state.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateLoad.test_load_missing_file",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_load_missing_file",
+      "parent": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateLoad"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateLoad.test_load_valid_json",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_load_valid_json",
+      "parent": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateLoad"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateLoad.test_load_corrupt_json",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_load_corrupt_json",
+      "parent": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateLoad"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateSave",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestMonitorStateSave",
+      "parent": "file:tests/ccbot/test_monitor_state.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateSave.test_save_writes_via_atomic_write",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_save_writes_via_atomic_write",
+      "parent": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateSave"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateOperations",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestMonitorStateOperations",
+      "parent": "file:tests/ccbot/test_monitor_state.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateOperations.test_get_session",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_get_session",
+      "parent": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateOperations"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateOperations.test_update_session_adds_new",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_update_session_adds_new",
+      "parent": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateOperations"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateOperations.test_update_session_sets_dirty",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_update_session_sets_dirty",
+      "parent": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateOperations"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateOperations.test_remove_session_deletes",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_remove_session_deletes",
+      "parent": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateOperations"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateOperations.test_remove_session_missing_no_error",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_remove_session_missing_no_error",
+      "parent": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateOperations"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_monitor_state.py:TestSaveIfDirty",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestSaveIfDirty",
+      "parent": "file:tests/ccbot/test_monitor_state.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_monitor_state.py:TestSaveIfDirty.test_dirty_saves",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_dirty_saves",
+      "parent": "sym:file:tests/ccbot/test_monitor_state.py:TestSaveIfDirty"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_monitor_state.py:TestSaveIfDirty.test_not_dirty_skips_save",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_not_dirty_skips_save",
+      "parent": "sym:file:tests/ccbot/test_monitor_state.py:TestSaveIfDirty"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session_monitor.py:TestReadNewLinesOffsetRecovery",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestReadNewLinesOffsetRecovery",
+      "parent": "file:tests/ccbot/test_session_monitor.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session_monitor.py:TestReadNewLinesOffsetRecovery.test_mid_line_offset_recovery",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_mid_line_offset_recovery",
+      "parent": "sym:file:tests/ccbot/test_session_monitor.py:TestReadNewLinesOffsetRecovery"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session_monitor.py:TestReadNewLinesOffsetRecovery.test_valid_offset_reads_normally",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_valid_offset_reads_normally",
+      "parent": "sym:file:tests/ccbot/test_session_monitor.py:TestReadNewLinesOffsetRecovery"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session_monitor.py:TestReadNewLinesOffsetRecovery.test_poison_line_skipped",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_poison_line_skipped",
+      "parent": "sym:file:tests/ccbot/test_session_monitor.py:TestReadNewLinesOffsetRecovery"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session_monitor.py:TestReadNewLinesOffsetRecovery.test_partial_line_at_eof_retried",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_partial_line_at_eof_retried",
+      "parent": "sym:file:tests/ccbot/test_session_monitor.py:TestReadNewLinesOffsetRecovery"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session_monitor.py:TestReadNewLinesOffsetRecovery.test_truncation_detection",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_truncation_detection",
+      "parent": "sym:file:tests/ccbot/test_session_monitor.py:TestReadNewLinesOffsetRecovery"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:mgr",
+      "type": "symbol",
+      "kind": "fixture",
+      "name": "mgr",
+      "parent": "file:tests/ccbot/test_session.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestThreadBindings",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestThreadBindings",
+      "parent": "file:tests/ccbot/test_session.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestThreadBindings.test_bind_and_get",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_bind_and_get",
+      "parent": "sym:file:tests/ccbot/test_session.py:TestThreadBindings"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestThreadBindings.test_bind_unbind_get_returns_none",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_bind_unbind_get_returns_none",
+      "parent": "sym:file:tests/ccbot/test_session.py:TestThreadBindings"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestThreadBindings.test_unbind_nonexistent_returns_none",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_unbind_nonexistent_returns_none",
+      "parent": "sym:file:tests/ccbot/test_session.py:TestThreadBindings"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestThreadBindings.test_iter_thread_bindings",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_iter_thread_bindings",
+      "parent": "sym:file:tests/ccbot/test_session.py:TestThreadBindings"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestGroupChatId",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestGroupChatId",
+      "parent": "file:tests/ccbot/test_session.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestGroupChatId.test_resolve_with_stored_group_id",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_resolve_with_stored_group_id",
+      "parent": "sym:file:tests/ccbot/test_session.py:TestGroupChatId"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestGroupChatId.test_resolve_without_group_id_falls_back_to_user_id",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_resolve_without_group_id_falls_back_to_user_id",
+      "parent": "sym:file:tests/ccbot/test_session.py:TestGroupChatId"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestGroupChatId.test_resolve_none_thread_id_falls_back_to_user_id",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_resolve_none_thread_id_falls_back_to_user_id",
+      "parent": "sym:file:tests/ccbot/test_session.py:TestGroupChatId"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestGroupChatId.test_set_group_chat_id_overwrites",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_set_group_chat_id_overwrites",
+      "parent": "sym:file:tests/ccbot/test_session.py:TestGroupChatId"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestGroupChatId.test_multiple_threads_independent",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_multiple_threads_independent",
+      "parent": "sym:file:tests/ccbot/test_session.py:TestGroupChatId"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestGroupChatId.test_multiple_users_independent",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_multiple_users_independent",
+      "parent": "sym:file:tests/ccbot/test_session.py:TestGroupChatId"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestGroupChatId.test_set_group_chat_id_with_none_thread",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_set_group_chat_id_with_none_thread",
+      "parent": "sym:file:tests/ccbot/test_session.py:TestGroupChatId"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestWindowState",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestWindowState",
+      "parent": "file:tests/ccbot/test_session.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestWindowState.test_get_creates_new",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_get_creates_new",
+      "parent": "sym:file:tests/ccbot/test_session.py:TestWindowState"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestWindowState.test_get_returns_existing",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_get_returns_existing",
+      "parent": "sym:file:tests/ccbot/test_session.py:TestWindowState"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestWindowState.test_clear_window_session",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_clear_window_session",
+      "parent": "sym:file:tests/ccbot/test_session.py:TestWindowState"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestResolveWindowForThread",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestResolveWindowForThread",
+      "parent": "file:tests/ccbot/test_session.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestResolveWindowForThread.test_none_thread_id_returns_none",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_none_thread_id_returns_none",
+      "parent": "sym:file:tests/ccbot/test_session.py:TestResolveWindowForThread"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestResolveWindowForThread.test_unbound_thread_returns_none",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_unbound_thread_returns_none",
+      "parent": "sym:file:tests/ccbot/test_session.py:TestResolveWindowForThread"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestResolveWindowForThread.test_bound_thread_returns_window",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_bound_thread_returns_window",
+      "parent": "sym:file:tests/ccbot/test_session.py:TestResolveWindowForThread"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestDisplayNames",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestDisplayNames",
+      "parent": "file:tests/ccbot/test_session.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestDisplayNames.test_get_display_name_fallback",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_get_display_name_fallback",
+      "parent": "sym:file:tests/ccbot/test_session.py:TestDisplayNames"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestDisplayNames.test_set_and_get_display_name",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_set_and_get_display_name",
+      "parent": "sym:file:tests/ccbot/test_session.py:TestDisplayNames"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestDisplayNames.test_set_display_name_update",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_set_display_name_update",
+      "parent": "sym:file:tests/ccbot/test_session.py:TestDisplayNames"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestDisplayNames.test_bind_thread_sets_display_name",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_bind_thread_sets_display_name",
+      "parent": "sym:file:tests/ccbot/test_session.py:TestDisplayNames"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestDisplayNames.test_bind_thread_without_name_no_display",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_bind_thread_without_name_no_display",
+      "parent": "sym:file:tests/ccbot/test_session.py:TestDisplayNames"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestIsWindowId",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestIsWindowId",
+      "parent": "file:tests/ccbot/test_session.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestIsWindowId.test_valid_ids",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_valid_ids",
+      "parent": "sym:file:tests/ccbot/test_session.py:TestIsWindowId"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestIsWindowId.test_invalid_ids",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_invalid_ids",
+      "parent": "sym:file:tests/ccbot/test_session.py:TestIsWindowId"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestMigrateOldFormatMap",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestMigrateOldFormatMap",
+      "parent": "file:tests/ccbot/test_session.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestMigrateOldFormatMap.test_migrates_name_to_window_id",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_migrates_name_to_window_id",
+      "parent": "sym:file:tests/ccbot/test_session.py:TestMigrateOldFormatMap"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestMigrateOldFormatMap.test_drops_orphan_without_live_window",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_drops_orphan_without_live_window",
+      "parent": "sym:file:tests/ccbot/test_session.py:TestMigrateOldFormatMap"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestMigrateOldFormatMap.test_prefers_existing_window_id_key",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_prefers_existing_window_id_key",
+      "parent": "sym:file:tests/ccbot/test_session.py:TestMigrateOldFormatMap"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestMigrateOldFormatMap.test_noop_for_window_id_keys",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_noop_for_window_id_keys",
+      "parent": "sym:file:tests/ccbot/test_session.py:TestMigrateOldFormatMap"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestMigrateOldFormatMap.test_ignores_other_tmux_sessions",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_ignores_other_tmux_sessions",
+      "parent": "sym:file:tests/ccbot/test_session.py:TestMigrateOldFormatMap"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestResolveStaleIds",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestResolveStaleIds",
+      "parent": "file:tests/ccbot/test_session.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestResolveStaleIds.test_tmux_restart_remaps_bindings_and_offsets",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_tmux_restart_remaps_bindings_and_offsets",
+      "parent": "sym:file:tests/ccbot/test_session.py:TestResolveStaleIds"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestResolveStaleIds.test_binding_without_window_state_still_remaps",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_binding_without_window_state_still_remaps",
+      "parent": "sym:file:tests/ccbot/test_session.py:TestResolveStaleIds"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestResolveStaleIds.test_unmatched_binding_dropped",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_unmatched_binding_dropped",
+      "parent": "sym:file:tests/ccbot/test_session.py:TestResolveStaleIds"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestResolveStaleIds.test_live_ids_untouched",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_live_ids_untouched",
+      "parent": "sym:file:tests/ccbot/test_session.py:TestResolveStaleIds"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestLoadSessionMapMigration",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestLoadSessionMapMigration",
+      "parent": "file:tests/ccbot/test_session.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestLoadSessionMapMigration.test_old_format_key_populates_window_state",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_old_format_key_populates_window_state",
+      "parent": "sym:file:tests/ccbot/test_session.py:TestLoadSessionMapMigration"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_session.py:TestLoadSessionMapMigration.test_no_tmux_lookup_when_no_old_keys",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_no_tmux_lookup_when_no_old_keys",
+      "parent": "sym:file:tests/ccbot/test_session.py:TestLoadSessionMapMigration"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestSplitMessage",
+      "parent": "file:tests/ccbot/test_telegram_sender.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage.test_single_chunk_returned",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_single_chunk_returned",
+      "parent": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage.test_split_on_newline_boundaries",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_split_on_newline_boundaries",
+      "parent": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage.test_single_long_line_force_split",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_single_long_line_force_split",
+      "parent": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage.test_custom_max_length",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_custom_max_length",
+      "parent": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage.test_custom_max_length_force_split",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_custom_max_length_force_split",
+      "parent": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage.test_trailing_newline_handling",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_trailing_newline_handling",
+      "parent": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage.test_mixed_lines_grouping",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_mixed_lines_grouping",
+      "parent": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage.test_chunk_count",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_chunk_count",
+      "parent": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage.test_all_chunks_within_max_length",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_all_chunks_within_max_length",
+      "parent": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage.test_code_block_split_closes_and_reopens",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_code_block_split_closes_and_reopens",
+      "parent": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage.test_code_block_not_split_fits",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_code_block_not_split_fits",
+      "parent": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage.test_text_before_and_after_code_block",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_text_before_and_after_code_block",
+      "parent": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage.test_multiple_code_blocks",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_multiple_code_blocks",
+      "parent": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_telegram_sender.py:TestUtf16Len",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestUtf16Len",
+      "parent": "file:tests/ccbot/test_telegram_sender.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_telegram_sender.py:TestUtf16Len.test_ascii",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_ascii",
+      "parent": "sym:file:tests/ccbot/test_telegram_sender.py:TestUtf16Len"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_telegram_sender.py:TestUtf16Len.test_bmp_cjk",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_bmp_cjk",
+      "parent": "sym:file:tests/ccbot/test_telegram_sender.py:TestUtf16Len"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_telegram_sender.py:TestUtf16Len.test_emoji_counts_double",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_emoji_counts_double",
+      "parent": "sym:file:tests/ccbot/test_telegram_sender.py:TestUtf16Len"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessageUtf16",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestSplitMessageUtf16",
+      "parent": "file:tests/ccbot/test_telegram_sender.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessageUtf16.test_emoji_text_within_utf16_budget",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_emoji_text_within_utf16_budget",
+      "parent": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessageUtf16"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessageUtf16.test_emoji_lines_within_utf16_budget",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_emoji_lines_within_utf16_budget",
+      "parent": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessageUtf16"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessageUtf16.test_force_split_never_splits_surrogate_pair",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_force_split_never_splits_surrogate_pair",
+      "parent": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessageUtf16"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessageCodeBlockForceSplit",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestSplitMessageCodeBlockForceSplit",
+      "parent": "file:tests/ccbot/test_telegram_sender.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessageCodeBlockForceSplit.test_long_line_in_code_block_gets_fenced_pieces",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_long_line_in_code_block_gets_fenced_pieces",
+      "parent": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessageCodeBlockForceSplit"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_terminal_parser.py:TestParseStatusLine",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestParseStatusLine",
+      "parent": "file:tests/ccbot/test_terminal_parser.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_terminal_parser.py:TestParseStatusLine.test_spinner_chars",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_spinner_chars",
+      "parent": "sym:file:tests/ccbot/test_terminal_parser.py:TestParseStatusLine"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_terminal_parser.py:TestParseStatusLine.test_returns_none",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_returns_none",
+      "parent": "sym:file:tests/ccbot/test_terminal_parser.py:TestParseStatusLine"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_terminal_parser.py:TestParseStatusLine.test_no_chrome_returns_none",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_no_chrome_returns_none",
+      "parent": "sym:file:tests/ccbot/test_terminal_parser.py:TestParseStatusLine"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_terminal_parser.py:TestParseStatusLine.test_blank_line_between_status_and_chrome",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_blank_line_between_status_and_chrome",
+      "parent": "sym:file:tests/ccbot/test_terminal_parser.py:TestParseStatusLine"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_terminal_parser.py:TestParseStatusLine.test_idle_no_status",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_idle_no_status",
+      "parent": "sym:file:tests/ccbot/test_terminal_parser.py:TestParseStatusLine"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_terminal_parser.py:TestParseStatusLine.test_false_positive_bullet",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_false_positive_bullet",
+      "parent": "sym:file:tests/ccbot/test_terminal_parser.py:TestParseStatusLine"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_terminal_parser.py:TestParseStatusLine.test_uses_fixture",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_uses_fixture",
+      "parent": "sym:file:tests/ccbot/test_terminal_parser.py:TestParseStatusLine"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestExtractInteractiveContent",
+      "parent": "file:tests/ccbot/test_terminal_parser.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent.test_exit_plan_mode",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_exit_plan_mode",
+      "parent": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent.test_exit_plan_mode_variant",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_exit_plan_mode_variant",
+      "parent": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent.test_ask_user_multi_tab",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_ask_user_multi_tab",
+      "parent": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent.test_ask_user_single_tab",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_ask_user_single_tab",
+      "parent": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent.test_permission_prompt",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_permission_prompt",
+      "parent": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent.test_restore_checkpoint",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_restore_checkpoint",
+      "parent": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent.test_settings",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_settings",
+      "parent": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent.test_settings_model_picker",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_settings_model_picker",
+      "parent": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent.test_settings_esc_to_cancel_bottom",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_settings_esc_to_cancel_bottom",
+      "parent": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent.test_settings_esc_to_exit_bottom",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_settings_esc_to_exit_bottom",
+      "parent": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent.test_returns_none",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_returns_none",
+      "parent": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent.test_min_gap_too_small_returns_none",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_min_gap_too_small_returns_none",
+      "parent": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_terminal_parser.py:TestIsInteractiveUI",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestIsInteractiveUI",
+      "parent": "file:tests/ccbot/test_terminal_parser.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_terminal_parser.py:TestIsInteractiveUI.test_true_when_ui_present",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_true_when_ui_present",
+      "parent": "sym:file:tests/ccbot/test_terminal_parser.py:TestIsInteractiveUI"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_terminal_parser.py:TestIsInteractiveUI.test_false_when_no_ui",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_false_when_no_ui",
+      "parent": "sym:file:tests/ccbot/test_terminal_parser.py:TestIsInteractiveUI"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_terminal_parser.py:TestIsInteractiveUI.test_settings_is_interactive",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_settings_is_interactive",
+      "parent": "sym:file:tests/ccbot/test_terminal_parser.py:TestIsInteractiveUI"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_terminal_parser.py:TestIsInteractiveUI.test_false_for_empty_string",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_false_for_empty_string",
+      "parent": "sym:file:tests/ccbot/test_terminal_parser.py:TestIsInteractiveUI"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_terminal_parser.py:TestStripPaneChrome",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestStripPaneChrome",
+      "parent": "file:tests/ccbot/test_terminal_parser.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_terminal_parser.py:TestStripPaneChrome.test_strips_from_separator",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_strips_from_separator",
+      "parent": "sym:file:tests/ccbot/test_terminal_parser.py:TestStripPaneChrome"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_terminal_parser.py:TestStripPaneChrome.test_no_separator_returns_all",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_no_separator_returns_all",
+      "parent": "sym:file:tests/ccbot/test_terminal_parser.py:TestStripPaneChrome"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_terminal_parser.py:TestStripPaneChrome.test_short_separator_not_triggered",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_short_separator_not_triggered",
+      "parent": "sym:file:tests/ccbot/test_terminal_parser.py:TestStripPaneChrome"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_terminal_parser.py:TestStripPaneChrome.test_only_searches_last_10_lines",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_only_searches_last_10_lines",
+      "parent": "sym:file:tests/ccbot/test_terminal_parser.py:TestStripPaneChrome"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractBashOutput",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestExtractBashOutput",
+      "parent": "file:tests/ccbot/test_terminal_parser.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractBashOutput.test_extracts_command_output",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_extracts_command_output",
+      "parent": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractBashOutput"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractBashOutput.test_command_not_found_returns_none",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_command_not_found_returns_none",
+      "parent": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractBashOutput"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractBashOutput.test_chrome_stripped",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_chrome_stripped",
+      "parent": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractBashOutput"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractBashOutput.test_prefix_match_long_command",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_prefix_match_long_command",
+      "parent": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractBashOutput"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractBashOutput.test_trailing_blank_lines_stripped",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_trailing_blank_lines_stripped",
+      "parent": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractBashOutput"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcribe.py:_reset_client",
+      "type": "symbol",
+      "kind": "fixture",
+      "name": "_reset_client",
+      "parent": "file:tests/ccbot/test_transcribe.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcribe.py:mock_config",
+      "type": "symbol",
+      "kind": "fixture",
+      "name": "mock_config",
+      "parent": "file:tests/ccbot/test_transcribe.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcribe.py:_mock_response",
+      "type": "symbol",
+      "kind": "function",
+      "name": "_mock_response",
+      "parent": "file:tests/ccbot/test_transcribe.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcribe.py:TestTranscribeVoice",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestTranscribeVoice",
+      "parent": "file:tests/ccbot/test_transcribe.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcribe.py:TestTranscribeVoice.test_success",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_success",
+      "parent": "sym:file:tests/ccbot/test_transcribe.py:TestTranscribeVoice"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcribe.py:TestTranscribeVoice.test_empty_transcription_raises",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_empty_transcription_raises",
+      "parent": "sym:file:tests/ccbot/test_transcribe.py:TestTranscribeVoice"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcribe.py:TestTranscribeVoice.test_whitespace_only_raises",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_whitespace_only_raises",
+      "parent": "sym:file:tests/ccbot/test_transcribe.py:TestTranscribeVoice"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcribe.py:TestTranscribeVoice.test_missing_text_field_raises",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_missing_text_field_raises",
+      "parent": "sym:file:tests/ccbot/test_transcribe.py:TestTranscribeVoice"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcribe.py:TestTranscribeVoice.test_api_error_raises",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_api_error_raises",
+      "parent": "sym:file:tests/ccbot/test_transcribe.py:TestTranscribeVoice"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcribe.py:TestTranscribeVoice.test_custom_base_url",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_custom_base_url",
+      "parent": "sym:file:tests/ccbot/test_transcribe.py:TestTranscribeVoice"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcribe.py:TestTranscribeVoice.test_base_url_trailing_slash_stripped",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_base_url_trailing_slash_stripped",
+      "parent": "sym:file:tests/ccbot/test_transcribe.py:TestTranscribeVoice"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcribe.py:TestCloseClient",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestCloseClient",
+      "parent": "file:tests/ccbot/test_transcribe.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcribe.py:TestCloseClient.test_close_client_when_open",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_close_client_when_open",
+      "parent": "sym:file:tests/ccbot/test_transcribe.py:TestCloseClient"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcribe.py:TestCloseClient.test_close_client_when_none",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_close_client_when_none",
+      "parent": "sym:file:tests/ccbot/test_transcribe.py:TestCloseClient"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcript_parser.py:EXPQUOTE_START",
+      "type": "symbol",
+      "kind": "variable",
+      "name": "EXPQUOTE_START",
+      "parent": "file:tests/ccbot/test_transcript_parser.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcript_parser.py:EXPQUOTE_END",
+      "type": "symbol",
+      "kind": "variable",
+      "name": "EXPQUOTE_END",
+      "parent": "file:tests/ccbot/test_transcript_parser.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseLine",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestParseLine",
+      "parent": "file:tests/ccbot/test_transcript_parser.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseLine.test_parse_line",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_parse_line",
+      "parent": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseLine"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcript_parser.py:TestExtractTextOnly",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestExtractTextOnly",
+      "parent": "file:tests/ccbot/test_transcript_parser.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcript_parser.py:TestExtractTextOnly.test_extract_text_only",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_extract_text_only",
+      "parent": "sym:file:tests/ccbot/test_transcript_parser.py:TestExtractTextOnly"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcript_parser.py:TestFormatToolUseSummary",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestFormatToolUseSummary",
+      "parent": "file:tests/ccbot/test_transcript_parser.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcript_parser.py:TestFormatToolUseSummary.test_tool_summary",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_tool_summary",
+      "parent": "sym:file:tests/ccbot/test_transcript_parser.py:TestFormatToolUseSummary"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcript_parser.py:TestFormatToolUseSummary.test_non_dict_input",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_non_dict_input",
+      "parent": "sym:file:tests/ccbot/test_transcript_parser.py:TestFormatToolUseSummary"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcript_parser.py:TestFormatToolUseSummary.test_truncation_at_200_chars",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_truncation_at_200_chars",
+      "parent": "sym:file:tests/ccbot/test_transcript_parser.py:TestFormatToolUseSummary"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcript_parser.py:TestExtractToolResultText",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestExtractToolResultText",
+      "parent": "file:tests/ccbot/test_transcript_parser.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcript_parser.py:TestExtractToolResultText.test_extract_tool_result_text",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_extract_tool_result_text",
+      "parent": "sym:file:tests/ccbot/test_transcript_parser.py:TestExtractToolResultText"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseMessage",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestParseMessage",
+      "parent": "file:tests/ccbot/test_transcript_parser.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseMessage.test_user_text",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_user_text",
+      "parent": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseMessage"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseMessage.test_assistant_text",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_assistant_text",
+      "parent": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseMessage"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseMessage.test_local_command_with_stdout",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_local_command_with_stdout",
+      "parent": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseMessage"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseMessage.test_local_command_invoke",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_local_command_invoke",
+      "parent": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseMessage"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseMessage.test_non_user_assistant_returns_none",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_non_user_assistant_returns_none",
+      "parent": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseMessage"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseMessage.test_string_content",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_string_content",
+      "parent": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseMessage"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcript_parser.py:TestFormatEditDiff",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestFormatEditDiff",
+      "parent": "file:tests/ccbot/test_transcript_parser.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcript_parser.py:TestFormatEditDiff.test_format_edit_diff",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_format_edit_diff",
+      "parent": "sym:file:tests/ccbot/test_transcript_parser.py:TestFormatEditDiff"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcript_parser.py:TestFormatToolResultText",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestFormatToolResultText",
+      "parent": "file:tests/ccbot/test_transcript_parser.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcript_parser.py:TestFormatToolResultText.test_format_tool_result_text",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_format_tool_result_text",
+      "parent": "sym:file:tests/ccbot/test_transcript_parser.py:TestFormatToolResultText"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcript_parser.py:TestFormatToolResultText.test_write_counts_lines_from_input_content",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_write_counts_lines_from_input_content",
+      "parent": "sym:file:tests/ccbot/test_transcript_parser.py:TestFormatToolResultText"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcript_parser.py:TestFormatToolResultText.test_write_trailing_newline_not_counted_extra",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_write_trailing_newline_not_counted_extra",
+      "parent": "sym:file:tests/ccbot/test_transcript_parser.py:TestFormatToolResultText"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestParseEntries",
+      "parent": "file:tests/ccbot/test_transcript_parser.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries.test_assistant_text",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_assistant_text",
+      "parent": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries.test_user_text",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_user_text",
+      "parent": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries.test_tool_use_and_result_pairing",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_tool_use_and_result_pairing",
+      "parent": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries.test_thinking_block",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_thinking_block",
+      "parent": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries.test_local_command_with_stdout",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_local_command_with_stdout",
+      "parent": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries.test_exit_plan_mode_emits_plan",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_exit_plan_mode_emits_plan",
+      "parent": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries.test_edit_tool_diff_stats",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_edit_tool_diff_stats",
+      "parent": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries.test_error_tool_result",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_error_tool_result",
+      "parent": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries.test_interrupted_tool_result",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_interrupted_tool_result",
+      "parent": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries.test_pending_tools_carry_over",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_pending_tools_carry_over",
+      "parent": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries.test_pending_tools_flushed_without_carry_over",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_pending_tools_flushed_without_carry_over",
+      "parent": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries.test_system_tag_filtered",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_system_tag_filtered",
+      "parent": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_utils.py:TestCcbotDir",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestCcbotDir",
+      "parent": "file:tests/ccbot/test_utils.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_utils.py:TestCcbotDir.test_returns_env_var_path",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_returns_env_var_path",
+      "parent": "sym:file:tests/ccbot/test_utils.py:TestCcbotDir"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_utils.py:TestCcbotDir.test_returns_default_without_env",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_returns_default_without_env",
+      "parent": "sym:file:tests/ccbot/test_utils.py:TestCcbotDir"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_utils.py:TestAtomicWriteJson",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestAtomicWriteJson",
+      "parent": "file:tests/ccbot/test_utils.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_utils.py:TestAtomicWriteJson.test_writes_valid_json",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_writes_valid_json",
+      "parent": "sym:file:tests/ccbot/test_utils.py:TestAtomicWriteJson"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_utils.py:TestAtomicWriteJson.test_creates_parent_directories",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_creates_parent_directories",
+      "parent": "sym:file:tests/ccbot/test_utils.py:TestAtomicWriteJson"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_utils.py:TestAtomicWriteJson.test_round_trip",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_round_trip",
+      "parent": "sym:file:tests/ccbot/test_utils.py:TestAtomicWriteJson"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_utils.py:TestAtomicWriteJson.test_no_temp_files_left_on_success",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_no_temp_files_left_on_success",
+      "parent": "sym:file:tests/ccbot/test_utils.py:TestAtomicWriteJson"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_utils.py:TestReadCwdFromJsonl",
+      "type": "symbol",
+      "kind": "class",
+      "name": "TestReadCwdFromJsonl",
+      "parent": "file:tests/ccbot/test_utils.py"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_utils.py:TestReadCwdFromJsonl.test_cwd_in_first_entry",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_cwd_in_first_entry",
+      "parent": "sym:file:tests/ccbot/test_utils.py:TestReadCwdFromJsonl"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_utils.py:TestReadCwdFromJsonl.test_cwd_in_second_entry",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_cwd_in_second_entry",
+      "parent": "sym:file:tests/ccbot/test_utils.py:TestReadCwdFromJsonl"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_utils.py:TestReadCwdFromJsonl.test_no_cwd_returns_empty",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_no_cwd_returns_empty",
+      "parent": "sym:file:tests/ccbot/test_utils.py:TestReadCwdFromJsonl"
+    },
+    {
+      "id": "sym:file:tests/ccbot/test_utils.py:TestReadCwdFromJsonl.test_missing_file_returns_empty",
+      "type": "symbol",
+      "kind": "method",
+      "name": "test_missing_file_returns_empty",
+      "parent": "sym:file:tests/ccbot/test_utils.py:TestReadCwdFromJsonl"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/ccbot/__init__.py",
+      "target": "sym:file:src/ccbot/__init__.py:__version__",
+      "type": "contains"
+    },
+    {
+      "source": "file:src/ccbot/hook.py",
+      "target": "sym:file:src/ccbot/hook.py:_UUID_RE",
+      "type": "contains"
+    },
+    {
+      "source": "file:src/ccbot/hook.py",
+      "target": "sym:file:src/ccbot/hook.py:_CLAUDE_SETTINGS_FILE",
+      "type": "contains"
+    },
+    {
+      "source": "file:src/ccbot/hook.py",
+      "target": "sym:file:src/ccbot/hook.py:_HOOK_COMMAND_SUFFIX",
+      "type": "contains"
+    },
+    {
+      "source": "file:src/ccbot/hook.py",
+      "target": "sym:file:src/ccbot/hook.py:_find_ccbot_path",
+      "type": "contains"
+    },
+    {
+      "source": "file:src/ccbot/hook.py",
+      "target": "sym:file:src/ccbot/hook.py:_is_hook_installed",
+      "type": "contains"
+    },
+    {
+      "source": "file:src/ccbot/hook.py",
+      "target": "sym:file:src/ccbot/hook.py:_install_hook",
+      "type": "contains"
+    },
+    {
+      "source": "file:src/ccbot/hook.py",
+      "target": "sym:file:src/ccbot/hook.py:hook_main",
+      "type": "contains"
+    },
+    {
+      "source": "file:src/ccbot/main.py",
+      "target": "sym:file:src/ccbot/main.py:main",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/conftest.py",
+      "target": "sym:file:tests/ccbot/conftest.py:make_jsonl_entry",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/conftest.py",
+      "target": "sym:file:tests/ccbot/conftest.py:make_text_block",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/conftest.py",
+      "target": "sym:file:tests/ccbot/conftest.py:make_tool_use_block",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/conftest.py",
+      "target": "sym:file:tests/ccbot/conftest.py:make_tool_result_block",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/conftest.py",
+      "target": "sym:file:tests/ccbot/conftest.py:make_thinking_block",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/conftest.py",
+      "target": "sym:file:tests/ccbot/conftest.py:sample_pane_exit_plan",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/conftest.py",
+      "target": "sym:file:tests/ccbot/conftest.py:sample_pane_ask_user_multi_tab",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/conftest.py",
+      "target": "sym:file:tests/ccbot/conftest.py:sample_pane_ask_user_single_tab",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/conftest.py",
+      "target": "sym:file:tests/ccbot/conftest.py:sample_pane_permission",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/conftest.py",
+      "target": "sym:file:tests/ccbot/conftest.py:chrome",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/conftest.py",
+      "target": "sym:file:tests/ccbot/conftest.py:sample_pane_status_line",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/conftest.py",
+      "target": "sym:file:tests/ccbot/conftest.py:sample_pane_settings",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/conftest.py",
+      "target": "sym:file:tests/ccbot/conftest.py:sample_pane_no_ui",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/handlers/test_interactive_ui.py",
+      "target": "sym:file:tests/ccbot/handlers/test_interactive_ui.py:mock_bot",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/handlers/test_interactive_ui.py",
+      "target": "sym:file:tests/ccbot/handlers/test_interactive_ui.py:_clear_interactive_state",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/handlers/test_interactive_ui.py",
+      "target": "sym:file:tests/ccbot/handlers/test_interactive_ui.py:TestHandleInteractiveUI",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/handlers/test_interactive_ui.py:TestHandleInteractiveUI",
+      "target": "sym:file:tests/ccbot/handlers/test_interactive_ui.py:TestHandleInteractiveUI.test_handle_settings_ui_sends_keyboard",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/handlers/test_interactive_ui.py:TestHandleInteractiveUI",
+      "target": "sym:file:tests/ccbot/handlers/test_interactive_ui.py:TestHandleInteractiveUI.test_handle_no_ui_returns_false",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/handlers/test_interactive_ui.py",
+      "target": "sym:file:tests/ccbot/handlers/test_interactive_ui.py:TestKeyboardLayoutForSettings",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/handlers/test_interactive_ui.py:TestKeyboardLayoutForSettings",
+      "target": "sym:file:tests/ccbot/handlers/test_interactive_ui.py:TestKeyboardLayoutForSettings.test_settings_keyboard_includes_all_nav_keys",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/handlers/test_response_builder.py",
+      "target": "sym:file:tests/ccbot/handlers/test_response_builder.py:EXP_START",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/handlers/test_response_builder.py",
+      "target": "sym:file:tests/ccbot/handlers/test_response_builder.py:EXP_END",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/handlers/test_response_builder.py",
+      "target": "sym:file:tests/ccbot/handlers/test_response_builder.py:TestBuildResponseParts",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/handlers/test_response_builder.py:TestBuildResponseParts",
+      "target": "sym:file:tests/ccbot/handlers/test_response_builder.py:TestBuildResponseParts.test_user_message_has_emoji_prefix",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/handlers/test_response_builder.py:TestBuildResponseParts",
+      "target": "sym:file:tests/ccbot/handlers/test_response_builder.py:TestBuildResponseParts.test_user_message_truncated_at_3000_chars",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/handlers/test_response_builder.py:TestBuildResponseParts",
+      "target": "sym:file:tests/ccbot/handlers/test_response_builder.py:TestBuildResponseParts.test_thinking_content_truncated_at_500_chars",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/handlers/test_response_builder.py:TestBuildResponseParts",
+      "target": "sym:file:tests/ccbot/handlers/test_response_builder.py:TestBuildResponseParts.test_plain_text_single_part",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/handlers/test_response_builder.py:TestBuildResponseParts",
+      "target": "sym:file:tests/ccbot/handlers/test_response_builder.py:TestBuildResponseParts.test_plain_text_multi_part_has_page_suffix",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/handlers/test_response_builder.py:TestBuildResponseParts",
+      "target": "sym:file:tests/ccbot/handlers/test_response_builder.py:TestBuildResponseParts.test_expandable_quote_stays_atomic",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/handlers/test_response_builder.py:TestBuildResponseParts",
+      "target": "sym:file:tests/ccbot/handlers/test_response_builder.py:TestBuildResponseParts.test_thinking_has_prefix",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/handlers/test_response_builder.py:TestBuildResponseParts",
+      "target": "sym:file:tests/ccbot/handlers/test_response_builder.py:TestBuildResponseParts.test_assistant_text_no_prefix",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/handlers/test_status_polling.py",
+      "target": "sym:file:tests/ccbot/handlers/test_status_polling.py:mock_bot",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/handlers/test_status_polling.py",
+      "target": "sym:file:tests/ccbot/handlers/test_status_polling.py:_clear_interactive_state",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/handlers/test_status_polling.py",
+      "target": "sym:file:tests/ccbot/handlers/test_status_polling.py:TestStatusPollerSettingsDetection",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/handlers/test_status_polling.py:TestStatusPollerSettingsDetection",
+      "target": "sym:file:tests/ccbot/handlers/test_status_polling.py:TestStatusPollerSettingsDetection.test_settings_ui_detected_and_keyboard_sent",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/handlers/test_status_polling.py:TestStatusPollerSettingsDetection",
+      "target": "sym:file:tests/ccbot/handlers/test_status_polling.py:TestStatusPollerSettingsDetection.test_normal_pane_no_interactive_ui",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/handlers/test_status_polling.py:TestStatusPollerSettingsDetection",
+      "target": "sym:file:tests/ccbot/handlers/test_status_polling.py:TestStatusPollerSettingsDetection.test_settings_ui_end_to_end_sends_telegram_keyboard",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_config.py",
+      "target": "sym:file:tests/ccbot/test_config.py:_base_env",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_config.py",
+      "target": "sym:file:tests/ccbot/test_config.py:TestConfigValid",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_config.py:TestConfigValid",
+      "target": "sym:file:tests/ccbot/test_config.py:TestConfigValid.test_valid_config",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_config.py:TestConfigValid",
+      "target": "sym:file:tests/ccbot/test_config.py:TestConfigValid.test_custom_tmux_session_name",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_config.py:TestConfigValid",
+      "target": "sym:file:tests/ccbot/test_config.py:TestConfigValid.test_custom_monitor_poll_interval",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_config.py:TestConfigValid",
+      "target": "sym:file:tests/ccbot/test_config.py:TestConfigValid.test_is_user_allowed_true",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_config.py:TestConfigValid",
+      "target": "sym:file:tests/ccbot/test_config.py:TestConfigValid.test_is_user_allowed_false",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_config.py",
+      "target": "sym:file:tests/ccbot/test_config.py:TestConfigMissingEnv",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_config.py:TestConfigMissingEnv",
+      "target": "sym:file:tests/ccbot/test_config.py:TestConfigMissingEnv.test_missing_telegram_bot_token",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_config.py:TestConfigMissingEnv",
+      "target": "sym:file:tests/ccbot/test_config.py:TestConfigMissingEnv.test_missing_allowed_users",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_config.py:TestConfigMissingEnv",
+      "target": "sym:file:tests/ccbot/test_config.py:TestConfigMissingEnv.test_non_numeric_allowed_users",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_config.py",
+      "target": "sym:file:tests/ccbot/test_config.py:TestConfigClaudeProjectsPath",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_config.py:TestConfigClaudeProjectsPath",
+      "target": "sym:file:tests/ccbot/test_config.py:TestConfigClaudeProjectsPath.test_default_claude_projects_path",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_config.py:TestConfigClaudeProjectsPath",
+      "target": "sym:file:tests/ccbot/test_config.py:TestConfigClaudeProjectsPath.test_custom_claude_projects_path",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_config.py:TestConfigClaudeProjectsPath",
+      "target": "sym:file:tests/ccbot/test_config.py:TestConfigClaudeProjectsPath.test_claude_config_dir_projects_path",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_config.py:TestConfigClaudeProjectsPath",
+      "target": "sym:file:tests/ccbot/test_config.py:TestConfigClaudeProjectsPath.test_ccbot_projects_path_takes_priority",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_config.py",
+      "target": "sym:file:tests/ccbot/test_config.py:TestConfigOpenAI",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_config.py:TestConfigOpenAI",
+      "target": "sym:file:tests/ccbot/test_config.py:TestConfigOpenAI.test_openai_defaults",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_config.py:TestConfigOpenAI",
+      "target": "sym:file:tests/ccbot/test_config.py:TestConfigOpenAI.test_openai_api_key",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_config.py:TestConfigOpenAI",
+      "target": "sym:file:tests/ccbot/test_config.py:TestConfigOpenAI.test_openai_base_url",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_config.py:TestConfigOpenAI",
+      "target": "sym:file:tests/ccbot/test_config.py:TestConfigOpenAI.test_openai_api_key_scrubbed_from_env",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_forward_command.py",
+      "target": "sym:file:tests/ccbot/test_forward_command.py:_make_update",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_forward_command.py",
+      "target": "sym:file:tests/ccbot/test_forward_command.py:_make_context",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_forward_command.py",
+      "target": "sym:file:tests/ccbot/test_forward_command.py:TestForwardCommand",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_forward_command.py:TestForwardCommand",
+      "target": "sym:file:tests/ccbot/test_forward_command.py:TestForwardCommand.test_model_sends_command_to_tmux",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_forward_command.py:TestForwardCommand",
+      "target": "sym:file:tests/ccbot/test_forward_command.py:TestForwardCommand.test_cost_sends_command_to_tmux",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_forward_command.py:TestForwardCommand",
+      "target": "sym:file:tests/ccbot/test_forward_command.py:TestForwardCommand.test_clear_clears_session",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_hook.py",
+      "target": "sym:file:tests/ccbot/test_hook.py:TestUuidRegex",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_hook.py:TestUuidRegex",
+      "target": "sym:file:tests/ccbot/test_hook.py:TestUuidRegex.test_valid_uuid_matches",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_hook.py:TestUuidRegex",
+      "target": "sym:file:tests/ccbot/test_hook.py:TestUuidRegex.test_invalid_uuid_no_match",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_hook.py",
+      "target": "sym:file:tests/ccbot/test_hook.py:TestIsHookInstalled",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_hook.py:TestIsHookInstalled",
+      "target": "sym:file:tests/ccbot/test_hook.py:TestIsHookInstalled.test_hook_present",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_hook.py:TestIsHookInstalled",
+      "target": "sym:file:tests/ccbot/test_hook.py:TestIsHookInstalled.test_no_hooks_key",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_hook.py:TestIsHookInstalled",
+      "target": "sym:file:tests/ccbot/test_hook.py:TestIsHookInstalled.test_different_hook_command",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_hook.py:TestIsHookInstalled",
+      "target": "sym:file:tests/ccbot/test_hook.py:TestIsHookInstalled.test_full_path_matches",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_hook.py",
+      "target": "sym:file:tests/ccbot/test_hook.py:TestHookMainValidation",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_hook.py:TestHookMainValidation",
+      "target": "sym:file:tests/ccbot/test_hook.py:TestHookMainValidation._run_hook_main",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_hook.py:TestHookMainValidation",
+      "target": "sym:file:tests/ccbot/test_hook.py:TestHookMainValidation.test_missing_session_id",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_hook.py:TestHookMainValidation",
+      "target": "sym:file:tests/ccbot/test_hook.py:TestHookMainValidation.test_invalid_uuid_format",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_hook.py:TestHookMainValidation",
+      "target": "sym:file:tests/ccbot/test_hook.py:TestHookMainValidation.test_relative_cwd",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_hook.py:TestHookMainValidation",
+      "target": "sym:file:tests/ccbot/test_hook.py:TestHookMainValidation.test_non_session_start_event",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_markdown_v2.py",
+      "target": "sym:file:tests/ccbot/test_markdown_v2.py:EXP_START",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_markdown_v2.py",
+      "target": "sym:file:tests/ccbot/test_markdown_v2.py:EXP_END",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_markdown_v2.py",
+      "target": "sym:file:tests/ccbot/test_markdown_v2.py:TestEscapeMdv2",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_markdown_v2.py:TestEscapeMdv2",
+      "target": "sym:file:tests/ccbot/test_markdown_v2.py:TestEscapeMdv2.test_escape",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_markdown_v2.py",
+      "target": "sym:file:tests/ccbot/test_markdown_v2.py:TestConvertMarkdown",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_markdown_v2.py:TestConvertMarkdown",
+      "target": "sym:file:tests/ccbot/test_markdown_v2.py:TestConvertMarkdown.test_plain_text",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_markdown_v2.py:TestConvertMarkdown",
+      "target": "sym:file:tests/ccbot/test_markdown_v2.py:TestConvertMarkdown.test_bold",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_markdown_v2.py:TestConvertMarkdown",
+      "target": "sym:file:tests/ccbot/test_markdown_v2.py:TestConvertMarkdown.test_code_block_preserved",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_markdown_v2.py:TestConvertMarkdown",
+      "target": "sym:file:tests/ccbot/test_markdown_v2.py:TestConvertMarkdown.test_expandable_quote_sentinels",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_markdown_v2.py:TestConvertMarkdown",
+      "target": "sym:file:tests/ccbot/test_markdown_v2.py:TestConvertMarkdown.test_mixed_text_and_expandable_quote",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_monitor_state.py",
+      "target": "sym:file:tests/ccbot/test_monitor_state.py:TestTrackedSession",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_monitor_state.py:TestTrackedSession",
+      "target": "sym:file:tests/ccbot/test_monitor_state.py:TestTrackedSession.test_to_dict_from_dict_roundtrip",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_monitor_state.py:TestTrackedSession",
+      "target": "sym:file:tests/ccbot/test_monitor_state.py:TestTrackedSession.test_from_dict_missing_fields_uses_defaults",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_monitor_state.py",
+      "target": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateLoad",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateLoad",
+      "target": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateLoad.test_load_missing_file",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateLoad",
+      "target": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateLoad.test_load_valid_json",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateLoad",
+      "target": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateLoad.test_load_corrupt_json",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_monitor_state.py",
+      "target": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateSave",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateSave",
+      "target": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateSave.test_save_writes_via_atomic_write",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_monitor_state.py",
+      "target": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateOperations",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateOperations",
+      "target": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateOperations.test_get_session",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateOperations",
+      "target": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateOperations.test_update_session_adds_new",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateOperations",
+      "target": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateOperations.test_update_session_sets_dirty",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateOperations",
+      "target": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateOperations.test_remove_session_deletes",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateOperations",
+      "target": "sym:file:tests/ccbot/test_monitor_state.py:TestMonitorStateOperations.test_remove_session_missing_no_error",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_monitor_state.py",
+      "target": "sym:file:tests/ccbot/test_monitor_state.py:TestSaveIfDirty",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_monitor_state.py:TestSaveIfDirty",
+      "target": "sym:file:tests/ccbot/test_monitor_state.py:TestSaveIfDirty.test_dirty_saves",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_monitor_state.py:TestSaveIfDirty",
+      "target": "sym:file:tests/ccbot/test_monitor_state.py:TestSaveIfDirty.test_not_dirty_skips_save",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_session_monitor.py",
+      "target": "sym:file:tests/ccbot/test_session_monitor.py:TestReadNewLinesOffsetRecovery",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session_monitor.py:TestReadNewLinesOffsetRecovery",
+      "target": "sym:file:tests/ccbot/test_session_monitor.py:TestReadNewLinesOffsetRecovery.test_mid_line_offset_recovery",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session_monitor.py:TestReadNewLinesOffsetRecovery",
+      "target": "sym:file:tests/ccbot/test_session_monitor.py:TestReadNewLinesOffsetRecovery.test_valid_offset_reads_normally",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session_monitor.py:TestReadNewLinesOffsetRecovery",
+      "target": "sym:file:tests/ccbot/test_session_monitor.py:TestReadNewLinesOffsetRecovery.test_poison_line_skipped",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session_monitor.py:TestReadNewLinesOffsetRecovery",
+      "target": "sym:file:tests/ccbot/test_session_monitor.py:TestReadNewLinesOffsetRecovery.test_partial_line_at_eof_retried",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session_monitor.py:TestReadNewLinesOffsetRecovery",
+      "target": "sym:file:tests/ccbot/test_session_monitor.py:TestReadNewLinesOffsetRecovery.test_truncation_detection",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_session.py",
+      "target": "sym:file:tests/ccbot/test_session.py:mgr",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_session.py",
+      "target": "sym:file:tests/ccbot/test_session.py:TestThreadBindings",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session.py:TestThreadBindings",
+      "target": "sym:file:tests/ccbot/test_session.py:TestThreadBindings.test_bind_and_get",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session.py:TestThreadBindings",
+      "target": "sym:file:tests/ccbot/test_session.py:TestThreadBindings.test_bind_unbind_get_returns_none",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session.py:TestThreadBindings",
+      "target": "sym:file:tests/ccbot/test_session.py:TestThreadBindings.test_unbind_nonexistent_returns_none",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session.py:TestThreadBindings",
+      "target": "sym:file:tests/ccbot/test_session.py:TestThreadBindings.test_iter_thread_bindings",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_session.py",
+      "target": "sym:file:tests/ccbot/test_session.py:TestGroupChatId",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session.py:TestGroupChatId",
+      "target": "sym:file:tests/ccbot/test_session.py:TestGroupChatId.test_resolve_with_stored_group_id",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session.py:TestGroupChatId",
+      "target": "sym:file:tests/ccbot/test_session.py:TestGroupChatId.test_resolve_without_group_id_falls_back_to_user_id",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session.py:TestGroupChatId",
+      "target": "sym:file:tests/ccbot/test_session.py:TestGroupChatId.test_resolve_none_thread_id_falls_back_to_user_id",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session.py:TestGroupChatId",
+      "target": "sym:file:tests/ccbot/test_session.py:TestGroupChatId.test_set_group_chat_id_overwrites",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session.py:TestGroupChatId",
+      "target": "sym:file:tests/ccbot/test_session.py:TestGroupChatId.test_multiple_threads_independent",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session.py:TestGroupChatId",
+      "target": "sym:file:tests/ccbot/test_session.py:TestGroupChatId.test_multiple_users_independent",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session.py:TestGroupChatId",
+      "target": "sym:file:tests/ccbot/test_session.py:TestGroupChatId.test_set_group_chat_id_with_none_thread",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_session.py",
+      "target": "sym:file:tests/ccbot/test_session.py:TestWindowState",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session.py:TestWindowState",
+      "target": "sym:file:tests/ccbot/test_session.py:TestWindowState.test_get_creates_new",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session.py:TestWindowState",
+      "target": "sym:file:tests/ccbot/test_session.py:TestWindowState.test_get_returns_existing",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session.py:TestWindowState",
+      "target": "sym:file:tests/ccbot/test_session.py:TestWindowState.test_clear_window_session",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_session.py",
+      "target": "sym:file:tests/ccbot/test_session.py:TestResolveWindowForThread",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session.py:TestResolveWindowForThread",
+      "target": "sym:file:tests/ccbot/test_session.py:TestResolveWindowForThread.test_none_thread_id_returns_none",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session.py:TestResolveWindowForThread",
+      "target": "sym:file:tests/ccbot/test_session.py:TestResolveWindowForThread.test_unbound_thread_returns_none",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session.py:TestResolveWindowForThread",
+      "target": "sym:file:tests/ccbot/test_session.py:TestResolveWindowForThread.test_bound_thread_returns_window",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_session.py",
+      "target": "sym:file:tests/ccbot/test_session.py:TestDisplayNames",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session.py:TestDisplayNames",
+      "target": "sym:file:tests/ccbot/test_session.py:TestDisplayNames.test_get_display_name_fallback",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session.py:TestDisplayNames",
+      "target": "sym:file:tests/ccbot/test_session.py:TestDisplayNames.test_set_and_get_display_name",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session.py:TestDisplayNames",
+      "target": "sym:file:tests/ccbot/test_session.py:TestDisplayNames.test_set_display_name_update",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session.py:TestDisplayNames",
+      "target": "sym:file:tests/ccbot/test_session.py:TestDisplayNames.test_bind_thread_sets_display_name",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session.py:TestDisplayNames",
+      "target": "sym:file:tests/ccbot/test_session.py:TestDisplayNames.test_bind_thread_without_name_no_display",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_session.py",
+      "target": "sym:file:tests/ccbot/test_session.py:TestIsWindowId",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session.py:TestIsWindowId",
+      "target": "sym:file:tests/ccbot/test_session.py:TestIsWindowId.test_valid_ids",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session.py:TestIsWindowId",
+      "target": "sym:file:tests/ccbot/test_session.py:TestIsWindowId.test_invalid_ids",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_session.py",
+      "target": "sym:file:tests/ccbot/test_session.py:TestMigrateOldFormatMap",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session.py:TestMigrateOldFormatMap",
+      "target": "sym:file:tests/ccbot/test_session.py:TestMigrateOldFormatMap.test_migrates_name_to_window_id",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session.py:TestMigrateOldFormatMap",
+      "target": "sym:file:tests/ccbot/test_session.py:TestMigrateOldFormatMap.test_drops_orphan_without_live_window",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session.py:TestMigrateOldFormatMap",
+      "target": "sym:file:tests/ccbot/test_session.py:TestMigrateOldFormatMap.test_prefers_existing_window_id_key",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session.py:TestMigrateOldFormatMap",
+      "target": "sym:file:tests/ccbot/test_session.py:TestMigrateOldFormatMap.test_noop_for_window_id_keys",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session.py:TestMigrateOldFormatMap",
+      "target": "sym:file:tests/ccbot/test_session.py:TestMigrateOldFormatMap.test_ignores_other_tmux_sessions",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_session.py",
+      "target": "sym:file:tests/ccbot/test_session.py:TestResolveStaleIds",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session.py:TestResolveStaleIds",
+      "target": "sym:file:tests/ccbot/test_session.py:TestResolveStaleIds.test_tmux_restart_remaps_bindings_and_offsets",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session.py:TestResolveStaleIds",
+      "target": "sym:file:tests/ccbot/test_session.py:TestResolveStaleIds.test_binding_without_window_state_still_remaps",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session.py:TestResolveStaleIds",
+      "target": "sym:file:tests/ccbot/test_session.py:TestResolveStaleIds.test_unmatched_binding_dropped",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session.py:TestResolveStaleIds",
+      "target": "sym:file:tests/ccbot/test_session.py:TestResolveStaleIds.test_live_ids_untouched",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_session.py",
+      "target": "sym:file:tests/ccbot/test_session.py:TestLoadSessionMapMigration",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session.py:TestLoadSessionMapMigration",
+      "target": "sym:file:tests/ccbot/test_session.py:TestLoadSessionMapMigration.test_old_format_key_populates_window_state",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_session.py:TestLoadSessionMapMigration",
+      "target": "sym:file:tests/ccbot/test_session.py:TestLoadSessionMapMigration.test_no_tmux_lookup_when_no_old_keys",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_telegram_sender.py",
+      "target": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage",
+      "target": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage.test_single_chunk_returned",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage",
+      "target": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage.test_split_on_newline_boundaries",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage",
+      "target": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage.test_single_long_line_force_split",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage",
+      "target": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage.test_custom_max_length",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage",
+      "target": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage.test_custom_max_length_force_split",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage",
+      "target": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage.test_trailing_newline_handling",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage",
+      "target": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage.test_mixed_lines_grouping",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage",
+      "target": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage.test_chunk_count",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage",
+      "target": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage.test_all_chunks_within_max_length",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage",
+      "target": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage.test_code_block_split_closes_and_reopens",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage",
+      "target": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage.test_code_block_not_split_fits",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage",
+      "target": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage.test_text_before_and_after_code_block",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage",
+      "target": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessage.test_multiple_code_blocks",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_telegram_sender.py",
+      "target": "sym:file:tests/ccbot/test_telegram_sender.py:TestUtf16Len",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_telegram_sender.py:TestUtf16Len",
+      "target": "sym:file:tests/ccbot/test_telegram_sender.py:TestUtf16Len.test_ascii",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_telegram_sender.py:TestUtf16Len",
+      "target": "sym:file:tests/ccbot/test_telegram_sender.py:TestUtf16Len.test_bmp_cjk",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_telegram_sender.py:TestUtf16Len",
+      "target": "sym:file:tests/ccbot/test_telegram_sender.py:TestUtf16Len.test_emoji_counts_double",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_telegram_sender.py",
+      "target": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessageUtf16",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessageUtf16",
+      "target": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessageUtf16.test_emoji_text_within_utf16_budget",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessageUtf16",
+      "target": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessageUtf16.test_emoji_lines_within_utf16_budget",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessageUtf16",
+      "target": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessageUtf16.test_force_split_never_splits_surrogate_pair",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_telegram_sender.py",
+      "target": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessageCodeBlockForceSplit",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessageCodeBlockForceSplit",
+      "target": "sym:file:tests/ccbot/test_telegram_sender.py:TestSplitMessageCodeBlockForceSplit.test_long_line_in_code_block_gets_fenced_pieces",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_terminal_parser.py",
+      "target": "sym:file:tests/ccbot/test_terminal_parser.py:TestParseStatusLine",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_terminal_parser.py:TestParseStatusLine",
+      "target": "sym:file:tests/ccbot/test_terminal_parser.py:TestParseStatusLine.test_spinner_chars",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_terminal_parser.py:TestParseStatusLine",
+      "target": "sym:file:tests/ccbot/test_terminal_parser.py:TestParseStatusLine.test_returns_none",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_terminal_parser.py:TestParseStatusLine",
+      "target": "sym:file:tests/ccbot/test_terminal_parser.py:TestParseStatusLine.test_no_chrome_returns_none",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_terminal_parser.py:TestParseStatusLine",
+      "target": "sym:file:tests/ccbot/test_terminal_parser.py:TestParseStatusLine.test_blank_line_between_status_and_chrome",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_terminal_parser.py:TestParseStatusLine",
+      "target": "sym:file:tests/ccbot/test_terminal_parser.py:TestParseStatusLine.test_idle_no_status",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_terminal_parser.py:TestParseStatusLine",
+      "target": "sym:file:tests/ccbot/test_terminal_parser.py:TestParseStatusLine.test_false_positive_bullet",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_terminal_parser.py:TestParseStatusLine",
+      "target": "sym:file:tests/ccbot/test_terminal_parser.py:TestParseStatusLine.test_uses_fixture",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_terminal_parser.py",
+      "target": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent",
+      "target": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent.test_exit_plan_mode",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent",
+      "target": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent.test_exit_plan_mode_variant",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent",
+      "target": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent.test_ask_user_multi_tab",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent",
+      "target": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent.test_ask_user_single_tab",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent",
+      "target": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent.test_permission_prompt",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent",
+      "target": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent.test_restore_checkpoint",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent",
+      "target": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent.test_settings",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent",
+      "target": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent.test_settings_model_picker",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent",
+      "target": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent.test_settings_esc_to_cancel_bottom",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent",
+      "target": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent.test_settings_esc_to_exit_bottom",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent",
+      "target": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent.test_returns_none",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent",
+      "target": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent.test_min_gap_too_small_returns_none",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_terminal_parser.py",
+      "target": "sym:file:tests/ccbot/test_terminal_parser.py:TestIsInteractiveUI",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_terminal_parser.py:TestIsInteractiveUI",
+      "target": "sym:file:tests/ccbot/test_terminal_parser.py:TestIsInteractiveUI.test_true_when_ui_present",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_terminal_parser.py:TestIsInteractiveUI",
+      "target": "sym:file:tests/ccbot/test_terminal_parser.py:TestIsInteractiveUI.test_false_when_no_ui",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_terminal_parser.py:TestIsInteractiveUI",
+      "target": "sym:file:tests/ccbot/test_terminal_parser.py:TestIsInteractiveUI.test_settings_is_interactive",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_terminal_parser.py:TestIsInteractiveUI",
+      "target": "sym:file:tests/ccbot/test_terminal_parser.py:TestIsInteractiveUI.test_false_for_empty_string",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_terminal_parser.py",
+      "target": "sym:file:tests/ccbot/test_terminal_parser.py:TestStripPaneChrome",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_terminal_parser.py:TestStripPaneChrome",
+      "target": "sym:file:tests/ccbot/test_terminal_parser.py:TestStripPaneChrome.test_strips_from_separator",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_terminal_parser.py:TestStripPaneChrome",
+      "target": "sym:file:tests/ccbot/test_terminal_parser.py:TestStripPaneChrome.test_no_separator_returns_all",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_terminal_parser.py:TestStripPaneChrome",
+      "target": "sym:file:tests/ccbot/test_terminal_parser.py:TestStripPaneChrome.test_short_separator_not_triggered",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_terminal_parser.py:TestStripPaneChrome",
+      "target": "sym:file:tests/ccbot/test_terminal_parser.py:TestStripPaneChrome.test_only_searches_last_10_lines",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_terminal_parser.py",
+      "target": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractBashOutput",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractBashOutput",
+      "target": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractBashOutput.test_extracts_command_output",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractBashOutput",
+      "target": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractBashOutput.test_command_not_found_returns_none",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractBashOutput",
+      "target": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractBashOutput.test_chrome_stripped",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractBashOutput",
+      "target": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractBashOutput.test_prefix_match_long_command",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractBashOutput",
+      "target": "sym:file:tests/ccbot/test_terminal_parser.py:TestExtractBashOutput.test_trailing_blank_lines_stripped",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_transcribe.py",
+      "target": "sym:file:tests/ccbot/test_transcribe.py:_reset_client",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_transcribe.py",
+      "target": "sym:file:tests/ccbot/test_transcribe.py:mock_config",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_transcribe.py",
+      "target": "sym:file:tests/ccbot/test_transcribe.py:_mock_response",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_transcribe.py",
+      "target": "sym:file:tests/ccbot/test_transcribe.py:TestTranscribeVoice",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_transcribe.py:TestTranscribeVoice",
+      "target": "sym:file:tests/ccbot/test_transcribe.py:TestTranscribeVoice.test_success",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_transcribe.py:TestTranscribeVoice",
+      "target": "sym:file:tests/ccbot/test_transcribe.py:TestTranscribeVoice.test_empty_transcription_raises",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_transcribe.py:TestTranscribeVoice",
+      "target": "sym:file:tests/ccbot/test_transcribe.py:TestTranscribeVoice.test_whitespace_only_raises",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_transcribe.py:TestTranscribeVoice",
+      "target": "sym:file:tests/ccbot/test_transcribe.py:TestTranscribeVoice.test_missing_text_field_raises",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_transcribe.py:TestTranscribeVoice",
+      "target": "sym:file:tests/ccbot/test_transcribe.py:TestTranscribeVoice.test_api_error_raises",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_transcribe.py:TestTranscribeVoice",
+      "target": "sym:file:tests/ccbot/test_transcribe.py:TestTranscribeVoice.test_custom_base_url",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_transcribe.py:TestTranscribeVoice",
+      "target": "sym:file:tests/ccbot/test_transcribe.py:TestTranscribeVoice.test_base_url_trailing_slash_stripped",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_transcribe.py",
+      "target": "sym:file:tests/ccbot/test_transcribe.py:TestCloseClient",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_transcribe.py:TestCloseClient",
+      "target": "sym:file:tests/ccbot/test_transcribe.py:TestCloseClient.test_close_client_when_open",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_transcribe.py:TestCloseClient",
+      "target": "sym:file:tests/ccbot/test_transcribe.py:TestCloseClient.test_close_client_when_none",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_transcript_parser.py",
+      "target": "sym:file:tests/ccbot/test_transcript_parser.py:EXPQUOTE_START",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_transcript_parser.py",
+      "target": "sym:file:tests/ccbot/test_transcript_parser.py:EXPQUOTE_END",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_transcript_parser.py",
+      "target": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseLine",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseLine",
+      "target": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseLine.test_parse_line",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_transcript_parser.py",
+      "target": "sym:file:tests/ccbot/test_transcript_parser.py:TestExtractTextOnly",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_transcript_parser.py:TestExtractTextOnly",
+      "target": "sym:file:tests/ccbot/test_transcript_parser.py:TestExtractTextOnly.test_extract_text_only",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_transcript_parser.py",
+      "target": "sym:file:tests/ccbot/test_transcript_parser.py:TestFormatToolUseSummary",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_transcript_parser.py:TestFormatToolUseSummary",
+      "target": "sym:file:tests/ccbot/test_transcript_parser.py:TestFormatToolUseSummary.test_tool_summary",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_transcript_parser.py:TestFormatToolUseSummary",
+      "target": "sym:file:tests/ccbot/test_transcript_parser.py:TestFormatToolUseSummary.test_non_dict_input",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_transcript_parser.py:TestFormatToolUseSummary",
+      "target": "sym:file:tests/ccbot/test_transcript_parser.py:TestFormatToolUseSummary.test_truncation_at_200_chars",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_transcript_parser.py",
+      "target": "sym:file:tests/ccbot/test_transcript_parser.py:TestExtractToolResultText",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_transcript_parser.py:TestExtractToolResultText",
+      "target": "sym:file:tests/ccbot/test_transcript_parser.py:TestExtractToolResultText.test_extract_tool_result_text",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_transcript_parser.py",
+      "target": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseMessage",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseMessage",
+      "target": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseMessage.test_user_text",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseMessage",
+      "target": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseMessage.test_assistant_text",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseMessage",
+      "target": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseMessage.test_local_command_with_stdout",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseMessage",
+      "target": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseMessage.test_local_command_invoke",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseMessage",
+      "target": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseMessage.test_non_user_assistant_returns_none",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseMessage",
+      "target": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseMessage.test_string_content",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_transcript_parser.py",
+      "target": "sym:file:tests/ccbot/test_transcript_parser.py:TestFormatEditDiff",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_transcript_parser.py:TestFormatEditDiff",
+      "target": "sym:file:tests/ccbot/test_transcript_parser.py:TestFormatEditDiff.test_format_edit_diff",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_transcript_parser.py",
+      "target": "sym:file:tests/ccbot/test_transcript_parser.py:TestFormatToolResultText",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_transcript_parser.py:TestFormatToolResultText",
+      "target": "sym:file:tests/ccbot/test_transcript_parser.py:TestFormatToolResultText.test_format_tool_result_text",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_transcript_parser.py:TestFormatToolResultText",
+      "target": "sym:file:tests/ccbot/test_transcript_parser.py:TestFormatToolResultText.test_write_counts_lines_from_input_content",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_transcript_parser.py:TestFormatToolResultText",
+      "target": "sym:file:tests/ccbot/test_transcript_parser.py:TestFormatToolResultText.test_write_trailing_newline_not_counted_extra",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_transcript_parser.py",
+      "target": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries",
+      "target": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries.test_assistant_text",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries",
+      "target": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries.test_user_text",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries",
+      "target": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries.test_tool_use_and_result_pairing",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries",
+      "target": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries.test_thinking_block",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries",
+      "target": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries.test_local_command_with_stdout",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries",
+      "target": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries.test_exit_plan_mode_emits_plan",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries",
+      "target": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries.test_edit_tool_diff_stats",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries",
+      "target": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries.test_error_tool_result",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries",
+      "target": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries.test_interrupted_tool_result",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries",
+      "target": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries.test_pending_tools_carry_over",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries",
+      "target": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries.test_pending_tools_flushed_without_carry_over",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries",
+      "target": "sym:file:tests/ccbot/test_transcript_parser.py:TestParseEntries.test_system_tag_filtered",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_utils.py",
+      "target": "sym:file:tests/ccbot/test_utils.py:TestCcbotDir",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_utils.py:TestCcbotDir",
+      "target": "sym:file:tests/ccbot/test_utils.py:TestCcbotDir.test_returns_env_var_path",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_utils.py:TestCcbotDir",
+      "target": "sym:file:tests/ccbot/test_utils.py:TestCcbotDir.test_returns_default_without_env",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_utils.py",
+      "target": "sym:file:tests/ccbot/test_utils.py:TestAtomicWriteJson",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_utils.py:TestAtomicWriteJson",
+      "target": "sym:file:tests/ccbot/test_utils.py:TestAtomicWriteJson.test_writes_valid_json",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_utils.py:TestAtomicWriteJson",
+      "target": "sym:file:tests/ccbot/test_utils.py:TestAtomicWriteJson.test_creates_parent_directories",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_utils.py:TestAtomicWriteJson",
+      "target": "sym:file:tests/ccbot/test_utils.py:TestAtomicWriteJson.test_round_trip",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_utils.py:TestAtomicWriteJson",
+      "target": "sym:file:tests/ccbot/test_utils.py:TestAtomicWriteJson.test_no_temp_files_left_on_success",
+      "type": "contains"
+    },
+    {
+      "source": "file:tests/ccbot/test_utils.py",
+      "target": "sym:file:tests/ccbot/test_utils.py:TestReadCwdFromJsonl",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_utils.py:TestReadCwdFromJsonl",
+      "target": "sym:file:tests/ccbot/test_utils.py:TestReadCwdFromJsonl.test_cwd_in_first_entry",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_utils.py:TestReadCwdFromJsonl",
+      "target": "sym:file:tests/ccbot/test_utils.py:TestReadCwdFromJsonl.test_cwd_in_second_entry",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_utils.py:TestReadCwdFromJsonl",
+      "target": "sym:file:tests/ccbot/test_utils.py:TestReadCwdFromJsonl.test_no_cwd_returns_empty",
+      "type": "contains"
+    },
+    {
+      "source": "sym:file:tests/ccbot/test_utils.py:TestReadCwdFromJsonl",
+      "target": "sym:file:tests/ccbot/test_utils.py:TestReadCwdFromJsonl.test_missing_file_returns_empty",
+      "type": "contains"
+    },
+    {
+      "source": "file:src/ccbot/main.py",
+      "target": "file:src/ccbot/hook.py",
+      "type": "imports"
+    },
+    {
+      "source": "file:src/ccbot/main.py",
+      "target": "file:src/ccbot/config.py",
+      "type": "imports"
+    },
+    {
+      "source": "file:src/ccbot/main.py",
+      "target": "file:src/ccbot/utils.py",
+      "type": "imports"
+    },
+    {
+      "source": "file:src/ccbot/main.py",
+      "target": "file:src/ccbot/tmux_manager.py",
+      "type": "imports"
+    },
+    {
+      "source": "file:src/ccbot/main.py",
+      "target": "file:src/ccbot/bot.py",
+      "type": "imports"
+    },
+    {
+      "source": "file:src/ccbot/hook.py",
+      "target": "file:src/ccbot/utils.py",
+      "type": "imports"
+    },
+    {
+      "source": "file:tests/ccbot/handlers/test_interactive_ui.py",
+      "target": "file:src/ccbot/handlers/interactive_ui.py",
+      "type": "imports"
+    },
+    {
+      "source": "file:tests/ccbot/handlers/test_interactive_ui.py",
+      "target": "file:src/ccbot/handlers/callback_data.py",
+      "type": "imports"
+    },
+    {
+      "source": "file:tests/ccbot/handlers/test_response_builder.py",
+      "target": "file:src/ccbot/handlers/response_builder.py",
+      "type": "imports"
+    },
+    {
+      "source": "file:tests/ccbot/handlers/test_response_builder.py",
+      "target": "file:src/ccbot/transcript_parser.py",
+      "type": "imports"
+    },
+    {
+      "source": "file:tests/ccbot/handlers/test_status_polling.py",
+      "target": "file:src/ccbot/handlers/status_polling.py",
+      "type": "imports"
+    },
+    {
+      "source": "file:tests/ccbot/test_config.py",
+      "target": "file:src/ccbot/config.py",
+      "type": "imports"
+    },
+    {
+      "source": "file:tests/ccbot/test_forward_command.py",
+      "target": "file:src/ccbot/bot.py",
+      "type": "imports"
+    },
+    {
+      "source": "file:tests/ccbot/test_hook.py",
+      "target": "file:src/ccbot/hook.py",
+      "type": "imports"
+    },
+    {
+      "source": "file:tests/ccbot/test_markdown_v2.py",
+      "target": "file:src/ccbot/markdown_v2.py",
+      "type": "imports"
+    },
+    {
+      "source": "file:tests/ccbot/test_markdown_v2.py",
+      "target": "file:src/ccbot/transcript_parser.py",
+      "type": "imports"
+    },
+    {
+      "source": "file:tests/ccbot/test_monitor_state.py",
+      "target": "file:src/ccbot/monitor_state.py",
+      "type": "imports"
+    },
+    {
+      "source": "file:tests/ccbot/test_session_monitor.py",
+      "target": "file:src/ccbot/monitor_state.py",
+      "type": "imports"
+    },
+    {
+      "source": "file:tests/ccbot/test_session_monitor.py",
+      "target": "file:src/ccbot/session_monitor.py",
+      "type": "imports"
+    },
+    {
+      "source": "file:tests/ccbot/test_session.py",
+      "target": "file:src/ccbot/session.py",
+      "type": "imports"
+    },
+    {
+      "source": "file:tests/ccbot/test_session.py",
+      "target": "file:src/ccbot/tmux_manager.py",
+      "type": "imports"
+    },
+    {
+      "source": "file:tests/ccbot/test_telegram_sender.py",
+      "target": "file:src/ccbot/telegram_sender.py",
+      "type": "imports"
+    },
+    {
+      "source": "file:tests/ccbot/test_terminal_parser.py",
+      "target": "file:src/ccbot/terminal_parser.py",
+      "type": "imports"
+    },
+    {
+      "source": "file:tests/ccbot/test_transcribe.py",
+      "target": "file:src/ccbot/transcribe.py",
+      "type": "imports"
+    },
+    {
+      "source": "file:tests/ccbot/test_transcript_parser.py",
+      "target": "file:src/ccbot/transcript_parser.py",
+      "type": "imports"
+    },
+    {
+      "source": "file:tests/ccbot/test_utils.py",
+      "target": "file:src/ccbot/utils.py",
+      "type": "imports"
+    },
+    {
+      "source": "file:src/ccbot/hook.py",
+      "target": "file:tests/ccbot/test_hook.py",
+      "type": "tested_by"
+    },
+    {
+      "source": "file:src/ccbot/config.py",
+      "target": "file:tests/ccbot/test_config.py",
+      "type": "tested_by"
+    },
+    {
+      "source": "file:src/ccbot/markdown_v2.py",
+      "target": "file:tests/ccbot/test_markdown_v2.py",
+      "type": "tested_by"
+    },
+    {
+      "source": "file:src/ccbot/monitor_state.py",
+      "target": "file:tests/ccbot/test_monitor_state.py",
+      "type": "tested_by"
+    },
+    {
+      "source": "file:src/ccbot/session_monitor.py",
+      "target": "file:tests/ccbot/test_session_monitor.py",
+      "type": "tested_by"
+    },
+    {
+      "source": "file:src/ccbot/session.py",
+      "target": "file:tests/ccbot/test_session.py",
+      "type": "tested_by"
+    },
+    {
+      "source": "file:src/ccbot/telegram_sender.py",
+      "target": "file:tests/ccbot/test_telegram_sender.py",
+      "type": "tested_by"
+    },
+    {
+      "source": "file:src/ccbot/terminal_parser.py",
+      "target": "file:tests/ccbot/test_terminal_parser.py",
+      "type": "tested_by"
+    },
+    {
+      "source": "file:src/ccbot/transcribe.py",
+      "target": "file:tests/ccbot/test_transcribe.py",
+      "type": "tested_by"
+    },
+    {
+      "source": "file:src/ccbot/transcript_parser.py",
+      "target": "file:tests/ccbot/test_transcript_parser.py",
+      "type": "tested_by"
+    },
+    {
+      "source": "file:src/ccbot/utils.py",
+      "target": "file:tests/ccbot/test_utils.py",
+      "type": "tested_by"
+    },
+    {
+      "source": "file:src/ccbot/handlers/interactive_ui.py",
+      "target": "file:tests/ccbot/handlers/test_interactive_ui.py",
+      "type": "tested_by"
+    },
+    {
+      "source": "file:src/ccbot/handlers/response_builder.py",
+      "target": "file:tests/ccbot/handlers/test_response_builder.py",
+      "type": "tested_by"
+    },
+    {
+      "source": "file:src/ccbot/handlers/status_polling.py",
+      "target": "file:tests/ccbot/handlers/test_status_polling.py",
+      "type": "tested_by"
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "file:tests/ccbot/test_forward_command.py",
+      "type": "tested_by"
+    },
+    {
+      "source": "file:doc/telegram-bot-features.md",
+      "target": "file:src/ccbot/bot.py",
+      "type": "references"
+    },
+    {
+      "source": "file:scripts/restart.sh",
+      "target": "file:src/ccbot/main.py",
+      "type": "references"
+    }
+  ]
+}
