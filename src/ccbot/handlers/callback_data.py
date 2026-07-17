@@ -3,26 +3,27 @@
 Defines all CB_* prefixes used for routing callback queries in the bot.
 Each prefix identifies a specific action or navigation target.
 
-Provides frozen dataclasses plus encode_*/parse_* so producers and the
-callback router avoid ad-hoc string splits while preserving on-wire formats
-and Telegram's 64-byte callback_data limit.
+Typed frozen dataclasses replace ad-hoc string splits. Wire formats are
+unchanged for backward compatibility with existing Telegram keyboards:
 
-Constants:
-  - CB_HISTORY_*: History pagination
-  - CB_DIR_*: Directory browser navigation
-  - CB_WIN_*: Window picker (bind existing unbound window)
-  - CB_SCREENSHOT_*: Screenshot refresh
-  - CB_ASK_*: Interactive UI navigation (arrows, enter, esc)
-  - CB_KEYS_PREFIX: Screenshot control keys (kb:<key_id>:<window>)
+  - History: ``hp|hn:<page>:<window_id>:<start>:<end>`` (legacy without range)
+  - Dir select/page: ``db:sel:<index>``, ``db:page:<page>``
+  - Window/session pickers: ``wb:sel:<index>``, ``rs:sel:<index>``
+  - Screenshot: ``ss:ref:<window>``, keys ``kb:<key_id>:<window>``
+  - Interactive UI: ``aq:<action>:<window>``
+
+Always pass payloads through ``safe_callback_data`` when building
+InlineKeyboardButton — never silent ``[:64]`` truncation.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Union
 
-# Telegram Bot API hard limit for callback_data (bytes; we clip by char count
-# to match existing call sites that used ``[:64]``).
-CALLBACK_DATA_MAX = 64
+# Telegram Bot API hard limit for callback_data (UTF-8 bytes).
+MAX_CALLBACK_DATA_BYTES = 64
+CALLBACK_DATA_MAX = MAX_CALLBACK_DATA_BYTES  # alias
 
 # History pagination
 CB_HISTORY_PREV = "hp:"  # history page older
@@ -62,23 +63,28 @@ CB_SESSION_CANCEL = "rs:cancel"  # cancel
 # Screenshot control keys
 CB_KEYS_PREFIX = "kb:"  # kb:<key_id>:<window>
 
+# Known interactive-UI prefixes (for validation / docs)
+CB_ASK_PREFIXES = frozenset(
+    {
+        CB_ASK_UP,
+        CB_ASK_DOWN,
+        CB_ASK_LEFT,
+        CB_ASK_RIGHT,
+        CB_ASK_ESC,
+        CB_ASK_ENTER,
+        CB_ASK_SPACE,
+        CB_ASK_TAB,
+        CB_ASK_REFRESH,
+    }
+)
 
-def clip_callback_data(data: str) -> str:
-    """Truncate callback_data to Telegram's size limit."""
-    return data[:CALLBACK_DATA_MAX]
 
-
-# ── Typed payloads ───────────────────────────────────────────────────────
+# ── Typed callback dataclasses ───────────────────────────────────────────
 
 
 @dataclass(frozen=True)
 class HistoryCallback:
-    """History pagination payload.
-
-    Wire formats:
-      - ``hp|hn:<page>:<window_id>:<start>:<end>`` (current)
-      - ``hp|hn:<page>:<window_id>`` (legacy, start/end default to 0)
-    """
+    """History pagination: ``hp|hn:<page>:<window_id>:<start>:<end>``."""
 
     older: bool  # True → CB_HISTORY_PREV, False → CB_HISTORY_NEXT
     page: int
@@ -86,19 +92,105 @@ class HistoryCallback:
     start_byte: int = 0
     end_byte: int = 0
 
+    def __post_init__(self) -> None:
+        if self.page < 0:
+            raise ValueError(f"page must be non-negative, got {self.page}")
+        if not self.window_id:
+            raise ValueError("window_id must be non-empty")
+        if self.start_byte < 0 or self.end_byte < 0:
+            raise ValueError("byte range must be non-negative")
+
+    def to_old_string(self) -> str:
+        """Serialize to on-wire format (no length check)."""
+        prefix = CB_HISTORY_PREV if self.older else CB_HISTORY_NEXT
+        return f"{prefix}{self.page}:{self.window_id}:{self.start_byte}:{self.end_byte}"
+
 
 @dataclass(frozen=True)
-class IndexCallback:
-    """Integer index payload (dir/window/session pickers)."""
+class DirSelectCallback:
+    """Directory browser entry: ``db:sel:<index>`` (index into cached list)."""
 
     index: int
 
+    def __post_init__(self) -> None:
+        if self.index < 0:
+            raise ValueError(f"index must be non-negative, got {self.index}")
+
+    def to_old_string(self) -> str:
+        return f"{CB_DIR_SELECT}{self.index}"
+
 
 @dataclass(frozen=True)
-class WindowCallback:
-    """Callback that carries only a tmux window id after a prefix."""
+class DirPageCallback:
+    """Directory browser page: ``db:page:<page>``."""
+
+    page: int
+
+    def __post_init__(self) -> None:
+        if self.page < 0:
+            raise ValueError(f"page must be non-negative, got {self.page}")
+
+    def to_old_string(self) -> str:
+        return f"{CB_DIR_PAGE}{self.page}"
+
+
+@dataclass(frozen=True)
+class WinBindCallback:
+    """Window picker: ``wb:sel:<index>`` (index into unbound windows cache)."""
+
+    index: int
+
+    def __post_init__(self) -> None:
+        if self.index < 0:
+            raise ValueError(f"index must be non-negative, got {self.index}")
+
+    def to_old_string(self) -> str:
+        return f"{CB_WIN_BIND}{self.index}"
+
+
+@dataclass(frozen=True)
+class SessionSelectCallback:
+    """Session picker: ``rs:sel:<index>`` (index into sessions cache)."""
+
+    index: int
+
+    def __post_init__(self) -> None:
+        if self.index < 0:
+            raise ValueError(f"index must be non-negative, got {self.index}")
+
+    def to_old_string(self) -> str:
+        return f"{CB_SESSION_SELECT}{self.index}"
+
+
+@dataclass(frozen=True)
+class AskCallback:
+    """Interactive UI action: ``aq:<action>:<window_id>``."""
+
+    prefix: str
+    window_id: str
+
+    def __post_init__(self) -> None:
+        if self.prefix not in CB_ASK_PREFIXES:
+            raise ValueError(f"unknown ask prefix: {self.prefix!r}")
+        if not self.window_id:
+            raise ValueError("window_id must be non-empty")
+
+    def to_old_string(self) -> str:
+        return f"{self.prefix}{self.window_id}"
+
+
+@dataclass(frozen=True)
+class ScreenshotRefreshCallback:
+    """Screenshot refresh: ``ss:ref:<window_id>``."""
 
     window_id: str
+
+    def __post_init__(self) -> None:
+        if not self.window_id:
+            raise ValueError("window_id must be non-empty")
+
+    def to_old_string(self) -> str:
+        return f"{CB_SCREENSHOT_REFRESH}{self.window_id}"
 
 
 @dataclass(frozen=True)
@@ -108,16 +200,58 @@ class KeyCallback:
     key_id: str
     window_id: str
 
+    def __post_init__(self) -> None:
+        if not self.key_id:
+            raise ValueError("key_id must be non-empty")
+        if not self.window_id:
+            raise ValueError("window_id must be non-empty")
+
+    def to_old_string(self) -> str:
+        return f"{CB_KEYS_PREFIX}{self.key_id}:{self.window_id}"
+
+
+# Union of typed payloads (plus plain str for constants like CB_DIR_UP / "noop").
+CallbackPayload = Union[
+    str,
+    HistoryCallback,
+    DirSelectCallback,
+    DirPageCallback,
+    WinBindCallback,
+    SessionSelectCallback,
+    AskCallback,
+    ScreenshotRefreshCallback,
+    KeyCallback,
+]
+
+
+def safe_callback_data(cb: CallbackPayload) -> str:
+    """Serialize callback_data with Telegram 64-byte UTF-8 limit check.
+
+    Accepts a wire string or a typed payload with ``to_old_string()``.
+    Raises ``ValueError`` on empty or oversized data — never truncates.
+    """
+    if isinstance(cb, str):
+        data = cb
+    else:
+        data = cb.to_old_string()
+
+    if not data:
+        raise ValueError("callback_data must be non-empty")
+
+    encoded_len = len(data.encode("utf-8"))
+    if encoded_len > MAX_CALLBACK_DATA_BYTES:
+        raise ValueError(
+            f"callback_data too long ({encoded_len}B > {MAX_CALLBACK_DATA_BYTES}B): "
+            f"{data!r}"
+        )
+    return data
+
 
 # ── History ──────────────────────────────────────────────────────────────
 
 
 def encode_history(cb: HistoryCallback) -> str:
-    """Encode history pagination callback_data (always new format)."""
-    prefix = CB_HISTORY_PREV if cb.older else CB_HISTORY_NEXT
-    return clip_callback_data(
-        f"{prefix}{cb.page}:{cb.window_id}:{cb.start_byte}:{cb.end_byte}"
-    )
+    return safe_callback_data(cb)
 
 
 def encode_history_page(
@@ -128,8 +262,7 @@ def encode_history_page(
     start_byte: int = 0,
     end_byte: int = 0,
 ) -> str:
-    """Convenience builder for history prev/next buttons."""
-    return encode_history(
+    return safe_callback_data(
         HistoryCallback(
             older=older,
             page=page,
@@ -141,7 +274,7 @@ def encode_history_page(
 
 
 def parse_history(data: str) -> HistoryCallback | None:
-    """Parse history pagination callback_data; None if not history or invalid."""
+    """Parse history callback_data; None if not history or invalid."""
     if data.startswith(CB_HISTORY_PREV):
         older = True
         rest = data[len(CB_HISTORY_PREV) :]
@@ -163,7 +296,7 @@ def parse_history(data: str) -> HistoryCallback | None:
                 start_byte=0,
                 end_byte=0,
             )
-        # Current: page:window_id:start:end (window_id may contain colons)
+        # Current: page:window_id:start:end
         page = int(parts[0])
         start_byte = int(parts[-2])
         end_byte = int(parts[-1])
@@ -179,46 +312,57 @@ def parse_history(data: str) -> HistoryCallback | None:
         return None
 
 
-# ── Index-based (dir / window / session pickers) ─────────────────────────
+# ── Index-based pickers ──────────────────────────────────────────────────
 
 
 def encode_dir_select(index: int) -> str:
-    return clip_callback_data(f"{CB_DIR_SELECT}{index}")
+    return safe_callback_data(DirSelectCallback(index=index))
 
 
-def parse_dir_select(data: str) -> IndexCallback | None:
-    return _parse_index(data, CB_DIR_SELECT)
+def parse_dir_select(data: str) -> DirSelectCallback | None:
+    if not data.startswith(CB_DIR_SELECT):
+        return None
+    try:
+        return DirSelectCallback(index=int(data[len(CB_DIR_SELECT) :]))
+    except ValueError:
+        return None
 
 
 def encode_dir_page(page: int) -> str:
-    return clip_callback_data(f"{CB_DIR_PAGE}{page}")
+    return safe_callback_data(DirPageCallback(page=page))
 
 
-def parse_dir_page(data: str) -> IndexCallback | None:
-    return _parse_index(data, CB_DIR_PAGE)
+def parse_dir_page(data: str) -> DirPageCallback | None:
+    if not data.startswith(CB_DIR_PAGE):
+        return None
+    try:
+        return DirPageCallback(page=int(data[len(CB_DIR_PAGE) :]))
+    except ValueError:
+        return None
 
 
 def encode_win_bind(index: int) -> str:
-    return clip_callback_data(f"{CB_WIN_BIND}{index}")
+    return safe_callback_data(WinBindCallback(index=index))
 
 
-def parse_win_bind(data: str) -> IndexCallback | None:
-    return _parse_index(data, CB_WIN_BIND)
+def parse_win_bind(data: str) -> WinBindCallback | None:
+    if not data.startswith(CB_WIN_BIND):
+        return None
+    try:
+        return WinBindCallback(index=int(data[len(CB_WIN_BIND) :]))
+    except ValueError:
+        return None
 
 
 def encode_session_select(index: int) -> str:
-    return clip_callback_data(f"{CB_SESSION_SELECT}{index}")
+    return safe_callback_data(SessionSelectCallback(index=index))
 
 
-def parse_session_select(data: str) -> IndexCallback | None:
-    return _parse_index(data, CB_SESSION_SELECT)
-
-
-def _parse_index(data: str, prefix: str) -> IndexCallback | None:
-    if not data.startswith(prefix):
+def parse_session_select(data: str) -> SessionSelectCallback | None:
+    if not data.startswith(CB_SESSION_SELECT):
         return None
     try:
-        return IndexCallback(index=int(data[len(prefix) :]))
+        return SessionSelectCallback(index=int(data[len(CB_SESSION_SELECT) :]))
     except ValueError:
         return None
 
@@ -227,37 +371,43 @@ def _parse_index(data: str, prefix: str) -> IndexCallback | None:
 
 
 def encode_screenshot_refresh(window_id: str) -> str:
-    return clip_callback_data(f"{CB_SCREENSHOT_REFRESH}{window_id}")
+    return safe_callback_data(ScreenshotRefreshCallback(window_id=window_id))
 
 
-def parse_screenshot_refresh(data: str) -> WindowCallback | None:
-    return _parse_window_suffix(data, CB_SCREENSHOT_REFRESH)
+def parse_screenshot_refresh(data: str) -> ScreenshotRefreshCallback | None:
+    if not data.startswith(CB_SCREENSHOT_REFRESH):
+        return None
+    window_id = data[len(CB_SCREENSHOT_REFRESH) :]
+    if not window_id:
+        return None
+    try:
+        return ScreenshotRefreshCallback(window_id=window_id)
+    except ValueError:
+        return None
 
 
 def encode_ask(prefix: str, window_id: str) -> str:
-    """Encode an interactive-UI action: ``<prefix><window_id>``."""
-    return clip_callback_data(f"{prefix}{window_id}")
+    return safe_callback_data(AskCallback(prefix=prefix, window_id=window_id))
 
 
-def parse_ask(data: str, prefix: str) -> WindowCallback | None:
-    """Parse interactive-UI action for a known prefix."""
-    return _parse_window_suffix(data, prefix)
-
-
-def _parse_window_suffix(data: str, prefix: str) -> WindowCallback | None:
+def parse_ask(data: str, prefix: str) -> AskCallback | None:
+    """Parse interactive-UI action for a known CB_ASK_* prefix."""
     if not data.startswith(prefix):
         return None
     window_id = data[len(prefix) :]
     if not window_id:
         return None
-    return WindowCallback(window_id=window_id)
+    try:
+        return AskCallback(prefix=prefix, window_id=window_id)
+    except ValueError:
+        return None
 
 
 # ── Screenshot control keys ──────────────────────────────────────────────
 
 
 def encode_key(key_id: str, window_id: str) -> str:
-    return clip_callback_data(f"{CB_KEYS_PREFIX}{key_id}:{window_id}")
+    return safe_callback_data(KeyCallback(key_id=key_id, window_id=window_id))
 
 
 def parse_key(data: str) -> KeyCallback | None:
@@ -272,4 +422,7 @@ def parse_key(data: str) -> KeyCallback | None:
     window_id = rest[colon_idx + 1 :]
     if not key_id or not window_id:
         return None
-    return KeyCallback(key_id=key_id, window_id=window_id)
+    try:
+        return KeyCallback(key_id=key_id, window_id=window_id)
+    except ValueError:
+        return None

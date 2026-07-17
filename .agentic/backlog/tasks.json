@@ -131,7 +131,7 @@
       "acceptance_criteria": [
         "String split replaced with typed dataclasses"
       ],
-      "status_updated_at": "2026-07-17T15:02:27.101739+00:00",
+      "status_updated_at": "2026-07-17T15:54:36.021680+00:00",
       "status_note": "Typed encode/parse dataclasses for callback_data; producers+router migrated; tests added"
     },
     {

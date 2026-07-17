@@ -32,7 +32,8 @@ from .callback_data import (
     CB_ASK_SPACE,
     CB_ASK_TAB,
     CB_ASK_UP,
-    encode_ask,
+    AskCallback,
+    safe_callback_data,
 )
 from .message_sender import NO_LINK_PREVIEW
 
@@ -90,53 +91,38 @@ def _build_interactive_keyboard(
     """
     vertical_only = ui_name == "RestoreCheckpoint"
 
+    def _ask(prefix: str) -> str:
+        return safe_callback_data(AskCallback(prefix=prefix, window_id=window_id))
+
     rows: list[list[InlineKeyboardButton]] = []
     # Row 1: directional keys
     rows.append(
         [
-            InlineKeyboardButton(
-                "␣ Space", callback_data=encode_ask(CB_ASK_SPACE, window_id)
-            ),
-            InlineKeyboardButton("↑", callback_data=encode_ask(CB_ASK_UP, window_id)),
-            InlineKeyboardButton(
-                "⇥ Tab", callback_data=encode_ask(CB_ASK_TAB, window_id)
-            ),
+            InlineKeyboardButton("␣ Space", callback_data=_ask(CB_ASK_SPACE)),
+            InlineKeyboardButton("↑", callback_data=_ask(CB_ASK_UP)),
+            InlineKeyboardButton("⇥ Tab", callback_data=_ask(CB_ASK_TAB)),
         ]
     )
     if vertical_only:
         rows.append(
             [
-                InlineKeyboardButton(
-                    "↓", callback_data=encode_ask(CB_ASK_DOWN, window_id)
-                ),
+                InlineKeyboardButton("↓", callback_data=_ask(CB_ASK_DOWN)),
             ]
         )
     else:
         rows.append(
             [
-                InlineKeyboardButton(
-                    "←", callback_data=encode_ask(CB_ASK_LEFT, window_id)
-                ),
-                InlineKeyboardButton(
-                    "↓", callback_data=encode_ask(CB_ASK_DOWN, window_id)
-                ),
-                InlineKeyboardButton(
-                    "→", callback_data=encode_ask(CB_ASK_RIGHT, window_id)
-                ),
+                InlineKeyboardButton("←", callback_data=_ask(CB_ASK_LEFT)),
+                InlineKeyboardButton("↓", callback_data=_ask(CB_ASK_DOWN)),
+                InlineKeyboardButton("→", callback_data=_ask(CB_ASK_RIGHT)),
             ]
         )
     # Row 2: action keys
     rows.append(
         [
-            InlineKeyboardButton(
-                "⎋ Esc", callback_data=encode_ask(CB_ASK_ESC, window_id)
-            ),
-            InlineKeyboardButton(
-                "🔄", callback_data=encode_ask(CB_ASK_REFRESH, window_id)
-            ),
-            InlineKeyboardButton(
-                "⏎ Enter", callback_data=encode_ask(CB_ASK_ENTER, window_id)
-            ),
+            InlineKeyboardButton("⎋ Esc", callback_data=_ask(CB_ASK_ESC)),
+            InlineKeyboardButton("🔄", callback_data=_ask(CB_ASK_REFRESH)),
+            InlineKeyboardButton("⏎ Enter", callback_data=_ask(CB_ASK_ENTER)),
         ]
     )
     return InlineKeyboardMarkup(rows)

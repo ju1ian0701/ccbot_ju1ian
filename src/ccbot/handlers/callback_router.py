@@ -43,6 +43,14 @@ from .callback_data import (
     CB_WIN_BIND,
     CB_WIN_CANCEL,
     CB_WIN_NEW,
+    AskCallback,
+    DirPageCallback,
+    DirSelectCallback,
+    HistoryCallback,
+    KeyCallback,
+    ScreenshotRefreshCallback,
+    SessionSelectCallback,
+    WinBindCallback,
     parse_ask,
     parse_dir_page,
     parse_dir_select,
@@ -104,7 +112,7 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     # Format: hp:<page>:<window_id>:<start>:<end> or hn:<page>:<window_id>:<start>:<end>
     if data.startswith(CB_HISTORY_PREV) or data.startswith(CB_HISTORY_NEXT):
         history_cb = parse_history(data)
-        if history_cb is None:
+        if not isinstance(history_cb, HistoryCallback):
             await query.answer("Invalid data")
             return
         window_id = history_cb.window_id
@@ -135,7 +143,7 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
             return
         # callback_data contains index, not dir name (to avoid 64-byte limit)
         dir_select = parse_dir_select(data)
-        if dir_select is None:
+        if not isinstance(dir_select, DirSelectCallback):
             await query.answer("Invalid data")
             return
         idx = dir_select.index
@@ -210,10 +218,10 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
             await query.answer("Stale browser (topic mismatch)", show_alert=True)
             return
         dir_page = parse_dir_page(data)
-        if dir_page is None:
+        if not isinstance(dir_page, DirPageCallback):
             await query.answer("Invalid data")
             return
-        pg = dir_page.index
+        pg = dir_page.page
         default_path = str(Path.cwd())
         current_path = (
             context.user_data.get(BROWSE_PATH_KEY, default_path)
@@ -298,7 +306,7 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
             await query.answer("Stale picker (topic mismatch)", show_alert=True)
             return
         session_select = parse_session_select(data)
-        if session_select is None:
+        if not isinstance(session_select, SessionSelectCallback):
             await query.answer("Invalid data")
             return
         idx = session_select.index
@@ -373,7 +381,7 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
             await query.answer("Stale picker (topic mismatch)", show_alert=True)
             return
         win_bind = parse_win_bind(data)
-        if win_bind is None:
+        if not isinstance(win_bind, WinBindCallback):
             await query.answer("Invalid data")
             return
         idx = win_bind.index
@@ -469,7 +477,7 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     # Screenshot: Refresh
     elif data.startswith(CB_SCREENSHOT_REFRESH):
         ss_refresh = parse_screenshot_refresh(data)
-        if ss_refresh is None:
+        if not isinstance(ss_refresh, ScreenshotRefreshCallback):
             await query.answer("Invalid data")
             return
         window_id = ss_refresh.window_id
@@ -503,7 +511,7 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     # Interactive UI: Up arrow
     elif data.startswith(CB_ASK_UP):
         ask_cb = parse_ask(data, CB_ASK_UP)
-        if ask_cb is None:
+        if not isinstance(ask_cb, AskCallback):
             await query.answer("Invalid data")
             return
         window_id = ask_cb.window_id
@@ -518,7 +526,7 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     # Interactive UI: Down arrow
     elif data.startswith(CB_ASK_DOWN):
         ask_cb = parse_ask(data, CB_ASK_DOWN)
-        if ask_cb is None:
+        if not isinstance(ask_cb, AskCallback):
             await query.answer("Invalid data")
             return
         window_id = ask_cb.window_id
@@ -535,7 +543,7 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     # Interactive UI: Left arrow
     elif data.startswith(CB_ASK_LEFT):
         ask_cb = parse_ask(data, CB_ASK_LEFT)
-        if ask_cb is None:
+        if not isinstance(ask_cb, AskCallback):
             await query.answer("Invalid data")
             return
         window_id = ask_cb.window_id
@@ -552,7 +560,7 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     # Interactive UI: Right arrow
     elif data.startswith(CB_ASK_RIGHT):
         ask_cb = parse_ask(data, CB_ASK_RIGHT)
-        if ask_cb is None:
+        if not isinstance(ask_cb, AskCallback):
             await query.answer("Invalid data")
             return
         window_id = ask_cb.window_id
@@ -569,7 +577,7 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     # Interactive UI: Escape
     elif data.startswith(CB_ASK_ESC):
         ask_cb = parse_ask(data, CB_ASK_ESC)
-        if ask_cb is None:
+        if not isinstance(ask_cb, AskCallback):
             await query.answer("Invalid data")
             return
         window_id = ask_cb.window_id
@@ -585,7 +593,7 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     # Interactive UI: Enter
     elif data.startswith(CB_ASK_ENTER):
         ask_cb = parse_ask(data, CB_ASK_ENTER)
-        if ask_cb is None:
+        if not isinstance(ask_cb, AskCallback):
             await query.answer("Invalid data")
             return
         window_id = ask_cb.window_id
@@ -602,7 +610,7 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     # Interactive UI: Space
     elif data.startswith(CB_ASK_SPACE):
         ask_cb = parse_ask(data, CB_ASK_SPACE)
-        if ask_cb is None:
+        if not isinstance(ask_cb, AskCallback):
             await query.answer("Invalid data")
             return
         window_id = ask_cb.window_id
@@ -619,7 +627,7 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     # Interactive UI: Tab
     elif data.startswith(CB_ASK_TAB):
         ask_cb = parse_ask(data, CB_ASK_TAB)
-        if ask_cb is None:
+        if not isinstance(ask_cb, AskCallback):
             await query.answer("Invalid data")
             return
         window_id = ask_cb.window_id
@@ -634,7 +642,7 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     # Interactive UI: refresh display
     elif data.startswith(CB_ASK_REFRESH):
         ask_cb = parse_ask(data, CB_ASK_REFRESH)
-        if ask_cb is None:
+        if not isinstance(ask_cb, AskCallback):
             await query.answer("Invalid data")
             return
         window_id = ask_cb.window_id
@@ -645,7 +653,7 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     # Screenshot quick keys: send key to tmux window
     elif data.startswith(CB_KEYS_PREFIX):
         key_cb = parse_key(data)
-        if key_cb is None:
+        if not isinstance(key_cb, KeyCallback):
             await query.answer("Invalid data")
             return
         key_id = key_cb.key_id
