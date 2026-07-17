@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "gitCommitHash": "2f85b4d1ed9e922f9a53c42f997310f231bf7b7a",
-  "generatedAt": "2026-07-17T10:33:04.752Z",
+  "generatedAt": "2026-07-17T13:56:19.466Z",
   "files": {
     ".env.example": {
       "filePath": ".env.example",
@@ -85,222 +85,8 @@
     },
     "src/ccbot/bot.py": {
       "filePath": "src/ccbot/bot.py",
-      "contentHash": "58a4d2529c824a3cd98ce17e13d15db097b0e731038caeed264461548700d408",
+      "contentHash": "e936a882977d60e8a5f0a40074d3db0f404ec1a88dc74ba47fe21343f26014f5",
       "functions": [
-        {
-          "name": "is_user_allowed",
-          "params": [
-            "user_id"
-          ],
-          "returnType": "bool",
-          "exported": true,
-          "lineCount": 2
-        },
-        {
-          "name": "_get_thread_id",
-          "params": [
-            "update"
-          ],
-          "returnType": "int | None",
-          "exported": true,
-          "lineCount": 11
-        },
-        {
-          "name": "start_command",
-          "params": [
-            "update",
-            "context"
-          ],
-          "returnType": "None",
-          "exported": true,
-          "lineCount": 15
-        },
-        {
-          "name": "history_command",
-          "params": [
-            "update",
-            "context"
-          ],
-          "returnType": "None",
-          "exported": true,
-          "lineCount": 15
-        },
-        {
-          "name": "screenshot_command",
-          "params": [
-            "update",
-            "context"
-          ],
-          "returnType": "None",
-          "exported": true,
-          "lineCount": 34
-        },
-        {
-          "name": "unbind_command",
-          "params": [
-            "update",
-            "context"
-          ],
-          "returnType": "None",
-          "exported": true,
-          "lineCount": 28
-        },
-        {
-          "name": "esc_command",
-          "params": [
-            "update",
-            "context"
-          ],
-          "returnType": "None",
-          "exported": true,
-          "lineCount": 23
-        },
-        {
-          "name": "usage_command",
-          "params": [
-            "update",
-            "context"
-          ],
-          "returnType": "None",
-          "exported": true,
-          "lineCount": 45
-        },
-        {
-          "name": "_build_screenshot_keyboard",
-          "params": [
-            "window_id"
-          ],
-          "returnType": "InlineKeyboardMarkup",
-          "exported": true,
-          "lineCount": 22
-        },
-        {
-          "name": "topic_closed_handler",
-          "params": [
-            "update",
-            "context"
-          ],
-          "returnType": "None",
-          "exported": true,
-          "lineCount": 38
-        },
-        {
-          "name": "topic_edited_handler",
-          "params": [
-            "update",
-            "context"
-          ],
-          "returnType": "None",
-          "exported": true,
-          "lineCount": 39
-        },
-        {
-          "name": "forward_command_handler",
-          "params": [
-            "update",
-            "context"
-          ],
-          "returnType": "None",
-          "exported": true,
-          "lineCount": 56
-        },
-        {
-          "name": "unsupported_content_handler",
-          "params": [
-            "update",
-            "_context"
-          ],
-          "returnType": "None",
-          "exported": true,
-          "lineCount": 15
-        },
-        {
-          "name": "photo_handler",
-          "params": [
-            "update",
-            "context"
-          ],
-          "returnType": "None",
-          "exported": true,
-          "lineCount": 72
-        },
-        {
-          "name": "voice_handler",
-          "params": [
-            "update",
-            "context"
-          ],
-          "returnType": "None",
-          "exported": true,
-          "lineCount": 77
-        },
-        {
-          "name": "_cancel_bash_capture",
-          "params": [
-            "user_id",
-            "thread_id"
-          ],
-          "returnType": "None",
-          "exported": true,
-          "lineCount": 6
-        },
-        {
-          "name": "_capture_bash_output",
-          "params": [
-            "bot",
-            "user_id",
-            "thread_id",
-            "window_id",
-            "command"
-          ],
-          "returnType": "None",
-          "exported": true,
-          "lineCount": 78
-        },
-        {
-          "name": "text_handler",
-          "params": [
-            "update",
-            "context"
-          ],
-          "returnType": "None",
-          "exported": true,
-          "lineCount": 206
-        },
-        {
-          "name": "_create_and_bind_window",
-          "params": [
-            "query",
-            "context",
-            "user",
-            "selected_path",
-            "pending_thread_id",
-            "resume_session_id"
-          ],
-          "returnType": "None",
-          "exported": true,
-          "lineCount": 133
-        },
-        {
-          "name": "callback_handler",
-          "params": [
-            "update",
-            "context"
-          ],
-          "returnType": "None",
-          "exported": true,
-          "lineCount": 578
-        },
-        {
-          "name": "handle_new_message",
-          "params": [
-            "msg",
-            "bot"
-          ],
-          "returnType": "None",
-          "exported": true,
-          "lineCount": 92
-        },
         {
           "name": "post_init",
           "params": [
@@ -336,44 +122,15 @@
           ]
         },
         {
-          "source": "io",
-          "specifiers": [
-            "io"
-          ]
-        },
-        {
           "source": "logging",
           "specifiers": [
             "logging"
           ]
         },
         {
-          "source": "time",
-          "specifiers": [
-            "time"
-          ]
-        },
-        {
-          "source": "pathlib",
-          "specifiers": [
-            "Path"
-          ]
-        },
-        {
           "source": "telegram",
           "specifiers": [
-            "Bot",
-            "BotCommand",
-            "InlineKeyboardButton",
-            "InlineKeyboardMarkup",
-            "InputMediaDocument",
-            "Update"
-          ]
-        },
-        {
-          "source": "telegram.constants",
-          "specifiers": [
-            "ChatAction"
+            "BotCommand"
           ]
         },
         {
@@ -383,7 +140,6 @@
             "Application",
             "CallbackQueryHandler",
             "CommandHandler",
-            "ContextTypes",
             "MessageHandler",
             "filters"
           ]
@@ -395,120 +151,57 @@
           ]
         },
         {
-          "source": ".handlers.callback_data",
+          "source": ".handlers.auth",
           "specifiers": [
-            "CB_ASK_DOWN",
-            "CB_ASK_ENTER",
-            "CB_ASK_ESC",
-            "CB_ASK_LEFT",
-            "CB_ASK_REFRESH",
-            "CB_ASK_RIGHT",
-            "CB_ASK_SPACE",
-            "CB_ASK_TAB",
-            "CB_ASK_UP",
-            "CB_DIR_CANCEL",
-            "CB_DIR_CONFIRM",
-            "CB_DIR_PAGE",
-            "CB_DIR_SELECT",
-            "CB_DIR_UP",
-            "CB_HISTORY_NEXT",
-            "CB_HISTORY_PREV",
-            "CB_SESSION_CANCEL",
-            "CB_SESSION_NEW",
-            "CB_SESSION_SELECT",
-            "CB_KEYS_PREFIX",
-            "CB_SCREENSHOT_REFRESH",
-            "CB_WIN_BIND",
-            "CB_WIN_CANCEL",
-            "CB_WIN_NEW"
+            "get_thread_id",
+            "is_user_allowed"
           ]
         },
         {
-          "source": ".handlers.directory_browser",
+          "source": ".handlers.callback_router",
           "specifiers": [
-            "BROWSE_DIRS_KEY",
-            "BROWSE_PAGE_KEY",
-            "BROWSE_PATH_KEY",
-            "SESSIONS_KEY",
-            "STATE_BROWSING_DIRECTORY",
-            "STATE_KEY",
-            "STATE_SELECTING_SESSION",
-            "STATE_SELECTING_WINDOW",
-            "UNBOUND_WINDOWS_KEY",
-            "build_directory_browser",
-            "build_session_picker",
-            "build_window_picker",
-            "clear_browse_state",
-            "clear_session_picker_state",
-            "clear_window_picker_state"
+            "callback_handler"
           ]
         },
         {
-          "source": ".handlers.cleanup",
+          "source": ".handlers.command_handlers",
           "specifiers": [
-            "clear_topic_state"
+            "esc_command",
+            "forward_command_handler",
+            "history_command",
+            "screenshot_command",
+            "start_command",
+            "topic_closed_handler",
+            "topic_edited_handler",
+            "unbind_command",
+            "unsupported_content_handler",
+            "usage_command"
           ]
         },
         {
-          "source": ".handlers.history",
+          "source": ".handlers.message_handlers",
           "specifiers": [
-            "send_history"
-          ]
-        },
-        {
-          "source": ".handlers.interactive_ui",
-          "specifiers": [
-            "INTERACTIVE_TOOL_NAMES",
-            "clear_interactive_mode",
-            "clear_interactive_msg",
-            "get_interactive_msg_id",
-            "get_interactive_window",
-            "handle_interactive_ui",
-            "set_interactive_mode"
+            "photo_handler",
+            "text_handler",
+            "voice_handler"
           ]
         },
         {
           "source": ".handlers.message_queue",
           "specifiers": [
-            "clear_status_msg_info",
-            "enqueue_content_message",
-            "enqueue_status_update",
-            "get_message_queue",
             "shutdown_workers"
           ]
         },
         {
-          "source": ".handlers.message_sender",
+          "source": ".handlers.notifications",
           "specifiers": [
-            "NO_LINK_PREVIEW",
-            "safe_edit",
-            "safe_reply",
-            "safe_send",
-            "send_with_fallback"
-          ]
-        },
-        {
-          "source": ".markdown_v2",
-          "specifiers": [
-            "convert_markdown"
-          ]
-        },
-        {
-          "source": ".handlers.response_builder",
-          "specifiers": [
-            "build_response_parts"
+            "handle_new_message"
           ]
         },
         {
           "source": ".handlers.status_polling",
           "specifiers": [
             "status_poll_loop"
-          ]
-        },
-        {
-          "source": ".screenshot",
-          "specifiers": [
-            "text_to_image"
           ]
         },
         {
@@ -525,64 +218,18 @@
           ]
         },
         {
-          "source": ".terminal_parser",
-          "specifiers": [
-            "extract_bash_output",
-            "is_interactive_ui"
-          ]
-        },
-        {
-          "source": ".tmux_manager",
-          "specifiers": [
-            "tmux_manager"
-          ]
-        },
-        {
           "source": ".transcribe",
           "specifiers": [
             "close_transcribe_client"
           ]
-        },
-        {
-          "source": ".transcribe",
-          "specifiers": [
-            "transcribe_voice"
-          ]
-        },
-        {
-          "source": ".utils",
-          "specifiers": [
-            "ccbot_dir"
-          ]
         }
       ],
       "exports": [
-        "is_user_allowed",
-        "_get_thread_id",
-        "start_command",
-        "history_command",
-        "screenshot_command",
-        "unbind_command",
-        "esc_command",
-        "usage_command",
-        "_build_screenshot_keyboard",
-        "topic_closed_handler",
-        "topic_edited_handler",
-        "forward_command_handler",
-        "unsupported_content_handler",
-        "photo_handler",
-        "voice_handler",
-        "_cancel_bash_capture",
-        "_capture_bash_output",
-        "text_handler",
-        "_create_and_bind_window",
-        "callback_handler",
-        "handle_new_message",
         "post_init",
         "post_shutdown",
         "create_bot"
       ],
-      "totalLines": 1961,
+      "totalLines": 220,
       "hasStructuralAnalysis": true
     },
     "src/ccbot/config.py": {
@@ -681,12 +328,57 @@
     },
     "src/ccbot/handlers/__init__.py": {
       "filePath": "src/ccbot/handlers/__init__.py",
-      "contentHash": "76182150b7795e5013c46e63530050a9ee9741ff7dbad33e8db142c87b14babe",
+      "contentHash": "bba2bdeb952083a00bea184bc53e0c728c8beb51d828133d15e92e5d9e4a8499",
       "functions": [],
       "classes": [],
       "imports": [],
       "exports": [],
-      "totalLines": 13,
+      "totalLines": 21,
+      "hasStructuralAnalysis": true
+    },
+    "src/ccbot/handlers/auth.py": {
+      "filePath": "src/ccbot/handlers/auth.py",
+      "contentHash": "157ae80f06bcbdc2103df732fbe7db611dc865ffeefd354460a4c2dcf2010c2e",
+      "functions": [
+        {
+          "name": "is_user_allowed",
+          "params": [
+            "user_id"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "get_thread_id",
+          "params": [
+            "update"
+          ],
+          "returnType": "int | None",
+          "exported": true,
+          "lineCount": 11
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "telegram",
+          "specifiers": [
+            "Update"
+          ]
+        },
+        {
+          "source": "..config",
+          "specifiers": [
+            "config"
+          ]
+        }
+      ],
+      "exports": [
+        "is_user_allowed",
+        "get_thread_id"
+      ],
+      "totalLines": 30,
       "hasStructuralAnalysis": true
     },
     "src/ccbot/handlers/callback_data.py": {
@@ -697,6 +389,173 @@
       "imports": [],
       "exports": [],
       "totalLines": 52,
+      "hasStructuralAnalysis": true
+    },
+    "src/ccbot/handlers/callback_router.py": {
+      "filePath": "src/ccbot/handlers/callback_router.py",
+      "contentHash": "4ed263436983d8c9b618b1aa13b8b1e37e52240b4386ebcd03b16965f02077bc",
+      "functions": [
+        {
+          "name": "callback_handler",
+          "params": [
+            "update",
+            "context"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 578
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "asyncio",
+          "specifiers": [
+            "asyncio"
+          ]
+        },
+        {
+          "source": "io",
+          "specifiers": [
+            "io"
+          ]
+        },
+        {
+          "source": "logging",
+          "specifiers": [
+            "logging"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        },
+        {
+          "source": "telegram",
+          "specifiers": [
+            "InputMediaDocument",
+            "Update"
+          ]
+        },
+        {
+          "source": "telegram.ext",
+          "specifiers": [
+            "ContextTypes"
+          ]
+        },
+        {
+          "source": "..screenshot",
+          "specifiers": [
+            "text_to_image"
+          ]
+        },
+        {
+          "source": "..session",
+          "specifiers": [
+            "session_manager"
+          ]
+        },
+        {
+          "source": "..tmux_manager",
+          "specifiers": [
+            "tmux_manager"
+          ]
+        },
+        {
+          "source": ".auth",
+          "specifiers": [
+            "get_thread_id",
+            "is_user_allowed"
+          ]
+        },
+        {
+          "source": ".callback_data",
+          "specifiers": [
+            "CB_ASK_DOWN",
+            "CB_ASK_ENTER",
+            "CB_ASK_ESC",
+            "CB_ASK_LEFT",
+            "CB_ASK_REFRESH",
+            "CB_ASK_RIGHT",
+            "CB_ASK_SPACE",
+            "CB_ASK_TAB",
+            "CB_ASK_UP",
+            "CB_DIR_CANCEL",
+            "CB_DIR_CONFIRM",
+            "CB_DIR_PAGE",
+            "CB_DIR_SELECT",
+            "CB_DIR_UP",
+            "CB_HISTORY_NEXT",
+            "CB_HISTORY_PREV",
+            "CB_KEYS_PREFIX",
+            "CB_SCREENSHOT_REFRESH",
+            "CB_SESSION_CANCEL",
+            "CB_SESSION_NEW",
+            "CB_SESSION_SELECT",
+            "CB_WIN_BIND",
+            "CB_WIN_CANCEL",
+            "CB_WIN_NEW"
+          ]
+        },
+        {
+          "source": ".directory_browser",
+          "specifiers": [
+            "BROWSE_DIRS_KEY",
+            "BROWSE_PAGE_KEY",
+            "BROWSE_PATH_KEY",
+            "SESSIONS_KEY",
+            "STATE_BROWSING_DIRECTORY",
+            "STATE_KEY",
+            "STATE_SELECTING_SESSION",
+            "UNBOUND_WINDOWS_KEY",
+            "build_directory_browser",
+            "build_session_picker",
+            "clear_browse_state",
+            "clear_session_picker_state",
+            "clear_window_picker_state"
+          ]
+        },
+        {
+          "source": ".history",
+          "specifiers": [
+            "send_history"
+          ]
+        },
+        {
+          "source": ".interactive_ui",
+          "specifiers": [
+            "clear_interactive_msg",
+            "handle_interactive_ui"
+          ]
+        },
+        {
+          "source": ".message_sender",
+          "specifiers": [
+            "safe_edit",
+            "safe_send"
+          ]
+        },
+        {
+          "source": ".screenshot_controls",
+          "specifiers": [
+            "KEY_LABELS",
+            "KEYS_SEND_MAP",
+            "build_screenshot_keyboard"
+          ]
+        },
+        {
+          "source": ".window_bind",
+          "specifiers": [
+            "create_and_bind_window"
+          ]
+        }
+      ],
+      "exports": [
+        "callback_handler"
+      ],
+      "totalLines": 653,
       "hasStructuralAnalysis": true
     },
     "src/ccbot/handlers/cleanup.py": {
@@ -750,9 +609,223 @@
       "totalLines": 50,
       "hasStructuralAnalysis": true
     },
+    "src/ccbot/handlers/command_handlers.py": {
+      "filePath": "src/ccbot/handlers/command_handlers.py",
+      "contentHash": "52bdd8d1f97fb74f1d49295a15be8c7b25bf3a21f0943a06244b0fbc897168ac",
+      "functions": [
+        {
+          "name": "start_command",
+          "params": [
+            "update",
+            "context"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 15
+        },
+        {
+          "name": "history_command",
+          "params": [
+            "update",
+            "context"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 15
+        },
+        {
+          "name": "screenshot_command",
+          "params": [
+            "update",
+            "context"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 34
+        },
+        {
+          "name": "unbind_command",
+          "params": [
+            "update",
+            "context"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 28
+        },
+        {
+          "name": "esc_command",
+          "params": [
+            "update",
+            "context"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 23
+        },
+        {
+          "name": "usage_command",
+          "params": [
+            "update",
+            "context"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 45
+        },
+        {
+          "name": "topic_closed_handler",
+          "params": [
+            "update",
+            "context"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 38
+        },
+        {
+          "name": "topic_edited_handler",
+          "params": [
+            "update",
+            "context"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 39
+        },
+        {
+          "name": "forward_command_handler",
+          "params": [
+            "update",
+            "context"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 56
+        },
+        {
+          "name": "unsupported_content_handler",
+          "params": [
+            "update",
+            "_context"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 15
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "asyncio",
+          "specifiers": [
+            "asyncio"
+          ]
+        },
+        {
+          "source": "io",
+          "specifiers": [
+            "io"
+          ]
+        },
+        {
+          "source": "logging",
+          "specifiers": [
+            "logging"
+          ]
+        },
+        {
+          "source": "telegram",
+          "specifiers": [
+            "Update"
+          ]
+        },
+        {
+          "source": "telegram.constants",
+          "specifiers": [
+            "ChatAction"
+          ]
+        },
+        {
+          "source": "telegram.ext",
+          "specifiers": [
+            "ContextTypes"
+          ]
+        },
+        {
+          "source": "..session",
+          "specifiers": [
+            "session_manager"
+          ]
+        },
+        {
+          "source": "..screenshot",
+          "specifiers": [
+            "text_to_image"
+          ]
+        },
+        {
+          "source": "..tmux_manager",
+          "specifiers": [
+            "tmux_manager"
+          ]
+        },
+        {
+          "source": ".auth",
+          "specifiers": [
+            "get_thread_id",
+            "is_user_allowed"
+          ]
+        },
+        {
+          "source": ".cleanup",
+          "specifiers": [
+            "clear_topic_state"
+          ]
+        },
+        {
+          "source": ".directory_browser",
+          "specifiers": [
+            "clear_browse_state"
+          ]
+        },
+        {
+          "source": ".history",
+          "specifiers": [
+            "send_history"
+          ]
+        },
+        {
+          "source": ".message_sender",
+          "specifiers": [
+            "safe_reply"
+          ]
+        },
+        {
+          "source": ".screenshot_controls",
+          "specifiers": [
+            "build_screenshot_keyboard"
+          ]
+        }
+      ],
+      "exports": [
+        "start_command",
+        "history_command",
+        "screenshot_command",
+        "unbind_command",
+        "esc_command",
+        "usage_command",
+        "topic_closed_handler",
+        "topic_edited_handler",
+        "forward_command_handler",
+        "unsupported_content_handler"
+      ],
+      "totalLines": 359,
+      "hasStructuralAnalysis": true
+    },
     "src/ccbot/handlers/directory_browser.py": {
       "filePath": "src/ccbot/handlers/directory_browser.py",
-      "contentHash": "0b44c1f4dea5f6fbf4961b71078db15e966e1bbea32a50f6e9ed4c6bcd113daa",
+      "contentHash": "5a91ca8b2110b0950532d128836967d9071bcb48b02d6b6c8b6d85c9ce6decec",
       "functions": [
         {
           "name": "clear_browse_state",
@@ -1144,9 +1217,213 @@
       "totalLines": 274,
       "hasStructuralAnalysis": true
     },
+    "src/ccbot/handlers/message_handlers.py": {
+      "filePath": "src/ccbot/handlers/message_handlers.py",
+      "contentHash": "2e0e128b442c62bd3b8a1a59c4dca93a793becc1b41a4d31a3b577bfa9a3b8ef",
+      "functions": [
+        {
+          "name": "photo_handler",
+          "params": [
+            "update",
+            "context"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 72
+        },
+        {
+          "name": "voice_handler",
+          "params": [
+            "update",
+            "context"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 77
+        },
+        {
+          "name": "cancel_bash_capture",
+          "params": [
+            "user_id",
+            "thread_id"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "capture_bash_output",
+          "params": [
+            "bot",
+            "user_id",
+            "thread_id",
+            "window_id",
+            "command"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 78
+        },
+        {
+          "name": "text_handler",
+          "params": [
+            "update",
+            "context"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 204
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "asyncio",
+          "specifiers": [
+            "asyncio"
+          ]
+        },
+        {
+          "source": "logging",
+          "specifiers": [
+            "logging"
+          ]
+        },
+        {
+          "source": "time",
+          "specifiers": [
+            "time"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        },
+        {
+          "source": "telegram",
+          "specifiers": [
+            "Bot",
+            "Update"
+          ]
+        },
+        {
+          "source": "telegram.constants",
+          "specifiers": [
+            "ChatAction"
+          ]
+        },
+        {
+          "source": "telegram.ext",
+          "specifiers": [
+            "ContextTypes"
+          ]
+        },
+        {
+          "source": "..config",
+          "specifiers": [
+            "config"
+          ]
+        },
+        {
+          "source": "..markdown_v2",
+          "specifiers": [
+            "convert_markdown"
+          ]
+        },
+        {
+          "source": "..session",
+          "specifiers": [
+            "session_manager"
+          ]
+        },
+        {
+          "source": "..terminal_parser",
+          "specifiers": [
+            "extract_bash_output",
+            "is_interactive_ui"
+          ]
+        },
+        {
+          "source": "..tmux_manager",
+          "specifiers": [
+            "tmux_manager"
+          ]
+        },
+        {
+          "source": "..transcribe",
+          "specifiers": [
+            "transcribe_voice"
+          ]
+        },
+        {
+          "source": "..utils",
+          "specifiers": [
+            "ccbot_dir"
+          ]
+        },
+        {
+          "source": ".auth",
+          "specifiers": [
+            "get_thread_id",
+            "is_user_allowed"
+          ]
+        },
+        {
+          "source": ".directory_browser",
+          "specifiers": [
+            "BROWSE_DIRS_KEY",
+            "BROWSE_PAGE_KEY",
+            "BROWSE_PATH_KEY",
+            "STATE_BROWSING_DIRECTORY",
+            "STATE_KEY",
+            "STATE_SELECTING_SESSION",
+            "STATE_SELECTING_WINDOW",
+            "UNBOUND_WINDOWS_KEY",
+            "build_directory_browser",
+            "build_window_picker",
+            "clear_browse_state",
+            "clear_session_picker_state",
+            "clear_window_picker_state"
+          ]
+        },
+        {
+          "source": ".interactive_ui",
+          "specifiers": [
+            "get_interactive_window",
+            "handle_interactive_ui"
+          ]
+        },
+        {
+          "source": ".message_queue",
+          "specifiers": [
+            "clear_status_msg_info",
+            "enqueue_status_update"
+          ]
+        },
+        {
+          "source": ".message_sender",
+          "specifiers": [
+            "NO_LINK_PREVIEW",
+            "safe_reply",
+            "send_with_fallback"
+          ]
+        }
+      ],
+      "exports": [
+        "photo_handler",
+        "voice_handler",
+        "cancel_bash_capture",
+        "capture_bash_output",
+        "text_handler"
+      ],
+      "totalLines": 511,
+      "hasStructuralAnalysis": true
+    },
     "src/ccbot/handlers/message_queue.py": {
       "filePath": "src/ccbot/handlers/message_queue.py",
-      "contentHash": "d345adbf12f5b8ca21773ab154e3cea3b6125016b824e4678527270b39851fd6",
+      "contentHash": "ce70192eb7287d804ad82e68b54f83d0fcc348c4e99ff758aab216a9f110293f",
       "functions": [
         {
           "name": "_ensure_formatted",
@@ -1257,7 +1534,7 @@
           ],
           "returnType": "None",
           "exported": true,
-          "lineCount": 89
+          "lineCount": 86
         },
         {
           "name": "_convert_status_to_content",
@@ -1281,7 +1558,7 @@
           ],
           "returnType": "None",
           "exported": true,
-          "lineCount": 72
+          "lineCount": 68
         },
         {
           "name": "_do_send_status_message",
@@ -1347,7 +1624,7 @@
           ],
           "returnType": "None",
           "exported": true,
-          "lineCount": 36
+          "lineCount": 35
         },
         {
           "name": "clear_status_msg_info",
@@ -1504,7 +1781,7 @@
         "clear_tool_msg_ids_for_topic",
         "shutdown_workers"
       ],
-      "totalLines": 746,
+      "totalLines": 738,
       "hasStructuralAnalysis": true
     },
     "src/ccbot/handlers/message_sender.py": {
@@ -1644,6 +1921,96 @@
       "totalLines": 199,
       "hasStructuralAnalysis": true
     },
+    "src/ccbot/handlers/notifications.py": {
+      "filePath": "src/ccbot/handlers/notifications.py",
+      "contentHash": "9cd602d893125a8980bd051d3b905108b35e2f5afb9ea260d404570c6dc8e8b0",
+      "functions": [
+        {
+          "name": "handle_new_message",
+          "params": [
+            "msg",
+            "bot"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 90
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "asyncio",
+          "specifiers": [
+            "asyncio"
+          ]
+        },
+        {
+          "source": "logging",
+          "specifiers": [
+            "logging"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        },
+        {
+          "source": "telegram",
+          "specifiers": [
+            "Bot"
+          ]
+        },
+        {
+          "source": "..config",
+          "specifiers": [
+            "config"
+          ]
+        },
+        {
+          "source": "..session",
+          "specifiers": [
+            "session_manager"
+          ]
+        },
+        {
+          "source": "..session_monitor",
+          "specifiers": [
+            "NewMessage"
+          ]
+        },
+        {
+          "source": ".interactive_ui",
+          "specifiers": [
+            "INTERACTIVE_TOOL_NAMES",
+            "clear_interactive_mode",
+            "clear_interactive_msg",
+            "get_interactive_msg_id",
+            "handle_interactive_ui",
+            "set_interactive_mode"
+          ]
+        },
+        {
+          "source": ".message_queue",
+          "specifiers": [
+            "enqueue_content_message",
+            "get_message_queue"
+          ]
+        },
+        {
+          "source": ".response_builder",
+          "specifiers": [
+            "build_response_parts"
+          ]
+        }
+      ],
+      "exports": [
+        "handle_new_message"
+      ],
+      "totalLines": 122,
+      "hasStructuralAnalysis": true
+    },
     "src/ccbot/handlers/response_builder.py": {
       "filePath": "src/ccbot/handlers/response_builder.py",
       "contentHash": "1269e88a24c19f001132e821bbfaf4624dfe9bc0872030257b18d64da4c3c7a3",
@@ -1688,9 +2055,46 @@
       "totalLines": 98,
       "hasStructuralAnalysis": true
     },
+    "src/ccbot/handlers/screenshot_controls.py": {
+      "filePath": "src/ccbot/handlers/screenshot_controls.py",
+      "contentHash": "8078f9980cd785261e9ddf83590b42866e46a720a939eadf96bddf1b38712da6",
+      "functions": [
+        {
+          "name": "build_screenshot_keyboard",
+          "params": [
+            "window_id"
+          ],
+          "returnType": "InlineKeyboardMarkup",
+          "exported": true,
+          "lineCount": 22
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "telegram",
+          "specifiers": [
+            "InlineKeyboardButton",
+            "InlineKeyboardMarkup"
+          ]
+        },
+        {
+          "source": ".callback_data",
+          "specifiers": [
+            "CB_KEYS_PREFIX",
+            "CB_SCREENSHOT_REFRESH"
+          ]
+        }
+      ],
+      "exports": [
+        "build_screenshot_keyboard"
+      ],
+      "totalLines": 62,
+      "hasStructuralAnalysis": true
+    },
     "src/ccbot/handlers/status_polling.py": {
       "filePath": "src/ccbot/handlers/status_polling.py",
-      "contentHash": "12bf1023adb3ec33df49150c378723c93f92a9ce97a732ebd4b82bed359f3778",
+      "contentHash": "f680ce303c0028ba9ee30f5cbc54b010a92223bd945a448fd2716247fc9ad644",
       "functions": [
         {
           "name": "update_status_message",
@@ -1712,7 +2116,7 @@
           ],
           "returnType": "None",
           "exported": true,
-          "lineCount": 85
+          "lineCount": 83
         }
       ],
       "classes": [],
@@ -1792,7 +2196,66 @@
         "update_status_message",
         "status_poll_loop"
       ],
-      "totalLines": 207,
+      "totalLines": 205,
+      "hasStructuralAnalysis": true
+    },
+    "src/ccbot/handlers/window_bind.py": {
+      "filePath": "src/ccbot/handlers/window_bind.py",
+      "contentHash": "2a3dee8f6c7907d0ecf9a7b3639763c360ea81f826a85eb53d2095481f8b6a20",
+      "functions": [
+        {
+          "name": "create_and_bind_window",
+          "params": [
+            "query",
+            "context",
+            "user",
+            "selected_path",
+            "pending_thread_id",
+            "resume_session_id"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 128
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "logging",
+          "specifiers": [
+            "logging"
+          ]
+        },
+        {
+          "source": "telegram.ext",
+          "specifiers": [
+            "ContextTypes"
+          ]
+        },
+        {
+          "source": "..session",
+          "specifiers": [
+            "session_manager"
+          ]
+        },
+        {
+          "source": "..tmux_manager",
+          "specifiers": [
+            "tmux_manager"
+          ]
+        },
+        {
+          "source": ".message_sender",
+          "specifiers": [
+            "safe_edit",
+            "safe_send"
+          ]
+        }
+      ],
+      "exports": [
+        "create_and_bind_window"
+      ],
+      "totalLines": 147,
       "hasStructuralAnalysis": true
     },
     "src/ccbot/hook.py": {
@@ -2284,7 +2747,7 @@
     },
     "src/ccbot/session.py": {
       "filePath": "src/ccbot/session.py",
-      "contentHash": "24e9e01bdb58bf8f505ded3fbddcb1f29621931a0262a67bed0fcbb428c092e8",
+      "contentHash": "ee20f8643a7a56c8cf7d175cfe9fe05901fca8c312cfb723f24a582996fdfb4c",
       "functions": [],
       "classes": [
         {
@@ -2357,7 +2820,7 @@
             "group_chat_ids"
           ],
           "exported": true,
-          "lineCount": 930
+          "lineCount": 922
         }
       ],
       "imports": [
@@ -2450,12 +2913,12 @@
         "ClaudeSession",
         "SessionManager"
       ],
-      "totalLines": 1019,
+      "totalLines": 1011,
       "hasStructuralAnalysis": true
     },
     "src/ccbot/session_monitor.py": {
       "filePath": "src/ccbot/session_monitor.py",
-      "contentHash": "f1e39f2b393482bd18e156947852526486b7fe20b760ff082b82e1ca5d5e942d",
+      "contentHash": "c3fc6fc644692da5344f09e7992a3e388418a17b8af65a629411da469321d1bd",
       "functions": [],
       "classes": [
         {
@@ -2502,7 +2965,7 @@
           ],
           "properties": [],
           "exported": true,
-          "lineCount": 508
+          "lineCount": 507
         }
       ],
       "imports": [
@@ -2587,7 +3050,7 @@
         "NewMessage",
         "SessionMonitor"
       ],
-      "totalLines": 562,
+      "totalLines": 561,
       "hasStructuralAnalysis": true
     },
     "src/ccbot/telegram_sender.py": {
@@ -2779,7 +3242,7 @@
     },
     "src/ccbot/tmux_manager.py": {
       "filePath": "src/ccbot/tmux_manager.py",
-      "contentHash": "0682059433cc4694598776acacd29a7ad877cbf9b88b7ed0acb853e9b91eb2b0",
+      "contentHash": "580080c82415876398d02b5a70127b40d44302be9d24a397cf85b6fd36a67e26",
       "functions": [],
       "classes": [
         {
@@ -3519,7 +3982,7 @@
     },
     "tests/ccbot/test_forward_command.py": {
       "filePath": "tests/ccbot/test_forward_command.py",
-      "contentHash": "7e3a7621e6d0e1c1422d4a33ad42292dd5a3f0161b30d8481725cbde555da929",
+      "contentHash": "2e9996002a8e882e15aa3a4befadc9d629da4441e7c61dbca4910904f6487132",
       "functions": [
         {
           "name": "_make_update",
@@ -3574,7 +4037,7 @@
         "_make_context",
         "TestForwardCommand"
       ],
-      "totalLines": 105,
+      "totalLines": 108,
       "hasStructuralAnalysis": true
     },
     "tests/ccbot/test_hook.py": {
@@ -3981,7 +4444,7 @@
     },
     "tests/ccbot/test_session_monitor.py": {
       "filePath": "tests/ccbot/test_session_monitor.py",
-      "contentHash": "31a61221b8d44bf6c506c3aa1969e6e740b7ea26bdab4854ed6c8cde0fe796e7",
+      "contentHash": "ddf2cbb099a763eb0061005b5361c0d698fc50a380f745ce117859fdb89aae45",
       "functions": [
         {
           "name": "_write_jsonl",

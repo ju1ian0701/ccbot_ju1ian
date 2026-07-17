@@ -52,7 +52,7 @@
                   {
                       "path":  "src/ccbot/bot.py",
                       "language":  "python",
-                      "sizeLines":  1960,
+                      "sizeLines":  219,
                       "fileCategory":  "code"
                   },
                   {
@@ -88,7 +88,13 @@
                   {
                       "path":  "src/ccbot/handlers/__init__.py",
                       "language":  "python",
-                      "sizeLines":  12,
+                      "sizeLines":  20,
+                      "fileCategory":  "code"
+                  },
+                  {
+                      "path":  "src/ccbot/handlers/auth.py",
+                      "language":  "python",
+                      "sizeLines":  29,
                       "fileCategory":  "code"
                   },
                   {
@@ -98,9 +104,21 @@
                       "fileCategory":  "code"
                   },
                   {
+                      "path":  "src/ccbot/handlers/callback_router.py",
+                      "language":  "python",
+                      "sizeLines":  652,
+                      "fileCategory":  "code"
+                  },
+                  {
                       "path":  "src/ccbot/handlers/cleanup.py",
                       "language":  "python",
                       "sizeLines":  49,
+                      "fileCategory":  "code"
+                  },
+                  {
+                      "path":  "src/ccbot/handlers/command_handlers.py",
+                      "language":  "python",
+                      "sizeLines":  358,
                       "fileCategory":  "code"
                   },
                   {
@@ -122,9 +140,15 @@
                       "fileCategory":  "code"
                   },
                   {
+                      "path":  "src/ccbot/handlers/message_handlers.py",
+                      "language":  "python",
+                      "sizeLines":  510,
+                      "fileCategory":  "code"
+                  },
+                  {
                       "path":  "src/ccbot/handlers/message_queue.py",
                       "language":  "python",
-                      "sizeLines":  745,
+                      "sizeLines":  737,
                       "fileCategory":  "code"
                   },
                   {
@@ -134,15 +158,33 @@
                       "fileCategory":  "code"
                   },
                   {
+                      "path":  "src/ccbot/handlers/notifications.py",
+                      "language":  "python",
+                      "sizeLines":  121,
+                      "fileCategory":  "code"
+                  },
+                  {
                       "path":  "src/ccbot/handlers/response_builder.py",
                       "language":  "python",
                       "sizeLines":  97,
                       "fileCategory":  "code"
                   },
                   {
+                      "path":  "src/ccbot/handlers/screenshot_controls.py",
+                      "language":  "python",
+                      "sizeLines":  61,
+                      "fileCategory":  "code"
+                  },
+                  {
                       "path":  "src/ccbot/handlers/status_polling.py",
                       "language":  "python",
-                      "sizeLines":  206,
+                      "sizeLines":  204,
+                      "fileCategory":  "code"
+                  },
+                  {
+                      "path":  "src/ccbot/handlers/window_bind.py",
+                      "language":  "python",
+                      "sizeLines":  146,
                       "fileCategory":  "code"
                   },
                   {
@@ -178,13 +220,13 @@
                   {
                       "path":  "src/ccbot/session.py",
                       "language":  "python",
-                      "sizeLines":  1018,
+                      "sizeLines":  1010,
                       "fileCategory":  "code"
                   },
                   {
                       "path":  "src/ccbot/session_monitor.py",
                       "language":  "python",
-                      "sizeLines":  561,
+                      "sizeLines":  560,
                       "fileCategory":  "code"
                   },
                   {
@@ -256,7 +298,7 @@
                   {
                       "path":  "tests/ccbot/test_forward_command.py",
                       "language":  "python",
-                      "sizeLines":  104,
+                      "sizeLines":  107,
                       "fileCategory":  "code"
                   },
                   {
@@ -338,9 +380,9 @@
                       "fileCategory":  "code"
                   }
               ],
-    "totalFiles":  56,
+    "totalFiles":  63,
     "stats":  {
-                  "filesScanned":  56,
+                  "filesScanned":  63,
                   "byLanguage":  {
                                      "txt":  2,
                                      "toml":  1,
@@ -384,23 +426,16 @@
                                                 ],
                       "src/ccbot/bot.py":  [
                                                "src/ccbot/config.py",
-                                               "src/ccbot/handlers/callback_data.py",
-                                               "src/ccbot/handlers/cleanup.py",
-                                               "src/ccbot/handlers/directory_browser.py",
-                                               "src/ccbot/handlers/history.py",
-                                               "src/ccbot/handlers/interactive_ui.py",
+                                               "src/ccbot/handlers/auth.py",
+                                               "src/ccbot/handlers/callback_router.py",
+                                               "src/ccbot/handlers/command_handlers.py",
+                                               "src/ccbot/handlers/message_handlers.py",
                                                "src/ccbot/handlers/message_queue.py",
-                                               "src/ccbot/handlers/message_sender.py",
-                                               "src/ccbot/handlers/response_builder.py",
+                                               "src/ccbot/handlers/notifications.py",
                                                "src/ccbot/handlers/status_polling.py",
-                                               "src/ccbot/markdown_v2.py",
-                                               "src/ccbot/screenshot.py",
                                                "src/ccbot/session_monitor.py",
                                                "src/ccbot/session.py",
-                                               "src/ccbot/terminal_parser.py",
-                                               "src/ccbot/tmux_manager.py",
-                                               "src/ccbot/transcribe.py",
-                                               "src/ccbot/utils.py"
+                                               "src/ccbot/transcribe.py"
                                            ],
                       "src/ccbot/config.py":  [
                                                   "src/ccbot/utils.py"
@@ -420,13 +455,40 @@
                       "src/ccbot/handlers/__init__.py":  [
 
                                                          ],
+                      "src/ccbot/handlers/auth.py":  [
+                                                         "src/ccbot/config.py"
+                                                     ],
                       "src/ccbot/handlers/callback_data.py":  [
 
                                                               ],
+                      "src/ccbot/handlers/callback_router.py":  [
+                                                                    "src/ccbot/handlers/auth.py",
+                                                                    "src/ccbot/handlers/callback_data.py",
+                                                                    "src/ccbot/handlers/directory_browser.py",
+                                                                    "src/ccbot/handlers/history.py",
+                                                                    "src/ccbot/handlers/interactive_ui.py",
+                                                                    "src/ccbot/handlers/message_sender.py",
+                                                                    "src/ccbot/handlers/screenshot_controls.py",
+                                                                    "src/ccbot/handlers/window_bind.py",
+                                                                    "src/ccbot/screenshot.py",
+                                                                    "src/ccbot/session.py",
+                                                                    "src/ccbot/tmux_manager.py"
+                                                                ],
                       "src/ccbot/handlers/cleanup.py":  [
                                                             "src/ccbot/handlers/interactive_ui.py",
                                                             "src/ccbot/handlers/message_queue.py"
                                                         ],
+                      "src/ccbot/handlers/command_handlers.py":  [
+                                                                     "src/ccbot/handlers/auth.py",
+                                                                     "src/ccbot/handlers/cleanup.py",
+                                                                     "src/ccbot/handlers/directory_browser.py",
+                                                                     "src/ccbot/handlers/history.py",
+                                                                     "src/ccbot/handlers/message_sender.py",
+                                                                     "src/ccbot/handlers/screenshot_controls.py",
+                                                                     "src/ccbot/screenshot.py",
+                                                                     "src/ccbot/session.py",
+                                                                     "src/ccbot/tmux_manager.py"
+                                                                 ],
                       "src/ccbot/handlers/directory_browser.py":  [
                                                                       "src/ccbot/config.py",
                                                                       "src/ccbot/handlers/callback_data.py",
@@ -447,6 +509,20 @@
                                                                    "src/ccbot/terminal_parser.py",
                                                                    "src/ccbot/tmux_manager.py"
                                                                ],
+                      "src/ccbot/handlers/message_handlers.py":  [
+                                                                     "src/ccbot/config.py",
+                                                                     "src/ccbot/handlers/auth.py",
+                                                                     "src/ccbot/handlers/directory_browser.py",
+                                                                     "src/ccbot/handlers/interactive_ui.py",
+                                                                     "src/ccbot/handlers/message_queue.py",
+                                                                     "src/ccbot/handlers/message_sender.py",
+                                                                     "src/ccbot/markdown_v2.py",
+                                                                     "src/ccbot/session.py",
+                                                                     "src/ccbot/terminal_parser.py",
+                                                                     "src/ccbot/tmux_manager.py",
+                                                                     "src/ccbot/transcribe.py",
+                                                                     "src/ccbot/utils.py"
+                                                                 ],
                       "src/ccbot/handlers/message_queue.py":  [
                                                                   "src/ccbot/handlers/message_sender.py",
                                                                   "src/ccbot/markdown_v2.py",
@@ -458,11 +534,22 @@
                                                                    "src/ccbot/markdown_v2.py",
                                                                    "src/ccbot/transcript_parser.py"
                                                                ],
+                      "src/ccbot/handlers/notifications.py":  [
+                                                                  "src/ccbot/config.py",
+                                                                  "src/ccbot/handlers/interactive_ui.py",
+                                                                  "src/ccbot/handlers/message_queue.py",
+                                                                  "src/ccbot/handlers/response_builder.py",
+                                                                  "src/ccbot/session_monitor.py",
+                                                                  "src/ccbot/session.py"
+                                                              ],
                       "src/ccbot/handlers/response_builder.py":  [
                                                                      "src/ccbot/markdown_v2.py",
                                                                      "src/ccbot/telegram_sender.py",
                                                                      "src/ccbot/transcript_parser.py"
                                                                  ],
+                      "src/ccbot/handlers/screenshot_controls.py":  [
+                                                                        "src/ccbot/handlers/callback_data.py"
+                                                                    ],
                       "src/ccbot/handlers/status_polling.py":  [
                                                                    "src/ccbot/handlers/cleanup.py",
                                                                    "src/ccbot/handlers/interactive_ui.py",
@@ -471,6 +558,11 @@
                                                                    "src/ccbot/terminal_parser.py",
                                                                    "src/ccbot/tmux_manager.py"
                                                                ],
+                      "src/ccbot/handlers/window_bind.py":  [
+                                                                "src/ccbot/handlers/message_sender.py",
+                                                                "src/ccbot/session.py",
+                                                                "src/ccbot/tmux_manager.py"
+                                                            ],
                       "src/ccbot/hook.py":  [
                                                 "src/ccbot/utils.py"
                                             ],

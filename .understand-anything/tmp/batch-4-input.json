@@ -1,0 +1,232 @@
+{
+    "projectRoot":  "D:\\CCbot_tmux\\ccbot\\ccbot_ju1ian",
+    "batchImportData":  {
+                            "tests/ccbot/test_utils.py":  [
+
+                                                          ],
+                            "tests/ccbot/test_transcribe.py":  [
+
+                                                               ],
+                            "tests/ccbot/handlers/test_response_builder.py":  [
+
+                                                                              ],
+                            "src/ccbot/session.py":  [
+
+                                                     ],
+                            "src/ccbot/transcribe.py":  [
+
+                                                        ],
+                            "src/ccbot/transcript_parser.py":  [
+
+                                                               ],
+                            "tests/ccbot/conftest.py":  [
+
+                                                        ],
+                            "tests/ccbot/test_markdown_v2.py":  [
+
+                                                                ],
+                            "tests/ccbot/test_telegram_sender.py":  [
+
+                                                                    ],
+                            "tests/ccbot/test_config.py":  [
+
+                                                           ],
+                            "src/ccbot/utils.py":  [
+
+                                                   ],
+                            "tests/ccbot/test_forward_command.py":  [
+
+                                                                    ],
+                            "src/ccbot/telegram_sender.py":  [
+
+                                                             ],
+                            "tests/ccbot/test_session_monitor.py":  [
+
+                                                                    ],
+                            "src/ccbot/terminal_parser.py":  [
+
+                                                             ],
+                            "tests/ccbot/test_transcript_parser.py":  [
+
+                                                                      ],
+                            "tests/ccbot/test_session.py":  [
+
+                                                            ],
+                            "src/ccbot/screenshot.py":  [
+
+                                                        ],
+                            "tests/ccbot/test_monitor_state.py":  [
+
+                                                                  ],
+                            "tests/ccbot/handlers/test_interactive_ui.py":  [
+
+                                                                            ],
+                            "tests/ccbot/test_terminal_parser.py":  [
+
+                                                                    ],
+                            "tests/ccbot/test_hook.py":  [
+
+                                                         ],
+                            "src/ccbot/session_monitor.py":  [
+
+                                                             ],
+                            "tests/ccbot/handlers/test_status_polling.py":  [
+
+                                                                            ],
+                            "src/ccbot/tmux_manager.py":  [
+
+                                                          ]
+                        },
+    "batchFiles":  [
+                       {
+                           "path":  "src/ccbot/screenshot.py",
+                           "language":  "python",
+                           "sizeLines":  336,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "src/ccbot/session_monitor.py",
+                           "language":  "python",
+                           "sizeLines":  560,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "src/ccbot/session.py",
+                           "language":  "python",
+                           "sizeLines":  1010,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "src/ccbot/telegram_sender.py",
+                           "language":  "python",
+                           "sizeLines":  122,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "src/ccbot/terminal_parser.py",
+                           "language":  "python",
+                           "sizeLines":  365,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "src/ccbot/tmux_manager.py",
+                           "language":  "python",
+                           "sizeLines":  460,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "src/ccbot/transcribe.py",
+                           "language":  "python",
+                           "sizeLines":  56,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "src/ccbot/transcript_parser.py",
+                           "language":  "python",
+                           "sizeLines":  776,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "src/ccbot/utils.py",
+                           "language":  "python",
+                           "sizeLines":  95,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "tests/ccbot/conftest.py",
+                           "language":  "python",
+                           "sizeLines":  168,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "tests/ccbot/handlers/test_interactive_ui.py",
+                           "language":  "python",
+                           "sizeLines":  111,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "tests/ccbot/handlers/test_response_builder.py",
+                           "language":  "python",
+                           "sizeLines":  60,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "tests/ccbot/handlers/test_status_polling.py",
+                           "language":  "python",
+                           "sizeLines":  141,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "tests/ccbot/test_config.py",
+                           "language":  "python",
+                           "sizeLines":  119,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "tests/ccbot/test_forward_command.py",
+                           "language":  "python",
+                           "sizeLines":  107,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "tests/ccbot/test_hook.py",
+                           "language":  "python",
+                           "sizeLines":  146,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "tests/ccbot/test_markdown_v2.py",
+                           "language":  "python",
+                           "sizeLines":  58,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "tests/ccbot/test_monitor_state.py",
+                           "language":  "python",
+                           "sizeLines":  145,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "tests/ccbot/test_session_monitor.py",
+                           "language":  "python",
+                           "sizeLines":  157,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "tests/ccbot/test_session.py",
+                           "language":  "python",
+                           "sizeLines":  344,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "tests/ccbot/test_telegram_sender.py",
+                           "language":  "python",
+                           "sizeLines":  175,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "tests/ccbot/test_terminal_parser.py",
+                           "language":  "python",
+                           "sizeLines":  265,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "tests/ccbot/test_transcribe.py",
+                           "language":  "python",
+                           "sizeLines":  123,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "tests/ccbot/test_transcript_parser.py",
+                           "language":  "python",
+                           "sizeLines":  529,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "tests/ccbot/test_utils.py",
+                           "language":  "python",
+                           "sizeLines":  72,
+                           "fileCategory":  "code"
+                       }
+                   ]
+}
