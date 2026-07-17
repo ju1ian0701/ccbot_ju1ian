@@ -1,0 +1,113 @@
+{
+  "$schema": "./schema/config.schema.json",
+  "name": "ccbot-agentic-pipeline",
+  "version": "1.0.0",
+  "repository": "ju1ian0701/ccbot_ju1ian",
+  "default_branch": "main",
+  "knowledge_graph": {
+    "path": ".understand-anything/knowledge-graph.json",
+    "meta_path": ".understand-anything/meta.json",
+    "scan_path": ".understand-anything/intermediate/scan-result.json"
+  },
+  "backlog": {
+    "path": ".agentic/backlog/tasks.json"
+  },
+  "outputs": {
+    "dir": ".agentic/out",
+    "analysis_report": "analysis-report.json",
+    "analysis_markdown": "analysis-report.md",
+    "plan": "plan.json",
+    "plan_markdown": "plan.md",
+    "selected_task": "selected-task.json",
+    "implement_prompt": "implement-prompt.md",
+    "validation": "validation.json"
+  },
+  "prioritization": {
+    "priority_weights": {
+      "critical": 100,
+      "high": 70,
+      "medium": 40,
+      "low": 15
+    },
+    "graph_signals": {
+      "complex_file_bonus": 15,
+      "untested_file_bonus": 12,
+      "high_fan_in_bonus": 10,
+      "high_fan_out_bonus": 8,
+      "orphan_edge_penalty": 0,
+      "hotspot_threshold_edges": 20
+    },
+    "max_open_agent_prs": 2,
+    "prefer_ready_status": ["ready", "planned"]
+  },
+  "implementation": {
+    "branch_prefix": "agentic/",
+    "commit_prefix": "refactor(agentic):",
+    "draft_pr": true,
+    "labels": ["agentic", "refactor", "automated"],
+    "max_files_changed": 40,
+    "require_tests": true,
+    "require_ruff": true,
+    "require_pyright": true
+  },
+  "guardrails": {
+    "allowed_path_globs": [
+      "src/ccbot/**/*.py",
+      "tests/**",
+      "tests/**/*.py",
+      "doc/**/*.md",
+      "README*.md",
+      "AGENTS.md",
+      "CLAUDE.md",
+      ".agentic/**",
+      "scripts/agentic/**",
+      "scripts/**",
+      ".github/workflows/agentic-*.yml",
+      ".github/workflows/agentic-*.yaml",
+      ".grok/**",
+      ".gitignore",
+      "pyproject.toml",
+      "tests/conftest.py"
+    ],
+    "ignored_path_globs": [
+      ".understand-anything/**",
+      ".agentic/out/**",
+      ".agentic/state/**",
+      ".venv/**",
+      "uv.lock",
+      "*.egg-info/**"
+    ],
+    "blocked_path_globs": [
+      ".env",
+      ".env.*",
+      "**/*secret*",
+      "**/*credential*",
+      "**/session_map.json",
+      "**/monitor_state.json",
+      "**/state.json",
+      ".github/workflows/check.yml"
+    ],
+    "blocked_commands": [
+      "rm -rf /",
+      "git push --force",
+      "git push -f",
+      "gh secret",
+      "curl *| sh",
+      "wget *| sh"
+    ],
+    "max_loc_delta": 2000
+  },
+  "github": {
+    "issue_label_map": {
+      "high": ["priority:high", "agentic"],
+      "medium": ["priority:medium", "agentic"],
+      "low": ["priority:low", "agentic"]
+    },
+    "pr_title_template": "[agentic] {task_id}: {title}",
+    "pr_body_template_path": ".agentic/prompts/pr-body.md"
+  },
+  "triggers": {
+    "analyze_schedule": "0 6 * * 1",
+    "orchestrator_manual_only_default": true
+  }
+}

@@ -1,0 +1,1915 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/ccbot/transcript_parser.py",
+      "type": "file",
+      "name": "transcript_parser.py",
+      "filePath": "src/ccbot/transcript_parser.py",
+      "summary": "src/ccbot/transcript_parser.py (python, 776 lines)",
+      "tags": [
+        "python",
+        "file",
+        "code"
+      ],
+      "complexity": "complex",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:src/ccbot/transcript_parser.py:ParsedMessage",
+      "type": "class",
+      "name": "ParsedMessage",
+      "filePath": "src/ccbot/transcript_parser.py",
+      "summary": "Class ParsedMessage in src/ccbot/transcript_parser.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:src/ccbot/transcript_parser.py:ParsedEntry",
+      "type": "class",
+      "name": "ParsedEntry",
+      "filePath": "src/ccbot/transcript_parser.py",
+      "summary": "Class ParsedEntry in src/ccbot/transcript_parser.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:src/ccbot/transcript_parser.py:PendingToolInfo",
+      "type": "class",
+      "name": "PendingToolInfo",
+      "filePath": "src/ccbot/transcript_parser.py",
+      "summary": "Class PendingToolInfo in src/ccbot/transcript_parser.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:src/ccbot/transcript_parser.py:TranscriptParser",
+      "type": "class",
+      "name": "TranscriptParser",
+      "filePath": "src/ccbot/transcript_parser.py",
+      "summary": "Class TranscriptParser in src/ccbot/transcript_parser.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "file:src/ccbot/utils.py",
+      "type": "file",
+      "name": "utils.py",
+      "filePath": "src/ccbot/utils.py",
+      "summary": "src/ccbot/utils.py (python, 95 lines)",
+      "tags": [
+        "python",
+        "file",
+        "code"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:src/ccbot/utils.py:ccbot_dir",
+      "type": "function",
+      "name": "ccbot_dir",
+      "filePath": "src/ccbot/utils.py",
+      "summary": "Function ccbot_dir in src/ccbot/utils.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:src/ccbot/utils.py:atomic_write_json",
+      "type": "function",
+      "name": "atomic_write_json",
+      "filePath": "src/ccbot/utils.py",
+      "summary": "Function atomic_write_json in src/ccbot/utils.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:src/ccbot/utils.py:read_cwd_from_jsonl",
+      "type": "function",
+      "name": "read_cwd_from_jsonl",
+      "filePath": "src/ccbot/utils.py",
+      "summary": "Function read_cwd_from_jsonl in src/ccbot/utils.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "file:tests/ccbot/conftest.py",
+      "type": "file",
+      "name": "conftest.py",
+      "filePath": "tests/ccbot/conftest.py",
+      "summary": "tests/ccbot/conftest.py (python, 168 lines)",
+      "tags": [
+        "python",
+        "file",
+        "code"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:tests/ccbot/conftest.py:make_jsonl_entry",
+      "type": "function",
+      "name": "make_jsonl_entry",
+      "filePath": "tests/ccbot/conftest.py",
+      "summary": "Function make_jsonl_entry in tests/ccbot/conftest.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:tests/ccbot/conftest.py:make_text_block",
+      "type": "function",
+      "name": "make_text_block",
+      "filePath": "tests/ccbot/conftest.py",
+      "summary": "Function make_text_block in tests/ccbot/conftest.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:tests/ccbot/conftest.py:make_tool_use_block",
+      "type": "function",
+      "name": "make_tool_use_block",
+      "filePath": "tests/ccbot/conftest.py",
+      "summary": "Function make_tool_use_block in tests/ccbot/conftest.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:tests/ccbot/conftest.py:make_tool_result_block",
+      "type": "function",
+      "name": "make_tool_result_block",
+      "filePath": "tests/ccbot/conftest.py",
+      "summary": "Function make_tool_result_block in tests/ccbot/conftest.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:tests/ccbot/conftest.py:make_thinking_block",
+      "type": "function",
+      "name": "make_thinking_block",
+      "filePath": "tests/ccbot/conftest.py",
+      "summary": "Function make_thinking_block in tests/ccbot/conftest.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:tests/ccbot/conftest.py:sample_pane_exit_plan",
+      "type": "function",
+      "name": "sample_pane_exit_plan",
+      "filePath": "tests/ccbot/conftest.py",
+      "summary": "Function sample_pane_exit_plan in tests/ccbot/conftest.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:tests/ccbot/conftest.py:sample_pane_ask_user_multi_tab",
+      "type": "function",
+      "name": "sample_pane_ask_user_multi_tab",
+      "filePath": "tests/ccbot/conftest.py",
+      "summary": "Function sample_pane_ask_user_multi_tab in tests/ccbot/conftest.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:tests/ccbot/conftest.py:sample_pane_ask_user_single_tab",
+      "type": "function",
+      "name": "sample_pane_ask_user_single_tab",
+      "filePath": "tests/ccbot/conftest.py",
+      "summary": "Function sample_pane_ask_user_single_tab in tests/ccbot/conftest.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:tests/ccbot/conftest.py:sample_pane_permission",
+      "type": "function",
+      "name": "sample_pane_permission",
+      "filePath": "tests/ccbot/conftest.py",
+      "summary": "Function sample_pane_permission in tests/ccbot/conftest.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:tests/ccbot/conftest.py:chrome",
+      "type": "function",
+      "name": "chrome",
+      "filePath": "tests/ccbot/conftest.py",
+      "summary": "Function chrome in tests/ccbot/conftest.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:tests/ccbot/conftest.py:sample_pane_status_line",
+      "type": "function",
+      "name": "sample_pane_status_line",
+      "filePath": "tests/ccbot/conftest.py",
+      "summary": "Function sample_pane_status_line in tests/ccbot/conftest.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:tests/ccbot/conftest.py:sample_pane_settings",
+      "type": "function",
+      "name": "sample_pane_settings",
+      "filePath": "tests/ccbot/conftest.py",
+      "summary": "Function sample_pane_settings in tests/ccbot/conftest.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:tests/ccbot/conftest.py:sample_pane_no_ui",
+      "type": "function",
+      "name": "sample_pane_no_ui",
+      "filePath": "tests/ccbot/conftest.py",
+      "summary": "Function sample_pane_no_ui in tests/ccbot/conftest.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "file:tests/ccbot/handlers/test_interactive_ui.py",
+      "type": "file",
+      "name": "test_interactive_ui.py",
+      "filePath": "tests/ccbot/handlers/test_interactive_ui.py",
+      "summary": "tests/ccbot/handlers/test_interactive_ui.py (python, 111 lines)",
+      "tags": [
+        "python",
+        "file",
+        "code"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:tests/ccbot/handlers/test_interactive_ui.py:mock_bot",
+      "type": "function",
+      "name": "mock_bot",
+      "filePath": "tests/ccbot/handlers/test_interactive_ui.py",
+      "summary": "Function mock_bot in tests/ccbot/handlers/test_interactive_ui.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:tests/ccbot/handlers/test_interactive_ui.py:_clear_interactive_state",
+      "type": "function",
+      "name": "_clear_interactive_state",
+      "filePath": "tests/ccbot/handlers/test_interactive_ui.py",
+      "summary": "Function _clear_interactive_state in tests/ccbot/handlers/test_interactive_ui.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/handlers/test_interactive_ui.py:TestHandleInteractiveUI",
+      "type": "class",
+      "name": "TestHandleInteractiveUI",
+      "filePath": "tests/ccbot/handlers/test_interactive_ui.py",
+      "summary": "Class TestHandleInteractiveUI in tests/ccbot/handlers/test_interactive_ui.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/handlers/test_interactive_ui.py:TestKeyboardLayoutForSettings",
+      "type": "class",
+      "name": "TestKeyboardLayoutForSettings",
+      "filePath": "tests/ccbot/handlers/test_interactive_ui.py",
+      "summary": "Class TestKeyboardLayoutForSettings in tests/ccbot/handlers/test_interactive_ui.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "file:tests/ccbot/handlers/test_response_builder.py",
+      "type": "file",
+      "name": "test_response_builder.py",
+      "filePath": "tests/ccbot/handlers/test_response_builder.py",
+      "summary": "tests/ccbot/handlers/test_response_builder.py (python, 60 lines)",
+      "tags": [
+        "python",
+        "file",
+        "code"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/handlers/test_response_builder.py:TestBuildResponseParts",
+      "type": "class",
+      "name": "TestBuildResponseParts",
+      "filePath": "tests/ccbot/handlers/test_response_builder.py",
+      "summary": "Class TestBuildResponseParts in tests/ccbot/handlers/test_response_builder.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "file:tests/ccbot/handlers/test_status_polling.py",
+      "type": "file",
+      "name": "test_status_polling.py",
+      "filePath": "tests/ccbot/handlers/test_status_polling.py",
+      "summary": "tests/ccbot/handlers/test_status_polling.py (python, 141 lines)",
+      "tags": [
+        "python",
+        "file",
+        "code"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:tests/ccbot/handlers/test_status_polling.py:mock_bot",
+      "type": "function",
+      "name": "mock_bot",
+      "filePath": "tests/ccbot/handlers/test_status_polling.py",
+      "summary": "Function mock_bot in tests/ccbot/handlers/test_status_polling.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:tests/ccbot/handlers/test_status_polling.py:_clear_interactive_state",
+      "type": "function",
+      "name": "_clear_interactive_state",
+      "filePath": "tests/ccbot/handlers/test_status_polling.py",
+      "summary": "Function _clear_interactive_state in tests/ccbot/handlers/test_status_polling.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/handlers/test_status_polling.py:TestStatusPollerSettingsDetection",
+      "type": "class",
+      "name": "TestStatusPollerSettingsDetection",
+      "filePath": "tests/ccbot/handlers/test_status_polling.py",
+      "summary": "Class TestStatusPollerSettingsDetection in tests/ccbot/handlers/test_status_polling.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "file:tests/ccbot/test_config.py",
+      "type": "file",
+      "name": "test_config.py",
+      "filePath": "tests/ccbot/test_config.py",
+      "summary": "tests/ccbot/test_config.py (python, 119 lines)",
+      "tags": [
+        "python",
+        "file",
+        "code"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:tests/ccbot/test_config.py:_base_env",
+      "type": "function",
+      "name": "_base_env",
+      "filePath": "tests/ccbot/test_config.py",
+      "summary": "Function _base_env in tests/ccbot/test_config.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_config.py:TestConfigValid",
+      "type": "class",
+      "name": "TestConfigValid",
+      "filePath": "tests/ccbot/test_config.py",
+      "summary": "Class TestConfigValid in tests/ccbot/test_config.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_config.py:TestConfigMissingEnv",
+      "type": "class",
+      "name": "TestConfigMissingEnv",
+      "filePath": "tests/ccbot/test_config.py",
+      "summary": "Class TestConfigMissingEnv in tests/ccbot/test_config.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_config.py:TestConfigClaudeProjectsPath",
+      "type": "class",
+      "name": "TestConfigClaudeProjectsPath",
+      "filePath": "tests/ccbot/test_config.py",
+      "summary": "Class TestConfigClaudeProjectsPath in tests/ccbot/test_config.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_config.py:TestConfigOpenAI",
+      "type": "class",
+      "name": "TestConfigOpenAI",
+      "filePath": "tests/ccbot/test_config.py",
+      "summary": "Class TestConfigOpenAI in tests/ccbot/test_config.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "file:tests/ccbot/test_forward_command.py",
+      "type": "file",
+      "name": "test_forward_command.py",
+      "filePath": "tests/ccbot/test_forward_command.py",
+      "summary": "tests/ccbot/test_forward_command.py (python, 104 lines)",
+      "tags": [
+        "python",
+        "file",
+        "code"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:tests/ccbot/test_forward_command.py:_make_update",
+      "type": "function",
+      "name": "_make_update",
+      "filePath": "tests/ccbot/test_forward_command.py",
+      "summary": "Function _make_update in tests/ccbot/test_forward_command.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:tests/ccbot/test_forward_command.py:_make_context",
+      "type": "function",
+      "name": "_make_context",
+      "filePath": "tests/ccbot/test_forward_command.py",
+      "summary": "Function _make_context in tests/ccbot/test_forward_command.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_forward_command.py:TestForwardCommand",
+      "type": "class",
+      "name": "TestForwardCommand",
+      "filePath": "tests/ccbot/test_forward_command.py",
+      "summary": "Class TestForwardCommand in tests/ccbot/test_forward_command.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "file:tests/ccbot/test_hook.py",
+      "type": "file",
+      "name": "test_hook.py",
+      "filePath": "tests/ccbot/test_hook.py",
+      "summary": "tests/ccbot/test_hook.py (python, 146 lines)",
+      "tags": [
+        "python",
+        "file",
+        "code"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_hook.py:TestUuidRegex",
+      "type": "class",
+      "name": "TestUuidRegex",
+      "filePath": "tests/ccbot/test_hook.py",
+      "summary": "Class TestUuidRegex in tests/ccbot/test_hook.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_hook.py:TestIsHookInstalled",
+      "type": "class",
+      "name": "TestIsHookInstalled",
+      "filePath": "tests/ccbot/test_hook.py",
+      "summary": "Class TestIsHookInstalled in tests/ccbot/test_hook.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_hook.py:TestHookMainValidation",
+      "type": "class",
+      "name": "TestHookMainValidation",
+      "filePath": "tests/ccbot/test_hook.py",
+      "summary": "Class TestHookMainValidation in tests/ccbot/test_hook.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "file:tests/ccbot/test_markdown_v2.py",
+      "type": "file",
+      "name": "test_markdown_v2.py",
+      "filePath": "tests/ccbot/test_markdown_v2.py",
+      "summary": "tests/ccbot/test_markdown_v2.py (python, 58 lines)",
+      "tags": [
+        "python",
+        "file",
+        "code"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_markdown_v2.py:TestEscapeMdv2",
+      "type": "class",
+      "name": "TestEscapeMdv2",
+      "filePath": "tests/ccbot/test_markdown_v2.py",
+      "summary": "Class TestEscapeMdv2 in tests/ccbot/test_markdown_v2.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_markdown_v2.py:TestConvertMarkdown",
+      "type": "class",
+      "name": "TestConvertMarkdown",
+      "filePath": "tests/ccbot/test_markdown_v2.py",
+      "summary": "Class TestConvertMarkdown in tests/ccbot/test_markdown_v2.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "file:tests/ccbot/test_monitor_state.py",
+      "type": "file",
+      "name": "test_monitor_state.py",
+      "filePath": "tests/ccbot/test_monitor_state.py",
+      "summary": "tests/ccbot/test_monitor_state.py (python, 145 lines)",
+      "tags": [
+        "python",
+        "file",
+        "code"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_monitor_state.py:TestTrackedSession",
+      "type": "class",
+      "name": "TestTrackedSession",
+      "filePath": "tests/ccbot/test_monitor_state.py",
+      "summary": "Class TestTrackedSession in tests/ccbot/test_monitor_state.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_monitor_state.py:TestMonitorStateLoad",
+      "type": "class",
+      "name": "TestMonitorStateLoad",
+      "filePath": "tests/ccbot/test_monitor_state.py",
+      "summary": "Class TestMonitorStateLoad in tests/ccbot/test_monitor_state.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_monitor_state.py:TestMonitorStateSave",
+      "type": "class",
+      "name": "TestMonitorStateSave",
+      "filePath": "tests/ccbot/test_monitor_state.py",
+      "summary": "Class TestMonitorStateSave in tests/ccbot/test_monitor_state.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_monitor_state.py:TestMonitorStateOperations",
+      "type": "class",
+      "name": "TestMonitorStateOperations",
+      "filePath": "tests/ccbot/test_monitor_state.py",
+      "summary": "Class TestMonitorStateOperations in tests/ccbot/test_monitor_state.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_monitor_state.py:TestSaveIfDirty",
+      "type": "class",
+      "name": "TestSaveIfDirty",
+      "filePath": "tests/ccbot/test_monitor_state.py",
+      "summary": "Class TestSaveIfDirty in tests/ccbot/test_monitor_state.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "file:tests/ccbot/test_session_monitor.py",
+      "type": "file",
+      "name": "test_session_monitor.py",
+      "filePath": "tests/ccbot/test_session_monitor.py",
+      "summary": "tests/ccbot/test_session_monitor.py (python, 157 lines)",
+      "tags": [
+        "python",
+        "file",
+        "code"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:tests/ccbot/test_session_monitor.py:_write_jsonl",
+      "type": "function",
+      "name": "_write_jsonl",
+      "filePath": "tests/ccbot/test_session_monitor.py",
+      "summary": "Function _write_jsonl in tests/ccbot/test_session_monitor.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_session_monitor.py:TestReadNewLinesOffsetRecovery",
+      "type": "class",
+      "name": "TestReadNewLinesOffsetRecovery",
+      "filePath": "tests/ccbot/test_session_monitor.py",
+      "summary": "Class TestReadNewLinesOffsetRecovery in tests/ccbot/test_session_monitor.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "file:tests/ccbot/test_session.py",
+      "type": "file",
+      "name": "test_session.py",
+      "filePath": "tests/ccbot/test_session.py",
+      "summary": "tests/ccbot/test_session.py (python, 344 lines)",
+      "tags": [
+        "python",
+        "file",
+        "code"
+      ],
+      "complexity": "complex",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:tests/ccbot/test_session.py:mgr",
+      "type": "function",
+      "name": "mgr",
+      "filePath": "tests/ccbot/test_session.py",
+      "summary": "Function mgr in tests/ccbot/test_session.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_session.py:TestThreadBindings",
+      "type": "class",
+      "name": "TestThreadBindings",
+      "filePath": "tests/ccbot/test_session.py",
+      "summary": "Class TestThreadBindings in tests/ccbot/test_session.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_session.py:TestGroupChatId",
+      "type": "class",
+      "name": "TestGroupChatId",
+      "filePath": "tests/ccbot/test_session.py",
+      "summary": "Class TestGroupChatId in tests/ccbot/test_session.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_session.py:TestWindowState",
+      "type": "class",
+      "name": "TestWindowState",
+      "filePath": "tests/ccbot/test_session.py",
+      "summary": "Class TestWindowState in tests/ccbot/test_session.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_session.py:TestResolveWindowForThread",
+      "type": "class",
+      "name": "TestResolveWindowForThread",
+      "filePath": "tests/ccbot/test_session.py",
+      "summary": "Class TestResolveWindowForThread in tests/ccbot/test_session.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_session.py:TestDisplayNames",
+      "type": "class",
+      "name": "TestDisplayNames",
+      "filePath": "tests/ccbot/test_session.py",
+      "summary": "Class TestDisplayNames in tests/ccbot/test_session.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_session.py:TestIsWindowId",
+      "type": "class",
+      "name": "TestIsWindowId",
+      "filePath": "tests/ccbot/test_session.py",
+      "summary": "Class TestIsWindowId in tests/ccbot/test_session.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_session.py:TestMigrateOldFormatMap",
+      "type": "class",
+      "name": "TestMigrateOldFormatMap",
+      "filePath": "tests/ccbot/test_session.py",
+      "summary": "Class TestMigrateOldFormatMap in tests/ccbot/test_session.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_session.py:TestResolveStaleIds",
+      "type": "class",
+      "name": "TestResolveStaleIds",
+      "filePath": "tests/ccbot/test_session.py",
+      "summary": "Class TestResolveStaleIds in tests/ccbot/test_session.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_session.py:TestLoadSessionMapMigration",
+      "type": "class",
+      "name": "TestLoadSessionMapMigration",
+      "filePath": "tests/ccbot/test_session.py",
+      "summary": "Class TestLoadSessionMapMigration in tests/ccbot/test_session.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "file:tests/ccbot/test_telegram_sender.py",
+      "type": "file",
+      "name": "test_telegram_sender.py",
+      "filePath": "tests/ccbot/test_telegram_sender.py",
+      "summary": "tests/ccbot/test_telegram_sender.py (python, 175 lines)",
+      "tags": [
+        "python",
+        "file",
+        "code"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_telegram_sender.py:TestSplitMessage",
+      "type": "class",
+      "name": "TestSplitMessage",
+      "filePath": "tests/ccbot/test_telegram_sender.py",
+      "summary": "Class TestSplitMessage in tests/ccbot/test_telegram_sender.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_telegram_sender.py:TestUtf16Len",
+      "type": "class",
+      "name": "TestUtf16Len",
+      "filePath": "tests/ccbot/test_telegram_sender.py",
+      "summary": "Class TestUtf16Len in tests/ccbot/test_telegram_sender.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_telegram_sender.py:TestSplitMessageUtf16",
+      "type": "class",
+      "name": "TestSplitMessageUtf16",
+      "filePath": "tests/ccbot/test_telegram_sender.py",
+      "summary": "Class TestSplitMessageUtf16 in tests/ccbot/test_telegram_sender.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_telegram_sender.py:TestSplitMessageCodeBlockForceSplit",
+      "type": "class",
+      "name": "TestSplitMessageCodeBlockForceSplit",
+      "filePath": "tests/ccbot/test_telegram_sender.py",
+      "summary": "Class TestSplitMessageCodeBlockForceSplit in tests/ccbot/test_telegram_sender.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "file:tests/ccbot/test_terminal_parser.py",
+      "type": "file",
+      "name": "test_terminal_parser.py",
+      "filePath": "tests/ccbot/test_terminal_parser.py",
+      "summary": "tests/ccbot/test_terminal_parser.py (python, 265 lines)",
+      "tags": [
+        "python",
+        "file",
+        "code"
+      ],
+      "complexity": "complex",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_terminal_parser.py:TestParseStatusLine",
+      "type": "class",
+      "name": "TestParseStatusLine",
+      "filePath": "tests/ccbot/test_terminal_parser.py",
+      "summary": "Class TestParseStatusLine in tests/ccbot/test_terminal_parser.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent",
+      "type": "class",
+      "name": "TestExtractInteractiveContent",
+      "filePath": "tests/ccbot/test_terminal_parser.py",
+      "summary": "Class TestExtractInteractiveContent in tests/ccbot/test_terminal_parser.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_terminal_parser.py:TestIsInteractiveUI",
+      "type": "class",
+      "name": "TestIsInteractiveUI",
+      "filePath": "tests/ccbot/test_terminal_parser.py",
+      "summary": "Class TestIsInteractiveUI in tests/ccbot/test_terminal_parser.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_terminal_parser.py:TestStripPaneChrome",
+      "type": "class",
+      "name": "TestStripPaneChrome",
+      "filePath": "tests/ccbot/test_terminal_parser.py",
+      "summary": "Class TestStripPaneChrome in tests/ccbot/test_terminal_parser.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_terminal_parser.py:TestExtractBashOutput",
+      "type": "class",
+      "name": "TestExtractBashOutput",
+      "filePath": "tests/ccbot/test_terminal_parser.py",
+      "summary": "Class TestExtractBashOutput in tests/ccbot/test_terminal_parser.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "file:tests/ccbot/test_transcribe.py",
+      "type": "file",
+      "name": "test_transcribe.py",
+      "filePath": "tests/ccbot/test_transcribe.py",
+      "summary": "tests/ccbot/test_transcribe.py (python, 123 lines)",
+      "tags": [
+        "python",
+        "file",
+        "code"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:tests/ccbot/test_transcribe.py:_reset_client",
+      "type": "function",
+      "name": "_reset_client",
+      "filePath": "tests/ccbot/test_transcribe.py",
+      "summary": "Function _reset_client in tests/ccbot/test_transcribe.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:tests/ccbot/test_transcribe.py:mock_config",
+      "type": "function",
+      "name": "mock_config",
+      "filePath": "tests/ccbot/test_transcribe.py",
+      "summary": "Function mock_config in tests/ccbot/test_transcribe.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:tests/ccbot/test_transcribe.py:_mock_response",
+      "type": "function",
+      "name": "_mock_response",
+      "filePath": "tests/ccbot/test_transcribe.py",
+      "summary": "Function _mock_response in tests/ccbot/test_transcribe.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_transcribe.py:TestTranscribeVoice",
+      "type": "class",
+      "name": "TestTranscribeVoice",
+      "filePath": "tests/ccbot/test_transcribe.py",
+      "summary": "Class TestTranscribeVoice in tests/ccbot/test_transcribe.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_transcribe.py:TestCloseClient",
+      "type": "class",
+      "name": "TestCloseClient",
+      "filePath": "tests/ccbot/test_transcribe.py",
+      "summary": "Class TestCloseClient in tests/ccbot/test_transcribe.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "file:tests/ccbot/test_transcript_parser.py",
+      "type": "file",
+      "name": "test_transcript_parser.py",
+      "filePath": "tests/ccbot/test_transcript_parser.py",
+      "summary": "tests/ccbot/test_transcript_parser.py (python, 529 lines)",
+      "tags": [
+        "python",
+        "file",
+        "code"
+      ],
+      "complexity": "complex",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_transcript_parser.py:TestParseLine",
+      "type": "class",
+      "name": "TestParseLine",
+      "filePath": "tests/ccbot/test_transcript_parser.py",
+      "summary": "Class TestParseLine in tests/ccbot/test_transcript_parser.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_transcript_parser.py:TestExtractTextOnly",
+      "type": "class",
+      "name": "TestExtractTextOnly",
+      "filePath": "tests/ccbot/test_transcript_parser.py",
+      "summary": "Class TestExtractTextOnly in tests/ccbot/test_transcript_parser.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_transcript_parser.py:TestFormatToolUseSummary",
+      "type": "class",
+      "name": "TestFormatToolUseSummary",
+      "filePath": "tests/ccbot/test_transcript_parser.py",
+      "summary": "Class TestFormatToolUseSummary in tests/ccbot/test_transcript_parser.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_transcript_parser.py:TestExtractToolResultText",
+      "type": "class",
+      "name": "TestExtractToolResultText",
+      "filePath": "tests/ccbot/test_transcript_parser.py",
+      "summary": "Class TestExtractToolResultText in tests/ccbot/test_transcript_parser.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_transcript_parser.py:TestParseMessage",
+      "type": "class",
+      "name": "TestParseMessage",
+      "filePath": "tests/ccbot/test_transcript_parser.py",
+      "summary": "Class TestParseMessage in tests/ccbot/test_transcript_parser.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_transcript_parser.py:TestFormatEditDiff",
+      "type": "class",
+      "name": "TestFormatEditDiff",
+      "filePath": "tests/ccbot/test_transcript_parser.py",
+      "summary": "Class TestFormatEditDiff in tests/ccbot/test_transcript_parser.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_transcript_parser.py:TestFormatToolResultText",
+      "type": "class",
+      "name": "TestFormatToolResultText",
+      "filePath": "tests/ccbot/test_transcript_parser.py",
+      "summary": "Class TestFormatToolResultText in tests/ccbot/test_transcript_parser.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_transcript_parser.py:TestParseEntries",
+      "type": "class",
+      "name": "TestParseEntries",
+      "filePath": "tests/ccbot/test_transcript_parser.py",
+      "summary": "Class TestParseEntries in tests/ccbot/test_transcript_parser.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "file:tests/ccbot/test_utils.py",
+      "type": "file",
+      "name": "test_utils.py",
+      "filePath": "tests/ccbot/test_utils.py",
+      "summary": "tests/ccbot/test_utils.py (python, 72 lines)",
+      "tags": [
+        "python",
+        "file",
+        "code"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_utils.py:TestCcbotDir",
+      "type": "class",
+      "name": "TestCcbotDir",
+      "filePath": "tests/ccbot/test_utils.py",
+      "summary": "Class TestCcbotDir in tests/ccbot/test_utils.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_utils.py:TestAtomicWriteJson",
+      "type": "class",
+      "name": "TestAtomicWriteJson",
+      "filePath": "tests/ccbot/test_utils.py",
+      "summary": "Class TestAtomicWriteJson in tests/ccbot/test_utils.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/ccbot/test_utils.py:TestReadCwdFromJsonl",
+      "type": "class",
+      "name": "TestReadCwdFromJsonl",
+      "filePath": "tests/ccbot/test_utils.py",
+      "summary": "Class TestReadCwdFromJsonl in tests/ccbot/test_utils.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "file:tests/conftest.py",
+      "type": "file",
+      "name": "conftest.py",
+      "filePath": "tests/conftest.py",
+      "summary": "tests/conftest.py (python, 33 lines)",
+      "tags": [
+        "python",
+        "file",
+        "code"
+      ],
+      "complexity": "simple",
+      "languageNotes": "python"
+    },
+    {
+      "id": "file:tests/integration/test_config_integration.py",
+      "type": "file",
+      "name": "test_config_integration.py",
+      "filePath": "tests/integration/test_config_integration.py",
+      "summary": "tests/integration/test_config_integration.py (python, 43 lines)",
+      "tags": [
+        "python",
+        "file",
+        "code"
+      ],
+      "complexity": "simple",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/integration/test_config_integration.py:TestConfigIntegration",
+      "type": "class",
+      "name": "TestConfigIntegration",
+      "filePath": "tests/integration/test_config_integration.py",
+      "summary": "Class TestConfigIntegration in tests/integration/test_config_integration.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "file:tests/integration/test_monitor_state_integration.py",
+      "type": "file",
+      "name": "test_monitor_state_integration.py",
+      "filePath": "tests/integration/test_monitor_state_integration.py",
+      "summary": "tests/integration/test_monitor_state_integration.py (python, 67 lines)",
+      "tags": [
+        "python",
+        "file",
+        "code"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:tests/integration/test_monitor_state_integration.py:TestMonitorStateIntegration",
+      "type": "class",
+      "name": "TestMonitorStateIntegration",
+      "filePath": "tests/integration/test_monitor_state_integration.py",
+      "summary": "Class TestMonitorStateIntegration in tests/integration/test_monitor_state_integration.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/ccbot/transcript_parser.py",
+      "target": "class:src/ccbot/transcript_parser.py:ParsedMessage",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/transcript_parser.py",
+      "target": "class:src/ccbot/transcript_parser.py:ParsedEntry",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/transcript_parser.py",
+      "target": "class:src/ccbot/transcript_parser.py:PendingToolInfo",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/transcript_parser.py",
+      "target": "class:src/ccbot/transcript_parser.py:TranscriptParser",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/utils.py",
+      "target": "function:src/ccbot/utils.py:ccbot_dir",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/utils.py",
+      "target": "function:src/ccbot/utils.py:atomic_write_json",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/utils.py",
+      "target": "function:src/ccbot/utils.py:read_cwd_from_jsonl",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/conftest.py",
+      "target": "function:tests/ccbot/conftest.py:make_jsonl_entry",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/conftest.py",
+      "target": "function:tests/ccbot/conftest.py:make_text_block",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/conftest.py",
+      "target": "function:tests/ccbot/conftest.py:make_tool_use_block",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/conftest.py",
+      "target": "function:tests/ccbot/conftest.py:make_tool_result_block",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/conftest.py",
+      "target": "function:tests/ccbot/conftest.py:make_thinking_block",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/conftest.py",
+      "target": "function:tests/ccbot/conftest.py:sample_pane_exit_plan",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/conftest.py",
+      "target": "function:tests/ccbot/conftest.py:sample_pane_ask_user_multi_tab",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/conftest.py",
+      "target": "function:tests/ccbot/conftest.py:sample_pane_ask_user_single_tab",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/conftest.py",
+      "target": "function:tests/ccbot/conftest.py:sample_pane_permission",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/conftest.py",
+      "target": "function:tests/ccbot/conftest.py:chrome",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/conftest.py",
+      "target": "function:tests/ccbot/conftest.py:sample_pane_status_line",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/conftest.py",
+      "target": "function:tests/ccbot/conftest.py:sample_pane_settings",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/conftest.py",
+      "target": "function:tests/ccbot/conftest.py:sample_pane_no_ui",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/handlers/test_interactive_ui.py",
+      "target": "function:tests/ccbot/handlers/test_interactive_ui.py:mock_bot",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/handlers/test_interactive_ui.py",
+      "target": "function:tests/ccbot/handlers/test_interactive_ui.py:_clear_interactive_state",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/handlers/test_interactive_ui.py",
+      "target": "class:tests/ccbot/handlers/test_interactive_ui.py:TestHandleInteractiveUI",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/handlers/test_interactive_ui.py",
+      "target": "class:tests/ccbot/handlers/test_interactive_ui.py:TestKeyboardLayoutForSettings",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/handlers/test_response_builder.py",
+      "target": "class:tests/ccbot/handlers/test_response_builder.py:TestBuildResponseParts",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/handlers/test_status_polling.py",
+      "target": "function:tests/ccbot/handlers/test_status_polling.py:mock_bot",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/handlers/test_status_polling.py",
+      "target": "function:tests/ccbot/handlers/test_status_polling.py:_clear_interactive_state",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/handlers/test_status_polling.py",
+      "target": "class:tests/ccbot/handlers/test_status_polling.py:TestStatusPollerSettingsDetection",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_config.py",
+      "target": "function:tests/ccbot/test_config.py:_base_env",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_config.py",
+      "target": "class:tests/ccbot/test_config.py:TestConfigValid",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_config.py",
+      "target": "class:tests/ccbot/test_config.py:TestConfigMissingEnv",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_config.py",
+      "target": "class:tests/ccbot/test_config.py:TestConfigClaudeProjectsPath",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_config.py",
+      "target": "class:tests/ccbot/test_config.py:TestConfigOpenAI",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_forward_command.py",
+      "target": "function:tests/ccbot/test_forward_command.py:_make_update",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_forward_command.py",
+      "target": "function:tests/ccbot/test_forward_command.py:_make_context",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_forward_command.py",
+      "target": "class:tests/ccbot/test_forward_command.py:TestForwardCommand",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_hook.py",
+      "target": "class:tests/ccbot/test_hook.py:TestUuidRegex",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_hook.py",
+      "target": "class:tests/ccbot/test_hook.py:TestIsHookInstalled",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_hook.py",
+      "target": "class:tests/ccbot/test_hook.py:TestHookMainValidation",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_markdown_v2.py",
+      "target": "class:tests/ccbot/test_markdown_v2.py:TestEscapeMdv2",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_markdown_v2.py",
+      "target": "class:tests/ccbot/test_markdown_v2.py:TestConvertMarkdown",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_monitor_state.py",
+      "target": "class:tests/ccbot/test_monitor_state.py:TestTrackedSession",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_monitor_state.py",
+      "target": "class:tests/ccbot/test_monitor_state.py:TestMonitorStateLoad",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_monitor_state.py",
+      "target": "class:tests/ccbot/test_monitor_state.py:TestMonitorStateSave",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_monitor_state.py",
+      "target": "class:tests/ccbot/test_monitor_state.py:TestMonitorStateOperations",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_monitor_state.py",
+      "target": "class:tests/ccbot/test_monitor_state.py:TestSaveIfDirty",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_session_monitor.py",
+      "target": "function:tests/ccbot/test_session_monitor.py:_write_jsonl",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_session_monitor.py",
+      "target": "class:tests/ccbot/test_session_monitor.py:TestReadNewLinesOffsetRecovery",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_session.py",
+      "target": "function:tests/ccbot/test_session.py:mgr",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_session.py",
+      "target": "class:tests/ccbot/test_session.py:TestThreadBindings",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_session.py",
+      "target": "class:tests/ccbot/test_session.py:TestGroupChatId",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_session.py",
+      "target": "class:tests/ccbot/test_session.py:TestWindowState",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_session.py",
+      "target": "class:tests/ccbot/test_session.py:TestResolveWindowForThread",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_session.py",
+      "target": "class:tests/ccbot/test_session.py:TestDisplayNames",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_session.py",
+      "target": "class:tests/ccbot/test_session.py:TestIsWindowId",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_session.py",
+      "target": "class:tests/ccbot/test_session.py:TestMigrateOldFormatMap",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_session.py",
+      "target": "class:tests/ccbot/test_session.py:TestResolveStaleIds",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_session.py",
+      "target": "class:tests/ccbot/test_session.py:TestLoadSessionMapMigration",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_telegram_sender.py",
+      "target": "class:tests/ccbot/test_telegram_sender.py:TestSplitMessage",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_telegram_sender.py",
+      "target": "class:tests/ccbot/test_telegram_sender.py:TestUtf16Len",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_telegram_sender.py",
+      "target": "class:tests/ccbot/test_telegram_sender.py:TestSplitMessageUtf16",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_telegram_sender.py",
+      "target": "class:tests/ccbot/test_telegram_sender.py:TestSplitMessageCodeBlockForceSplit",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_terminal_parser.py",
+      "target": "class:tests/ccbot/test_terminal_parser.py:TestParseStatusLine",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_terminal_parser.py",
+      "target": "class:tests/ccbot/test_terminal_parser.py:TestExtractInteractiveContent",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_terminal_parser.py",
+      "target": "class:tests/ccbot/test_terminal_parser.py:TestIsInteractiveUI",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_terminal_parser.py",
+      "target": "class:tests/ccbot/test_terminal_parser.py:TestStripPaneChrome",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_terminal_parser.py",
+      "target": "class:tests/ccbot/test_terminal_parser.py:TestExtractBashOutput",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_transcribe.py",
+      "target": "function:tests/ccbot/test_transcribe.py:_reset_client",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_transcribe.py",
+      "target": "function:tests/ccbot/test_transcribe.py:mock_config",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_transcribe.py",
+      "target": "function:tests/ccbot/test_transcribe.py:_mock_response",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_transcribe.py",
+      "target": "class:tests/ccbot/test_transcribe.py:TestTranscribeVoice",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_transcribe.py",
+      "target": "class:tests/ccbot/test_transcribe.py:TestCloseClient",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_transcript_parser.py",
+      "target": "class:tests/ccbot/test_transcript_parser.py:TestParseLine",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_transcript_parser.py",
+      "target": "class:tests/ccbot/test_transcript_parser.py:TestExtractTextOnly",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_transcript_parser.py",
+      "target": "class:tests/ccbot/test_transcript_parser.py:TestFormatToolUseSummary",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_transcript_parser.py",
+      "target": "class:tests/ccbot/test_transcript_parser.py:TestExtractToolResultText",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_transcript_parser.py",
+      "target": "class:tests/ccbot/test_transcript_parser.py:TestParseMessage",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_transcript_parser.py",
+      "target": "class:tests/ccbot/test_transcript_parser.py:TestFormatEditDiff",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_transcript_parser.py",
+      "target": "class:tests/ccbot/test_transcript_parser.py:TestFormatToolResultText",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_transcript_parser.py",
+      "target": "class:tests/ccbot/test_transcript_parser.py:TestParseEntries",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_utils.py",
+      "target": "class:tests/ccbot/test_utils.py:TestCcbotDir",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_utils.py",
+      "target": "class:tests/ccbot/test_utils.py:TestAtomicWriteJson",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/ccbot/test_utils.py",
+      "target": "class:tests/ccbot/test_utils.py:TestReadCwdFromJsonl",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/integration/test_config_integration.py",
+      "target": "class:tests/integration/test_config_integration.py:TestConfigIntegration",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/integration/test_monitor_state_integration.py",
+      "target": "class:tests/integration/test_monitor_state_integration.py:TestMonitorStateIntegration",
+      "type": "contains",
+      "weight": 1.0
+    }
+  ]
+}

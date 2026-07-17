@@ -1,0 +1,18 @@
+# Project-scoped Grok config for ccbot_ju1ian agentic pipeline.
+# Requires folder trust: /hooks-trust or --trust (same gate as MCP/LSP).
+#
+# Tools appear as: ccbot-agentic__list_tasks, ccbot-agentic__select_next_task, ...
+
+[mcp_servers.ccbot-agentic]
+command = "python"
+args = ["scripts/agentic/mcp_server.py"]
+# Pin repo root so the server works even if Grok cwd differs.
+env = { CCBOT_REPO_ROOT = "D:\\CCbot_tmux\\ccbot\\ccbot_ju1ian" }
+enabled = true
+startup_timeout_sec = 45
+tool_timeout_sec = 600
+tool_timeouts = { select_next_task = 300, run_analyze = 180, run_validate = 600, get_context_pack = 120 }
+
+[mcp]
+# Analysis / context packs can be large; raise default 20k cap for this project.
+max_output_bytes = 80000

@@ -4,15 +4,38 @@ Provides:
   - ccbot_dir(): resolve config directory from CCBOT_DIR env var.
   - atomic_write_json(): crash-safe JSON file writes via temp+rename.
   - read_cwd_from_jsonl(): extract the cwd field from the first JSONL entry.
+  - flock()/LOCK_EX/LOCK_UN: advisory file locks (fcntl on POSIX; no-op on Windows).
 """
+
+from __future__ import annotations
 
 import json
 import os
+import sys
 import tempfile
 from pathlib import Path
-from typing import Any
+from typing import IO, Any
 
 CCBOT_DIR_ENV = "CCBOT_DIR"
+
+# fcntl is POSIX-only. On Windows, provide a no-op lock so imports/type-check
+# succeed for unit tests; production bot + hook run on Linux with real locks.
+if sys.platform != "win32":
+    import fcntl as _fcntl
+
+    LOCK_EX = _fcntl.LOCK_EX
+    LOCK_UN = _fcntl.LOCK_UN
+
+    def flock(fd: IO[Any] | int, operation: int) -> None:
+        """Apply an advisory lock via fcntl.flock (POSIX)."""
+        _fcntl.flock(fd, operation)
+else:
+    LOCK_EX = 2
+    LOCK_UN = 8
+
+    def flock(fd: IO[Any] | int, operation: int) -> None:
+        """No-op on Windows (fcntl is unavailable)."""
+        return None
 
 
 def ccbot_dir() -> Path:

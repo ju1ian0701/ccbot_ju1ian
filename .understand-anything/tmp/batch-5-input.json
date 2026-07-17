@@ -1,0 +1,34 @@
+{
+    "projectRoot":  "D:\\CCbot_tmux\\ccbot\\ccbot_ju1ian",
+    "batchImportData":  {
+                            "tests/integration/test_config_integration.py":  [
+
+                                                                             ],
+                            "tests/integration/test_monitor_state_integration.py":  [
+
+                                                                                    ],
+                            "tests/conftest.py":  [
+
+                                                  ]
+                        },
+    "batchFiles":  [
+                       {
+                           "path":  "tests/conftest.py",
+                           "language":  "python",
+                           "sizeLines":  33,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "tests/integration/test_config_integration.py",
+                           "language":  "python",
+                           "sizeLines":  43,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "tests/integration/test_monitor_state_integration.py",
+                           "language":  "python",
+                           "sizeLines":  67,
+                           "fileCategory":  "code"
+                       }
+                   ]
+}
