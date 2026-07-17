@@ -22,7 +22,6 @@ Key methods for thread binding access:
 """
 
 import asyncio
-import fcntl
 import json
 import logging
 import re
@@ -36,7 +35,7 @@ import aiofiles
 from .config import config
 from .tmux_manager import tmux_manager
 from .transcript_parser import TranscriptParser
-from .utils import atomic_write_json
+from .utils import LOCK_EX, LOCK_UN, atomic_write_json, flock
 
 logger = logging.getLogger(__name__)
 
@@ -410,7 +409,7 @@ class SessionManager:
         lock_path = map_file.with_suffix(".lock")
         try:
             with open(lock_path, "w") as lock_f:
-                fcntl.flock(lock_f, fcntl.LOCK_EX)
+                flock(lock_f, LOCK_EX)
                 try:
                     session_map: dict[str, dict] = {}
                     if map_file.exists():
@@ -426,7 +425,7 @@ class SessionManager:
                     atomic_write_json(map_file, session_map)
                     return True
                 finally:
-                    fcntl.flock(lock_f, fcntl.LOCK_UN)
+                    flock(lock_f, LOCK_UN)
         except OSError as e:
             logger.error("Failed to update session_map.json: %s", e)
             return False
