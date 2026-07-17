@@ -16,7 +16,7 @@ from ..config import config
 from ..session import session_manager
 from ..telegram_sender import split_message
 from ..transcript_parser import TranscriptParser
-from .callback_data import CB_HISTORY_NEXT, CB_HISTORY_PREV
+from .callback_data import encode_history_page
 from .message_sender import safe_edit, safe_reply, safe_send
 
 logger = logging.getLogger(__name__)
@@ -39,13 +39,16 @@ def _build_history_keyboard(
 
     buttons = []
     if page_index > 0:
-        cb_data = (
-            f"{CB_HISTORY_PREV}{page_index - 1}:{window_id}:{start_byte}:{end_byte}"
-        )
         buttons.append(
             InlineKeyboardButton(
                 "◀ Older",
-                callback_data=cb_data[:64],
+                callback_data=encode_history_page(
+                    older=True,
+                    page=page_index - 1,
+                    window_id=window_id,
+                    start_byte=start_byte,
+                    end_byte=end_byte,
+                ),
             )
         )
 
@@ -54,13 +57,16 @@ def _build_history_keyboard(
     )
 
     if page_index < total_pages - 1:
-        cb_data = (
-            f"{CB_HISTORY_NEXT}{page_index + 1}:{window_id}:{start_byte}:{end_byte}"
-        )
         buttons.append(
             InlineKeyboardButton(
                 "Newer ▶",
-                callback_data=cb_data[:64],
+                callback_data=encode_history_page(
+                    older=False,
+                    page=page_index + 1,
+                    window_id=window_id,
+                    start_byte=start_byte,
+                    end_byte=end_byte,
+                ),
             )
         )
 

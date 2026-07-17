@@ -25,15 +25,15 @@ from ..config import config
 from .callback_data import (
     CB_DIR_CANCEL,
     CB_DIR_CONFIRM,
-    CB_DIR_PAGE,
-    CB_DIR_SELECT,
     CB_DIR_UP,
     CB_SESSION_CANCEL,
     CB_SESSION_NEW,
-    CB_SESSION_SELECT,
-    CB_WIN_BIND,
     CB_WIN_CANCEL,
     CB_WIN_NEW,
+    encode_dir_page,
+    encode_dir_select,
+    encode_session_select,
+    encode_win_bind,
 )
 
 # Directories per page in directory browser
@@ -103,7 +103,7 @@ def build_window_picker(
             display = name[:12] + "…" if len(name) > 13 else name
             row.append(
                 InlineKeyboardButton(
-                    f"🖥 {display}", callback_data=f"{CB_WIN_BIND}{i + j}"
+                    f"🖥 {display}", callback_data=encode_win_bind(i + j)
                 )
             )
         buttons.append(row)
@@ -156,7 +156,7 @@ def build_directory_browser(
             idx = start + i + j
             row.append(
                 InlineKeyboardButton(
-                    f"📁 {display}", callback_data=f"{CB_DIR_SELECT}{idx}"
+                    f"📁 {display}", callback_data=encode_dir_select(idx)
                 )
             )
         buttons.append(row)
@@ -165,14 +165,14 @@ def build_directory_browser(
         nav: list[InlineKeyboardButton] = []
         if page > 0:
             nav.append(
-                InlineKeyboardButton("◀", callback_data=f"{CB_DIR_PAGE}{page - 1}")
+                InlineKeyboardButton("◀", callback_data=encode_dir_page(page - 1))
             )
         nav.append(
             InlineKeyboardButton(f"{page + 1}/{total_pages}", callback_data="noop")
         )
         if page < total_pages - 1:
             nav.append(
-                InlineKeyboardButton("▶", callback_data=f"{CB_DIR_PAGE}{page + 1}")
+                InlineKeyboardButton("▶", callback_data=encode_dir_page(page + 1))
             )
         buttons.append(nav)
 
@@ -240,7 +240,7 @@ def build_session_picker(
             label = s.summary[:14] + "…" if len(s.summary) > 14 else s.summary
             row.append(
                 InlineKeyboardButton(
-                    f"▶ {label}", callback_data=f"{CB_SESSION_SELECT}{i + j}"
+                    f"▶ {label}", callback_data=encode_session_select(i + j)
                 )
             )
         buttons.append(row)

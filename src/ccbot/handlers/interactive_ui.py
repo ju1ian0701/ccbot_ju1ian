@@ -32,6 +32,7 @@ from .callback_data import (
     CB_ASK_SPACE,
     CB_ASK_TAB,
     CB_ASK_UP,
+    encode_ask,
 )
 from .message_sender import NO_LINK_PREVIEW
 
@@ -94,11 +95,11 @@ def _build_interactive_keyboard(
     rows.append(
         [
             InlineKeyboardButton(
-                "␣ Space", callback_data=f"{CB_ASK_SPACE}{window_id}"[:64]
+                "␣ Space", callback_data=encode_ask(CB_ASK_SPACE, window_id)
             ),
-            InlineKeyboardButton("↑", callback_data=f"{CB_ASK_UP}{window_id}"[:64]),
+            InlineKeyboardButton("↑", callback_data=encode_ask(CB_ASK_UP, window_id)),
             InlineKeyboardButton(
-                "⇥ Tab", callback_data=f"{CB_ASK_TAB}{window_id}"[:64]
+                "⇥ Tab", callback_data=encode_ask(CB_ASK_TAB, window_id)
             ),
         ]
     )
@@ -106,7 +107,7 @@ def _build_interactive_keyboard(
         rows.append(
             [
                 InlineKeyboardButton(
-                    "↓", callback_data=f"{CB_ASK_DOWN}{window_id}"[:64]
+                    "↓", callback_data=encode_ask(CB_ASK_DOWN, window_id)
                 ),
             ]
         )
@@ -114,13 +115,13 @@ def _build_interactive_keyboard(
         rows.append(
             [
                 InlineKeyboardButton(
-                    "←", callback_data=f"{CB_ASK_LEFT}{window_id}"[:64]
+                    "←", callback_data=encode_ask(CB_ASK_LEFT, window_id)
                 ),
                 InlineKeyboardButton(
-                    "↓", callback_data=f"{CB_ASK_DOWN}{window_id}"[:64]
+                    "↓", callback_data=encode_ask(CB_ASK_DOWN, window_id)
                 ),
                 InlineKeyboardButton(
-                    "→", callback_data=f"{CB_ASK_RIGHT}{window_id}"[:64]
+                    "→", callback_data=encode_ask(CB_ASK_RIGHT, window_id)
                 ),
             ]
         )
@@ -128,13 +129,13 @@ def _build_interactive_keyboard(
     rows.append(
         [
             InlineKeyboardButton(
-                "⎋ Esc", callback_data=f"{CB_ASK_ESC}{window_id}"[:64]
+                "⎋ Esc", callback_data=encode_ask(CB_ASK_ESC, window_id)
             ),
             InlineKeyboardButton(
-                "🔄", callback_data=f"{CB_ASK_REFRESH}{window_id}"[:64]
+                "🔄", callback_data=encode_ask(CB_ASK_REFRESH, window_id)
             ),
             InlineKeyboardButton(
-                "⏎ Enter", callback_data=f"{CB_ASK_ENTER}{window_id}"[:64]
+                "⏎ Enter", callback_data=encode_ask(CB_ASK_ENTER, window_id)
             ),
         ]
     )

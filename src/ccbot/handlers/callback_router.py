@@ -43,6 +43,14 @@ from .callback_data import (
     CB_WIN_BIND,
     CB_WIN_CANCEL,
     CB_WIN_NEW,
+    parse_ask,
+    parse_dir_page,
+    parse_dir_select,
+    parse_history,
+    parse_key,
+    parse_screenshot_refresh,
+    parse_session_select,
+    parse_win_bind,
 )
 from .directory_browser import (
     BROWSE_DIRS_KEY,
@@ -95,34 +103,20 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     # History: older/newer pagination
     # Format: hp:<page>:<window_id>:<start>:<end> or hn:<page>:<window_id>:<start>:<end>
     if data.startswith(CB_HISTORY_PREV) or data.startswith(CB_HISTORY_NEXT):
-        prefix_len = len(CB_HISTORY_PREV)  # same length for both
-        rest = data[prefix_len:]
-        try:
-            parts = rest.split(":")
-            if len(parts) < 4:
-                # Old format without byte range: page:window_id
-                offset_str, window_id = rest.split(":", 1)
-                start_byte, end_byte = 0, 0
-            else:
-                # New format: page:window_id:start:end (window_id may contain colons)
-                offset_str = parts[0]
-                start_byte = int(parts[-2])
-                end_byte = int(parts[-1])
-                window_id = ":".join(parts[1:-2])
-            offset = int(offset_str)
-        except (ValueError, IndexError):
+        history_cb = parse_history(data)
+        if history_cb is None:
             await query.answer("Invalid data")
             return
-
+        window_id = history_cb.window_id
         w = await tmux_manager.find_window_by_id(window_id)
         if w:
             await send_history(
                 query,
                 window_id,
-                offset=offset,
+                offset=history_cb.page,
                 edit=True,
-                start_byte=start_byte,
-                end_byte=end_byte,
+                start_byte=history_cb.start_byte,
+                end_byte=history_cb.end_byte,
                 # Don't pass user_id for pagination - offset update only on initial view
                 # This prevents offset from going backwards if new messages arrive while paging
             )
@@ -140,11 +134,11 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
             await query.answer("Stale browser (topic mismatch)", show_alert=True)
             return
         # callback_data contains index, not dir name (to avoid 64-byte limit)
-        try:
-            idx = int(data[len(CB_DIR_SELECT) :])
-        except ValueError:
+        dir_select = parse_dir_select(data)
+        if dir_select is None:
             await query.answer("Invalid data")
             return
+        idx = dir_select.index
 
         # Look up dir name from cached subdirs
         cached_dirs: list[str] = (
@@ -215,11 +209,11 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         if pending_tid is not None and get_thread_id(update) != pending_tid:
             await query.answer("Stale browser (topic mismatch)", show_alert=True)
             return
-        try:
-            pg = int(data[len(CB_DIR_PAGE) :])
-        except ValueError:
+        dir_page = parse_dir_page(data)
+        if dir_page is None:
             await query.answer("Invalid data")
             return
+        pg = dir_page.index
         default_path = str(Path.cwd())
         current_path = (
             context.user_data.get(BROWSE_PATH_KEY, default_path)
@@ -303,11 +297,11 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         if pending_tid is not None and get_thread_id(update) != pending_tid:
             await query.answer("Stale picker (topic mismatch)", show_alert=True)
             return
-        try:
-            idx = int(data[len(CB_SESSION_SELECT) :])
-        except ValueError:
+        session_select = parse_session_select(data)
+        if session_select is None:
             await query.answer("Invalid data")
             return
+        idx = session_select.index
 
         cached_sessions = (
             context.user_data.get(SESSIONS_KEY, []) if context.user_data else []
@@ -378,11 +372,11 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         if pending_tid is not None and get_thread_id(update) != pending_tid:
             await query.answer("Stale picker (topic mismatch)", show_alert=True)
             return
-        try:
-            idx = int(data[len(CB_WIN_BIND) :])
-        except ValueError:
+        win_bind = parse_win_bind(data)
+        if win_bind is None:
             await query.answer("Invalid data")
             return
+        idx = win_bind.index
 
         cached_windows: list[str] = (
             context.user_data.get(UNBOUND_WINDOWS_KEY, []) if context.user_data else []
@@ -474,7 +468,11 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
     # Screenshot: Refresh
     elif data.startswith(CB_SCREENSHOT_REFRESH):
-        window_id = data[len(CB_SCREENSHOT_REFRESH) :]
+        ss_refresh = parse_screenshot_refresh(data)
+        if ss_refresh is None:
+            await query.answer("Invalid data")
+            return
+        window_id = ss_refresh.window_id
         w = await tmux_manager.find_window_by_id(window_id)
         if not w:
             await query.answer("Window no longer exists", show_alert=True)
@@ -504,7 +502,11 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
     # Interactive UI: Up arrow
     elif data.startswith(CB_ASK_UP):
-        window_id = data[len(CB_ASK_UP) :]
+        ask_cb = parse_ask(data, CB_ASK_UP)
+        if ask_cb is None:
+            await query.answer("Invalid data")
+            return
+        window_id = ask_cb.window_id
         thread_id = get_thread_id(update)
         w = await tmux_manager.find_window_by_id(window_id)
         if w:
@@ -515,7 +517,11 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
     # Interactive UI: Down arrow
     elif data.startswith(CB_ASK_DOWN):
-        window_id = data[len(CB_ASK_DOWN) :]
+        ask_cb = parse_ask(data, CB_ASK_DOWN)
+        if ask_cb is None:
+            await query.answer("Invalid data")
+            return
+        window_id = ask_cb.window_id
         thread_id = get_thread_id(update)
         w = await tmux_manager.find_window_by_id(window_id)
         if w:
@@ -528,7 +534,11 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
     # Interactive UI: Left arrow
     elif data.startswith(CB_ASK_LEFT):
-        window_id = data[len(CB_ASK_LEFT) :]
+        ask_cb = parse_ask(data, CB_ASK_LEFT)
+        if ask_cb is None:
+            await query.answer("Invalid data")
+            return
+        window_id = ask_cb.window_id
         thread_id = get_thread_id(update)
         w = await tmux_manager.find_window_by_id(window_id)
         if w:
@@ -541,7 +551,11 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
     # Interactive UI: Right arrow
     elif data.startswith(CB_ASK_RIGHT):
-        window_id = data[len(CB_ASK_RIGHT) :]
+        ask_cb = parse_ask(data, CB_ASK_RIGHT)
+        if ask_cb is None:
+            await query.answer("Invalid data")
+            return
+        window_id = ask_cb.window_id
         thread_id = get_thread_id(update)
         w = await tmux_manager.find_window_by_id(window_id)
         if w:
@@ -554,7 +568,11 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
     # Interactive UI: Escape
     elif data.startswith(CB_ASK_ESC):
-        window_id = data[len(CB_ASK_ESC) :]
+        ask_cb = parse_ask(data, CB_ASK_ESC)
+        if ask_cb is None:
+            await query.answer("Invalid data")
+            return
+        window_id = ask_cb.window_id
         thread_id = get_thread_id(update)
         w = await tmux_manager.find_window_by_id(window_id)
         if w:
@@ -566,7 +584,11 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
     # Interactive UI: Enter
     elif data.startswith(CB_ASK_ENTER):
-        window_id = data[len(CB_ASK_ENTER) :]
+        ask_cb = parse_ask(data, CB_ASK_ENTER)
+        if ask_cb is None:
+            await query.answer("Invalid data")
+            return
+        window_id = ask_cb.window_id
         thread_id = get_thread_id(update)
         w = await tmux_manager.find_window_by_id(window_id)
         if w:
@@ -579,7 +601,11 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
     # Interactive UI: Space
     elif data.startswith(CB_ASK_SPACE):
-        window_id = data[len(CB_ASK_SPACE) :]
+        ask_cb = parse_ask(data, CB_ASK_SPACE)
+        if ask_cb is None:
+            await query.answer("Invalid data")
+            return
+        window_id = ask_cb.window_id
         thread_id = get_thread_id(update)
         w = await tmux_manager.find_window_by_id(window_id)
         if w:
@@ -592,7 +618,11 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
     # Interactive UI: Tab
     elif data.startswith(CB_ASK_TAB):
-        window_id = data[len(CB_ASK_TAB) :]
+        ask_cb = parse_ask(data, CB_ASK_TAB)
+        if ask_cb is None:
+            await query.answer("Invalid data")
+            return
+        window_id = ask_cb.window_id
         thread_id = get_thread_id(update)
         w = await tmux_manager.find_window_by_id(window_id)
         if w:
@@ -603,20 +633,23 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
     # Interactive UI: refresh display
     elif data.startswith(CB_ASK_REFRESH):
-        window_id = data[len(CB_ASK_REFRESH) :]
+        ask_cb = parse_ask(data, CB_ASK_REFRESH)
+        if ask_cb is None:
+            await query.answer("Invalid data")
+            return
+        window_id = ask_cb.window_id
         thread_id = get_thread_id(update)
         await handle_interactive_ui(context.bot, user.id, window_id, thread_id)
         await query.answer("🔄")
 
     # Screenshot quick keys: send key to tmux window
     elif data.startswith(CB_KEYS_PREFIX):
-        rest = data[len(CB_KEYS_PREFIX) :]
-        colon_idx = rest.find(":")
-        if colon_idx < 0:
+        key_cb = parse_key(data)
+        if key_cb is None:
             await query.answer("Invalid data")
             return
-        key_id = rest[:colon_idx]
-        window_id = rest[colon_idx + 1 :]
+        key_id = key_cb.key_id
+        window_id = key_cb.window_id
 
         key_info = KEYS_SEND_MAP.get(key_id)
         if not key_info:
