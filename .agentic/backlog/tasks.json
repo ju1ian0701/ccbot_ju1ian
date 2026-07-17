@@ -1,0 +1,28 @@
+﻿{
+  "tasks": [
+    {
+      "id": "REF-001",
+      "title": "Extract shared auth + session resolution helper",
+      "priority": "high", "status": "done",
+      "categories": ["dry", "solid"],
+      "files": ["src/ccbot/bot.py", "src/ccbot/session.py"],
+      "related_nodes": ["file:src/ccbot/bot.py", "file:src/ccbot/session.py"],
+      "depends_on": [], "estimated_risk": "medium",
+      "acceptance_criteria": ["At least 8 handlers use the shared helper"]
+    },
+    {
+      "id": "REF-…ium",
+      "acceptance_criteria": ["Single MessageFormatter or context manager used across sender/queue"]
+    },
+    {
+      "id": "REF-009",
+      "title": "Fill test gaps for bot/tmux/queue hotspots",
+      "priority": "medium", "status": "ready",
+      "categories": ["testing"],
+      "files": ["tests/"],
+      "related_nodes": ["file:tests/"],
+      "depends_on": [], "estimated_risk": "low",
+      "acceptance_criteria": ["Coverage for uncovered hotspots from knowledge graph"]
+    }
+  ]
+}
