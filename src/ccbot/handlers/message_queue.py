@@ -25,26 +25,23 @@ from typing import Literal
 
 from telegram import Bot
 from telegram.constants import ChatAction
-from telegram.error import RetryAfter
 
-from ..markdown_v2 import convert_markdown
+from ..errors import (
+    RetryAfter,
+    TelegramError,
+    log_exception,
+    retry_after_seconds,
+)
 from ..session import session_manager
 from ..terminal_parser import parse_status_line
 from ..tmux_manager import tmux_manager
 from .message_sender import (
-    NO_LINK_PREVIEW,
-    PARSE_MODE,
+    edit_with_fallback,
     send_photo,
     send_with_fallback,
-    strip_sentinels,
 )
 
 logger = logging.getLogger(__name__)
-
-
-def _ensure_formatted(text: str) -> str:
-    """Convert markdown to MarkdownV2."""
-    return convert_markdown(text)
 
 
 # Merge limit for content messages
@@ -212,11 +209,7 @@ async def _process_content_with_retry(
             await _process_content_task(bot, user_id, task)
             return
         except RetryAfter as e:
-            retry_secs = (
-                e.retry_after
-                if isinstance(e.retry_after, int)
-                else int(e.retry_after.total_seconds())
-            )
+            retry_secs = int(retry_after_seconds(e))
             if retry_secs > FLOOD_CONTROL_MAX_WAIT:
                 # Long ban — also pause subsequent queued tasks
                 _flood_until[user_id] = time.monotonic() + retry_secs
@@ -284,11 +277,7 @@ async def _message_queue_worker(bot: Bot, user_id: int) -> None:
                 elif task.task_type == "status_clear":
                     await _do_clear_status_message(bot, user_id, task.thread_id or 0)
             except RetryAfter as e:
-                retry_secs = (
-                    e.retry_after
-                    if isinstance(e.retry_after, int)
-                    else int(e.retry_after.total_seconds())
-                )
+                retry_secs = int(retry_after_seconds(e))
                 if retry_secs > FLOOD_CONTROL_MAX_WAIT:
                     _flood_until[user_id] = time.monotonic() + retry_secs
                     logger.warning(
@@ -304,15 +293,35 @@ async def _message_queue_worker(bot: Bot, user_id: int) -> None:
                         retry_secs,
                     )
                     await asyncio.sleep(retry_secs)
+            except TelegramError as e:
+                log_exception(
+                    logger,
+                    "Telegram error processing message task",
+                    e,
+                    level=logging.ERROR,
+                    user_id=user_id,
+                )
             except Exception as e:
-                logger.error(f"Error processing message task for user {user_id}: {e}")
+                log_exception(
+                    logger,
+                    "Error processing message task",
+                    e,
+                    level=logging.ERROR,
+                    user_id=user_id,
+                )
             finally:
                 queue.task_done()
         except asyncio.CancelledError:
             logger.info(f"Message queue worker cancelled for user {user_id}")
             break
         except Exception as e:
-            logger.error(f"Unexpected error in queue worker for user {user_id}: {e}")
+            log_exception(
+                logger,
+                "Unexpected error in queue worker",
+                e,
+                level=logging.ERROR,
+                user_id=user_id,
+            )
 
 
 def _send_kwargs(thread_id: int | None) -> dict[str, int]:
@@ -354,37 +363,18 @@ async def _process_content_task(bot: Bot, user_id: int, task: MessageTask) -> No
             await _do_clear_status_message(bot, user_id, tid)
             # Join all parts for editing (merged content goes together)
             full_text = "\n\n".join(task.parts)
-            try:
-                await bot.edit_message_text(
-                    chat_id=chat_id,
-                    message_id=edit_msg_id,
-                    text=_ensure_formatted(full_text),
-                    parse_mode=PARSE_MODE,
-                    link_preview_options=NO_LINK_PREVIEW,
-                )
+            edited = await edit_with_fallback(
+                bot,
+                chat_id,
+                edit_msg_id,
+                full_text,
+            )
+            if edited:
                 await _send_task_images(bot, chat_id, task)
                 await _check_and_send_status(bot, user_id, wid, task.thread_id)
                 return
-            except RetryAfter:
-                raise
-            except Exception:
-                try:
-                    # Fallback: plain text with sentinels stripped
-                    plain_text = strip_sentinels(task.text or full_text)
-                    await bot.edit_message_text(
-                        chat_id=chat_id,
-                        message_id=edit_msg_id,
-                        text=plain_text,
-                        link_preview_options=NO_LINK_PREVIEW,
-                    )
-                    await _send_task_images(bot, chat_id, task)
-                    await _check_and_send_status(bot, user_id, wid, task.thread_id)
-                    return
-                except RetryAfter:
-                    raise
-                except Exception:
-                    logger.debug(f"Failed to edit tool msg {edit_msg_id}, sending new")
-                    # Fall through to send as new message
+            logger.debug("Failed to edit tool msg %s, sending new", edit_msg_id)
+            # Fall through to send as new message
 
     # 2. Send content messages, converting status message to first content part
     first_part = True
@@ -449,39 +439,21 @@ async def _convert_status_to_content(
         # Different window, just delete the old status
         try:
             await bot.delete_message(chat_id=chat_id, message_id=msg_id)
-        except Exception:
-            pass
+        except TelegramError as e:
+            log_exception(
+                logger,
+                "Failed to delete status on window change",
+                e,
+                message_id=msg_id,
+            )
         return None
 
     # Edit status message to show content
-    try:
-        await bot.edit_message_text(
-            chat_id=chat_id,
-            message_id=msg_id,
-            text=_ensure_formatted(content_text),
-            parse_mode=PARSE_MODE,
-            link_preview_options=NO_LINK_PREVIEW,
-        )
+    edited = await edit_with_fallback(bot, chat_id, msg_id, content_text)
+    if edited:
         return msg_id
-    except RetryAfter:
-        raise
-    except Exception:
-        try:
-            # Fallback to plain text with sentinels stripped
-            plain = strip_sentinels(content_text)
-            await bot.edit_message_text(
-                chat_id=chat_id,
-                message_id=msg_id,
-                text=plain,
-                link_preview_options=NO_LINK_PREVIEW,
-            )
-            return msg_id
-        except RetryAfter:
-            raise
-        except Exception as e:
-            logger.debug(f"Failed to convert status to content: {e}")
-            # Message might be deleted or too old, caller will send new message
-            return None
+    # Message might be deleted or too old, caller will send new message
+    return None
 
 
 async def _process_status_update_task(
@@ -521,34 +493,14 @@ async def _process_status_update_task(
                     )
                 except RetryAfter:
                     raise
-                except Exception:
-                    pass
-            try:
-                await bot.edit_message_text(
-                    chat_id=chat_id,
-                    message_id=msg_id,
-                    text=_ensure_formatted(status_text),
-                    parse_mode=PARSE_MODE,
-                    link_preview_options=NO_LINK_PREVIEW,
-                )
+                except TelegramError as e:
+                    log_exception(logger, "Failed to send typing action", e)
+            edited = await edit_with_fallback(bot, chat_id, msg_id, status_text)
+            if edited:
                 _status_msg_info[skey] = (msg_id, wid, status_text)
-            except RetryAfter:
-                raise
-            except Exception:
-                try:
-                    await bot.edit_message_text(
-                        chat_id=chat_id,
-                        message_id=msg_id,
-                        text=status_text,
-                        link_preview_options=NO_LINK_PREVIEW,
-                    )
-                    _status_msg_info[skey] = (msg_id, wid, status_text)
-                except RetryAfter:
-                    raise
-                except Exception as e:
-                    logger.debug(f"Failed to edit status message: {e}")
-                    _status_msg_info.pop(skey, None)
-                    await _do_send_status_message(bot, user_id, tid, wid, status_text)
+            else:
+                _status_msg_info.pop(skey, None)
+                await _do_send_status_message(bot, user_id, tid, wid, status_text)
     else:
         # No existing status message, send new
         await _do_send_status_message(bot, user_id, tid, wid, status_text)
@@ -571,16 +523,21 @@ async def _do_send_status_message(
     if old:
         try:
             await bot.delete_message(chat_id=chat_id, message_id=old[0])
-        except Exception:
-            pass
+        except TelegramError as e:
+            log_exception(
+                logger,
+                "Failed to delete orphaned status message",
+                e,
+                message_id=old[0],
+            )
     # Send typing indicator when Claude is working
     if "esc to interrupt" in text.lower():
         try:
             await bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
         except RetryAfter:
             raise
-        except Exception:
-            pass
+        except TelegramError as e:
+            log_exception(logger, "Failed to send typing action", e)
     sent = await send_with_fallback(
         bot,
         chat_id,
@@ -604,8 +561,13 @@ async def _do_clear_status_message(
         chat_id = session_manager.resolve_chat_id(user_id, thread_id_or_0 or None)
         try:
             await bot.delete_message(chat_id=chat_id, message_id=msg_id)
-        except Exception as e:
-            logger.debug(f"Failed to delete status message {msg_id}: {e}")
+        except TelegramError as e:
+            log_exception(
+                logger,
+                "Failed to delete status message",
+                e,
+                message_id=msg_id,
+            )
 
 
 async def _check_and_send_status(
