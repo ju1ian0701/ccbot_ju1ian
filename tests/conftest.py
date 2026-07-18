@@ -31,3 +31,5 @@ if sys.platform == "win32" and "fcntl" not in sys.modules:
 os.environ["TELEGRAM_BOT_TOKEN"] = "test:0000000000:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
 os.environ["ALLOWED_USERS"] = "12345"
 os.environ["CCBOT_DIR"] = tempfile.mkdtemp(prefix="ccbot-test-")
+# PTB v22.2+: RetryAfter.retry_after as timedelta (must be set before telegram import)
+os.environ["PTB_TIMEDELTA"] = "1"
