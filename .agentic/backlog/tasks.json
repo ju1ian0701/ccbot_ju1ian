@@ -182,7 +182,7 @@
       "id": "REF-009",
       "title": "Fill test gaps for bot/tmux/queue hotspots",
       "priority": "medium",
-      "status": "ready",
+      "status": "done",
       "categories": [
         "testing"
       ],
@@ -194,8 +194,9 @@
       "estimated_risk": "low",
       "acceptance_criteria": [
         "Coverage for uncovered hotspots"
-      ]
+      ],
+      "status_updated_at": "2026-07-18T09:57:27.416343+00:00"
     }
   ],
-  "updated_at": "2026-07-17"
+  "updated_at": "2026-07-18"
 }
