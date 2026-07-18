@@ -1,0 +1,1611 @@
+{
+  "nodes": [
+    {
+      "id": "src/ccbot/handlers/auth.py",
+      "type": "file",
+      "fileCategory": "code",
+      "sizeLines": 29,
+      "language": "python",
+      "description": "Shared auth and topic helpers for Telegram handlers",
+      "functions": [
+        {
+          "name": "is_user_allowed",
+          "params": ["user_id: int | None"],
+          "returns": "bool",
+          "line": 15,
+          "description": "Check if user is in ALLOWED_USERS config"
+        },
+        {
+          "name": "get_thread_id",
+          "params": ["update: Update"],
+          "returns": "int | None",
+          "line": 19,
+          "description": "Extract forum topic thread_id from an update"
+        }
+      ],
+      "classes": [],
+      "imports": ["telegram.Update", "..config.config"]
+    },
+    {
+      "id": "src/ccbot/handlers/callback_data.py",
+      "type": "file",
+      "fileCategory": "code",
+      "sizeLines": 51,
+      "language": "python",
+      "description": "Callback data constants for Telegram inline keyboards",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "constants": [
+        "CB_HISTORY_PREV", "CB_HISTORY_NEXT", "CB_DIR_SELECT", "CB_DIR_UP",
+        "CB_DIR_CONFIRM", "CB_DIR_CANCEL", "CB_DIR_PAGE", "CB_WIN_BIND",
+        "CB_WIN_NEW", "CB_WIN_CANCEL", "CB_SCREENSHOT_REFRESH",
+        "CB_ASK_UP", "CB_ASK_DOWN", "CB_ASK_LEFT", "CB_ASK_RIGHT",
+        "CB_ASK_ESC", "CB_ASK_ENTER", "CB_ASK_SPACE", "CB_ASK_TAB",
+        "CB_ASK_REFRESH", "CB_SESSION_SELECT", "CB_SESSION_NEW",
+        "CB_SESSION_CANCEL", "CB_KEYS_PREFIX"
+      ]
+    },
+    {
+      "id": "src/ccbot/handlers/callback_router.py",
+      "type": "file",
+      "fileCategory": "code",
+      "sizeLines": 652,
+      "language": "python",
+      "description": "Central callback query router for inline keyboards",
+      "functions": [
+        {
+          "name": "callback_handler",
+          "params": ["update: Update", "context: ContextTypes.DEFAULT_TYPE"],
+          "returns": "None",
+          "modifier": "async",
+          "line": 75,
+          "description": "Route all CB_* callback queries to appropriate handlers"
+        }
+      ],
+      "classes": [],
+      "imports": [
+        "asyncio", "io", "logging", "pathlib.Path",
+        "telegram.InputMediaDocument", "telegram.Update", "telegram.ext.ContextTypes",
+        "..screenshot.text_to_image", "..session.session_manager",
+        "..tmux_manager.tmux_manager",
+        ".auth.get_thread_id", ".auth.is_user_allowed",
+        ".callback_data.*", ".directory_browser.*",
+        ".history.send_history", ".interactive_ui.clear_interactive_msg",
+        ".interactive_ui.handle_interactive_ui",
+        ".message_sender.safe_edit", ".message_sender.safe_send",
+        ".screenshot_controls.*", ".window_bind.create_and_bind_window"
+      ]
+    },
+    {
+      "id": "src/ccbot/handlers/cleanup.py",
+      "type": "file",
+      "fileCategory": "code",
+      "sizeLines": 49,
+      "language": "python",
+      "description": "Unified cleanup API for topic state",
+      "functions": [
+        {
+          "name": "clear_topic_state",
+          "params": ["user_id: int", "thread_id: int", "bot: Bot | None = None", "user_data: dict[str, Any] | None = None"],
+          "returns": "None",
+          "modifier": "async",
+          "line": 18,
+          "description": "Clear all memory state associated with a topic"
+        }
+      ],
+      "classes": [],
+      "imports": ["typing.Any", "telegram.Bot", ".interactive_ui.clear_interactive_msg", ".message_queue.clear_status_msg_info", ".message_queue.clear_tool_msg_ids_for_topic"]
+    },
+    {
+      "id": "src/ccbot/handlers/command_handlers.py",
+      "type": "file",
+      "fileCategory": "code",
+      "sizeLines": 358,
+      "language": "python",
+      "description": "Telegram command and topic lifecycle handlers",
+      "functions": [
+        {
+          "name": "start_command",
+          "params": ["update: Update", "context: ContextTypes.DEFAULT_TYPE"],
+          "returns": "None",
+          "modifier": "async",
+          "line": 33,
+          "description": "Handle /start command"
+        },
+        {
+          "name": "history_command",
+          "params": ["update: Update", "context: ContextTypes.DEFAULT_TYPE"],
+          "returns": "None",
+          "modifier": "async",
+          "line": 50,
+          "description": "Handle /history command — show message history"
+        },
+        {
+          "name": "screenshot_command",
+          "params": ["update: Update", "context: ContextTypes.DEFAULT_TYPE"],
+          "returns": "None",
+          "modifier": "async",
+          "line": 67,
+          "description": "Handle /screenshot command — capture tmux pane as image"
+        },
+        {
+          "name": "unbind_command",
+          "params": ["update: Update", "context: ContextTypes.DEFAULT_TYPE"],
+          "returns": "None",
+          "modifier": "async",
+          "line": 103,
+          "description": "Handle /unbind command — unbind topic from session"
+        },
+        {
+          "name": "esc_command",
+          "params": ["update: Update", "context: ContextTypes.DEFAULT_TYPE"],
+          "returns": "None",
+          "modifier": "async",
+          "line": 133,
+          "description": "Handle /esc command — send Escape key to interrupt Claude"
+        },
+        {
+          "name": "usage_command",
+          "params": ["update: Update", "context: ContextTypes.DEFAULT_TYPE"],
+          "returns": "None",
+          "modifier": "async",
+          "line": 158,
+          "description": "Handle /usage command — fetch Claude Code usage stats"
+        },
+        {
+          "name": "topic_closed_handler",
+          "params": ["update: Update", "context: ContextTypes.DEFAULT_TYPE"],
+          "returns": "None",
+          "modifier": "async",
+          "line": 205,
+          "description": "Handle topic closure — kill tmux window and clean up"
+        },
+        {
+          "name": "topic_edited_handler",
+          "params": ["update: Update", "context: ContextTypes.DEFAULT_TYPE"],
+          "returns": "None",
+          "modifier": "async",
+          "line": 245,
+          "description": "Handle topic rename — sync new name to tmux window"
+        },
+        {
+          "name": "forward_command_handler",
+          "params": ["update: Update", "context: ContextTypes.DEFAULT_TYPE"],
+          "returns": "None",
+          "modifier": "async",
+          "line": 286,
+          "description": "Forward non-bot commands as slash commands to Claude Code"
+        },
+        {
+          "name": "unsupported_content_handler",
+          "params": ["update: Update", "_context: ContextTypes.DEFAULT_TYPE"],
+          "returns": "None",
+          "modifier": "async",
+          "line": 344,
+          "description": "Reply to non-text messages"
+        }
+      ],
+      "classes": [],
+      "imports": [
+        "asyncio", "io", "logging", "telegram.Update",
+        "telegram.constants.ChatAction", "telegram.ext.ContextTypes",
+        "..session.session_manager", "..screenshot.text_to_image",
+        "..tmux_manager.tmux_manager",
+        ".auth.get_thread_id", ".auth.is_user_allowed",
+        ".cleanup.clear_topic_state", ".directory_browser.clear_browse_state",
+        ".history.send_history", ".message_sender.safe_reply",
+        ".screenshot_controls.build_screenshot_keyboard"
+      ]
+    },
+    {
+      "id": "src/ccbot/handlers/directory_browser.py",
+      "type": "file",
+      "fileCategory": "code",
+      "sizeLines": 256,
+      "language": "python",
+      "description": "Directory browser and window picker UI for session creation",
+      "functions": [
+        {
+          "name": "clear_browse_state",
+          "params": ["user_data: dict | None"],
+          "returns": "None",
+          "line": 54,
+          "description": "Clear directory browsing state keys from user_data"
+        },
+        {
+          "name": "clear_window_picker_state",
+          "params": ["user_data: dict | None"],
+          "returns": "None",
+          "line": 63,
+          "description": "Clear window picker state keys from user_data"
+        },
+        {
+          "name": "clear_session_picker_state",
+          "params": ["user_data: dict | None"],
+          "returns": "None",
+          "line": 70,
+          "description": "Clear session picker state keys from user_data"
+        },
+        {
+          "name": "build_window_picker",
+          "params": ["windows: list[tuple[str, str, str]]"],
+          "returns": "tuple[str, InlineKeyboardMarkup, list[str]]",
+          "line": 77,
+          "description": "Build window picker UI for unbound tmux windows"
+        },
+        {
+          "name": "build_directory_browser",
+          "params": ["current_path: str", "page: int = 0"],
+          "returns": "tuple[str, InlineKeyboardMarkup, list[str]]",
+          "line": 122,
+          "description": "Build directory browser UI for navigating filesystem"
+        },
+        {
+          "name": "_relative_time",
+          "params": ["file_path: str"],
+          "returns": "str",
+          "line": 196,
+          "description": "Format file mtime as human-readable relative time"
+        },
+        {
+          "name": "build_session_picker",
+          "params": ["sessions: list[ClaudeSession]"],
+          "returns": "tuple[str, InlineKeyboardMarkup]",
+          "line": 215,
+          "description": "Build session picker UI for resuming existing sessions"
+        }
+      ],
+      "classes": [],
+      "imports": ["os", "time", "pathlib.Path", "telegram.InlineKeyboardButton", "telegram.InlineKeyboardMarkup", "..session.ClaudeSession", "..config.config", ".callback_data.*"]
+    },
+    {
+      "id": "src/ccbot/handlers/history.py",
+      "type": "file",
+      "fileCategory": "code",
+      "sizeLines": 235,
+      "language": "python",
+      "description": "Message history display with pagination",
+      "functions": [
+        {
+          "name": "_build_history_keyboard",
+          "params": ["window_id: str", "page_index: int", "total_pages: int", "start_byte: int = 0", "end_byte: int = 0"],
+          "returns": "InlineKeyboardMarkup | None",
+          "line": 25,
+          "description": "Build inline keyboard for history pagination"
+        },
+        {
+          "name": "send_history",
+          "params": ["target: Any", "window_id: str", "offset: int = -1", "edit: bool = False", "start_byte: int = 0", "end_byte: int = 0", "user_id: int | None = None", "bot: Bot | None = None", "message_thread_id: int | None = None"],
+          "returns": "None",
+          "modifier": "async",
+          "line": 70,
+          "description": "Send or edit message history for a window's session"
+        }
+      ],
+      "classes": [],
+      "imports": ["logging", "typing.Any", "telegram.Bot", "telegram.InlineKeyboardButton", "telegram.InlineKeyboardMarkup", "..config.config", "..session.session_manager", "..telegram_sender.split_message", "..transcript_parser.TranscriptParser", ".callback_data.CB_HISTORY_NEXT", ".callback_data.CB_HISTORY_PREV", ".message_sender.safe_edit", ".message_sender.safe_reply", ".message_sender.safe_send"]
+    },
+    {
+      "id": "src/ccbot/handlers/interactive_ui.py",
+      "type": "file",
+      "fileCategory": "code",
+      "sizeLines": 273,
+      "language": "python",
+      "description": "Interactive UI handling for Claude Code prompts",
+      "functions": [
+        {
+          "name": "get_interactive_window",
+          "params": ["user_id: int", "thread_id: int | None = None"],
+          "returns": "str | None",
+          "line": 50,
+          "description": "Get the window_id for user's interactive mode"
+        },
+        {
+          "name": "set_interactive_mode",
+          "params": ["user_id: int", "window_id: str", "thread_id: int | None = None"],
+          "returns": "None",
+          "line": 55,
+          "description": "Set interactive mode for a user"
+        },
+        {
+          "name": "clear_interactive_mode",
+          "params": ["user_id: int", "thread_id: int | None = None"],
+          "returns": "None",
+          "line": 70,
+          "description": "Clear interactive mode for a user"
+        },
+        {
+          "name": "get_interactive_msg_id",
+          "params": ["user_id: int", "thread_id: int | None = None"],
+          "returns": "int | None",
+          "line": 76,
+          "description": "Get the interactive message ID for a user"
+        },
+        {
+          "name": "_build_interactive_keyboard",
+          "params": ["window_id: str", "ui_name: str = ''"],
+          "returns": "InlineKeyboardMarkup",
+          "line": 81,
+          "description": "Build keyboard for interactive UI navigation"
+        },
+        {
+          "name": "handle_interactive_ui",
+          "params": ["bot: Bot", "user_id: int", "window_id: str", "thread_id: int | None = None"],
+          "returns": "bool",
+          "modifier": "async",
+          "line": 144,
+          "description": "Capture terminal and send interactive UI content to user"
+        },
+        {
+          "name": "clear_interactive_msg",
+          "params": ["user_id: int", "bot: Bot | None = None", "thread_id: int | None = None"],
+          "returns": "None",
+          "modifier": "async",
+          "line": 253,
+          "description": "Clear tracked interactive message and delete from chat"
+        }
+      ],
+      "classes": [],
+      "imports": ["logging", "telegram.Bot", "telegram.InlineKeyboardButton", "telegram.InlineKeyboardMarkup", "telegram.error.BadRequest", "..session.session_manager", "..terminal_parser.extract_interactive_content", "..terminal_parser.is_interactive_ui", "..tmux_manager.tmux_manager", ".callback_data.*", ".message_sender.NO_LINK_PREVIEW"],
+      "moduleConstants": {
+        "INTERACTIVE_TOOL_NAMES": "frozenset({'AskUserQuestion', 'ExitPlanMode'})",
+        "_interactive_msgs": "dict[tuple[int, int], int]",
+        "_interactive_mode": "dict[tuple[int, int], str]"
+      }
+    },
+    {
+      "id": "src/ccbot/handlers/message_handlers.py",
+      "type": "file",
+      "fileCategory": "code",
+      "sizeLines": 510,
+      "language": "python",
+      "description": "Text, photo, and voice message handlers plus bash output capture",
+      "functions": [
+        {
+          "name": "photo_handler",
+          "params": ["update: Update", "context: ContextTypes.DEFAULT_TYPE"],
+          "returns": "None",
+          "modifier": "async",
+          "line": 62,
+          "description": "Handle photos: download and forward path to Claude Code"
+        },
+        {
+          "name": "voice_handler",
+          "params": ["update: Update", "context: ContextTypes.DEFAULT_TYPE"],
+          "returns": "None",
+          "modifier": "async",
+          "line": 136,
+          "description": "Handle voice messages: transcribe via OpenAI and forward text"
+        },
+        {
+          "name": "cancel_bash_capture",
+          "params": ["user_id: int", "thread_id: int"],
+          "returns": "None",
+          "line": 219,
+          "description": "Cancel any running bash capture for this topic"
+        },
+        {
+          "name": "capture_bash_output",
+          "params": ["bot: Bot", "user_id: int", "thread_id: int", "window_id: str", "command: str"],
+          "returns": "None",
+          "modifier": "async",
+          "line": 227,
+          "description": "Background task: capture !bash command output from tmux pane"
+        },
+        {
+          "name": "text_handler",
+          "params": ["update: Update", "context: ContextTypes.DEFAULT_TYPE"],
+          "returns": "None",
+          "modifier": "async",
+          "line": 307,
+          "description": "Route user text to bound tmux window or pickers"
+        }
+      ],
+      "classes": [],
+      "imports": [
+        "asyncio", "logging", "time", "pathlib.Path",
+        "telegram.Bot", "telegram.Update", "telegram.constants.ChatAction",
+        "telegram.ext.ContextTypes",
+        "..config.config", "..markdown_v2.convert_markdown",
+        "..session.session_manager", "..terminal_parser.extract_bash_output",
+        "..terminal_parser.is_interactive_ui", "..tmux_manager.tmux_manager",
+        "..transcribe.transcribe_voice", "..utils.ccbot_dir",
+        ".auth.get_thread_id", ".auth.is_user_allowed",
+        ".directory_browser.*", ".interactive_ui.get_interactive_window",
+        ".interactive_ui.handle_interactive_ui",
+        ".message_queue.clear_status_msg_info", ".message_queue.enqueue_status_update",
+        ".message_sender.NO_LINK_PREVIEW", ".message_sender.safe_reply", ".message_sender.send_with_fallback"
+      ],
+      "moduleConstants": {
+        "IMAGES_DIR": "Path to ~/.ccbot/images/",
+        "bash_capture_tasks": "dict[tuple[int, int], asyncio.Task[None]]"
+      }
+    },
+    {
+      "id": "src/ccbot/handlers/message_queue.py",
+      "type": "file",
+      "fileCategory": "code",
+      "sizeLines": 820,
+      "language": "python",
+      "description": "Per-user message queue management for ordered message delivery",
+      "functions": [
+        {
+          "name": "_ensure_formatted",
+          "params": ["text: str"],
+          "returns": "str",
+          "line": 47,
+          "description": "Convert markdown to MarkdownV2"
+        },
+        {
+          "name": "get_message_queue",
+          "params": ["user_id: int"],
+          "returns": "asyncio.Queue[MessageTask] | None",
+          "line": 203,
+          "description": "Get the message queue for a user if exists"
+        },
+        {
+          "name": "get_or_create_queue",
+          "params": ["bot: Bot", "user_id: int"],
+          "returns": "asyncio.Queue[MessageTask]",
+          "line": 208,
+          "description": "Get or create message queue and worker for a user"
+        },
+        {
+          "name": "clear_status_msg_info",
+          "params": ["user_id: int", "thread_id: int | None = None"],
+          "returns": "None",
+          "line": 213,
+          "description": "Clear status message tracking for a user"
+        },
+        {
+          "name": "clear_tool_msg_ids_for_topic",
+          "params": ["user_id: int", "thread_id: int | None = None"],
+          "returns": "None",
+          "line": 218,
+          "description": "Clear tool message ID tracking for a topic"
+        },
+        {
+          "name": "shutdown_workers",
+          "params": [],
+          "returns": "None",
+          "modifier": "async",
+          "line": 223,
+          "description": "Stop all queue workers during bot shutdown"
+        },
+        {
+          "name": "_inspect_queue",
+          "params": ["queue: asyncio.Queue[MessageTask]"],
+          "returns": "list[MessageTask]",
+          "line": 228,
+          "description": "Non-destructively inspect all items in queue"
+        },
+        {
+          "name": "_can_merge_tasks",
+          "params": ["base: MessageTask", "candidate: MessageTask"],
+          "returns": "bool",
+          "line": 243,
+          "description": "Check if two content tasks can be merged"
+        },
+        {
+          "name": "_merge_content_tasks",
+          "params": ["queue: asyncio.Queue[MessageTask]", "first: MessageTask", "lock: asyncio.Lock"],
+          "returns": "tuple[MessageTask, int]",
+          "modifier": "async",
+          "line": 259,
+          "description": "Merge consecutive content tasks from queue"
+        },
+        {
+          "name": "_process_content_with_retry",
+          "params": ["bot: Bot", "user_id: int", "task: MessageTask", "max_attempts: int = 3"],
+          "returns": "None",
+          "modifier": "async",
+          "line": 323,
+          "description": "Send a content task with retry on flood control"
+        },
+        {
+          "name": "_message_queue_worker",
+          "params": ["bot: Bot", "user_id: int"],
+          "returns": "None",
+          "modifier": "async",
+          "line": 365,
+          "description": "Process message tasks for a user sequentially"
+        },
+        {
+          "name": "_send_kwargs",
+          "params": ["thread_id: int | None"],
+          "returns": "dict[str, int]",
+          "line": 439,
+          "description": "Build message_thread_id kwargs for bot.send_message()"
+        },
+        {
+          "name": "_send_task_images",
+          "params": ["bot: Bot", "chat_id: int", "task: MessageTask"],
+          "returns": "None",
+          "modifier": "async",
+          "line": 446,
+          "description": "Send images attached to a task if any"
+        },
+        {
+          "name": "_process_content_task",
+          "params": ["bot: Bot", "user_id: int", "task: MessageTask"],
+          "returns": "None",
+          "modifier": "async",
+          "line": 463,
+          "description": "Process a content message task"
+        },
+        {
+          "name": "_convert_status_to_content",
+          "params": ["bot: Bot", "user_id: int", "thread_id_or_0: int", "window_id: str", "content_text: str"],
+          "returns": "int | None",
+          "modifier": "async",
+          "line": 551,
+          "description": "Convert status message to content message by editing it"
+        },
+        {
+          "name": "_process_status_update_task",
+          "params": ["bot: Bot", "user_id: int", "task: MessageTask"],
+          "returns": "None",
+          "modifier": "async",
+          "line": 607,
+          "description": "Process a status update task"
+        },
+        {
+          "name": "_do_send_status_message",
+          "params": ["bot: Bot", "user_id: int", "thread_id_or_0: int", "window_id: str", "text: str"],
+          "returns": "None",
+          "modifier": "async",
+          "line": 677,
+          "description": "Send a new status message and track it"
+        },
+        {
+          "name": "_do_clear_status_message",
+          "params": ["bot: Bot", "user_id: int", "thread_id_or_0: int = 0"],
+          "returns": "None",
+          "modifier": "async",
+          "line": 714,
+          "description": "Delete the status message for a user"
+        },
+        {
+          "name": "_check_and_send_status",
+          "params": ["bot: Bot", "user_id: int", "window_id: str", "thread_id: int | None = None"],
+          "returns": "None",
+          "modifier": "async",
+          "line": 730,
+          "description": "Check terminal for status line and send status message"
+        },
+        {
+          "name": "enqueue_content_message",
+          "params": ["bot: Bot", "user_id: int", "window_id: str", "parts: list[str]", "tool_use_id: str | None = None", "content_type: str = 'text'", "text: str | None = None", "thread_id: int | None = None", "image_data: list[tuple[str, bytes]] | None = None"],
+          "returns": "None",
+          "modifier": "async",
+          "line": 755,
+          "description": "Enqueue a content message task"
+        },
+        {
+          "name": "enqueue_status_update",
+          "params": ["bot: Bot", "user_id: int", "window_id: str", "status_text: str | None", "thread_id: int | None = None"],
+          "returns": "None",
+          "modifier": "async",
+          "line": 788,
+          "description": "Enqueue status update with deduplication"
+        }
+      ],
+      "classes": [
+        {
+          "name": "MessageTask",
+          "type": "dataclass",
+          "line": 60,
+          "methods": [],
+          "attributes": ["task_type", "text", "window_id", "parts", "tool_use_id", "content_type", "thread_id", "image_data"]
+        },
+        {
+          "name": "StatusTracker",
+          "type": "class",
+          "line": 74,
+          "methods": [
+            {"name": "__init__", "line": 77},
+            {"name": "set_status", "line": 83},
+            {"name": "get_status", "line": 93},
+            {"name": "pop_status", "line": 98},
+            {"name": "set_tool_msg_id", "line": 103},
+            {"name": "get_tool_msg_id", "line": 112},
+            {"name": "pop_tool_msg_id", "line": 117},
+            {"name": "clear_tools_for_topic", "line": 122},
+            {"name": "clear_status_for_topic", "line": 128},
+            {"name": "clear_all", "line": 133}
+          ],
+          "attributes": ["_status: dict", "_tool_msg_ids: dict"]
+        },
+        {
+          "name": "MessageQueueManager",
+          "type": "class",
+          "line": 138,
+          "methods": [
+            {"name": "__init__", "line": 141},
+            {"name": "get_queue", "line": 149},
+            {"name": "get_or_create_queue", "line": 153},
+            {"name": "set_flood", "line": 163},
+            {"name": "is_flooded", "line": 167},
+            {"name": "flood_remaining", "line": 170},
+            {"name": "clear_flood", "line": 174},
+            {"name": "get_lock", "line": 177},
+            {"name": "shutdown", "modifier": "async", "line": 180}
+          ],
+          "attributes": ["_queues", "_workers", "_locks", "_flood_until", "status"]
+        }
+      ],
+      "imports": [
+        "asyncio", "logging", "time", "dataclasses.dataclass", "dataclasses.field",
+        "typing.Literal", "telegram.Bot", "telegram.constants.ChatAction",
+        "telegram.error.RetryAfter", "..markdown_v2.convert_markdown",
+        "..session.session_manager", "..terminal_parser.parse_status_line",
+        "..tmux_manager.tmux_manager",
+        ".message_sender.NO_LINK_PREVIEW", ".message_sender.PARSE_MODE",
+        ".message_sender.send_photo", ".message_sender.send_with_fallback",
+        ".message_sender.strip_sentinels"
+      ],
+      "moduleConstants": {
+        "MERGE_MAX_LENGTH": 3800,
+        "FLOOD_CONTROL_MAX_WAIT": 10,
+        "queue_manager": "MessageQueueManager singleton"
+      }
+    },
+    {
+      "id": "src/ccbot/handlers/message_sender.py",
+      "type": "file",
+      "fileCategory": "code",
+      "sizeLines": 198,
+      "language": "python",
+      "description": "Safe message sending helpers with MarkdownV2 fallback",
+      "functions": [
+        {
+          "name": "strip_sentinels",
+          "params": ["text: str"],
+          "returns": "str",
+          "line": 32,
+          "description": "Strip expandable quote sentinel markers for plain text fallback"
+        },
+        {
+          "name": "_ensure_formatted",
+          "params": ["text: str"],
+          "returns": "str",
+          "line": 42,
+          "description": "Convert markdown to MarkdownV2"
+        },
+        {
+          "name": "send_with_fallback",
+          "params": ["bot: Bot", "chat_id: int", "text: str", "**kwargs: Any"],
+          "returns": "Message | None",
+          "modifier": "async",
+          "line": 54,
+          "description": "Send message with MarkdownV2, falling back to plain text"
+        },
+        {
+          "name": "send_photo",
+          "params": ["bot: Bot", "chat_id: int", "image_data: list[tuple[str, bytes]]", "**kwargs: Any"],
+          "returns": "None",
+          "modifier": "async",
+          "line": 87,
+          "description": "Send photo(s) to chat as single or media group"
+        },
+        {
+          "name": "safe_reply",
+          "params": ["message: Message", "text: str", "**kwargs: Any"],
+          "returns": "Message",
+          "modifier": "async",
+          "line": 129,
+          "description": "Reply with formatting, falling back to plain text"
+        },
+        {
+          "name": "safe_edit",
+          "params": ["target: Any", "text: str", "**kwargs: Any"],
+          "returns": "None",
+          "modifier": "async",
+          "line": 150,
+          "description": "Edit message with formatting, falling back to plain text"
+        },
+        {
+          "name": "safe_send",
+          "params": ["bot: Bot", "chat_id: int", "text: str", "message_thread_id: int | None = None", "**kwargs: Any"],
+          "returns": "None",
+          "modifier": "async",
+          "line": 170,
+          "description": "Send message with formatting, falling back to plain text"
+        }
+      ],
+      "classes": [],
+      "imports": ["io", "logging", "typing.Any", "telegram.Bot", "telegram.InputMediaPhoto", "telegram.LinkPreviewOptions", "telegram.Message", "telegram.error.RetryAfter", "..markdown_v2.convert_markdown", "..transcript_parser.TranscriptParser"],
+      "moduleConstants": {
+        "PARSE_MODE": "'MarkdownV2'",
+        "NO_LINK_PREVIEW": "LinkPreviewOptions(is_disabled=True)"
+      }
+    },
+    {
+      "id": "src/ccbot/handlers/notifications.py",
+      "type": "file",
+      "fileCategory": "code",
+      "sizeLines": 121,
+      "language": "python",
+      "description": "Outbound assistant message routing from SessionMonitor",
+      "functions": [
+        {
+          "name": "handle_new_message",
+          "params": ["msg: NewMessage", "bot: Bot"],
+          "returns": "None",
+          "modifier": "async",
+          "line": 32,
+          "description": "Handle a new assistant message — enqueue for sequential processing"
+        }
+      ],
+      "classes": [],
+      "imports": [
+        "asyncio", "logging", "pathlib.Path", "telegram.Bot",
+        "..config.config", "..session.session_manager", "..session_monitor.NewMessage",
+        ".interactive_ui.*",
+        ".message_queue.enqueue_content_message", ".message_queue.get_message_queue",
+        ".response_builder.build_response_parts"
+      ]
+    },
+    {
+      "id": "src/ccbot/handlers/response_builder.py",
+      "type": "file",
+      "fileCategory": "code",
+      "sizeLines": 97,
+      "language": "python",
+      "description": "Response message building for Telegram delivery",
+      "functions": [
+        {
+          "name": "build_response_parts",
+          "params": ["text: str", "is_complete: bool", "content_type: str = 'text'", "role: str = 'assistant'"],
+          "returns": "list[str]",
+          "line": 21,
+          "description": "Build paginated response messages for Telegram"
+        }
+      ],
+      "classes": [],
+      "imports": ["..markdown_v2.convert_markdown_tables", "..telegram_sender.split_message", "..transcript_parser.TranscriptParser"]
+    },
+    {
+      "id": "src/ccbot/handlers/screenshot_controls.py",
+      "type": "file",
+      "fileCategory": "code",
+      "sizeLines": 61,
+      "language": "python",
+      "description": "Screenshot control keyboard and key-send maps",
+      "functions": [
+        {
+          "name": "build_screenshot_keyboard",
+          "params": ["window_id: str"],
+          "returns": "InlineKeyboardMarkup",
+          "line": 40,
+          "description": "Build inline keyboard for screenshot control keys + refresh"
+        },
+        {
+          "name": "btn",
+          "params": ["label: str", "key_id: str"],
+          "returns": "InlineKeyboardButton",
+          "line": 43,
+          "description": "Create an inline keyboard button for screenshot control"
+        }
+      ],
+      "classes": [],
+      "imports": ["telegram.InlineKeyboardButton", "telegram.InlineKeyboardMarkup", ".callback_data.CB_KEYS_PREFIX", ".callback_data.CB_SCREENSHOT_REFRESH"],
+      "moduleConstants": {
+        "KEYS_SEND_MAP": "dict[str, tuple[str, bool, bool]] — maps key_id to (tmux_key, enter, literal)",
+        "KEY_LABELS": "dict[str, str] — maps key_id to display label"
+      }
+    },
+    {
+      "id": "src/ccbot/handlers/status_polling.py",
+      "type": "file",
+      "fileCategory": "code",
+      "sizeLines": 204,
+      "language": "python",
+      "description": "Terminal status line polling for thread-bound windows",
+      "functions": [
+        {
+          "name": "update_status_message",
+          "params": ["bot: Bot", "user_id: int", "window_id: str", "thread_id: int | None = None", "skip_status: bool = False"],
+          "returns": "None",
+          "modifier": "async",
+          "line": 46,
+          "description": "Poll terminal for interactive UIs and status updates"
+        },
+        {
+          "name": "status_poll_loop",
+          "params": ["bot: Bot"],
+          "returns": "None",
+          "modifier": "async",
+          "line": 122,
+          "description": "Background task to poll terminal status for all thread-bound windows"
+        }
+      ],
+      "classes": [],
+      "imports": [
+        "asyncio", "logging", "time", "telegram.Bot", "telegram.error.BadRequest",
+        "..session.session_manager", "..terminal_parser.is_interactive_ui",
+        "..terminal_parser.parse_status_line", "..tmux_manager.tmux_manager",
+        ".interactive_ui.clear_interactive_msg", ".interactive_ui.get_interactive_window",
+        ".interactive_ui.handle_interactive_ui",
+        ".cleanup.clear_topic_state",
+        ".message_queue.enqueue_status_update", ".message_queue.get_message_queue"
+      ],
+      "moduleConstants": {
+        "STATUS_POLL_INTERVAL": 1.0,
+        "TOPIC_CHECK_INTERVAL": 60.0
+      }
+    },
+    {
+      "id": "src/ccbot/handlers/window_bind.py",
+      "type": "file",
+      "fileCategory": "code",
+      "sizeLines": 146,
+      "language": "python",
+      "description": "Create a tmux window and bind it to a Telegram forum topic",
+      "functions": [
+        {
+          "name": "create_and_bind_window",
+          "params": ["query: object", "context: ContextTypes.DEFAULT_TYPE", "user: object", "selected_path: str", "pending_thread_id: int | None", "resume_session_id: str | None = None"],
+          "returns": "None",
+          "modifier": "async",
+          "line": 19,
+          "description": "Create a tmux window, bind it to a topic, and forward pending text"
+        }
+      ],
+      "classes": [],
+      "imports": ["logging", "telegram.ext.ContextTypes", "..session.session_manager", "..tmux_manager.tmux_manager", ".message_sender.safe_edit", ".message_sender.safe_send"]
+    },
+    {
+      "id": "src/ccbot/hook.py",
+      "type": "file",
+      "fileCategory": "code",
+      "sizeLines": 277,
+      "language": "python",
+      "description": "Hook subcommand for Claude Code session tracking",
+      "functions": [
+        {
+          "name": "_find_ccbot_path",
+          "params": [],
+          "returns": "str",
+          "line": 37,
+          "description": "Find full path to ccbot executable"
+        },
+        {
+          "name": "_is_hook_installed",
+          "params": ["settings: dict"],
+          "returns": "bool",
+          "line": 60,
+          "description": "Check if ccbot hook is already installed in settings"
+        },
+        {
+          "name": "_install_hook",
+          "params": [],
+          "returns": "int",
+          "line": 82,
+          "description": "Install the ccbot hook into Claude's settings.json"
+        },
+        {
+          "name": "hook_main",
+          "params": [],
+          "returns": "None",
+          "line": 135,
+          "description": "Process Claude Code hook event from stdin or install the hook"
+        }
+      ],
+      "classes": [],
+      "imports": [
+        "argparse", "json", "logging", "os", "re", "shutil", "subprocess",
+        "sys", "pathlib.Path", ".utils.LOCK_EX", ".utils.LOCK_UN", ".utils.flock"
+      ],
+      "moduleConstants": {
+        "_UUID_RE": "UUID regex pattern",
+        "_CLAUDE_SETTINGS_FILE": "~/.claude/settings.json",
+        "_HOOK_COMMAND_SUFFIX": "'ccbot hook'"
+      }
+    },
+    {
+      "id": "src/ccbot/main.py",
+      "type": "file",
+      "fileCategory": "code",
+      "sizeLines": 75,
+      "language": "python",
+      "description": "Application entry point — CLI dispatcher and bot bootstrap",
+      "functions": [
+        {
+          "name": "main",
+          "params": [],
+          "returns": "None",
+          "line": 13,
+          "description": "Main entry point: dispatches hook or starts Telegram bot"
+        }
+      ],
+      "classes": [],
+      "imports": ["logging", "sys"]
+    },
+    {
+      "id": "src/ccbot/markdown_v2.py",
+      "type": "file",
+      "fileCategory": "code",
+      "sizeLines": 205,
+      "language": "python",
+      "description": "Markdown to Telegram MarkdownV2 conversion layer",
+      "functions": [
+        {
+          "name": "_split_table_row",
+          "params": ["line: str"],
+          "returns": "list[str]",
+          "line": 23,
+          "description": "Split a table row by pipes respecting escaped pipes"
+        },
+        {
+          "name": "convert_markdown_tables",
+          "params": ["text: str"],
+          "returns": "str",
+          "line": 30,
+          "description": "Convert markdown tables to card-style key-value format"
+        },
+        {
+          "name": "_escape_mdv2",
+          "params": ["text: str"],
+          "returns": "str",
+          "line": 114,
+          "description": "Escape special characters for Telegram MarkdownV2"
+        },
+        {
+          "name": "_render_expandable_quote",
+          "params": ["m: re.Match[str]"],
+          "returns": "str",
+          "line": 124,
+          "description": "Render expandable blockquote block in raw MarkdownV2"
+        },
+        {
+          "name": "_markdownify",
+          "params": ["text: str"],
+          "returns": "str",
+          "line": 156,
+          "description": "Custom markdownify with custom rendering rules"
+        },
+        {
+          "name": "convert_markdown",
+          "params": ["text: str"],
+          "returns": "str",
+          "line": 175,
+          "description": "Convert standard Markdown to Telegram MarkdownV2 format"
+        }
+      ],
+      "classes": [],
+      "imports": ["re", "mistletoe", "mistletoe.block_token.BlockCode", "mistletoe.block_token.remove_token", "telegramify_markdown._update_block", "telegramify_markdown.escape_latex", "telegramify_markdown.render.TelegramMarkdownRenderer", ".transcript_parser.TranscriptParser"]
+    },
+    {
+      "id": "src/ccbot/monitor_state.py",
+      "type": "file",
+      "fileCategory": "code",
+      "sizeLines": 109,
+      "language": "python",
+      "description": "Monitor state persistence for byte-offset tracking",
+      "functions": [],
+      "classes": [
+        {
+          "name": "TrackedSession",
+          "type": "dataclass",
+          "line": 20,
+          "methods": [
+            {"name": "to_dict", "line": 27, "returns": "dict[str, Any]"},
+            {"name": "from_dict", "line": 32, "returns": "TrackedSession", "modifier": "classmethod"}
+          ],
+          "attributes": ["session_id: str", "file_path: str", "last_byte_offset: int"]
+        },
+        {
+          "name": "MonitorState",
+          "type": "dataclass",
+          "line": 42,
+          "methods": [
+            {"name": "load", "line": 53, "description": "Load state from file"},
+            {"name": "save", "line": 72, "description": "Save state to file atomically"},
+            {"name": "get_session", "line": 91, "returns": "TrackedSession | None"},
+            {"name": "update_session", "line": 95, "description": "Update or add a tracked session"},
+            {"name": "remove_session", "line": 100, "description": "Remove a tracked session"},
+            {"name": "save_if_dirty", "line": 106, "description": "Save state only if modified"}
+          ],
+          "attributes": ["state_file: Path", "tracked_sessions: dict[str, TrackedSession]", "_dirty: bool"]
+        }
+      ],
+      "imports": ["json", "logging", "dataclasses.asdict", "dataclasses.dataclass", "dataclasses.field", "dataclasses.dataclass", "pathlib.Path", "typing.Any"]
+    },
+    {
+      "id": "src/ccbot/screenshot.py",
+      "type": "file",
+      "fileCategory": "code",
+      "sizeLines": 336,
+      "language": "python",
+      "description": "Terminal text to PNG screenshot renderer with ANSI support",
+      "functions": [
+        {
+          "name": "_load_font",
+          "params": ["path: Path", "size: int"],
+          "returns": "ImageFont.FreeTypeFont | ImageFont.ImageFont",
+          "line": 92,
+          "description": "Load TrueType/OpenType font with fallback"
+        },
+        {
+          "name": "_font_tier",
+          "params": ["ch: str"],
+          "returns": "int",
+          "line": 101,
+          "description": "Return font tier for character (0=JB, 1=Noto, 2=Symbola)"
+        },
+        {
+          "name": "_parse_ansi_line",
+          "params": ["line: str"],
+          "returns": "list[StyledSegment]",
+          "line": 124,
+          "description": "Parse a line with ANSI escape codes into styled segments"
+        },
+        {
+          "name": "_apply_ansi_codes",
+          "params": ["style: TextStyle", "codes: str"],
+          "returns": "TextStyle",
+          "line": 162,
+          "description": "Apply ANSI color codes to a text style"
+        },
+        {
+          "name": "_approximate_256_color",
+          "params": ["idx: int"],
+          "returns": "tuple[int, int, int]",
+          "line": 222,
+          "description": "Approximate 256-color palette index to RGB"
+        },
+        {
+          "name": "_split_line_segments_plain",
+          "params": ["line: str"],
+          "returns": "list[tuple[str, int]]",
+          "line": 239,
+          "description": "Split line into (text, font_tier) segments"
+        },
+        {
+          "name": "text_to_image",
+          "params": ["text: str", "font_size: int = 28", "with_ansi: bool = True"],
+          "returns": "bytes",
+          "modifier": "async",
+          "line": 259,
+          "description": "Render monospace text onto dark background PNG image"
+        }
+      ],
+      "classes": [
+        {
+          "name": "TextStyle",
+          "type": "dataclass",
+          "line": 76,
+          "attributes": ["fg_color: tuple", "bg_color: tuple | None"]
+        },
+        {
+          "name": "StyledSegment",
+          "type": "dataclass",
+          "line": 84,
+          "attributes": ["text: str", "style: TextStyle", "font_tier: int"]
+        }
+      ],
+      "imports": ["asyncio", "io", "logging", "re", "dataclasses.dataclass", "pathlib.Path", "PIL.Image", "PIL.ImageDraw", "PIL.ImageFont"]
+    },
+    {
+      "id": "src/ccbot/session_monitor.py",
+      "type": "file",
+      "fileCategory": "code",
+      "sizeLines": 560,
+      "language": "python",
+      "description": "Session monitoring service — watches JSONL files for new messages",
+      "functions": [],
+      "classes": [
+        {
+          "name": "SessionInfo",
+          "type": "dataclass",
+          "line": 33,
+          "attributes": ["session_id: str", "file_path: Path"]
+        },
+        {
+          "name": "NewMessage",
+          "type": "dataclass",
+          "line": 41,
+          "attributes": ["session_id", "text", "is_complete", "content_type", "tool_use_id", "role", "tool_name", "image_data"]
+        },
+        {
+          "name": "SessionMonitor",
+          "type": "class",
+          "line": 54,
+          "methods": [
+            {"name": "__init__", "line": 61},
+            {"name": "set_message_callback", "line": 88},
+            {"name": "_get_active_cwds", "modifier": "async", "line": 93, "returns": "set[str]"},
+            {"name": "scan_projects", "modifier": "async", "line": 104, "returns": "list[SessionInfo]"},
+            {"name": "_read_new_lines", "modifier": "async", "line": 196, "returns": "list[dict]"},
+            {"name": "check_for_updates", "modifier": "async", "line": 303, "returns": "list[NewMessage]"},
+            {"name": "_load_current_session_map", "modifier": "async", "line": 409, "returns": "dict[str, str]"},
+            {"name": "_cleanup_all_stale_sessions", "modifier": "async", "line": 437},
+            {"name": "_detect_and_cleanup_changes", "modifier": "async", "line": 456, "returns": "dict[str, str]"},
+            {"name": "_monitor_loop", "modifier": "async", "line": 503},
+            {"name": "start", "line": 547},
+            {"name": "stop", "line": 554}
+          ],
+          "attributes": ["projects_path", "poll_interval", "state", "_running", "_task", "_message_callback", "_pending_tools", "_last_session_map", "_file_mtimes"]
+        }
+      ],
+      "imports": ["asyncio", "json", "logging", "dataclasses.dataclass", "pathlib.Path", "typing.Any", "typing.Callable", "typing.Awaitable", "aiofiles", ".config.config", ".monitor_state.MonitorState", ".monitor_state.TrackedSession", ".tmux_manager.tmux_manager", ".transcript_parser.TranscriptParser", ".utils.read_cwd_from_jsonl"]
+    },
+    {
+      "id": "src/ccbot/session.py",
+      "type": "file",
+      "fileCategory": "code",
+      "sizeLines": 1010,
+      "language": "python",
+      "description": "Claude Code session management — the core state hub",
+      "functions": [],
+      "classes": [
+        {
+          "name": "WindowState",
+          "type": "dataclass",
+          "line": 44,
+          "methods": [
+            {"name": "to_dict", "line": 57, "returns": "dict[str, Any]"},
+            {"name": "from_dict", "line": 67, "returns": "WindowState", "modifier": "classmethod"}
+          ],
+          "attributes": ["session_id: str", "cwd: str", "window_name: str"]
+        },
+        {
+          "name": "ClaudeSession",
+          "type": "dataclass",
+          "line": 76,
+          "attributes": ["session_id: str", "summary: str", "message_count: int", "file_path: str"]
+        },
+        {
+          "name": "SessionManager",
+          "type": "dataclass",
+          "line": 86,
+          "methods": [
+            {"name": "window_states", "line": 99},
+            {"name": "user_window_offsets", "line": 100},
+            {"name": "thread_bindings", "line": 101},
+            {"name": "window_display_names", "line": 103},
+            {"name": "group_chat_ids", "line": 112},
+            {"name": "__post_init__", "line": 114},
+            {"name": "_save_state", "line": 117},
+            {"name": "_is_window_id", "line": 133, "returns": "bool"},
+            {"name": "_load_state", "line": 137},
+            {"name": "resolve_stale_ids", "modifier": "async", "line": 194},
+            {"name": "_migrate_old_format_map", "line": 346, "returns": "bool"},
+            {"name": "_mutate_session_map_locked", "line": 390, "returns": "bool"},
+            {"name": "override_session_map_entry", "modifier": "async", "line": 427},
+            {"name": "_migrate_old_format_session_map_keys", "modifier": "async", "line": 456},
+            {"name": "_cleanup_stale_session_map_entries", "modifier": "async", "line": 469},
+            {"name": "get_display_name", "line": 501, "returns": "str"},
+            {"name": "update_display_name", "line": 505},
+            {"name": "set_group_chat_id", "line": 516},
+            {"name": "resolve_chat_id", "line": 542, "returns": "int"},
+            {"name": "wait_for_session_map_entry", "modifier": "async", "line": 560, "returns": "bool"},
+            {"name": "load_session_map", "modifier": "async", "line": 596},
+            {"name": "get_window_state", "line": 676, "returns": "WindowState"},
+            {"name": "clear_window_session", "line": 682},
+            {"name": "_encode_cwd", "line": 690, "returns": "str", "modifier": "staticmethod"},
+            {"name": "_build_session_file_path", "line": 698, "returns": "Path | None"},
+            {"name": "_get_session_direct", "modifier": "async", "line": 705, "returns": "ClaudeSession | None"},
+            {"name": "list_sessions_for_directory", "modifier": "async", "line": 761, "returns": "list[ClaudeSession]"},
+            {"name": "resolve_session_for_window", "modifier": "async", "line": 797, "returns": "ClaudeSession | None"},
+            {"name": "update_user_window_offset", "line": 826},
+            {"name": "bind_thread", "line": 837},
+            {"name": "unbind_thread", "line": 863, "returns": "str | None"},
+            {"name": "get_window_for_thread", "line": 880, "returns": "str | None"},
+            {"name": "resolve_window_for_thread", "line": 887, "returns": "str | None"},
+            {"name": "iter_thread_bindings", "line": 900, "returns": "Iterator[tuple[int, int, str]]"},
+            {"name": "find_users_for_session", "modifier": "async", "line": 910, "returns": "list[tuple[int, str, int]]"},
+            {"name": "send_to_window", "modifier": "async", "line": 931, "returns": "tuple[bool, str]"},
+            {"name": "get_recent_messages", "modifier": "async", "line": 950, "returns": "tuple[list[dict], int]"}
+          ],
+          "attributes": [
+            "window_states: dict[str, WindowState]",
+            "user_window_offsets: dict[int, dict[str, int]]",
+            "thread_bindings: dict[int, dict[int, str]]",
+            "window_display_names: dict[str, str]",
+            "group_chat_ids: dict[str, int]"
+          ]
+        }
+      ],
+      "imports": [
+        "asyncio", "json", "logging", "re", "dataclasses.dataclass", "dataclasses.field",
+        "pathlib.Path", "collections.abc.Callable", "collections.abc.Iterator", "typing.Any",
+        "aiofiles", ".config.config", ".tmux_manager.tmux_manager",
+        ".transcript_parser.TranscriptParser",
+        ".utils.LOCK_EX", ".utils.LOCK_UN", ".utils.atomic_write_json", ".utils.flock"
+      ],
+      "moduleConstants": {
+        "session_manager": "SessionManager singleton"
+      }
+    },
+    {
+      "id": "src/ccbot/telegram_sender.py",
+      "type": "file",
+      "fileCategory": "code",
+      "sizeLines": 122,
+      "language": "python",
+      "description": "Message splitting utility for Telegram's 4096-character limit",
+      "functions": [
+        {
+          "name": "utf16_len",
+          "params": ["text: str"],
+          "returns": "int",
+          "line": 15,
+          "description": "Length in UTF-16 code units (Telegram's accounting)"
+        },
+        {
+          "name": "_force_split",
+          "params": ["line: str", "budget: int"],
+          "returns": "list[str]",
+          "line": 24,
+          "description": "Split a single overlong line into pieces within UTF-16 budget"
+        },
+        {
+          "name": "split_message",
+          "params": ["text: str", "max_length: int = 4096"],
+          "returns": "list[str]",
+          "line": 42,
+          "description": "Split message into chunks fitting Telegram's length limit"
+        }
+      ],
+      "classes": [],
+      "imports": [],
+      "moduleConstants": {
+        "TELEGRAM_MAX_MESSAGE_LENGTH": 4096,
+        "_FENCE_CLOSE_RESERVE": 4
+      }
+    },
+    {
+      "id": "src/ccbot/terminal_parser.py",
+      "type": "file",
+      "fileCategory": "code",
+      "sizeLines": 365,
+      "language": "python",
+      "description": "Terminal output parser — detects Claude Code UI elements in pane text",
+      "functions": [
+        {
+          "name": "_shorten_separators",
+          "params": ["text: str"],
+          "returns": "str",
+          "line": 126,
+          "description": "Replace lines of 5+ ─ characters with exactly ─────"
+        },
+        {
+          "name": "_try_extract",
+          "params": ["lines: list[str]", "pattern: UIPattern"],
+          "returns": "InteractiveUIContent | None",
+          "line": 136,
+          "description": "Try to extract content matching a single UI pattern"
+        },
+        {
+          "name": "extract_interactive_content",
+          "params": ["pane_text: str"],
+          "returns": "InteractiveUIContent | None",
+          "line": 174,
+          "description": "Extract content from an interactive UI in terminal output"
+        },
+        {
+          "name": "is_interactive_ui",
+          "params": ["pane_text: str"],
+          "returns": "bool",
+          "line": 191,
+          "description": "Check if terminal currently shows an interactive UI"
+        },
+        {
+          "name": "parse_status_line",
+          "params": ["pane_text: str"],
+          "returns": "str | None",
+          "line": 202,
+          "description": "Extract Claude Code status line from terminal output"
+        },
+        {
+          "name": "strip_pane_chrome",
+          "params": ["lines: list[str]"],
+          "returns": "list[str]",
+          "line": 244,
+          "description": "Strip Claude Code's bottom chrome from pane lines"
+        },
+        {
+          "name": "extract_bash_output",
+          "params": ["pane_text: str", "command: str"],
+          "returns": "str | None",
+          "line": 266,
+          "description": "Extract !command output from captured tmux pane"
+        },
+        {
+          "name": "parse_usage_output",
+          "params": ["pane_text: str"],
+          "returns": "UsageInfo | None",
+          "line": 314,
+          "description": "Extract usage information from Claude Code's /usage modal"
+        }
+      ],
+      "classes": [
+        {
+          "name": "InteractiveUIContent",
+          "type": "dataclass",
+          "line": 21,
+          "attributes": ["content: str", "name: str"]
+        },
+        {
+          "name": "UIPattern",
+          "type": "dataclass",
+          "line": 29,
+          "attributes": ["name: str", "top: tuple", "bottom: tuple", "min_gap: int"]
+        },
+        {
+          "name": "UsageInfo",
+          "type": "dataclass",
+          "line": 307,
+          "attributes": ["raw_text: str", "parsed_lines: list[str]"]
+        }
+      ],
+      "imports": ["re", "dataclasses.dataclass"],
+      "moduleConstants": {
+        "UI_PATTERNS": "list[UIPattern] — 7 patterns for AskUserQuestion, ExitPlanMode, PermissionPrompt, BashApproval, RestoreCheckpoint, Settings",
+        "STATUS_SPINNERS": "frozenset of spinner characters"
+      }
+    },
+    {
+      "id": "tests/ccbot/test_terminal_parser.py",
+      "type": "file",
+      "fileCategory": "test",
+      "sizeLines": null,
+      "language": "python",
+      "description": "Tests for terminal_parser.py",
+      "imports": ["ccbot.terminal_parser.*"]
+    },
+    {
+      "id": "tests/ccbot/test_monitor_state.py",
+      "type": "file",
+      "fileCategory": "test",
+      "sizeLines": null,
+      "language": "python",
+      "description": "Tests for monitor_state.py",
+      "imports": ["ccbot.monitor_state.MonitorState", "ccbot.monitor_state.TrackedSession"]
+    },
+    {
+      "id": "tests/ccbot/test_session.py",
+      "type": "file",
+      "fileCategory": "test",
+      "sizeLines": null,
+      "language": "python",
+      "description": "Tests for session.py",
+      "imports": ["ccbot.session.SessionManager"]
+    },
+    {
+      "id": "tests/ccbot/test_session_monitor.py",
+      "type": "file",
+      "fileCategory": "test",
+      "sizeLines": null,
+      "language": "python",
+      "description": "Tests for session_monitor.py",
+      "imports": ["ccbot.monitor_state.TrackedSession", "ccbot.session_monitor.SessionMonitor"]
+    },
+    {
+      "id": "tests/ccbot/test_telegram_sender.py",
+      "type": "file",
+      "fileCategory": "test",
+      "sizeLines": null,
+      "language": "python",
+      "description": "Tests for telegram_sender.py",
+      "imports": ["ccbot.telegram_sender.split_message", "ccbot.telegram_sender.utf16_len"]
+    },
+    {
+      "id": "tests/ccbot/test_markdown_v2.py",
+      "type": "file",
+      "fileCategory": "test",
+      "sizeLines": null,
+      "language": "python",
+      "description": "Tests for markdown_v2.py",
+      "imports": ["ccbot.markdown_v2._escape_mdv2", "ccbot.markdown_v2.convert_markdown"]
+    },
+    {
+      "id": "tests/ccbot/test_hook.py",
+      "type": "file",
+      "fileCategory": "test",
+      "sizeLines": null,
+      "language": "python",
+      "description": "Tests for hook.py",
+      "imports": ["ccbot.hook._UUID_RE", "ccbot.hook._is_hook_installed", "ccbot.hook.hook_main"]
+    },
+    {
+      "id": "tests/ccbot/test_forward_command.py",
+      "type": "file",
+      "fileCategory": "test",
+      "sizeLines": null,
+      "language": "python",
+      "description": "Tests for forward_command_handler in command_handlers.py",
+      "imports": ["ccbot.handlers.command_handlers.forward_command_handler"]
+    },
+    {
+      "id": "tests/ccbot/handlers/test_status_polling.py",
+      "type": "file",
+      "fileCategory": "test",
+      "sizeLines": null,
+      "language": "python",
+      "description": "Tests for status_polling.py",
+      "imports": ["ccbot.handlers.status_polling.update_status_message", "ccbot.handlers.interactive_ui._interactive_mode", "ccbot.handlers.interactive_ui._interactive_msgs"]
+    },
+    {
+      "id": "tests/ccbot/handlers/test_response_builder.py",
+      "type": "file",
+      "fileCategory": "test",
+      "sizeLines": null,
+      "language": "python",
+      "description": "Tests for response_builder.py",
+      "imports": ["ccbot.handlers.response_builder.build_response_parts"]
+    },
+    {
+      "id": "tests/ccbot/handlers/test_interactive_ui.py",
+      "type": "file",
+      "fileCategory": "test",
+      "sizeLines": null,
+      "language": "python",
+      "description": "Tests for interactive_ui.py",
+      "imports": ["ccbot.handlers.interactive_ui.*", "ccbot.handlers.callback_data.*", "ccbot.handlers.interactive_ui._interactive_mode", "ccbot.handlers.interactive_ui._interactive_msgs"]
+    },
+    {
+      "id": "tests/ccbot/handlers/test_message_queue_state.py",
+      "type": "file",
+      "fileCategory": "test",
+      "sizeLines": null,
+      "language": "python",
+      "description": "Tests for message_queue.py state management",
+      "imports": ["ccbot.handlers.message_queue.*"]
+    },
+    {
+      "id": "tests/integration/test_monitor_state_integration.py",
+      "type": "file",
+      "fileCategory": "test",
+      "sizeLines": null,
+      "language": "python",
+      "description": "Integration tests for monitor_state.py",
+      "imports": ["ccbot.monitor_state.MonitorState", "ccbot.monitor_state.TrackedSession"]
+    }
+  ],
+  "edges": [
+    {"source": "src/ccbot/handlers/auth.py", "target": "src/ccbot/config.py", "type": "imports", "label": "imports config"},
+    {"source": "src/ccbot/handlers/callback_router.py", "target": "src/ccbot/screenshot.py", "type": "imports", "label": "imports text_to_image"},
+    {"source": "src/ccbot/handlers/callback_router.py", "target": "src/ccbot/session.py", "type": "imports", "label": "imports session_manager"},
+    {"source": "src/ccbot/handlers/callback_router.py", "target": "src/ccbot/tmux_manager.py", "type": "imports", "label": "imports tmux_manager"},
+    {"source": "src/ccbot/handlers/callback_router.py", "target": "src/ccbot/handlers/auth.py", "type": "imports", "label": "imports get_thread_id, is_user_allowed"},
+    {"source": "src/ccbot/handlers/callback_router.py", "target": "src/ccbot/handlers/callback_data.py", "type": "imports", "label": "imports CB_* constants"},
+    {"source": "src/ccbot/handlers/callback_router.py", "target": "src/ccbot/handlers/directory_browser.py", "type": "imports", "label": "imports directory browser functions"},
+    {"source": "src/ccbot/handlers/callback_router.py", "target": "src/ccbot/handlers/history.py", "type": "imports", "label": "imports send_history"},
+    {"source": "src/ccbot/handlers/callback_router.py", "target": "src/ccbot/handlers/interactive_ui.py", "type": "imports", "label": "imports clear_interactive_msg, handle_interactive_ui"},
+    {"source": "src/ccbot/handlers/callback_router.py", "target": "src/ccbot/handlers/message_sender.py", "type": "imports", "label": "imports safe_edit, safe_send"},
+    {"source": "src/ccbot/handlers/callback_router.py", "target": "src/ccbot/handlers/screenshot_controls.py", "type": "imports", "label": "imports KEY_LABELS, KEYS_SEND_MAP, build_screenshot_keyboard"},
+    {"source": "src/ccbot/handlers/callback_router.py", "target": "src/ccbot/handlers/window_bind.py", "type": "imports", "label": "imports create_and_bind_window"},
+    {"source": "src/ccbot/handlers/cleanup.py", "target": "src/ccbot/handlers/interactive_ui.py", "type": "imports", "label": "imports clear_interactive_msg"},
+    {"source": "src/ccbot/handlers/cleanup.py", "target": "src/ccbot/handlers/message_queue.py", "type": "imports", "label": "imports clear_status_msg_info, clear_tool_msg_ids_for_topic"},
+    {"source": "src/ccbot/handlers/command_handlers.py", "target": "src/ccbot/session.py", "type": "imports", "label": "imports session_manager"},
+    {"source": "src/ccbot/handlers/command_handlers.py", "target": "src/ccbot/screenshot.py", "type": "imports", "label": "imports text_to_image"},
+    {"source": "src/ccbot/handlers/command_handlers.py", "target": "src/ccbot/tmux_manager.py", "type": "imports", "label": "imports tmux_manager"},
+    {"source": "src/ccbot/handlers/command_handlers.py", "target": "src/ccbot/handlers/auth.py", "type": "imports", "label": "imports get_thread_id, is_user_allowed"},
+    {"source": "src/ccbot/handlers/command_handlers.py", "target": "src/ccbot/handlers/cleanup.py", "type": "imports", "label": "imports clear_topic_state"},
+    {"source": "src/ccbot/handlers/command_handlers.py", "target": "src/ccbot/handlers/directory_browser.py", "type": "imports", "label": "imports clear_browse_state"},
+    {"source": "src/ccbot/handlers/command_handlers.py", "target": "src/ccbot/handlers/history.py", "type": "imports", "label": "imports send_history"},
+    {"source": "src/ccbot/handlers/command_handlers.py", "target": "src/ccbot/handlers/message_sender.py", "type": "imports", "label": "imports safe_reply"},
+    {"source": "src/ccbot/handlers/command_handlers.py", "target": "src/ccbot/handlers/screenshot_controls.py", "type": "imports", "label": "imports build_screenshot_keyboard"},
+    {"source": "src/ccbot/handlers/command_handlers.py", "target": "src/ccbot/terminal_parser.py", "type": "imports", "label": "imports parse_usage_output (lazy)"},
+    {"source": "src/ccbot/handlers/directory_browser.py", "target": "src/ccbot/session.py", "type": "imports", "label": "imports ClaudeSession"},
+    {"source": "src/ccbot/handlers/directory_browser.py", "target": "src/ccbot/config.py", "type": "imports", "label": "imports config"},
+    {"source": "src/ccbot/handlers/directory_browser.py", "target": "src/ccbot/handlers/callback_data.py", "type": "imports", "label": "imports CB_* constants"},
+    {"source": "src/ccbot/handlers/history.py", "target": "src/ccbot/config.py", "type": "imports", "label": "imports config"},
+    {"source": "src/ccbot/handlers/history.py", "target": "src/ccbot/session.py", "type": "imports", "label": "imports session_manager"},
+    {"source": "src/ccbot/handlers/history.py", "target": "src/ccbot/telegram_sender.py", "type": "imports", "label": "imports split_message"},
+    {"source": "src/ccbot/handlers/history.py", "target": "src/ccbot/transcript_parser.py", "type": "imports", "label": "imports TranscriptParser"},
+    {"source": "src/ccbot/handlers/history.py", "target": "src/ccbot/handlers/callback_data.py", "type": "imports", "label": "imports CB_HISTORY_NEXT, CB_HISTORY_PREV"},
+    {"source": "src/ccbot/handlers/history.py", "target": "src/ccbot/handlers/message_sender.py", "type": "imports", "label": "imports safe_edit, safe_reply, safe_send"},
+    {"source": "src/ccbot/handlers/interactive_ui.py", "target": "src/ccbot/session.py", "type": "imports", "label": "imports session_manager"},
+    {"source": "src/ccbot/handlers/interactive_ui.py", "target": "src/ccbot/terminal_parser.py", "type": "imports", "label": "imports extract_interactive_content, is_interactive_ui"},
+    {"source": "src/ccbot/handlers/interactive_ui.py", "target": "src/ccbot/tmux_manager.py", "type": "imports", "label": "imports tmux_manager"},
+    {"source": "src/ccbot/handlers/interactive_ui.py", "target": "src/ccbot/handlers/callback_data.py", "type": "imports", "label": "imports CB_ASK_* constants"},
+    {"source": "src/ccbot/handlers/interactive_ui.py", "target": "src/ccbot/handlers/message_sender.py", "type": "imports", "label": "imports NO_LINK_PREVIEW"},
+    {"source": "src/ccbot/handlers/message_handlers.py", "target": "src/ccbot/config.py", "type": "imports", "label": "imports config"},
+    {"source": "src/ccbot/handlers/message_handlers.py", "target": "src/ccbot/markdown_v2.py", "type": "imports", "label": "imports convert_markdown"},
+    {"source": "src/ccbot/handlers/message_handlers.py", "target": "src/ccbot/session.py", "type": "imports", "label": "imports session_manager"},
+    {"source": "src/ccbot/handlers/message_handlers.py", "target": "src/ccbot/terminal_parser.py", "type": "imports", "label": "imports extract_bash_output, is_interactive_ui"},
+    {"source": "src/ccbot/handlers/message_handlers.py", "target": "src/ccbot/tmux_manager.py", "type": "imports", "label": "imports tmux_manager"},
+    {"source": "src/ccbot/handlers/message_handlers.py", "target": "src/ccbot/transcribe.py", "type": "imports", "label": "imports transcribe_voice"},
+    {"source": "src/ccbot/handlers/message_handlers.py", "target": "src/ccbot/utils.py", "type": "imports", "label": "imports ccbot_dir"},
+    {"source": "src/ccbot/handlers/message_handlers.py", "target": "src/ccbot/handlers/auth.py", "type": "imports", "label": "imports get_thread_id, is_user_allowed"},
+    {"source": "src/ccbot/handlers/message_handlers.py", "target": "src/ccbot/handlers/directory_browser.py", "type": "imports", "label": "imports browser functions"},
+    {"source": "src/ccbot/handlers/message_handlers.py", "target": "src/ccbot/handlers/interactive_ui.py", "type": "imports", "label": "imports get_interactive_window, handle_interactive_ui"},
+    {"source": "src/ccbot/handlers/message_handlers.py", "target": "src/ccbot/handlers/message_queue.py", "type": "imports", "label": "imports clear_status_msg_info, enqueue_status_update"},
+    {"source": "src/ccbot/handlers/message_handlers.py", "target": "src/ccbot/handlers/message_sender.py", "type": "imports", "label": "imports NO_LINK_PREVIEW, safe_reply, send_with_fallback"},
+    {"source": "src/ccbot/handlers/message_queue.py", "target": "src/ccbot/markdown_v2.py", "type": "imports", "label": "imports convert_markdown"},
+    {"source": "src/ccbot/handlers/message_queue.py", "target": "src/ccbot/session.py", "type": "imports", "label": "imports session_manager"},
+    {"source": "src/ccbot/handlers/message_queue.py", "target": "src/ccbot/terminal_parser.py", "type": "imports", "label": "imports parse_status_line"},
+    {"source": "src/ccbot/handlers/message_queue.py", "target": "src/ccbot/tmux_manager.py", "type": "imports", "label": "imports tmux_manager"},
+    {"source": "src/ccbot/handlers/message_queue.py", "target": "src/ccbot/handlers/message_sender.py", "type": "imports", "label": "imports NO_LINK_PREVIEW, PARSE_MODE, send_photo, send_with_fallback, strip_sentinels"},
+    {"source": "src/ccbot/handlers/message_sender.py", "target": "src/ccbot/markdown_v2.py", "type": "imports", "label": "imports convert_markdown"},
+    {"source": "src/ccbot/handlers/message_sender.py", "target": "src/ccbot/transcript_parser.py", "type": "imports", "label": "imports TranscriptParser"},
+    {"source": "src/ccbot/handlers/notifications.py", "target": "src/ccbot/config.py", "type": "imports", "label": "imports config"},
+    {"source": "src/ccbot/handlers/notifications.py", "target": "src/ccbot/session.py", "type": "imports", "label": "imports session_manager"},
+    {"source": "src/ccbot/handlers/notifications.py", "target": "src/ccbot/session_monitor.py", "type": "imports", "label": "imports NewMessage"},
+    {"source": "src/ccbot/handlers/notifications.py", "target": "src/ccbot/handlers/interactive_ui.py", "type": "imports", "label": "imports interactive UI functions"},
+    {"source": "src/ccbot/handlers/notifications.py", "target": "src/ccbot/handlers/message_queue.py", "type": "imports", "label": "imports enqueue_content_message, get_message_queue"},
+    {"source": "src/ccbot/handlers/notifications.py", "target": "src/ccbot/handlers/response_builder.py", "type": "imports", "label": "imports build_response_parts"},
+    {"source": "src/ccbot/handlers/response_builder.py", "target": "src/ccbot/markdown_v2.py", "type": "imports", "label": "imports convert_markdown_tables"},
+    {"source": "src/ccbot/handlers/response_builder.py", "target": "src/ccbot/telegram_sender.py", "type": "imports", "label": "imports split_message"},
+    {"source": "src/ccbot/handlers/response_builder.py", "target": "src/ccbot/transcript_parser.py", "type": "imports", "label": "imports TranscriptParser"},
+    {"source": "src/ccbot/handlers/screenshot_controls.py", "target": "src/ccbot/handlers/callback_data.py", "type": "imports", "label": "imports CB_KEYS_PREFIX, CB_SCREENSHOT_REFRESH"},
+    {"source": "src/ccbot/handlers/status_polling.py", "target": "src/ccbot/session.py", "type": "imports", "label": "imports session_manager"},
+    {"source": "src/ccbot/handlers/status_polling.py", "target": "src/ccbot/terminal_parser.py", "type": "imports", "label": "imports is_interactive_ui, parse_status_line"},
+    {"source": "src/ccbot/handlers/status_polling.py", "target": "src/ccbot/tmux_manager.py", "type": "imports", "label": "imports tmux_manager"},
+    {"source": "src/ccbot/handlers/status_polling.py", "target": "src/ccbot/handlers/interactive_ui.py", "type": "imports", "label": "imports clear_interactive_msg, get_interactive_window, handle_interactive_ui"},
+    {"source": "src/ccbot/handlers/status_polling.py", "target": "src/ccbot/handlers/cleanup.py", "type": "imports", "label": "imports clear_topic_state"},
+    {"source": "src/ccbot/handlers/status_polling.py", "target": "src/ccbot/handlers/message_queue.py", "type": "imports", "label": "imports enqueue_status_update, get_message_queue"},
+    {"source": "src/ccbot/handlers/window_bind.py", "target": "src/ccbot/session.py", "type": "imports", "label": "imports session_manager"},
+    {"source": "src/ccbot/handlers/window_bind.py", "target": "src/ccbot/tmux_manager.py", "type": "imports", "label": "imports tmux_manager"},
+    {"source": "src/ccbot/handlers/window_bind.py", "target": "src/ccbot/handlers/message_sender.py", "type": "imports", "label": "imports safe_edit, safe_send"},
+    {"source": "src/ccbot/hook.py", "target": "src/ccbot/utils.py", "type": "imports", "label": "imports LOCK_EX, LOCK_UN, flock"},
+    {"source": "src/ccbot/main.py", "target": "src/ccbot/hook.py", "type": "imports", "label": "imports hook_main (lazy)"},
+    {"source": "src/ccbot/main.py", "target": "src/ccbot/config.py", "type": "imports", "label": "imports config (lazy)"},
+    {"source": "src/ccbot/main.py", "target": "src/ccbot/tmux_manager.py", "type": "imports", "label": "imports tmux_manager (lazy)"},
+    {"source": "src/ccbot/main.py", "target": "src/ccbot/bot.py", "type": "imports", "label": "imports create_bot (lazy)"},
+    {"source": "src/ccbot/markdown_v2.py", "target": "src/ccbot/transcript_parser.py", "type": "imports", "label": "imports TranscriptParser"},
+    {"source": "src/ccbot/monitor_state.py", "target": "src/ccbot/utils.py", "type": "imports", "label": "imports atomic_write_json (lazy)"},
+    {"source": "src/ccbot/session_monitor.py", "target": "src/ccbot/config.py", "type": "imports", "label": "imports config"},
+    {"source": "src/ccbot/session_monitor.py", "target": "src/ccbot/monitor_state.py", "type": "imports", "label": "imports MonitorState, TrackedSession"},
+    {"source": "src/ccbot/session_monitor.py", "target": "src/ccbot/tmux_manager.py", "type": "imports", "label": "imports tmux_manager"},
+    {"source": "src/ccbot/session_monitor.py", "target": "src/ccbot/transcript_parser.py", "type": "imports", "label": "imports TranscriptParser"},
+    {"source": "src/ccbot/session_monitor.py", "target": "src/ccbot/utils.py", "type": "imports", "label": "imports read_cwd_from_jsonl"},
+    {"source": "src/ccbot/session_monitor.py", "target": "src/ccbot/session.py", "type": "imports", "label": "imports session_manager (lazy, deferred)"},
+    {"source": "src/ccbot/session.py", "target": "src/ccbot/config.py", "type": "imports", "label": "imports config"},
+    {"source": "src/ccbot/session.py", "target": "src/ccbot/tmux_manager.py", "type": "imports", "label": "imports tmux_manager"},
+    {"source": "src/ccbot/session.py", "target": "src/ccbot/transcript_parser.py", "type": "imports", "label": "imports TranscriptParser"},
+    {"source": "src/ccbot/session.py", "target": "src/ccbot/utils.py", "type": "imports", "label": "imports LOCK_EX, LOCK_UN, atomic_write_json, flock"},
+    {"source": "tests/ccbot/test_terminal_parser.py", "target": "src/ccbot/terminal_parser.py", "type": "tested_by", "label": "tests terminal_parser"},
+    {"source": "tests/ccbot/test_monitor_state.py", "target": "src/ccbot/monitor_state.py", "type": "tested_by", "label": "tests MonitorState, TrackedSession"},
+    {"source": "tests/ccbot/test_session.py", "target": "src/ccbot/session.py", "type": "tested_by", "label": "tests SessionManager"},
+    {"source": "tests/ccbot/test_session_monitor.py", "target": "src/ccbot/session_monitor.py", "type": "tested_by", "label": "tests SessionMonitor"},
+    {"source": "tests/ccbot/test_session_monitor.py", "target": "src/ccbot/monitor_state.py", "type": "tested_by", "label": "tests TrackedSession"},
+    {"source": "tests/ccbot/test_telegram_sender.py", "target": "src/ccbot/telegram_sender.py", "type": "tested_by", "label": "tests split_message, utf16_len"},
+    {"source": "tests/ccbot/test_markdown_v2.py", "target": "src/ccbot/markdown_v2.py", "type": "tested_by", "label": "tests convert_markdown, _escape_mdv2"},
+    {"source": "tests/ccbot/test_hook.py", "target": "src/ccbot/hook.py", "type": "tested_by", "label": "tests hook_main, _is_hook_installed, _UUID_RE"},
+    {"source": "tests/ccbot/test_forward_command.py", "target": "src/ccbot/handlers/command_handlers.py", "type": "tested_by", "label": "tests forward_command_handler"},
+    {"source": "tests/ccbot/handlers/test_status_polling.py", "target": "src/ccbot/handlers/status_polling.py", "type": "tested_by", "label": "tests update_status_message"},
+    {"source": "tests/ccbot/handlers/test_status_polling.py", "target": "src/ccbot/handlers/interactive_ui.py", "type": "tested_by", "label": "tests _interactive_mode, _interactive_msgs"},
+    {"source": "tests/ccbot/handlers/test_response_builder.py", "target": "src/ccbot/handlers/response_builder.py", "type": "tested_by", "label": "tests build_response_parts"},
+    {"source": "tests/ccbot/handlers/test_interactive_ui.py", "target": "src/ccbot/handlers/interactive_ui.py", "type": "tested_by", "label": "tests interactive UI functions"},
+    {"source": "tests/ccbot/handlers/test_interactive_ui.py", "target": "src/ccbot/handlers/callback_data.py", "type": "tested_by", "label": "tests CB_ASK_* constants"},
+    {"source": "tests/ccbot/handlers/test_message_queue_state.py", "target": "src/ccbot/handlers/message_queue.py", "type": "tested_by", "label": "tests MessageTask, StatusTracker, MessageQueueManager"},
+    {"source": "tests/integration/test_monitor_state_integration.py", "target": "src/ccbot/monitor_state.py", "type": "tested_by", "label": "integration tests for MonitorState"},
+    {"source": "src/ccbot/handlers/message_handlers.py", "target": "src/ccbot/handlers/message_queue.py", "type": "calls", "label": "calls clear_status_msg_info, enqueue_status_update"},
+    {"source": "src/ccbot/handlers/notifications.py", "target": "src/ccbot/handlers/message_queue.py", "type": "calls", "label": "calls enqueue_content_message, get_message_queue"},
+    {"source": "src/ccbot/handlers/notifications.py", "target": "src/ccbot/handlers/response_builder.py", "type": "calls", "label": "calls build_response_parts"},
+    {"source": "src/ccbot/session_monitor.py", "target": "src/ccbot/session.py", "type": "calls", "label": "calls session_manager.load_session_map (lazy)"},
+    {"source": "src/ccbot/handlers/status_polling.py", "target": "src/ccbot/handlers/cleanup.py", "type": "calls", "label": "calls clear_topic_state"},
+    {"source": "src/ccbot/handlers/command_handlers.py", "target": "src/ccbot/handlers/cleanup.py", "type": "calls", "label": "calls clear_topic_state"},
+    {"source": "src/ccbot/handlers/cleanup.py", "target": "src/ccbot/handlers/interactive_ui.py", "type": "calls", "label": "calls clear_interactive_msg"},
+    {"source": "src/ccbot/handlers/cleanup.py", "target": "src/ccbot/handlers/message_queue.py", "type": "calls", "label": "calls clear_status_msg_info, clear_tool_msg_ids_for_topic"},
+    {"source": "src/ccbot/handlers/callback_router.py", "target": "src/ccbot/handlers/history.py", "type": "calls", "label": "calls send_history"},
+    {"source": "src/ccbot/handlers/callback_router.py", "target": "src/ccbot/handlers/interactive_ui.py", "type": "calls", "label": "calls handle_interactive_ui, clear_interactive_msg"},
+    {"source": "src/ccbot/handlers/callback_router.py", "target": "src/ccbot/handlers/message_sender.py", "type": "calls", "label": "calls safe_edit, safe_send"},
+    {"source": "src/ccbot/handlers/callback_router.py", "target": "src/ccbot/handlers/directory_browser.py", "type": "calls", "label": "calls build_directory_browser, build_session_picker, clear_*_state"},
+    {"source": "src/ccbot/handlers/callback_router.py", "target": "src/ccbot/handlers/screenshot_controls.py", "type": "calls", "label": "calls build_screenshot_keyboard"},
+    {"source": "src/ccbot/handlers/callback_router.py", "target": "src/ccbot/handlers/window_bind.py", "type": "calls", "label": "calls create_and_bind_window"},
+    {"source": "src/ccbot/handlers/callback_router.py", "target": "src/ccbot/screenshot.py", "type": "calls", "label": "calls text_to_image"},
+    {"source": "src/ccbot/handlers/callback_router.py", "target": "src/ccbot/session.py", "type": "calls", "label": "calls session_manager.*"},
+    {"source": "src/ccbot/handlers/callback_router.py", "target": "src/ccbot/tmux_manager.py", "type": "calls", "label": "calls tmux_manager.*"},
+    {"source": "src/ccbot/session.py", "target": "src/ccbot/tmux_manager.py", "type": "calls", "label": "calls tmux_manager.find_window_by_id, send_keys"},
+    {"source": "src/ccbot/session.py", "target": "src/ccbot/config.py", "type": "calls", "label": "reads config.state_file, config.claude_projects_path"},
+    {"source": "src/ccbot/session_monitor.py", "target": "src/ccbot/config.py", "type": "calls", "label": "reads config values"},
+    {"source": "src/ccbot/session_monitor.py", "target": "src/ccbot/monitor_state.py", "type": "calls", "label": "calls MonitorState methods"},
+    {"source": "src/ccbot/session_monitor.py", "target": "src/ccbot/transcript_parser.py", "type": "calls", "label": "calls TranscriptParser"},
+    {"source": "src/ccbot/session_monitor.py", "target": "src/ccbot/tmux_manager.py", "type": "calls", "label": "calls tmux_manager.list_windows"},
+    {"source": "src/ccbot/session_monitor.py", "target": "src/ccbot/utils.py", "type": "calls", "label": "calls read_cwd_from_jsonl"},
+    {"source": "src/ccbot/session.py", "target": "src/ccbot/transcript_parser.py", "type": "calls", "label": "calls TranscriptParser"},
+    {"source": "src/ccbot/hook.py", "target": "src/ccbot/utils.py", "type": "calls", "label": "calls flock, atomic_write_json, ccbot_dir"},
+    {"source": "src/ccbot/monitor_state.py", "target": "src/ccbot/utils.py", "type": "calls", "label": "calls atomic_write_json (lazy)"},
+    {"source": "src/ccbot/main.py", "target": "src/ccbot/hook.py", "type": "dispatches", "label": "dispatches to hook_main for 'hook' argument"},
+    {"source": "src/ccbot/main.py", "target": "src/ccbot/tmux_manager.py", "type": "dispatches", "label": "initializes tmux_manager on startup"},
+    {"source": "src/ccbot/main.py", "target": "src/ccbot/config.py", "type": "dispatches", "label": "validates config on startup"},
+    {"source": "src/ccbot/main.py", "target": "src/ccbot/bot.py", "type": "dispatches", "label": "creates bot application on startup"}
+  ]
+}

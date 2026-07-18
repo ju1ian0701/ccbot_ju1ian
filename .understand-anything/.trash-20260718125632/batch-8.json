@@ -1,0 +1,190 @@
+{
+  "nodes": [
+    {
+      "id": ".understand-anything/.trash-1784291606,08255/tmp/batch-1-input.json",
+      "type": "file",
+      "label": "batch-1-input.json",
+      "fileCategory": "config",
+      "language": "json",
+      "sizeLines": 69,
+      "description": "Intermediate batch input for batch 1 processing — lists 7 root-level project files (.env.example, AGENTS.md, CLAUDE.md, README.md, README_CN.md, README_RU.md, pyproject.toml) as part of the understand-anything pipeline",
+      "properties": {
+        "projectRoot": "D:\\CCbot_tmux\\ccbot\\ccbot_ju1ian",
+        "batchIndex": 1,
+        "fileCount": 7,
+        "referencedFiles": [".env.example", "AGENTS.md", "CLAUDE.md", "README.md", "README_CN.md", "README_RU.md", "pyproject.toml"]
+      }
+    },
+    {
+      "id": ".understand-anything/.trash-1784291606,08255/tmp/batch-2-input.json",
+      "type": "file",
+      "label": "batch-2-input.json",
+      "fileCategory": "config",
+      "language": "json",
+      "sizeLines": 33,
+      "description": "Intermediate batch input for batch 2 processing — lists 3 font license files (LICENSE-JetBrainsMono.txt, LICENSE-NotoSansMono.txt, LICENSE-Symbola.txt)",
+      "properties": {
+        "projectRoot": "D:\\CCbot_tmux\\ccbot\\ccbot_ju1ian",
+        "batchIndex": 2,
+        "fileCount": 3,
+        "referencedFiles": ["src/ccbot/fonts/LICENSE-JetBrainsMono.txt", "src/ccbot/fonts/LICENSE-NotoSansMono.txt", "src/ccbot/fonts/LICENSE-Symbola.txt"]
+      }
+    },
+    {
+      "id": ".understand-anything/.trash-1784291606,08255/tmp/batch-3-input.json",
+      "type": "file",
+      "label": "batch-3-input.json",
+      "fileCategory": "config",
+      "language": "json",
+      "sizeLines": 231,
+      "description": "Intermediate batch input for batch 3 processing — lists 25 source code files covering all main Python modules, handlers, font assets, and core bot logic",
+      "properties": {
+        "projectRoot": "D:\\CCbot_tmux\\ccbot\\ccbot_ju1ian",
+        "batchIndex": 3,
+        "fileCount": 25,
+        "referencedFiles": [
+          "src/ccbot/__init__.py", "src/ccbot/bot.py", "src/ccbot/config.py",
+          "src/ccbot/handlers/__init__.py", "src/ccbot/handlers/callback_data.py",
+          "src/ccbot/handlers/cleanup.py", "src/ccbot/handlers/directory_browser.py",
+          "src/ccbot/handlers/history.py", "src/ccbot/handlers/interactive_ui.py",
+          "src/ccbot/handlers/message_queue.py", "src/ccbot/handlers/message_sender.py",
+          "src/ccbot/handlers/response_builder.py", "src/ccbot/handlers/status_polling.py",
+          "src/ccbot/hook.py", "src/ccbot/main.py", "src/ccbot/markdown_v2.py",
+          "src/ccbot/monitor_state.py", "src/ccbot/screenshot.py",
+          "src/ccbot/session_monitor.py", "src/ccbot/session.py",
+          "src/ccbot/telegram_sender.py", "src/ccbot/terminal_parser.py",
+          "src/ccbot/tmux_manager.py", "src/ccbot/transcribe.py",
+          "src/ccbot/fonts/NotoSansMonoCJKsc-Regular.otf"
+        ]
+      }
+    },
+    {
+      "id": ".understand-anything/.trash-1784291606,08255/tmp/batch-4-input.json",
+      "type": "file",
+      "label": "batch-4-input.json",
+      "fileCategory": "config",
+      "language": "json",
+      "sizeLines": 195,
+      "description": "Intermediate batch input for batch 4 processing — lists 21 files including transcript_parser.py, utils.py, and 19 test files across ccbot tests and integration tests",
+      "properties": {
+        "projectRoot": "D:\\CCbot_tmux\\ccbot\\ccbot_ju1ian",
+        "batchIndex": 4,
+        "fileCount": 21,
+        "referencedFiles": [
+          "src/ccbot/transcript_parser.py", "src/ccbot/utils.py",
+          "tests/ccbot/conftest.py", "tests/ccbot/handlers/test_interactive_ui.py",
+          "tests/ccbot/handlers/test_response_builder.py", "tests/ccbot/handlers/test_status_polling.py",
+          "tests/ccbot/test_config.py", "tests/ccbot/test_forward_command.py",
+          "tests/ccbot/test_hook.py", "tests/ccbot/test_markdown_v2.py",
+          "tests/ccbot/test_monitor_state.py", "tests/ccbot/test_session_monitor.py",
+          "tests/ccbot/test_session.py", "tests/ccbot/test_telegram_sender.py",
+          "tests/ccbot/test_terminal_parser.py", "tests/ccbot/test_transcribe.py",
+          "tests/ccbot/test_transcript_parser.py", "tests/ccbot/test_utils.py",
+          "tests/conftest.py", "tests/integration/test_config_integration.py",
+          "tests/integration/test_monitor_state_integration.py"
+        ]
+      }
+    },
+    {
+      "id": ".understand-anything/.trash-1784291606,08255/tmp/import-map-input.json",
+      "type": "file",
+      "label": "import-map-input.json",
+      "fileCategory": "config",
+      "language": "json",
+      "sizeLines": 284,
+      "description": "Complete project import map / master file index listing all 53 files across the entire ccbot project with categories (config, docs, code) and languages, used as the central reference by the understand-anything pipeline",
+      "properties": {
+        "projectRoot": "D:\\CCbot_tmux\\ccbot\\ccbot_ju1ian",
+        "totalFileCount": 53,
+        "configFiles": 2,
+        "docsFiles": 10,
+        "codeFiles": 41,
+        "referencedFiles": [
+          ".env.example", "AGENTS.md", "CLAUDE.md", "pyproject.toml",
+          "README.md", "README_CN.md", "README_RU.md",
+          "src/ccbot/__init__.py", "src/ccbot/bot.py", "src/ccbot/config.py",
+          "src/ccbot/fonts/LICENSE-JetBrainsMono.txt", "src/ccbot/fonts/LICENSE-NotoSansMono.txt",
+          "src/ccbot/fonts/LICENSE-Symbola.txt", "src/ccbot/fonts/NotoSansMonoCJKsc-Regular.otf",
+          "src/ccbot/handlers/__init__.py", "src/ccbot/handlers/callback_data.py",
+          "src/ccbot/handlers/cleanup.py", "src/ccbot/handlers/directory_browser.py",
+          "src/ccbot/handlers/history.py", "src/ccbot/handlers/interactive_ui.py",
+          "src/ccbot/handlers/message_queue.py", "src/ccbot/handlers/message_sender.py",
+          "src/ccbot/handlers/response_builder.py", "src/ccbot/handlers/status_polling.py",
+          "src/ccbot/hook.py", "src/ccbot/main.py", "src/ccbot/markdown_v2.py",
+          "src/ccbot/monitor_state.py", "src/ccbot/screenshot.py", "src/ccbot/session.py",
+          "src/ccbot/session_monitor.py", "src/ccbot/telegram_sender.py",
+          "src/ccbot/terminal_parser.py", "src/ccbot/tmux_manager.py", "src/ccbot/transcribe.py",
+          "src/ccbot/transcript_parser.py", "src/ccbot/utils.py",
+          "tests/ccbot/conftest.py", "tests/ccbot/handlers/test_interactive_ui.py",
+          "tests/ccbot/handlers/test_response_builder.py", "tests/ccbot/handlers/test_status_polling.py",
+          "tests/ccbot/test_config.py", "tests/ccbot/test_forward_command.py",
+          "tests/ccbot/test_hook.py", "tests/ccbot/test_markdown_v2.py",
+          "tests/ccbot/test_monitor_state.py", "tests/ccbot/test_session.py",
+          "tests/ccbot/test_session_monitor.py", "tests/ccbot/test_telegram_sender.py",
+          "tests/ccbot/test_terminal_parser.py", "tests/ccbot/test_transcribe.py",
+          "tests/ccbot/test_transcript_parser.py", "tests/ccbot/test_utils.py",
+          "tests/conftest.py", "tests/integration/test_config_integration.py",
+          "tests/integration/test_monitor_state_integration.py"
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": ".understand-anything/.trash-1784291606,08255/tmp/import-map-input.json",
+      "target": ".understand-anything/.trash-1784291606,08255/tmp/batch-1-input.json",
+      "type": "aggregates",
+      "label": "import-map aggregates batch-1 file index",
+      "description": "import-map-input.json contains all 7 root-level files referenced in batch-1-input.json, serving as the master index that subsumes this batch's file list"
+    },
+    {
+      "source": ".understand-anything/.trash-1784291606,08255/tmp/import-map-input.json",
+      "target": ".understand-anything/.trash-1784291606,08255/tmp/batch-2-input.json",
+      "type": "aggregates",
+      "label": "import-map aggregates batch-2 file index",
+      "description": "import-map-input.json contains all 3 font license files referenced in batch-2-input.json"
+    },
+    {
+      "source": ".understand-anything/.trash-1784291606,08255/tmp/import-map-input.json",
+      "target": ".understand-anything/.trash-1784291606,08255/tmp/batch-3-input.json",
+      "type": "aggregates",
+      "label": "import-map aggregates batch-3 file index",
+      "description": "import-map-input.json contains all 25 source code files referenced in batch-3-input.json"
+    },
+    {
+      "source": ".understand-anything/.trash-1784291606,08255/tmp/import-map-input.json",
+      "target": ".understand-anything/.trash-1784291606,08255/tmp/batch-4-input.json",
+      "type": "aggregates",
+      "label": "import-map aggregates batch-4 file index",
+      "description": "import-map-input.json contains all 21 files referenced in batch-4-input.json"
+    },
+    {
+      "source": ".understand-anything/.trash-1784291606,08255/tmp/batch-1-input.json",
+      "target": ".understand-anything/.trash-1784291606,08255/tmp/batch-3-input.json",
+      "type": "references",
+      "label": "project config feeds source code",
+      "description": "batch-1 references pyproject.toml (project configuration) which defines dependencies and project metadata used by the Python source code files in batch-3"
+    },
+    {
+      "source": ".understand-anything/.trash-1784291606,08255/tmp/batch-3-input.json",
+      "target": ".understand-anything/.trash-1784291606,08255/tmp/batch-4-input.json",
+      "type": "references",
+      "label": "source code tested by test files",
+      "description": "Batch-3 contains the main source code modules (session.py, bot.py, session_monitor.py, etc.) that are imported and tested by the test files listed in batch-4"
+    },
+    {
+      "source": ".understand-anything/.trash-1784291606,08255/tmp/batch-4-input.json",
+      "target": ".understand-anything/.trash-1784291606,08255/tmp/batch-3-input.json",
+      "type": "references",
+      "label": "tests import source modules",
+      "description": "Batch-4 test files (test_session.py, test_bot.py, etc.) import and depend on the source code modules listed in batch-3"
+    },
+    {
+      "source": ".understand-anything/.trash-1784291606,08255/tmp/batch-1-input.json",
+      "target": ".understand-anything/.trash-1784291606,08255/tmp/batch-4-input.json",
+      "type": "references",
+      "label": "config referenced by tests",
+      "description": "Batch-4 test files and conftest files reference project configuration (pyproject.toml) from batch-1 for test setup"
+    }
+  ]
+}

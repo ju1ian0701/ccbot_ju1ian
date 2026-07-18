@@ -1,0 +1,394 @@
+{
+  "nodes": [
+    {
+      "id": ".understand-anything/assembled-graph.json",
+      "type": "config",
+      "name": "assembled-graph.json",
+      "filePath": ".understand-anything/assembled-graph.json",
+      "summary": "assembled-graph.json (config, 6454 lines) — Complete assembled knowledge graph merging all batch results. Contains layers (9 layers: bot-application, message-processing, session-and-state, terminal-and-tmux, handlers-and-ui, transcription, testing, documentation, configuration), nodes (269 total across config/document/file/function/class types), edges (375 total across contains/imports/calls/tested_by types), tour (8 steps), and project metadata (name: ccbot, frameworks: python-telegram-bot, languages: python/markdown/toml/yaml/shell, gitCommitHash, analyzedAt).",
+      "tags": ["json", "config", "knowledge-graph", "assembled", "aggregation"],
+      "complexity": "complex",
+      "languageNotes": "json"
+    },
+    {
+      "id": ".understand-anything/batch-1.json",
+      "type": "config",
+      "name": "batch-1.json",
+      "filePath": ".understand-anything/batch-1.json",
+      "summary": "batch-1.json (config, 102 lines) — Batch 1 analysis result. Contains 7 nodes for root-level configuration and documentation files (.env.example, AGENTS.md, CLAUDE.md, README.md, README_CN.md, README_RU.md, pyproject.toml). No edges. These are the first files processed by the batch analyzer.",
+      "tags": ["json", "config", "batch", "analysis"],
+      "complexity": "moderate",
+      "languageNotes": "json"
+    },
+    {
+      "id": ".understand-anything/batch-2.json",
+      "type": "config",
+      "name": "batch-2.json",
+      "filePath": ".understand-anything/batch-2.json",
+      "summary": "batch-2.json (config, 46 lines) — Batch 2 analysis result. Contains 3 nodes for font license documents (LICENSE-JetBrainsMono.txt, LICENSE-NotoSansMono.txt, LICENSE-Symbola.txt). No edges.",
+      "tags": ["json", "config", "batch", "analysis"],
+      "complexity": "simple",
+      "languageNotes": "json"
+    },
+    {
+      "id": ".understand-anything/batch-3.json",
+      "type": "config",
+      "name": "batch-3.json",
+      "filePath": ".understand-anything/batch-3.json",
+      "summary": "batch-3.json (config, 2860 lines) — Batch 3 analysis result. Contains nodes and edges for core source files under src/ccbot/ (__init__.py, bot.py, config.py, handlers/*.py, hook.py, main.py, markdown_v2.py, monitor_state.py, screenshot.py, session.py, session_monitor.py, telegram_sender.py, terminal_parser.py, tmux_manager.py, transcribe.py, transcript_parser.py, utils.py, font file). Includes file, function, and class nodes with contains, imports, and calls edges.",
+      "tags": ["json", "config", "batch", "analysis", "source"],
+      "complexity": "complex",
+      "languageNotes": "json"
+    },
+    {
+      "id": ".understand-anything/batch-4.json",
+      "type": "config",
+      "name": "batch-4.json",
+      "filePath": ".understand-anything/batch-4.json",
+      "summary": "batch-4.json (config, 2758 lines) — Batch 4 analysis result. Contains nodes and edges for test files under tests/ccbot/ (conftest.py, test_config.py, test_forward_command.py, test_hook.py, test_markdown_v2.py, test_monitor_state.py, test_session.py, test_session_monitor.py, test_telegram_sender.py, test_terminal_parser.py, test_transcribe.py, test_transcript_parser.py, test_utils.py, handlers/test_interactive_ui.py, handlers/test_response_builder.py, handlers/test_status_polling.py). Includes file and class nodes with contains edges.",
+      "tags": ["json", "config", "batch", "analysis", "test"],
+      "complexity": "complex",
+      "languageNotes": "json"
+    },
+    {
+      "id": ".understand-anything/batch-5.json",
+      "type": "config",
+      "name": "batch-5.json",
+      "filePath": ".understand-anything/batch-5.json",
+      "summary": "batch-5.json (config, 85 lines) — Batch 5 analysis result. Contains 4 nodes (tests/conftest.py, tests/integration/test_config_integration.py, tests/integration/test_monitor_state_integration.py, plus class nodes) and 2 contains edges for integration test files.",
+      "tags": ["json", "config", "batch", "analysis", "integration-test"],
+      "complexity": "moderate",
+      "languageNotes": "json"
+    },
+    {
+      "id": ".understand-anything/batches.json",
+      "type": "config",
+      "name": "batches.json",
+      "filePath": ".understand-anything/batches.json",
+      "summary": "batches.json (config, 797 lines) — Batch scheduling and export metadata. Schema version 1, louvain algorithm, totalFiles: 63, totalBatches: 5. Contains exportsByPath mapping every source file to its exported functions/classes. Defines all 5 batch definitions with their file lists, import data, and neighbor maps.",
+      "tags": ["json", "config", "batch", "metadata", "scheduling"],
+      "complexity": "complex",
+      "languageNotes": "json"
+    },
+    {
+      "id": ".understand-anything/fingerprint-input.json",
+      "type": "config",
+      "name": "fingerprint-input.json",
+      "filePath": ".understand-anything/fingerprint-input.json",
+      "summary": "fingerprint-input.json (config, 68 lines) — Input for structural fingerprinting. Contains projectRoot path, list of all 63 source file paths to fingerprint, and the git commit hash (2f85b4d1). Serves as input to the fingerprint generation process.",
+      "tags": ["json", "config", "fingerprint", "input"],
+      "complexity": "moderate",
+      "languageNotes": "json"
+    },
+    {
+      "id": ".understand-anything/fingerprints.json",
+      "type": "config",
+      "name": "fingerprints.json",
+      "filePath": ".understand-anything/fingerprints.json",
+      "summary": "fingerprints.json (config, 5101 lines) — Structural fingerprint analysis results for all 63 files. Each file entry includes: contentHash (SHA-256), analyzed functions (name, params, returnType, exported, lineCount), classes (name, methods, properties, exported, lineCount), imports (source module, specifiers), exports list, totalLines, and hasStructuralAnalysis flag. Generated at 2026-07-17T13:56:19.466Z.",
+      "tags": ["json", "config", "fingerprint", "structural-analysis"],
+      "complexity": "complex",
+      "languageNotes": "json"
+    },
+    {
+      "id": ".understand-anything/import-map.json",
+      "type": "config",
+      "name": "import-map.json",
+      "filePath": ".understand-anything/import-map.json",
+      "summary": "import-map.json (config, 195 lines) — Import dependency map of the entire codebase. Contains stats (filesScanned: 63, filesWithImports: 23, totalEdges: 100) and per-file import lists showing which modules each file depends on. Script completed successfully. Reveals the dependency graph structure of the project.",
+      "tags": ["json", "config", "import-map", "dependencies"],
+      "complexity": "complex",
+      "languageNotes": "json"
+    },
+    {
+      "id": ".understand-anything/knowledge-graph.json",
+      "type": "config",
+      "name": "knowledge-graph.json",
+      "filePath": ".understand-anything/knowledge-graph.json",
+      "summary": "knowledge-graph.json (config, 6454 lines) — Full knowledge graph output. Contains layers (9 layers), nodes (269 total), edges (375 total), tour (8 steps), and project information. Identical structure to assembled-graph.json but represents the canonical knowledge graph generated by the analysis pipeline.",
+      "tags": ["json", "config", "knowledge-graph", "canonical"],
+      "complexity": "complex",
+      "languageNotes": "json"
+    },
+    {
+      "id": ".understand-anything/layers.json",
+      "type": "config",
+      "name": "layers.json",
+      "filePath": ".understand-anything/layers.json",
+      "summary": "layers.json (config, 57 lines) — Layer definitions for the knowledge graph. Defines 9 layers: bot-application (core setup/config), message-processing (queues/sending/formatting), session-and-state (session lifecycle/monitoring), terminal-and-tmux (tmux management/parsing), handlers-and-ui (telegram handlers/interactive UI), transcription (voice-to-text), testing (unit/integration tests), documentation (readmes/licenses), and configuration (project config files). Each layer maps to file and document node IDs.",
+      "tags": ["json", "config", "layers", "architecture"],
+      "complexity": "moderate",
+      "languageNotes": "json"
+    },
+    {
+      "id": ".understand-anything/meta.json",
+      "type": "config",
+      "name": "meta.json",
+      "filePath": ".understand-anything/meta.json",
+      "summary": "meta.json (config, 5 lines) — Analysis metadata. Records lastAnalyzedAt (2026-07-17T15:56:24.944+02:00), version (1.0.0), analyzedFiles count (63), and gitCommitHash (2f85b4d1ed9e922f9a53c42f997310f231bf7b7a). Top-level timestamp and versioning for the entire analysis run.",
+      "tags": ["json", "config", "metadata", "timestamp"],
+      "complexity": "simple",
+      "languageNotes": "json"
+    },
+    {
+      "id": ".understand-anything/review.json",
+      "type": "config",
+      "name": "review.json",
+      "filePath": ".understand-anything/review.json",
+      "summary": "review.json (config, 37 lines) — Codebase review/quality report. Lists 17 orphan nodes (nodes with no edges including .env.example, AGENTS.md, CLAUDE.md, READMEs, LICENSE files, __init__.py files, font file, and tests/conftest.py). Reports stats: 269 total nodes, 375 total edges, 9 layers, 8 tour steps. Node type breakdown: config(2), document(8), file(53), function(132), class(74). Edge type breakdown: contains(206), imports(100), calls(55), tested_by(14).",
+      "tags": ["json", "config", "review", "quality", "orphans"],
+      "complexity": "moderate",
+      "languageNotes": "json"
+    },
+    {
+      "id": ".understand-anything/tour.json",
+      "type": "config",
+      "name": "tour.json",
+      "filePath": ".understand-anything/tour.json",
+      "summary": "tour.json (config, 51 lines) — Guided tour of the codebase with 8 steps: (1) Project Overview — bridges Telegram topics to Claude Code sessions via tmux, (2) Entry Point & Configuration — main.py and Config class, (3) Core Bot & Auth — bot.py orchestration and auth.py, (4) Session & State Management — SessionManager/MonitorState/SessionMonitor, (5) Terminal & Tmux Integration — TmuxManager/TerminalParser/TranscriptParser, (6) Message Pipeline & Notifications — queue/sender/response pipeline, (7) Interactive UI & Callback Routing — inline keyboards/callback routing/screenshots, (8) Testing Infrastructure — unit and integration tests.",
+      "tags": ["json", "config", "tour", "documentation", "guide"],
+      "complexity": "moderate",
+      "languageNotes": "json"
+    }
+  ],
+  "edges": [
+    {
+      "source": ".understand-anything/import-map.json",
+      "target": ".understand-anything/fingerprints.json",
+      "type": "depends_on",
+      "weight": 0.7,
+      "direction": "forward"
+    },
+    {
+      "source": ".understand-anything/batches.json",
+      "target": ".understand-anything/batch-1.json",
+      "type": "references",
+      "weight": 0.8,
+      "direction": "forward"
+    },
+    {
+      "source": ".understand-anything/batches.json",
+      "target": ".understand-anything/batch-2.json",
+      "type": "references",
+      "weight": 0.8,
+      "direction": "forward"
+    },
+    {
+      "source": ".understand-anything/batches.json",
+      "target": ".understand-anything/batch-3.json",
+      "type": "references",
+      "weight": 0.8,
+      "direction": "forward"
+    },
+    {
+      "source": ".understand-anything/batches.json",
+      "target": ".understand-anything/batch-4.json",
+      "type": "references",
+      "weight": 0.8,
+      "direction": "forward"
+    },
+    {
+      "source": ".understand-anything/batches.json",
+      "target": ".understand-anything/batch-5.json",
+      "type": "references",
+      "weight": 0.8,
+      "direction": "forward"
+    },
+    {
+      "source": ".understand-anything/fingerprint-input.json",
+      "target": ".understand-anything/fingerprints.json",
+      "type": "produces",
+      "weight": 1.0,
+      "direction": "forward"
+    },
+    {
+      "source": ".understand-anything/assembled-graph.json",
+      "target": ".understand-anything/knowledge-graph.json",
+      "type": "derived_from",
+      "weight": 0.9,
+      "direction": "forward"
+    },
+    {
+      "source": ".understand-anything/assembled-graph.json",
+      "target": ".understand-anything/layers.json",
+      "type": "references",
+      "weight": 0.8,
+      "direction": "forward"
+    },
+    {
+      "source": ".understand-anything/assembled-graph.json",
+      "target": ".understand-anything/tour.json",
+      "type": "references",
+      "weight": 0.8,
+      "direction": "forward"
+    },
+    {
+      "source": ".understand-anything/knowledge-graph.json",
+      "target": ".understand-anything/layers.json",
+      "type": "references",
+      "weight": 0.8,
+      "direction": "forward"
+    },
+    {
+      "source": ".understand-anything/knowledge-graph.json",
+      "target": ".understand-anything/tour.json",
+      "type": "references",
+      "weight": 0.8,
+      "direction": "forward"
+    },
+    {
+      "source": ".understand-anything/knowledge-graph.json",
+      "target": ".understand-anything/meta.json",
+      "type": "references",
+      "weight": 0.6,
+      "direction": "forward"
+    },
+    {
+      "source": ".understand-anything/assembled-graph.json",
+      "target": ".understand-anything/meta.json",
+      "type": "references",
+      "weight": 0.6,
+      "direction": "forward"
+    },
+    {
+      "source": ".understand-anything/assembled-graph.json",
+      "target": ".understand-anything/batch-1.json",
+      "type": "aggregates",
+      "weight": 0.7,
+      "direction": "forward"
+    },
+    {
+      "source": ".understand-anything/assembled-graph.json",
+      "target": ".understand-anything/batch-2.json",
+      "type": "aggregates",
+      "weight": 0.7,
+      "direction": "forward"
+    },
+    {
+      "source": ".understand-anything/assembled-graph.json",
+      "target": ".understand-anything/batch-3.json",
+      "type": "aggregates",
+      "weight": 0.7,
+      "direction": "forward"
+    },
+    {
+      "source": ".understand-anything/assembled-graph.json",
+      "target": ".understand-anything/batch-4.json",
+      "type": "aggregates",
+      "weight": 0.7,
+      "direction": "forward"
+    },
+    {
+      "source": ".understand-anything/assembled-graph.json",
+      "target": ".understand-anything/batch-5.json",
+      "type": "aggregates",
+      "weight": 0.7,
+      "direction": "forward"
+    },
+    {
+      "source": ".understand-anything/review.json",
+      "target": ".understand-anything/knowledge-graph.json",
+      "type": "reviews",
+      "weight": 0.9,
+      "direction": "forward"
+    },
+    {
+      "source": ".understand-anything/review.json",
+      "target": ".understand-anything/assembled-graph.json",
+      "type": "reviews",
+      "weight": 0.6,
+      "direction": "forward"
+    },
+    {
+      "source": ".understand-anything/fingerprints.json",
+      "target": ".understand-anything/batches.json",
+      "type": "feeds_into",
+      "weight": 0.5,
+      "direction": "forward"
+    },
+    {
+      "source": ".understand-anything/fingerprints.json",
+      "target": ".understand-anything/import-map.json",
+      "type": "feeds_into",
+      "weight": 0.5,
+      "direction": "forward"
+    },
+    {
+      "source": ".understand-anything/fingerprints.json",
+      "target": ".understand-anything/knowledge-graph.json",
+      "type": "feeds_into",
+      "weight": 0.5,
+      "direction": "forward"
+    },
+    {
+      "source": ".understand-anything/import-map.json",
+      "target": ".understand-anything/knowledge-graph.json",
+      "type": "feeds_into",
+      "weight": 0.5,
+      "direction": "forward"
+    },
+    {
+      "source": ".understand-anything/import-map.json",
+      "target": ".understand-anything/assembled-graph.json",
+      "type": "feeds_into",
+      "weight": 0.5,
+      "direction": "forward"
+    },
+    {
+      "source": ".understand-anything/meta.json",
+      "target": ".understand-anything/review.json",
+      "type": "provides_context",
+      "weight": 0.4,
+      "direction": "forward"
+    },
+    {
+      "source": ".understand-anything/layers.json",
+      "target": ".understand-anything/batches.json",
+      "type": "informs",
+      "weight": 0.4,
+      "direction": "forward"
+    },
+    {
+      "source": ".understand-anything/batch-1.json",
+      "target": ".understand-anything/fingerprints.json",
+      "type": "uses_fingerprints",
+      "weight": 0.3,
+      "direction": "forward"
+    },
+    {
+      "source": ".understand-anything/batch-2.json",
+      "target": ".understand-anything/fingerprints.json",
+      "type": "uses_fingerprints",
+      "weight": 0.3,
+      "direction": "forward"
+    },
+    {
+      "source": ".understand-anything/batch-3.json",
+      "target": ".understand-anything/fingerprints.json",
+      "type": "uses_fingerprints",
+      "weight": 0.3,
+      "direction": "forward"
+    },
+    {
+      "source": ".understand-anything/batch-4.json",
+      "target": ".understand-anything/fingerprints.json",
+      "type": "uses_fingerprints",
+      "weight": 0.3,
+      "direction": "forward"
+    },
+    {
+      "source": ".understand-anything/batch-5.json",
+      "target": ".understand-anything/fingerprints.json",
+      "type": "uses_fingerprints",
+      "weight": 0.3,
+      "direction": "forward"
+    },
+    {
+      "source": ".understand-anything/tour.json",
+      "target": ".understand-anything/batches.json",
+      "type": "references",
+      "weight": 0.3,
+      "direction": "forward"
+    }
+  ]
+}

@@ -1,0 +1,114 @@
+[
+    {
+        "order":  1,
+        "title":  "Project Overview вЂ” Telegram Bot for Claude Code via tmux",
+        "description":  "ccbot bridges Telegram forum topics to Claude Code sessions running inside tmux windows. Each topic maps 1-to-1 to a session. The README and architecture doc provide the big picture.",
+        "nodeIds":  [
+                        "concept:topic-window-session",
+                        "document:README.md",
+                        "document:.claude/rules/architecture.md"
+                    ]
+    },
+    {
+        "order":  2,
+        "title":  "Entry Point \u0026 Configuration",
+        "description":  "The CLI entry point in main.py parses args and wires everything together. pyproject.toml defines dependencies (python-telegram-bot, libtmux, Pillow, httpx). Config loads .env for TELEGRAM_BOT_TOKEN and ALLOWED_USERS.",
+        "nodeIds":  [
+                        "module:src/ccbot/main.py",
+                        "config:pyproject.toml",
+                        "file:src/ccbot/config.py",
+                        "config:.env.example"
+                    ]
+    },
+    {
+        "order":  3,
+        "title":  "Bot Application Core",
+        "description":  "create_bot() in bot.py sets up the Application, registers handlers, and manages lifecycle (post_init / post_shutdown). Auth helpers gate access. Rate limiting (AIORateLimiter) protects against Telegram 429s. Startup re-resolution remaps stale window IDs after tmux restart.",
+        "nodeIds":  [
+                        "module:src/ccbot/bot.py",
+                        "file:src/ccbot/handlers/auth.py",
+                        "concept:rate_limiting",
+                        "concept:startup_re_resolution"
+                    ]
+    },
+    {
+        "order":  4,
+        "title":  "Session Management вЂ” Bindings \u0026 State",
+        "description":  "SessionManager resolves topics to windows and windows to sessions. thread_bindings (topicв†’window_id) live in memory and persist in state.json. session_map.json (written by the hook) maps window_idв†’session_id. Dual-state design enables clean startup recovery.",
+        "nodeIds":  [
+                        "module:src/ccbot/session.py",
+                        "concept:thread_bindings",
+                        "file:state:state.json",
+                        "file:state:session_map.json"
+                    ]
+    },
+    {
+        "order":  5,
+        "title":  "Session Monitoring вЂ” Polling \u0026 Offset Tracking",
+        "description":  "SessionMonitor polls JSONL transcripts every 2s, detects mtime changes, reads new lines incrementally. MonitorState tracks byte offsets per file to avoid re-processing. tool_useв†”tool_result pairing tracks pending tool calls across poll cycles for in-place message edits.",
+        "nodeIds":  [
+                        "module:src/ccbot/session_monitor.py",
+                        "module:src/ccbot/monitor_state.py",
+                        "file:state:monitor_state.json",
+                        "concept:tool_use_tool_result_pairing"
+                    ]
+    },
+    {
+        "order":  6,
+        "title":  "Tmux Integration вЂ” Windows, Hooks \u0026 Parsing",
+        "description":  "TmuxManager wraps libtmux to list/find/create/kill windows, send keystrokes, and capture pane output. The hook script receives Claude Code SessionStart events via stdin and writes session_map.json. TerminalParser detects interactive UI prompts (AskUserQuestion, Permission, ExitPlanMode). TranscriptParser parses JSONL entries and formats expandable quotes.",
+        "nodeIds":  [
+                        "module:src/ccbot/tmux_manager.py",
+                        "module:src/ccbot/hook.py",
+                        "module:src/ccbot/terminal_parser.py",
+                        "module:src/ccbot/transcript_parser.py"
+                    ]
+    },
+    {
+        "order":  7,
+        "title":  "Message Pipeline вЂ” Sending, Formatting \u0026 Queuing",
+        "description":  "telegram_sender.py handles split_message (4096-char limit) and rate-limited safe_send/safe_edit/safe_reply with MarkdownV2 fallback. markdown_v2.py converts Markdown to Telegram MarkdownV2 with expandable quotes. A per-user message queue (message_queue.py) merges consecutive content, breaks on tool boundaries, and deduplicates status updates.",
+        "nodeIds":  [
+                        "module:src/ccbot/telegram_sender.py",
+                        "module:src/ccbot/markdown_v2.py",
+                        "module:src/ccbot/handlers/message_sender.py",
+                        "module:src/ccbot/handlers/message_queue.py",
+                        "concept:message_queue_architecture"
+                    ]
+    },
+    {
+        "order":  8,
+        "title":  "Handlers вЂ” Interactive UI, Browsing \u0026 Routing",
+        "description":  "Inline keyboard handlers manage directory browsing (directory_browser.py), session picker, interactive UI prompts (interactive_ui.py), history pagination (response_builder.py), status polling (status_polling.py), and topic cleanup (cleanup.py). The callback_router dispatches all CB_* prefixed queries to the correct handler.",
+        "nodeIds":  [
+                        "module:src/ccbot/handlers/interactive_ui.py",
+                        "module:src/ccbot/handlers/directory_browser.py",
+                        "module:src/ccbot/handlers/response_builder.py",
+                        "module:src/ccbot/handlers/status_polling.py",
+                        "module:src/ccbot/handlers/cleanup.py",
+                        "file:src/ccbot/handlers/callback_router.py",
+                        "file:src/ccbot/handlers/callback_data.py"
+                    ]
+    },
+    {
+        "order":  9,
+        "title":  "Testing \u0026 CI Quality Gates",
+        "description":  "The check.yml pipeline enforces ruff lint/format, pyright type checking, and pytest across Python 3.12/3.13. Unit tests cover config, session, monitor_state, transcript_parser, terminal_parser, telegram_sender, markdown_v2, hook, transcribe, and all handlers. Integration tests validate config loading and monitor state persistence.",
+        "nodeIds":  [
+                        "pipeline:.github/workflows/check.yml",
+                        "config:.understand-anything/review.json"
+                    ]
+    },
+    {
+        "order":  10,
+        "title":  "Beyond вЂ” Agentic Pipeline \u0026 Extensions",
+        "description":  "The .agentic/ system provides an automated refactoring pipeline (analyzeв†’planв†’implementв†’validateв†’draft PR) driven by the knowledge graph. The CLI (scripts/agentic/cli.py) and MCP server expose pipeline tools to Grok. Screenshot rendering (screenshot.py) captures terminal output as PNG. Voice transcription (transcribe.py) supports gpt-4o-transcribe for voice messages.",
+        "nodeIds":  [
+                        "file:scripts/agentic/cli.py",
+                        "document:.agentic/HANDOFF.md",
+                        "config:.agentic/policies.json",
+                        "module:src/ccbot/screenshot.py",
+                        "module:src/ccbot/transcribe.py"
+                    ]
+    }
+]

@@ -1,0 +1,324 @@
+{
+  "nodes": [
+    {
+      "id": "file:.agentic/prompts/analyze.md",
+      "type": "node",
+      "labels": ["document", "markdown", "prompt", "stage-definition"],
+      "properties": {
+        "path": ".agentic/prompts/analyze.md",
+        "fileName": "analyze.md",
+        "language": "markdown",
+        "sizeLines": 28,
+        "fileCategory": "docs",
+        "stage": "ANALYZE",
+        "pipelinePosition": 1,
+        "summary": "Prompt for the ANALYZE stage: read-only analysis of the ccbot codebase using knowledge graph and source tree, producing a structured analysis report. Cross-checks backlog tasks against current code reality and identifies hotspots (complexity, fan-in/fan-out, untested files).",
+        "inputs": [
+          ".understand-anything/knowledge-graph.json",
+          ".agentic/backlog/tasks.json",
+          ".agentic/config.json",
+          "AGENTS.md",
+          "CLAUDE.md",
+          ".claude/rules/*"
+        ],
+        "outputs": [
+          ".agentic/out/analysis-report.json",
+          ".agentic/out/analysis-report.md"
+        ],
+        "rules": "Read-only for src/ and tests/; prefer evidence from graph + file sizes; flag partially-done backlog tasks."
+      }
+    },
+    {
+      "id": "file:.agentic/prompts/plan.md",
+      "type": "node",
+      "labels": ["document", "markdown", "prompt", "stage-definition"],
+      "properties": {
+        "path": ".agentic/prompts/plan.md",
+        "fileName": "plan.md",
+        "language": "markdown",
+        "sizeLines": 31,
+        "fileCategory": "docs",
+        "stage": "PLAN",
+        "pipelinePosition": 2,
+        "summary": "Prompt for the PLAN stage: turns analysis + backlog into an executable plan. Ranks ready tasks by priority, dependencies, and graph hotspots; selects one next task; expands acceptance criteria into a concrete implementation checklist.",
+        "inputs": [
+          ".agentic/out/analysis-report.json",
+          ".agentic/backlog/tasks.json",
+          ".agentic/policies.json"
+        ],
+        "outputs": [
+          ".agentic/out/plan.json",
+          ".agentic/out/plan.md",
+          ".agentic/out/selected-task.json"
+        ],
+        "selectionRules": [
+          "Never pick a task whose depends_on are incomplete",
+          "Prefer status: ready over planned",
+          "Prefer high priority + high graph signal",
+          "Skip tasks covered by open agentic PRs",
+          "Default: one task per implementation run"
+        ]
+      }
+    },
+    {
+      "id": "file:.agentic/prompts/implement.md",
+      "type": "node",
+      "labels": ["document", "markdown", "prompt", "stage-definition"],
+      "properties": {
+        "path": ".agentic/prompts/implement.md",
+        "fileName": "implement.md",
+        "language": "markdown",
+        "sizeLines": 47,
+        "fileCategory": "docs",
+        "stage": "IMPLEMENT",
+        "pipelinePosition": 3,
+        "summary": "Prompt for the IMPLEMENT stage: implements exactly one refactoring task using explore-design-implement-test-commit flow. Includes quality gates (ruff, pyright, pytest) and hard constraints against scope creep, force-pushing, or weakening auth/topic architecture.",
+        "inputs": [
+          ".agentic/out/selected-task.json",
+          ".agentic/policies.json",
+          "AGENTS.md",
+          "CLAUDE.md"
+        ],
+        "outputs": [
+          ".agentic/out/blocked.md"
+        ],
+        "qualityGates": [
+          "uv sync --all-extras",
+          "ruff check",
+          "ruff format",
+          "pyright src/ccbot/",
+          "pytest --tb=short -q"
+        ],
+        "hardConstraints": [
+          "Do not implement multiple backlog tasks in one PR",
+          "Do not force-push or alter main directly",
+          "Do not weaken auth, topic-only architecture, or CI gates"
+        ]
+      }
+    },
+    {
+      "id": "file:.agentic/prompts/pr-body.md",
+      "type": "node",
+      "labels": ["document", "markdown", "prompt", "template"],
+      "properties": {
+        "path": ".agentic/prompts/pr-body.md",
+        "fileName": "pr-body.md",
+        "language": "markdown",
+        "sizeLines": 35,
+        "fileCategory": "docs",
+        "templateType": "PR body",
+        "summary": "GitHub PR body template for agentic refactoring PRs. Includes task metadata table, problem/solution sections, acceptance criteria checklist, validation gates, risk notes, and agent notes. Uses mustache-style {{PLACEHOLDER}} variables for dynamic content.",
+        "placeholders": [
+          "TASK_ID",
+          "PRIORITY",
+          "GRAPH_COMMIT",
+          "PROBLEM",
+          "SOLUTION",
+          "ACCEPTANCE_CHECKLIST",
+          "RISK",
+          "AGENT_NOTES"
+        ],
+        "validationGates": [
+          "ruff check / ruff format --check",
+          "pyright",
+          "pytest",
+          "Manual reasoning: topic-only + auth invariants preserved"
+        ]
+      }
+    },
+    {
+      "id": "file:.agentic/prompts/review.md",
+      "type": "node",
+      "labels": ["document", "markdown", "prompt", "stage-definition"],
+      "properties": {
+        "path": ".agentic/prompts/review.md",
+        "fileName": "review.md",
+        "language": "markdown",
+        "sizeLines": 24,
+        "fileCategory": "docs",
+        "stage": "REVIEW",
+        "pipelinePosition": 4,
+        "summary": "Prompt for the REVIEW stage: reviews agentic PRs as a senior Python engineer. Focuses on correctness vs task/acceptance criteria, architecture constraints, concurrency/error-handling regressions, test adequacy, and scope creep. Outputs structured review with verdict.",
+        "outputFormat": ["Summary", "Must-fix", "Should-fix", "Nits", "Verdict"],
+        "focusAreas": [
+          "Correctness vs task id and acceptance criteria",
+          "Architecture constraints from AGENTS.md / CLAUDE.md",
+          "Concurrency and error-handling regressions",
+          "Test adequacy",
+          "Scope creep beyond single task"
+        ],
+        "antiPatterns": [
+          "Rewriting the PR in review-only mode",
+          "Approving if quality gates fail or auth/topic constraints violated"
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge:analyze-to-plan",
+      "type": "edge",
+      "labels": ["pipeline-flow", "data-dependency"],
+      "properties": {
+        "relationship": "produces-input-for",
+        "summary": "ANALYZE stage produces analysis-report.json which PLAN stage consumes to rank and select tasks."
+      },
+      "source": "file:.agentic/prompts/analyze.md",
+      "target": "file:.agentic/prompts/plan.md"
+    },
+    {
+      "id": "edge:plan-to-implement",
+      "type": "edge",
+      "labels": ["pipeline-flow", "data-dependency"],
+      "properties": {
+        "relationship": "produces-input-for",
+        "summary": "PLAN stage produces selected-task.json which IMPLEMENT stage consumes as the exact task to execute."
+      },
+      "source": "file:.agentic/prompts/plan.md",
+      "target": "file:.agentic/prompts/implement.md"
+    },
+    {
+      "id": "edge:implement-to-review",
+      "type": "edge",
+      "labels": ["pipeline-flow", "artifact-dependency"],
+      "properties": {
+        "relationship": "produces-artifact-for",
+        "summary": "IMPLEMENT stage creates a GitHub PR, which REVIEW stage evaluates against acceptance criteria and quality gates."
+      },
+      "source": "file:.agentic/prompts/implement.md",
+      "target": "file:.agentic/prompts/review.md"
+    },
+    {
+      "id": "edge:implement-uses-pr-body",
+      "type": "edge",
+      "labels": ["uses-template"],
+      "properties": {
+        "relationship": "uses-template",
+        "summary": "IMPLEMENT stage references the PR body template (pr-body.md) to format the pull request description."
+      },
+      "source": "file:.agentic/prompts/implement.md",
+      "target": "file:.agentic/prompts/pr-body.md"
+    },
+    {
+      "id": "edge:review-evaluates-pr-body",
+      "type": "edge",
+      "labels": ["evaluates"],
+      "properties": {
+        "relationship": "evaluates",
+        "summary": "REVIEW stage evaluates the PR body (produced from pr-body.md template) against acceptance criteria."
+      },
+      "source": "file:.agentic/prompts/review.md",
+      "target": "file:.agentic/prompts/pr-body.md"
+    },
+    {
+      "id": "edge:analyze-refs-tasks",
+      "type": "edge",
+      "labels": ["references"],
+      "properties": {
+        "relationship": "references",
+        "summary": "ANALYZE reads .agentic/backlog/tasks.json to cross-check backlog against current code reality."
+      },
+      "source": "file:.agentic/prompts/analyze.md",
+      "target": "file:.agentic/backlog/tasks.json"
+    },
+    {
+      "id": "edge:analyze-refs-config",
+      "type": "edge",
+      "labels": ["references"],
+      "properties": {
+        "relationship": "references",
+        "summary": "ANALYZE reads .agentic/config.json for configuration context."
+      },
+      "source": "file:.agentic/prompts/analyze.md",
+      "target": "file:.agentic/config.json"
+    },
+    {
+      "id": "edge:analyze-refs-agents-md",
+      "type": "edge",
+      "labels": ["references"],
+      "properties": {
+        "relationship": "references",
+        "summary": "ANALYZE reads AGENTS.md and CLAUDE.md for architectural rules."
+      },
+      "source": "file:.agentic/prompts/analyze.md",
+      "target": "file:AGENTS.md"
+    },
+    {
+      "id": "edge:analyze-refs-knowledge-graph",
+      "type": "edge",
+      "labels": ["references"],
+      "properties": {
+        "relationship": "references",
+        "summary": "ANALYZE reads the knowledge graph for evidence-driven analysis."
+      },
+      "source": "file:.agentic/prompts/analyze.md",
+      "target": "file:.understand-anything/knowledge-graph.json"
+    },
+    {
+      "id": "edge:plan-refs-analysis-report",
+      "type": "edge",
+      "labels": ["references", "data-dependency"],
+      "properties": {
+        "relationship": "references",
+        "summary": "PLAN consumes analysis-report.json produced by ANALYZE to rank tasks."
+      },
+      "source": "file:.agentic/prompts/plan.md",
+      "target": "file:.agentic/out/analysis-report.json"
+    },
+    {
+      "id": "edge:plan-refs-tasks",
+      "type": "edge",
+      "labels": ["references"],
+      "properties": {
+        "relationship": "references",
+        "summary": "PLAN reads .agentic/backlog/tasks.json to select the next task."
+      },
+      "source": "file:.agentic/prompts/plan.md",
+      "target": "file:.agentic/backlog/tasks.json"
+    },
+    {
+      "id": "edge:plan-refs-policies",
+      "type": "edge",
+      "labels": ["references"],
+      "properties": {
+        "relationship": "references",
+        "summary": "PLAN reads .agentic/policies.json for selection rules and constraints."
+      },
+      "source": "file:.agentic/prompts/plan.md",
+      "target": "file:.agentic/policies.json"
+    },
+    {
+      "id": "edge:implement-refs-policies",
+      "type": "edge",
+      "labels": ["references"],
+      "properties": {
+        "relationship": "references",
+        "summary": "IMPLEMENT reads .agentic/policies.json for review_checklist and constraints."
+      },
+      "source": "file:.agentic/prompts/implement.md",
+      "target": "file:.agentic/policies.json"
+    },
+    {
+      "id": "edge:implement-refs-selected-task",
+      "type": "edge",
+      "labels": ["references", "data-dependency"],
+      "properties": {
+        "relationship": "references",
+        "summary": "IMPLEMENT consumes selected-task.json (produced by PLAN) as the exact task specification."
+      },
+      "source": "file:.agentic/prompts/implement.md",
+      "target": "file:.agentic/out/selected-task.json"
+    },
+    {
+      "id": "edge:implement-refs-agents-md",
+      "type": "edge",
+      "labels": ["references"],
+      "properties": {
+        "relationship": "references",
+        "summary": "IMPLEMENT reads AGENTS.md and CLAUDE.md for architecture constraints."
+      },
+      "source": "file:.agentic/prompts/implement.md",
+      "target": "file:AGENTS.md"
+    }
+  ]
+}

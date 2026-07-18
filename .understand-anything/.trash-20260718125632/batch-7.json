@@ -1,0 +1,228 @@
+{
+  "nodes": [
+    {
+      "id": "file:.understand-anything/.trash-1784291606,08255/assembled-graph.json",
+      "type": "file",
+      "name": "assembled-graph.json",
+      "filePath": ".understand-anything/.trash-1784291606,08255/assembled-graph.json",
+      "summary": ".understand-anything/.trash-1784291606,08255/assembled-graph.json (json, 6295 lines) - Complete assembled knowledge graph containing 9 architectural layers (Bot Application, Message Processing, Session & State, Terminal & Tmux, Handlers & Interactive UI, Transcription, Testing, Documentation, Configuration), 206 'contains' edges, 84 'calls' edges, 64 'imports' edges, and 14 'tested_by' edges connecting all source files, functions, and classes",
+      "tags": ["json", "file", "config", "knowledge-graph", "understand-anything"],
+      "complexity": "complex",
+      "languageNotes": "json"
+    },
+    {
+      "id": "file:.understand-anything/.trash-1784291606,08255/batch-1.json",
+      "type": "file",
+      "name": "batch-1.json",
+      "filePath": ".understand-anything/.trash-1784291606,08255/batch-1.json",
+      "summary": ".understand-anything/.trash-1784291606,08255/batch-1.json (json, 103 lines) - First batch output containing 7 file nodes for config (.env.example, pyproject.toml) and documentation (README.md, README_CN.md, README_RU.md, AGENTS.md, CLAUDE.md); no edges",
+      "tags": ["json", "file", "config", "batch-output", "understand-anything"],
+      "complexity": "simple",
+      "languageNotes": "json"
+    },
+    {
+      "id": "file:.understand-anything/.trash-1784291606,08255/batch-2.json",
+      "type": "file",
+      "name": "batch-2.json",
+      "filePath": ".understand-anything/.trash-1784291606,08255/batch-2.json",
+      "summary": ".understand-anything/.trash-1784291606,08255/batch-2.json (json, 47 lines) - Second batch output containing 3 document nodes for font license files (LICENSE-JetBrainsMono.txt, LICENSE-NotoSansMono.txt, LICENSE-Symbola.txt); no edges",
+      "tags": ["json", "file", "config", "batch-output", "understand-anything"],
+      "complexity": "simple",
+      "languageNotes": "json"
+    },
+    {
+      "id": "file:.understand-anything/.trash-1784291606,08255/batch-3.json",
+      "type": "file",
+      "name": "batch-3.json",
+      "filePath": ".understand-anything/.trash-1784291606,08255/batch-3.json",
+      "summary": ".understand-anything/.trash-1784291606,08255/batch-3.json (json, 3800 lines) - Third batch output containing 100+ nodes for main source code files (bot.py, config.py, all handlers, terminal_parser, tmux_manager, etc.) with their functions and classes, plus ~250 edges for contains/calls/imports relationships",
+      "tags": ["json", "file", "config", "batch-output", "understand-anything"],
+      "complexity": "complex",
+      "languageNotes": "json"
+    },
+    {
+      "id": "file:.understand-anything/.trash-1784291606,08255/batch-4.json",
+      "type": "file",
+      "name": "batch-4.json",
+      "filePath": ".understand-anything/.trash-1784291606,08255/batch-4.json",
+      "summary": ".understand-anything/.trash-1784291606,08255/batch-4.json (json, 1915 lines) - Fourth batch output containing nodes for transcript_parser.py, utils.py, and all 21 test files (unit tests + integration tests) with their functions/test classes, plus ~150 contains edges",
+      "tags": ["json", "file", "config", "batch-output", "understand-anything"],
+      "complexity": "complex",
+      "languageNotes": "json"
+    },
+    {
+      "id": "file:.understand-anything/.trash-1784291606,08255/batches.json",
+      "type": "file",
+      "name": "batches.json",
+      "filePath": ".understand-anything/.trash-1784291606,08255/batches.json",
+      "summary": ".understand-anything/.trash-1784291606,08255/batches.json (json, 727 lines) - Master batch planning/tracking file with schemaVersion=1, louvain algorithm, 56 total files across 4 batches, export map listing every function/class per file, and detailed batch definitions with file metadata and batchImportData",
+      "tags": ["json", "file", "config", "batch-plan", "understand-anything"],
+      "complexity": "complex",
+      "languageNotes": "json"
+    },
+    {
+      "id": "file:.understand-anything/.trash-1784291606,08255/fingerprint-input.json",
+      "type": "file",
+      "name": "fingerprint-input.json",
+      "filePath": ".understand-anything/.trash-1784291606,08255/fingerprint-input.json",
+      "summary": ".understand-anything/.trash-1784291606,08255/fingerprint-input.json (json, 62 lines) - Input fingerprint containing projectRoot path, list of all 56 source file paths, and gitCommitHash (2f85b4d1ed9e922f9a53c42f997310f231bf7b7a) used to identify the analysis run",
+      "tags": ["json", "file", "config", "fingerprint", "understand-anything"],
+      "complexity": "moderate",
+      "languageNotes": "json"
+    },
+    {
+      "id": "file:.understand-anything/.trash-1784291606,08255/import-map.json",
+      "type": "file",
+      "name": "import-map.json",
+      "filePath": ".understand-anything/.trash-1784291606,08255/import-map.json",
+      "summary": ".understand-anything/.trash-1784291606,08255/import-map.json (json, 146 lines) - Import map with 56 files scanned, 16 files with imports, 64 total import edges; maps import dependencies between Python source files (e.g. bot.py imports 18 modules, session.py imports 4 modules)",
+      "tags": ["json", "file", "config", "import-map", "understand-anything"],
+      "complexity": "moderate",
+      "languageNotes": "json"
+    },
+    {
+      "id": "file:.understand-anything/.trash-1784291606,08255/layers.json",
+      "type": "file",
+      "name": "layers.json",
+      "filePath": ".understand-anything/.trash-1784291606,08255/layers.json",
+      "summary": ".understand-anything/.trash-1784291606,08255/layers.json (json, 125 lines) - Layer definitions containing 9 architectural layers: Bot Application, Message Processing, Session & State, Terminal & Tmux, Handlers & Interactive UI, Transcription, Testing, Documentation, Configuration; each with node IDs belonging to that layer",
+      "tags": ["json", "file", "config", "layers", "understand-anything"],
+      "complexity": "moderate",
+      "languageNotes": "json"
+    },
+    {
+      "id": "file:.understand-anything/.trash-1784291606,08255/review.json",
+      "type": "file",
+      "name": "review.json",
+      "filePath": ".understand-anything/.trash-1784291606,08255/review.json",
+      "summary": ".understand-anything/.trash-1784291606,08255/review.json (json, 40 lines) - Quality review output with 1 issue (otf font file not in any layer), 14 orphan node warnings, and stats: 262 total nodes (2 config, 8 document, 46 file, 132 function, 74 class), 368 edges (206 contains, 84 calls, 64 imports, 14 tested_by), 9 layers, 8 tour steps",
+      "tags": ["json", "file", "config", "review", "understand-anything"],
+      "complexity": "moderate",
+      "languageNotes": "json"
+    },
+    {
+      "id": "file:.understand-anything/.trash-1784291606,08255/tour.json",
+      "type": "file",
+      "name": "tour.json",
+      "filePath": ".understand-anything/.trash-1784291606,08255/tour.json",
+      "summary": ".understand-anything/.trash-1784291606,08255/tour.json (json, 52 lines) - Interactive tour guide with 8 ordered tour steps covering: Project Overview, Application Entry Point & Configuration, Core Bot Application, Session & State Management, Terminal & Tmux Integration, Message Processing Pipeline, Interactive UI & Handlers, Testing Infrastructure",
+      "tags": ["json", "file", "config", "tour", "understand-anything"],
+      "complexity": "moderate",
+      "languageNotes": "json"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:.understand-anything/.trash-1784291606,08255/batches.json",
+      "target": "file:.understand-anything/.trash-1784291606,08255/batch-1.json",
+      "type": "references",
+      "weight": 1.0,
+      "direction": "forward"
+    },
+    {
+      "source": "file:.understand-anything/.trash-1784291606,08255/batches.json",
+      "target": "file:.understand-anything/.trash-1784291606,08255/batch-2.json",
+      "type": "references",
+      "weight": 1.0,
+      "direction": "forward"
+    },
+    {
+      "source": "file:.understand-anything/.trash-1784291606,08255/batches.json",
+      "target": "file:.understand-anything/.trash-1784291606,08255/batch-3.json",
+      "type": "references",
+      "weight": 1.0,
+      "direction": "forward"
+    },
+    {
+      "source": "file:.understand-anything/.trash-1784291606,08255/batches.json",
+      "target": "file:.understand-anything/.trash-1784291606,08255/batch-4.json",
+      "type": "references",
+      "weight": 1.0,
+      "direction": "forward"
+    },
+    {
+      "source": "file:.understand-anything/.trash-1784291606,08255/fingerprint-input.json",
+      "target": "file:.understand-anything/.trash-1784291606,08255/batches.json",
+      "type": "configures",
+      "weight": 0.9,
+      "direction": "forward"
+    },
+    {
+      "source": "file:.understand-anything/.trash-1784291606,08255/fingerprint-input.json",
+      "target": "file:.understand-anything/.trash-1784291606,08255/import-map.json",
+      "type": "configures",
+      "weight": 0.9,
+      "direction": "forward"
+    },
+    {
+      "source": "file:.understand-anything/.trash-1784291606,08255/fingerprint-input.json",
+      "target": "file:.understand-anything/.trash-1784291606,08255/layers.json",
+      "type": "configures",
+      "weight": 0.9,
+      "direction": "forward"
+    },
+    {
+      "source": "file:.understand-anything/.trash-1784291606,08255/import-map.json",
+      "target": "file:.understand-anything/.trash-1784291606,08255/assembled-graph.json",
+      "type": "feeds_into",
+      "weight": 0.8,
+      "direction": "forward"
+    },
+    {
+      "source": "file:.understand-anything/.trash-1784291606,08255/layers.json",
+      "target": "file:.understand-anything/.trash-1784291606,08255/assembled-graph.json",
+      "type": "feeds_into",
+      "weight": 0.8,
+      "direction": "forward"
+    },
+    {
+      "source": "file:.understand-anything/.trash-1784291606,08255/batch-1.json",
+      "target": "file:.understand-anything/.trash-1784291606,08255/assembled-graph.json",
+      "type": "feeds_into",
+      "weight": 0.8,
+      "direction": "forward"
+    },
+    {
+      "source": "file:.understand-anything/.trash-1784291606,08255/batch-2.json",
+      "target": "file:.understand-anything/.trash-1784291606,08255/assembled-graph.json",
+      "type": "feeds_into",
+      "weight": 0.8,
+      "direction": "forward"
+    },
+    {
+      "source": "file:.understand-anything/.trash-1784291606,08255/batch-3.json",
+      "target": "file:.understand-anything/.trash-1784291606,08255/assembled-graph.json",
+      "type": "feeds_into",
+      "weight": 0.8,
+      "direction": "forward"
+    },
+    {
+      "source": "file:.understand-anything/.trash-1784291606,08255/batch-4.json",
+      "target": "file:.understand-anything/.trash-1784291606,08255/assembled-graph.json",
+      "type": "feeds_into",
+      "weight": 0.8,
+      "direction": "forward"
+    },
+    {
+      "source": "file:.understand-anything/.trash-1784291606,08255/assembled-graph.json",
+      "target": "file:.understand-anything/.trash-1784291606,08255/review.json",
+      "type": "reviewed_by",
+      "weight": 0.9,
+      "direction": "forward"
+    },
+    {
+      "source": "file:.understand-anything/.trash-1784291606,08255/assembled-graph.json",
+      "target": "file:.understand-anything/.trash-1784291606,08255/tour.json",
+      "type": "feeds_into",
+      "weight": 0.7,
+      "direction": "forward"
+    },
+    {
+      "source": "file:.understand-anything/.trash-1784291606,08255/layers.json",
+      "target": "file:.understand-anything/.trash-1784291606,08255/review.json",
+      "type": "feeds_into",
+      "weight": 0.5,
+      "direction": "forward"
+    }
+  ]
+}

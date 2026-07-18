@@ -11,11 +11,13 @@ Rate limiting is handled globally by AIORateLimiter on the Application.
 
 Key components:
   - MessageTask: Dataclass representing a queued message task (with thread_id)
-  - get_or_create_queue: Get or create queue and worker for a user
-  - Message queue worker: Background task processing user's queue
-  - Content task processing with tool_use/tool_result handling
-  - Status message tracking and conversion (keyed by (user_id, thread_id))
+  - StatusTracker: status + tool_use message id maps
+  - MessageQueueManager: queues, workers, flood control, status tracker
+  - queue_manager: process-wide singleton
+  - Public wrappers (get_or_create_queue, enqueue_*, clear_*, shutdown_workers)
 """
+
+from __future__ import annotations
 
 import asyncio
 import logging
@@ -50,6 +52,9 @@ def _ensure_formatted(text: str) -> str:
 # Merge limit for content messages
 MERGE_MAX_LENGTH = 3800  # Leave room for markdown conversion overhead
 
+# Max seconds to wait for flood control before dropping tasks
+FLOOD_CONTROL_MAX_WAIT = 10
+
 
 @dataclass
 class MessageTask:
@@ -66,40 +71,158 @@ class MessageTask:
     image_data: list[tuple[str, bytes]] | None = None  # From tool_result images
 
 
-# Per-user message queues and worker tasks
-_message_queues: dict[int, asyncio.Queue[MessageTask]] = {}
-_queue_workers: dict[int, asyncio.Task[None]] = {}
-_queue_locks: dict[int, asyncio.Lock] = {}  # Protect drain/refill operations
+class StatusTracker:
+    """Tracks Telegram status messages and tool_use message IDs."""
 
-# Map (tool_use_id, user_id, thread_id_or_0) -> telegram message_id
-# for editing tool_use messages with results
-_tool_msg_ids: dict[tuple[str, int, int], int] = {}
+    def __init__(self) -> None:
+        # (user_id, thread_id_or_0) -> (message_id, window_id, last_text)
+        self._status: dict[tuple[int, int], tuple[int, str, str]] = {}
+        # (tool_use_id, user_id, thread_id_or_0) -> telegram message_id
+        self._tool_msg_ids: dict[tuple[str, int, int], int] = {}
 
-# Status message tracking: (user_id, thread_id_or_0) -> (message_id, window_id, last_text)
-_status_msg_info: dict[tuple[int, int], tuple[int, str, str]] = {}
+    def set_status(
+        self,
+        user_id: int,
+        thread_id_or_0: int,
+        message_id: int,
+        window_id: str,
+        text: str,
+    ) -> None:
+        self._status[(user_id, thread_id_or_0)] = (message_id, window_id, text)
 
-# Flood control: user_id -> monotonic time when ban expires
-_flood_until: dict[int, float] = {}
+    def get_status(
+        self, user_id: int, thread_id_or_0: int = 0
+    ) -> tuple[int, str, str] | None:
+        return self._status.get((user_id, thread_id_or_0))
 
-# Max seconds to wait for flood control before dropping tasks
-FLOOD_CONTROL_MAX_WAIT = 10
+    def pop_status(
+        self, user_id: int, thread_id_or_0: int = 0
+    ) -> tuple[int, str, str] | None:
+        return self._status.pop((user_id, thread_id_or_0), None)
+
+    def set_tool_msg_id(
+        self,
+        tool_use_id: str,
+        user_id: int,
+        thread_id_or_0: int,
+        message_id: int,
+    ) -> None:
+        self._tool_msg_ids[(tool_use_id, user_id, thread_id_or_0)] = message_id
+
+    def get_tool_msg_id(
+        self, tool_use_id: str, user_id: int, thread_id_or_0: int
+    ) -> int | None:
+        return self._tool_msg_ids.get((tool_use_id, user_id, thread_id_or_0))
+
+    def pop_tool_msg_id(
+        self, tool_use_id: str, user_id: int, thread_id_or_0: int
+    ) -> int | None:
+        return self._tool_msg_ids.pop((tool_use_id, user_id, thread_id_or_0), None)
+
+    def clear_tools_for_topic(self, user_id: int, thread_id: int | None = None) -> None:
+        tid = thread_id or 0
+        keys = [k for k in self._tool_msg_ids if k[1] == user_id and k[2] == tid]
+        for key in keys:
+            self._tool_msg_ids.pop(key, None)
+
+    def clear_status_for_topic(
+        self, user_id: int, thread_id: int | None = None
+    ) -> None:
+        self._status.pop((user_id, thread_id or 0), None)
+
+    def clear_all(self) -> None:
+        self._status.clear()
+        self._tool_msg_ids.clear()
+
+
+class MessageQueueManager:
+    """Owns per-user queues, workers, flood control, and status tracking."""
+
+    def __init__(self) -> None:
+        self._queues: dict[int, asyncio.Queue[MessageTask]] = {}
+        self._workers: dict[int, asyncio.Task[None]] = {}
+        self._locks: dict[int, asyncio.Lock] = {}
+        # user_id -> monotonic time when flood ban expires
+        self._flood_until: dict[int, float] = {}
+        self.status = StatusTracker()
+
+    def get_queue(self, user_id: int) -> asyncio.Queue[MessageTask] | None:
+        """Get the message queue for a user (if exists)."""
+        return self._queues.get(user_id)
+
+    def get_or_create_queue(self, bot: Bot, user_id: int) -> asyncio.Queue[MessageTask]:
+        """Get or create message queue and worker for a user."""
+        if user_id not in self._queues:
+            self._queues[user_id] = asyncio.Queue()
+            self._locks[user_id] = asyncio.Lock()
+            self._workers[user_id] = asyncio.create_task(
+                _message_queue_worker(bot, user_id)
+            )
+        return self._queues[user_id]
+
+    def set_flood(self, user_id: int, retry_secs: float) -> None:
+        """Pause the user queue until now + retry_secs."""
+        self._flood_until[user_id] = time.monotonic() + retry_secs
+
+    def is_flooded(self, user_id: int) -> bool:
+        return self._flood_until.get(user_id, 0) > time.monotonic()
+
+    def flood_remaining(self, user_id: int) -> float:
+        rem = self._flood_until.get(user_id, 0) - time.monotonic()
+        return rem if rem > 0 else 0.0
+
+    def clear_flood(self, user_id: int) -> None:
+        self._flood_until.pop(user_id, None)
+
+    def get_lock(self, user_id: int) -> asyncio.Lock:
+        return self._locks[user_id]
+
+    async def shutdown(self) -> None:
+        """Stop all queue workers and clear queue state."""
+        for _, worker in list(self._workers.items()):
+            worker.cancel()
+            try:
+                await worker
+            except asyncio.CancelledError:
+                pass
+        self._workers.clear()
+        self._queues.clear()
+        self._locks.clear()
+        self._flood_until.clear()
+        self.status.clear_all()
+        logger.info("Message queue workers stopped")
+
+
+# Process-wide singleton
+queue_manager = MessageQueueManager()
+
+
+# --- Public wrappers (stable import surface) ---
 
 
 def get_message_queue(user_id: int) -> asyncio.Queue[MessageTask] | None:
     """Get the message queue for a user (if exists)."""
-    return _message_queues.get(user_id)
+    return queue_manager.get_queue(user_id)
 
 
 def get_or_create_queue(bot: Bot, user_id: int) -> asyncio.Queue[MessageTask]:
     """Get or create message queue and worker for a user."""
-    if user_id not in _message_queues:
-        _message_queues[user_id] = asyncio.Queue()
-        _queue_locks[user_id] = asyncio.Lock()
-        # Start worker task for this user
-        _queue_workers[user_id] = asyncio.create_task(
-            _message_queue_worker(bot, user_id)
-        )
-    return _message_queues[user_id]
+    return queue_manager.get_or_create_queue(bot, user_id)
+
+
+def clear_status_msg_info(user_id: int, thread_id: int | None = None) -> None:
+    """Clear status message tracking for a user (and optionally a specific thread)."""
+    queue_manager.status.clear_status_for_topic(user_id, thread_id)
+
+
+def clear_tool_msg_ids_for_topic(user_id: int, thread_id: int | None = None) -> None:
+    """Clear tool message ID tracking for a specific topic."""
+    queue_manager.status.clear_tools_for_topic(user_id, thread_id)
+
+
+async def shutdown_workers() -> None:
+    """Stop all queue workers (called during bot shutdown)."""
+    await queue_manager.shutdown()
 
 
 def _inspect_queue(queue: asyncio.Queue[MessageTask]) -> list[MessageTask]:
@@ -219,7 +342,7 @@ async def _process_content_with_retry(
             )
             if retry_secs > FLOOD_CONTROL_MAX_WAIT:
                 # Long ban — also pause subsequent queued tasks
-                _flood_until[user_id] = time.monotonic() + retry_secs
+                queue_manager.set_flood(user_id, retry_secs)
             if attempt >= max_attempts:
                 logger.error(
                     "Dropping content message for user %d after %d flood-control "
@@ -241,8 +364,8 @@ async def _process_content_with_retry(
 
 async def _message_queue_worker(bot: Bot, user_id: int) -> None:
     """Process message tasks for a user sequentially."""
-    queue = _message_queues[user_id]
-    lock = _queue_locks[user_id]
+    queue = queue_manager._queues[user_id]
+    lock = queue_manager._locks[user_id]
     logger.info(f"Message queue worker started for user {user_id}")
 
     while True:
@@ -250,22 +373,20 @@ async def _message_queue_worker(bot: Bot, user_id: int) -> None:
             task = await queue.get()
             try:
                 # Flood control: drop status, wait for content
-                flood_end = _flood_until.get(user_id, 0)
-                if flood_end > 0:
-                    remaining = flood_end - time.monotonic()
-                    if remaining > 0:
-                        if task.task_type != "content":
-                            # Status is ephemeral — safe to drop
-                            continue
-                        # Content is actual Claude output — wait then send
-                        logger.debug(
-                            "Flood controlled: waiting %.0fs for content (user %d)",
-                            remaining,
-                            user_id,
-                        )
-                        await asyncio.sleep(remaining)
+                remaining = queue_manager.flood_remaining(user_id)
+                if remaining > 0:
+                    if task.task_type != "content":
+                        # Status is ephemeral — safe to drop
+                        continue
+                    # Content is actual Claude output — wait then send
+                    logger.debug(
+                        "Flood controlled: waiting %.0fs for content (user %d)",
+                        remaining,
+                        user_id,
+                    )
+                    await asyncio.sleep(remaining)
                     # Ban expired
-                    _flood_until.pop(user_id, None)
+                    queue_manager.clear_flood(user_id)
                     logger.info("Flood control lifted for user %d", user_id)
 
                 if task.task_type == "content":
@@ -290,7 +411,7 @@ async def _message_queue_worker(bot: Bot, user_id: int) -> None:
                     else int(e.retry_after.total_seconds())
                 )
                 if retry_secs > FLOOD_CONTROL_MAX_WAIT:
-                    _flood_until[user_id] = time.monotonic() + retry_secs
+                    queue_manager.set_flood(user_id, retry_secs)
                     logger.warning(
                         "Flood control for user %d: retry_after=%ds, "
                         "pausing queue until ban expires",
@@ -344,11 +465,11 @@ async def _process_content_task(bot: Bot, user_id: int, task: MessageTask) -> No
     wid = task.window_id or ""
     tid = task.thread_id or 0
     chat_id = session_manager.resolve_chat_id(user_id, task.thread_id)
+    st = queue_manager.status
 
     # 1. Handle tool_result editing (merged parts are edited together)
     if task.content_type == "tool_result" and task.tool_use_id:
-        _tkey = (task.tool_use_id, user_id, tid)
-        edit_msg_id = _tool_msg_ids.pop(_tkey, None)
+        edit_msg_id = st.pop_tool_msg_id(task.tool_use_id, user_id, tid)
         if edit_msg_id is not None:
             # Clear status message first
             await _do_clear_status_message(bot, user_id, tid)
@@ -418,7 +539,7 @@ async def _process_content_task(bot: Bot, user_id: int, task: MessageTask) -> No
 
     # 3. Record tool_use message ID for later editing
     if last_msg_id and task.tool_use_id and task.content_type == "tool_use":
-        _tool_msg_ids[(task.tool_use_id, user_id, tid)] = last_msg_id
+        st.set_tool_msg_id(task.tool_use_id, user_id, tid, last_msg_id)
 
     # 4. Send images if present (from tool_result with base64 image blocks)
     await _send_task_images(bot, chat_id, task)
@@ -438,8 +559,7 @@ async def _convert_status_to_content(
 
     Returns the message_id if converted successfully, None otherwise.
     """
-    skey = (user_id, thread_id_or_0)
-    info = _status_msg_info.pop(skey, None)
+    info = queue_manager.status.pop_status(user_id, thread_id_or_0)
     if not info:
         return None
 
@@ -491,15 +611,15 @@ async def _process_status_update_task(
     wid = task.window_id or ""
     tid = task.thread_id or 0
     chat_id = session_manager.resolve_chat_id(user_id, task.thread_id)
-    skey = (user_id, tid)
     status_text = task.text or ""
+    st = queue_manager.status
 
     if not status_text:
         # No status text means clear status
         await _do_clear_status_message(bot, user_id, tid)
         return
 
-    current_info = _status_msg_info.get(skey)
+    current_info = st.get_status(user_id, tid)
 
     if current_info:
         msg_id, stored_wid, last_text = current_info
@@ -531,7 +651,7 @@ async def _process_status_update_task(
                     parse_mode=PARSE_MODE,
                     link_preview_options=NO_LINK_PREVIEW,
                 )
-                _status_msg_info[skey] = (msg_id, wid, status_text)
+                st.set_status(user_id, tid, msg_id, wid, status_text)
             except RetryAfter:
                 raise
             except Exception:
@@ -542,12 +662,12 @@ async def _process_status_update_task(
                         text=status_text,
                         link_preview_options=NO_LINK_PREVIEW,
                     )
-                    _status_msg_info[skey] = (msg_id, wid, status_text)
+                    st.set_status(user_id, tid, msg_id, wid, status_text)
                 except RetryAfter:
                     raise
                 except Exception as e:
                     logger.debug(f"Failed to edit status message: {e}")
-                    _status_msg_info.pop(skey, None)
+                    st.pop_status(user_id, tid)
                     await _do_send_status_message(bot, user_id, tid, wid, status_text)
     else:
         # No existing status message, send new
@@ -562,12 +682,12 @@ async def _do_send_status_message(
     text: str,
 ) -> None:
     """Send a new status message and track it (internal, called from worker)."""
-    skey = (user_id, thread_id_or_0)
+    st = queue_manager.status
     thread_id: int | None = thread_id_or_0 if thread_id_or_0 != 0 else None
     chat_id = session_manager.resolve_chat_id(user_id, thread_id)
     # Safety net: delete any orphaned status message before sending a new one.
     # This catches edge cases where tracking was cleared without deleting the message.
-    old = _status_msg_info.pop(skey, None)
+    old = st.pop_status(user_id, thread_id_or_0)
     if old:
         try:
             await bot.delete_message(chat_id=chat_id, message_id=old[0])
@@ -588,7 +708,7 @@ async def _do_send_status_message(
         **_send_kwargs(thread_id),  # type: ignore[arg-type]
     )
     if sent:
-        _status_msg_info[skey] = (sent.message_id, window_id, text)
+        st.set_status(user_id, thread_id_or_0, sent.message_id, window_id, text)
 
 
 async def _do_clear_status_message(
@@ -597,8 +717,7 @@ async def _do_clear_status_message(
     thread_id_or_0: int = 0,
 ) -> None:
     """Delete the status message for a user (internal, called from worker)."""
-    skey = (user_id, thread_id_or_0)
-    info = _status_msg_info.pop(skey, None)
+    info = queue_manager.status.pop_status(user_id, thread_id_or_0)
     if info:
         msg_id = info[0]
         chat_id = session_manager.resolve_chat_id(user_id, thread_id_or_0 or None)
@@ -616,7 +735,7 @@ async def _check_and_send_status(
 ) -> None:
     """Check terminal for status line and send status message if present."""
     # Skip if there are more messages pending in the queue
-    queue = _message_queues.get(user_id)
+    queue = queue_manager.get_queue(user_id)
     if queue and not queue.empty():
         return
     w = await tmux_manager.find_window_by_id(window_id)
@@ -675,16 +794,14 @@ async def enqueue_status_update(
 ) -> None:
     """Enqueue status update. Skipped if text unchanged or during flood control."""
     # Don't enqueue during flood control — they'd just be dropped
-    flood_end = _flood_until.get(user_id, 0)
-    if flood_end > time.monotonic():
+    if queue_manager.is_flooded(user_id):
         return
 
     tid = thread_id or 0
 
     # Deduplicate: skip if text matches what's already displayed
     if status_text:
-        skey = (user_id, tid)
-        info = _status_msg_info.get(skey)
+        info = queue_manager.status.get_status(user_id, tid)
         if info and info[1] == window_id and info[2] == status_text:
             return
 
@@ -701,37 +818,3 @@ async def enqueue_status_update(
         task = MessageTask(task_type="status_clear", thread_id=thread_id)
 
     queue.put_nowait(task)
-
-
-def clear_status_msg_info(user_id: int, thread_id: int | None = None) -> None:
-    """Clear status message tracking for a user (and optionally a specific thread)."""
-    skey = (user_id, thread_id or 0)
-    _status_msg_info.pop(skey, None)
-
-
-def clear_tool_msg_ids_for_topic(user_id: int, thread_id: int | None = None) -> None:
-    """Clear tool message ID tracking for a specific topic.
-
-    Removes all entries in _tool_msg_ids that match the given user and thread.
-    """
-    tid = thread_id or 0
-    # Find and remove all matching keys
-    keys_to_remove = [
-        key for key in _tool_msg_ids if key[1] == user_id and key[2] == tid
-    ]
-    for key in keys_to_remove:
-        _tool_msg_ids.pop(key, None)
-
-
-async def shutdown_workers() -> None:
-    """Stop all queue workers (called during bot shutdown)."""
-    for _, worker in list(_queue_workers.items()):
-        worker.cancel()
-        try:
-            await worker
-        except asyncio.CancelledError:
-            pass
-    _queue_workers.clear()
-    _message_queues.clear()
-    _queue_locks.clear()
-    logger.info("Message queue workers stopped")

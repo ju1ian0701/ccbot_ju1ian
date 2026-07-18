@@ -1,0 +1,54 @@
+{
+  "nodes": [
+    {
+      "id": "src/ccbot/fonts/LICENSE-JetBrainsMono.txt",
+      "type": "file",
+      "fileType": "txt",
+      "language": "txt",
+      "fileCategory": "docs",
+      "sizeLines": 93,
+      "label": "LICENSE-JetBrainsMono.txt",
+      "summary": "SIL Open Font License v1.1 for JetBrains Mono font. Grants permission to use, study, modify, and redistribute the font software under OFL terms. Copyright 2020 The JetBrains Mono Project Authors."
+    },
+    {
+      "id": "src/ccbot/fonts/LICENSE-NotoSansMono.txt",
+      "type": "file",
+      "fileType": "txt",
+      "language": "txt",
+      "fileCategory": "docs",
+      "sizeLines": 92,
+      "label": "LICENSE-NotoSansMono.txt",
+      "summary": "SIL Open Font License v1.1 for Noto Sans Mono CJK SC font. Standard OFL terms permitting use, modification, and redistribution of the font software."
+    },
+    {
+      "id": "src/ccbot/fonts/LICENSE-Symbola.txt",
+      "type": "file",
+      "fileType": "txt",
+      "language": "txt",
+      "fileCategory": "docs",
+      "sizeLines": 8,
+      "label": "LICENSE-Symbola.txt",
+      "summary": "License for Symbola font by George Douros (2007-2015). Declares the font free for any use — may be opened, edited, modified, regenerated, packaged, and redistributed."
+    }
+  ],
+  "edges": [
+    {
+      "source": "src/ccbot/fonts/LICENSE-JetBrainsMono.txt",
+      "target": "src/ccbot/fonts/JetBrainsMono-Regular.ttf",
+      "type": "licenses",
+      "label": "licenses font file"
+    },
+    {
+      "source": "src/ccbot/fonts/LICENSE-NotoSansMono.txt",
+      "target": "src/ccbot/fonts/NotoSansMonoCJKsc-Regular.otf",
+      "type": "licenses",
+      "label": "licenses font file"
+    },
+    {
+      "source": "src/ccbot/fonts/LICENSE-Symbola.txt",
+      "target": "src/ccbot/fonts/Symbola.ttf",
+      "type": "licenses",
+      "label": "licenses font file"
+    }
+  ]
+}
