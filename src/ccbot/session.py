@@ -33,6 +33,13 @@ from typing import Any
 import aiofiles
 
 from .config import config
+from .session_migration import (
+    apply_startup_state_migration,
+    cleanup_stale_session_map_entries,
+    is_window_id,
+    migrate_session_map_old_format,
+    state_needs_legacy_migration,
+)
 from .tmux_manager import tmux_manager
 from .transcript_parser import TranscriptParser
 from .utils import LOCK_EX, LOCK_UN, atomic_write_json, flock
@@ -132,13 +139,13 @@ class SessionManager:
 
     def _is_window_id(self, key: str) -> bool:
         """Check if a key looks like a tmux window ID (e.g. '@0', '@12')."""
-        return key.startswith("@") and len(key) > 1 and key[1:].isdigit()
+        return is_window_id(key)
 
     def _load_state(self) -> None:
         """Load state synchronously during initialization.
 
         Detects old-format state (window_name keys without '@' prefix) and
-        marks for migration on next startup re-resolution.
+        logs that startup re-resolution will migrate them once to @id keys.
         """
         if config.state_file.exists():
             try:
@@ -160,27 +167,13 @@ class SessionManager:
                     k: int(v) for k, v in state.get("group_chat_ids", {}).items()
                 }
 
-                # Detect old format: keys that don't look like window IDs
-                needs_migration = False
-                for k in self.window_states:
-                    if not self._is_window_id(k):
-                        needs_migration = True
-                        break
-                if not needs_migration:
-                    for bindings in self.thread_bindings.values():
-                        for wid in bindings.values():
-                            if not self._is_window_id(wid):
-                                needs_migration = True
-                                break
-                        if needs_migration:
-                            break
-
-                if needs_migration:
+                if state_needs_legacy_migration(
+                    self.window_states, self.thread_bindings
+                ):
                     logger.info(
                         "Detected old-format state (window_name keys), "
                         "will re-resolve on startup"
                     )
-                    pass
 
             except (json.JSONDecodeError, ValueError) as e:
                 logger.warning("Failed to load state: %s", e)
@@ -189,203 +182,50 @@ class SessionManager:
                 self.thread_bindings = {}
                 self.window_display_names = {}
                 self.group_chat_ids = {}
-                pass
 
     async def resolve_stale_ids(self) -> None:
         """Re-resolve persisted window IDs against live tmux windows.
 
-        Called on startup. Handles two cases:
-        1. Old-format migration: window_name keys → window_id keys
-        2. Stale IDs: window_id no longer exists but display name matches a live window
-
-        Builds {window_name: window_id} from live windows, then remaps or drops entries.
+        Thin orchestrator: lists live windows, applies pure
+        :func:`apply_startup_state_migration`, persists, then cleans
+        session_map.json. Canonical routing keys are always ``@N``.
         """
         windows = await tmux_manager.list_windows()
-        live_by_name: dict[str, str] = {}  # window_name -> window_id
+        live_by_name: dict[str, str] = {}
         live_ids: set[str] = set()
         for w in windows:
             live_by_name[w.window_name] = w.window_id
             live_ids.add(w.window_id)
 
-        # Snapshot old_id -> display_name BEFORE any mutation: the loops below
-        # rewrite window_display_names as they go, and thread_bindings /
-        # user_window_offsets must still resolve stale IDs against the old view.
-        old_names: dict[str, str] = dict(self.window_display_names)
-        for key, ws in self.window_states.items():
-            if ws.window_name and key not in old_names:
-                old_names[key] = ws.window_name
+        result = apply_startup_state_migration(
+            window_states=self.window_states,
+            thread_bindings=self.thread_bindings,
+            user_window_offsets=self.user_window_offsets,
+            window_display_names=self.window_display_names,
+            live_by_name=live_by_name,
+            live_ids=live_ids,
+        )
+        self.window_states = result.window_states  # type: ignore[assignment]
+        self.thread_bindings = result.thread_bindings
+        self.user_window_offsets = result.user_window_offsets
+        self.window_display_names = result.window_display_names
 
-        changed = False
-
-        # --- Migrate window_states ---
-        new_window_states: dict[str, WindowState] = {}
-        for key, ws in self.window_states.items():
-            if self._is_window_id(key):
-                if key in live_ids:
-                    new_window_states[key] = ws
-                else:
-                    # Stale ID — try re-resolve by display name
-                    display = old_names.get(key, key)
-                    new_id = live_by_name.get(display)
-                    if new_id:
-                        logger.info(
-                            "Re-resolved stale window_id %s -> %s (name=%s)",
-                            key,
-                            new_id,
-                            display,
-                        )
-                        new_window_states[new_id] = ws
-                        ws.window_name = display
-                        self.window_display_names[new_id] = display
-                        self.window_display_names.pop(key, None)
-                        changed = True
-                    else:
-                        logger.info(
-                            "Dropping stale window_state: %s (name=%s)", key, display
-                        )
-                        changed = True
-            else:
-                # Old format: key is window_name
-                new_id = live_by_name.get(key)
-                if new_id:
-                    logger.info("Migrating window_state key %s -> %s", key, new_id)
-                    ws.window_name = key
-                    new_window_states[new_id] = ws
-                    self.window_display_names[new_id] = key
-                    changed = True
-                else:
-                    logger.info(
-                        "Dropping old-format window_state: %s (no live window)", key
-                    )
-                    changed = True
-        self.window_states = new_window_states
-
-        # --- Migrate thread_bindings ---
-        for uid, bindings in self.thread_bindings.items():
-            new_bindings: dict[int, str] = {}
-            for tid, val in bindings.items():
-                if self._is_window_id(val):
-                    if val in live_ids:
-                        new_bindings[tid] = val
-                    else:
-                        display = old_names.get(val, val)
-                        new_id = live_by_name.get(display)
-                        if new_id:
-                            logger.info(
-                                "Re-resolved thread binding %s -> %s (name=%s)",
-                                val,
-                                new_id,
-                                display,
-                            )
-                            new_bindings[tid] = new_id
-                            self.window_display_names[new_id] = display
-                            changed = True
-                        else:
-                            logger.info(
-                                "Dropping stale thread binding: user=%d, thread=%d, wid=%s",
-                                uid,
-                                tid,
-                                val,
-                            )
-                            changed = True
-                else:
-                    # Old format: val is window_name
-                    new_id = live_by_name.get(val)
-                    if new_id:
-                        logger.info("Migrating thread binding %s -> %s", val, new_id)
-                        new_bindings[tid] = new_id
-                        self.window_display_names[new_id] = val
-                        changed = True
-                    else:
-                        logger.info(
-                            "Dropping old-format thread binding: user=%d, thread=%d, name=%s",
-                            uid,
-                            tid,
-                            val,
-                        )
-                        changed = True
-            self.thread_bindings[uid] = new_bindings
-
-        # Remove empty user entries
-        empty_users = [uid for uid, b in self.thread_bindings.items() if not b]
-        for uid in empty_users:
-            del self.thread_bindings[uid]
-
-        # --- Migrate user_window_offsets ---
-        for uid, offsets in self.user_window_offsets.items():
-            new_offsets: dict[str, int] = {}
-            for key, offset in offsets.items():
-                if self._is_window_id(key):
-                    if key in live_ids:
-                        new_offsets[key] = offset
-                    else:
-                        display = old_names.get(key, key)
-                        new_id = live_by_name.get(display)
-                        if new_id:
-                            new_offsets[new_id] = offset
-                            changed = True
-                        else:
-                            changed = True
-                else:
-                    new_id = live_by_name.get(key)
-                    if new_id:
-                        new_offsets[new_id] = offset
-                        changed = True
-                    else:
-                        changed = True
-            self.user_window_offsets[uid] = new_offsets
-
-        if changed:
+        if result.changed:
             self._save_state()
             logger.info("Startup re-resolution complete")
 
-        # Clean up session_map.json: stale window IDs, migrate old-format keys
         await self._cleanup_stale_session_map_entries(live_ids)
         await self._migrate_old_format_session_map_keys(live_by_name)
 
     def _migrate_old_format_map(
         self, session_map: dict[str, dict], live_by_name: dict[str, str]
     ) -> bool:
-        """Migrate old-format session_map keys to the @window_id form in place.
-
-        Old hook versions keyed session_map by window_name (e.g. "ccbot:ccmux")
-        instead of window_id ("ccbot:@4"). Such keys are invisible to the
-        window_id-based delivery path (load_session_map skips them), which
-        silently drops inbound messages. This resolves each old-format key's
-        window_name against live tmux windows and rewrites it to the @window_id
-        form, preserving session_id/cwd and backfilling window_name. Keys with
-        no matching live window are dropped as orphans; if the @window_id key
-        already exists it wins and the old-format one is discarded.
-
-        Mutates session_map in place. Returns True if anything changed.
-        """
-        prefix = f"{config.tmux_session_name}:"
-        old_keys = [
-            key
-            for key in session_map
-            if key.startswith(prefix) and not self._is_window_id(key[len(prefix) :])
-        ]
-        changed = False
-        for key in old_keys:
-            window_name = key[len(prefix) :]
-            info = session_map.pop(key)
-            changed = True
-            new_id = live_by_name.get(window_name)
-            if not new_id:
-                logger.info("Dropping orphan old-format session_map key: %s", key)
-                continue
-            new_key = f"{prefix}{new_id}"
-            if new_key in session_map:
-                logger.info(
-                    "Discarding old-format session_map key %s (superseded by %s)",
-                    key,
-                    new_key,
-                )
-                continue
-            info.setdefault("window_name", window_name)
-            session_map[new_key] = info
-            logger.info("Migrated old-format session_map key %s -> %s", key, new_key)
-        return changed
+        """Migrate old-format session_map keys to @window_id (delegates to pure helper)."""
+        return migrate_session_map_old_format(
+            session_map,
+            live_by_name,
+            f"{config.tmux_session_name}:",
+        )
 
     def _mutate_session_map_locked(
         self, mutate: Callable[[dict[str, dict]], bool]
@@ -479,17 +319,7 @@ class SessionManager:
         prefix = f"{config.tmux_session_name}:"
 
         def mutate(session_map: dict[str, dict]) -> bool:
-            stale_keys = [
-                key
-                for key in session_map
-                if key.startswith(prefix)
-                and self._is_window_id(key[len(prefix) :])
-                and key[len(prefix) :] not in live_ids
-            ]
-            for key in stale_keys:
-                del session_map[key]
-                logger.info("Removed stale session_map entry: %s", key)
-            return bool(stale_keys)
+            return cleanup_stale_session_map_entries(session_map, live_ids, prefix)
 
         if await asyncio.to_thread(self._mutate_session_map_locked, mutate):
             logger.info(

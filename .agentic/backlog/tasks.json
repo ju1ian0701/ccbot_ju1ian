@@ -74,7 +74,7 @@
       "id": "REF-004",
       "title": "Simplify session migration and stale ID logic",
       "priority": "high",
-      "status": "ready",
+      "status": "done",
       "categories": [
         "architecture"
       ],
@@ -88,7 +88,8 @@
       "estimated_risk": "high",
       "acceptance_criteria": [
         "Remove legacy window_name support"
-      ]
+      ],
+      "status_updated_at": "2026-07-18T10:07:41.319621+00:00"
     },
     {
       "id": "REF-005",
@@ -197,5 +198,5 @@
       ]
     }
   ],
-  "updated_at": "2026-07-17"
+  "updated_at": "2026-07-18"
 }
