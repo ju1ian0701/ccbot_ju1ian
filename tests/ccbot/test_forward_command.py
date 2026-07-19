@@ -5,7 +5,6 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 
-
 def _make_update(text: str, user_id: int = 1, thread_id: int = 42) -> MagicMock:
     """Build a minimal mock Update with message text in a forum topic."""
     update = MagicMock()
