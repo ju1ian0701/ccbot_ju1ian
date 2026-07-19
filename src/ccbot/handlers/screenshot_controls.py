@@ -8,7 +8,11 @@ from __future__ import annotations
 
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
-from .callback_data import CB_KEYS_PREFIX, CB_SCREENSHOT_REFRESH
+from .callback_data import (
+    KeyCallback,
+    ScreenshotRefreshCallback,
+    safe_callback_data,
+)
 
 # key_id → (tmux_key, enter, literal)
 KEYS_SEND_MAP: dict[str, tuple[str, bool, bool]] = {
@@ -43,7 +47,9 @@ def build_screenshot_keyboard(window_id: str) -> InlineKeyboardMarkup:
     def btn(label: str, key_id: str) -> InlineKeyboardButton:
         return InlineKeyboardButton(
             label,
-            callback_data=f"{CB_KEYS_PREFIX}{key_id}:{window_id}"[:64],
+            callback_data=safe_callback_data(
+                KeyCallback(key_id=key_id, window_id=window_id)
+            ),
         )
 
     return InlineKeyboardMarkup(
@@ -54,7 +60,9 @@ def build_screenshot_keyboard(window_id: str) -> InlineKeyboardMarkup:
             [
                 InlineKeyboardButton(
                     "🔄 Refresh",
-                    callback_data=f"{CB_SCREENSHOT_REFRESH}{window_id}"[:64],
+                    callback_data=safe_callback_data(
+                        ScreenshotRefreshCallback(window_id=window_id)
+                    ),
                 )
             ],
         ]
