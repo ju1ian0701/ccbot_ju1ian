@@ -3,7 +3,6 @@
 
 import json
 import sys
-import os
 from pathlib import Path
 
 CATEGORY_TO_TYPE = {
@@ -162,7 +161,6 @@ def convert_file(file_result, import_map):
 def main():
     project_root = Path(sys.argv[1])
     intermediate = project_root / ".understand-anything" / "intermediate"
-    tmp_dir = project_root / ".understand-anything" / "tmp"
     import_map_path = intermediate / "import-map.json"
 
     # Load import map

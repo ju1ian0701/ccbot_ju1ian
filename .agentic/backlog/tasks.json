@@ -163,7 +163,7 @@
       "id": "REF-008",
       "title": "Unify Markdown/plain fallback and RetryAfter handling",
       "priority": "medium",
-      "status": "ready",
+      "status": "done",
       "categories": [
         "dry"
       ],
@@ -179,7 +179,8 @@
       "estimated_risk": "medium",
       "acceptance_criteria": [
         "Single MessageFormatter used"
-      ]
+      ],
+      "status_updated_at": "2026-07-18T09:48:47.555552+00:00"
     },
     {
       "id": "REF-009",
