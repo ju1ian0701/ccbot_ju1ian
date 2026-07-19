@@ -1,0 +1,1188 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/ccbot/bot.py",
+      "type": "file",
+      "name": "bot.py",
+      "filePath": "src/ccbot/bot.py",
+      "summary": "Main bot entry point — registers all Telegram command, callback, and message handlers, manages the bot lifecycle via post_init/post_shutdown, and routes messages between Telegram forum topics and tmux windows running Claude Code sessions. Also handles voice transcription, photo forwarding, screenshot capture, and interactive UI navigation.",
+      "tags": ["telegram", "bot", "handlers", "routing", "lifecycle", "voice", "photo", "screenshot"],
+      "complexity": "complex",
+      "languageNotes": "Uses python-telegram-bot v20+ Application/Handler pattern with AIORateLimiter. Defines ~20 async handler functions. Hot path (text_handler) must never abort after tmux injection succeeds."
+    },
+    {
+      "id": "file:src/ccbot/config.py",
+      "type": "file",
+      "name": "config.py",
+      "filePath": "src/ccbot/config.py",
+      "summary": "Loads configuration from environment variables with .env file support (local .env > CCBOT_DIR/.env). Exposes a singleton Config instance and scrubs sensitive env vars to prevent credential leaks to child processes.",
+      "tags": ["configuration", "environment", "env", "secrets"],
+      "complexity": "simple",
+      "languageNotes": "Imports dotenv.load_dotenv for .env loading. Scrub loop removes TELEGRAM_BOT_TOKEN/ALLOWED_USERS/OPENAI_API_KEY from os.environ after capture."
+    },
+    {
+      "id": "file:src/ccbot/handlers/callback_data.py",
+      "type": "file",
+      "name": "callback_data.py",
+      "filePath": "src/ccbot/handlers/callback_data.py",
+      "summary": "Defines all CB_* prefix constants for Telegram inline keyboard callback data routing. Each constant encodes a distinct action: history pagination, directory browser navigation, window picker binding, screenshot refresh, interactive UI navigation, and session picking.",
+      "tags": ["callback", "routing", "constants", "inline-keyboard"],
+      "complexity": "simple",
+      "languageNotes": "Pure constant definitions with no imports beyond stdlib. Callback payloads must stay under Telegram's 64-byte limit."
+    },
+    {
+      "id": "file:src/ccbot/handlers/directory_browser.py",
+      "type": "file",
+      "name": "directory_browser.py",
+      "filePath": "src/ccbot/handlers/directory_browser.py",
+      "summary": "Builds inline keyboard UIs for three flows: the directory browser (navigate filesystem to create a new session), the window picker (bind an existing unbound tmux window), and the session picker (resume an existing Claude session). Includes pagination, state keys, and clear-state helpers.",
+      "tags": ["ui", "inline-keyboard", "directory-navigation", "session-management"],
+      "complexity": "moderate",
+      "languageNotes": "State keys (STATE_KEY/BROWSE_PATH_KEY/etc.) shared with bot.py via direct import. UiState machine transitions: idle -> browsing_directory -> selecting_session -> create_window."
+    },
+    {
+      "id": "file:src/ccbot/monitor_state.py",
+      "type": "file",
+      "name": "monitor_state.py",
+      "filePath": "src/ccbot/monitor_state.py",
+      "summary": "Persistent state tracker for the session monitor — stores per-session byte offsets (TrackedSession) to enable incremental JSONL reading across restarts. Wraps load/save in a MonitorState dataclass with dirty-flag optimization.",
+      "tags": ["state", "persistence", "monitoring", "jsonl"],
+      "complexity": "simple",
+      "languageNotes": "Uses dataclasses for TrackedSession/MonitorState. Delegates atomic JSON writes to utils.atomic_write_json. Byte-offset tracking avoids re-reading already-processed messages."
+    },
+    {
+      "id": "file:src/ccbot/screenshot.py",
+      "type": "file",
+      "name": "screenshot.py",
+      "filePath": "src/ccbot/screenshot.py",
+      "summary": "Renders captured tmux pane text (with ANSI color codes) into a dark-background PNG image using Pillow. Features a three-tier font fallback chain (JetBrains Mono, Noto Sans Mono CJK SC, Symbola) for broad character coverage. ANSI parsing supports 16/256/RGB colors.",
+      "tags": ["screenshot", "image", "ansi", "terminal", "pillow", "font-rendering"],
+      "complexity": "complex",
+      "languageNotes": "CPU-bound rendering offloaded to thread pool via asyncio.to_thread. Font tiers selected per-codepoint. ANSI parser handles SGR codes (0-107) with extended 256-color and RGB support."
+    },
+    {
+      "id": "file:src/ccbot/session_monitor.py",
+      "type": "file",
+      "name": "session_monitor.py",
+      "filePath": "src/ccbot/session_monitor.py",
+      "summary": "Background async polling service that watches Claude Code JSONL session files for new messages. Scans projects directories, tracks byte offsets via MonitorState, detects session_map changes, and emits NewMessage objects through a callback. Handles file truncation, corrupted offsets, and partial writes.",
+      "tags": ["monitoring", "polling", "jsonl", "session-tracking", "async"],
+      "complexity": "complex",
+      "languageNotes": "Uses aiofiles for non-blocking file I/O. Maintains in-memory mtime cache to skip unchanged files. Pending tool_use state carried across poll cycles for tool_use/tool_result pairing."
+    },
+    {
+      "id": "file:src/ccbot/transcribe.py",
+      "type": "file",
+      "name": "transcribe.py",
+      "filePath": "src/ccbot/transcribe.py",
+      "summary": "Voice-to-text transcription via the OpenAI audio/transcriptions API using gpt-4o-transcribe model. Uses httpx directly (no OpenAI SDK) with a lazily-initialized async client singleton.",
+      "tags": ["voice", "transcription", "openai", "api", "audio"],
+      "complexity": "simple",
+      "languageNotes": "Single async function wrapping httpx POST to OpenAI. Client is lazily initialized singleton. close_client() called during bot shutdown."
+    },
+    {
+      "id": "file:src/ccbot/utils.py",
+      "type": "file",
+      "name": "utils.py",
+      "filePath": "src/ccbot/utils.py",
+      "summary": "Shared utility functions: ccbot_dir() resolves the config directory from CCBOT_DIR env var, atomic_write_json() performs crash-safe JSON writes via temp-file-then-rename, and read_cwd_from_jsonl() extracts the cwd from the first entry of a JSONL file.",
+      "tags": ["utilities", "filesystem", "json", "io"],
+      "complexity": "simple",
+      "languageNotes": "Pure Python stdlib (json, os, tempfile, pathlib). atomic_write_json uses os.replace for atomic cross-filesystem renames."
+    },
+    {
+      "id": "class:src/ccbot/config.py:Config",
+      "type": "class",
+      "name": "Config",
+      "filePath": "src/ccbot/config.py",
+      "summary": "Application configuration singleton — loads TELEGRAM_BOT_TOKEN, ALLOWED_USERS, TMUX_SESSION_NAME, CLAUDE_COMMAND, monitoring intervals, OpenAI keys, and display preferences from environment variables or .env files.",
+      "tags": ["configuration", "singleton"],
+      "complexity": "simple",
+      "languageNotes": "Instantiated at module level as `config`. is_user_allowed() is the only method beyond __init__."
+    },
+    {
+      "id": "class:src/ccbot/monitor_state.py:TrackedSession",
+      "type": "class",
+      "name": "TrackedSession",
+      "filePath": "src/ccbot/monitor_state.py",
+      "summary": "Dataclass representing a single tracked Claude Code session with session_id, file_path, and last_byte_offset for incremental JSONL reading. Provides to_dict/from_dict serialization.",
+      "tags": ["dataclass", "serialization", "monitoring"],
+      "complexity": "simple",
+      "languageNotes": "Uses @dataclass decorator with field defaults. to_dict() delegates to dataclasses.asdict."
+    },
+    {
+      "id": "class:src/ccbot/monitor_state.py:MonitorState",
+      "type": "class",
+      "name": "MonitorState",
+      "filePath": "src/ccbot/monitor_state.py",
+      "summary": "Persistent state container for the session monitor — manages a dict of TrackedSession objects keyed by session_id, with load/save/save_if_dirty lifecycle and dirty-flag optimization.",
+      "tags": ["state", "persistence", "monitoring"],
+      "complexity": "moderate",
+      "languageNotes": "Dirty flag avoids unnecessary writes. Atomic save via utils.atomic_write_json. load() handles missing/empty files gracefully."
+    },
+    {
+      "id": "class:src/ccbot/screenshot.py:TextStyle",
+      "type": "class",
+      "name": "TextStyle",
+      "filePath": "src/ccbot/screenshot.py",
+      "summary": "Dataclass representing ANSI text styling with foreground color and optional background color. Defaults to light gray on dark gray.",
+      "tags": ["dataclass", "styling", "ansi"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/ccbot/screenshot.py:StyledSegment",
+      "type": "class",
+      "name": "StyledSegment",
+      "filePath": "src/ccbot/screenshot.py",
+      "summary": "Dataclass representing a text segment with its TextStyle and font_tier index for multi-font rendering.",
+      "tags": ["dataclass", "segment", "rendering"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/ccbot/session_monitor.py:SessionInfo",
+      "type": "class",
+      "name": "SessionInfo",
+      "filePath": "src/ccbot/session_monitor.py",
+      "summary": "Dataclass holding session_id and file_path for a Claude Code session discovered during project scanning.",
+      "tags": ["dataclass", "session", "scanning"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/ccbot/session_monitor.py:NewMessage",
+      "type": "class",
+      "name": "NewMessage",
+      "filePath": "src/ccbot/session_monitor.py",
+      "summary": "Dataclass representing a new message detected by the monitor, with fields for session_id, text, completion status, content_type, tool_use_id, role, tool_name, and optional image data from tool_result images.",
+      "tags": ["dataclass", "message", "notification"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/ccbot/session_monitor.py:SessionMonitor",
+      "type": "class",
+      "name": "SessionMonitor",
+      "filePath": "src/ccbot/session_monitor.py",
+      "summary": "Primary monitoring service — runs an async polling loop that scans Claude Code projects, reads new JSONL entries via byte-offset tracking, parses them through TranscriptParser, and emits NewMessage objects. Detects session_map changes and cleans up stale sessions on startup.",
+      "tags": ["monitoring", "polling", "service", "jsonl", "async"],
+      "complexity": "complex",
+      "languageNotes": "Core loop in _monitor_loop(). Uses aiofiles for non-blocking reads. Maintains per-session pending tool state across cycles. mtime cache for quick no-change detection."
+    },
+    {
+      "id": "function:src/ccbot/bot.py:is_user_allowed",
+      "type": "function",
+      "name": "is_user_allowed",
+      "filePath": "src/ccbot/bot.py",
+      "summary": "Checks if a Telegram user ID is in the configured allowed_users set.",
+      "tags": ["authorization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/ccbot/bot.py:start_command",
+      "type": "function",
+      "name": "start_command",
+      "filePath": "src/ccbot/bot.py",
+      "summary": "/start handler — shows welcome message after authorizing the user.",
+      "tags": ["command", "telegram"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/ccbot/bot.py:history_command",
+      "type": "function",
+      "name": "history_command",
+      "filePath": "src/ccbot/bot.py",
+      "summary": "/history handler — shows paginated message history for the bound session.",
+      "tags": ["command", "history", "telegram"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/ccbot/bot.py:screenshot_command",
+      "type": "function",
+      "name": "screenshot_command",
+      "filePath": "src/ccbot/bot.py",
+      "summary": "/screenshot handler — captures the tmux pane content as a PNG image with an inline keyboard for terminal control keys.",
+      "tags": ["command", "screenshot", "tmux"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/ccbot/bot.py:unbind_command",
+      "type": "function",
+      "name": "unbind_command",
+      "filePath": "src/ccbot/bot.py",
+      "summary": "/unbind handler — unbinds the current topic from its tmux window without killing the Claude session.",
+      "tags": ["command", "unbind", "telegram"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/ccbot/bot.py:esc_command",
+      "type": "function",
+      "name": "esc_command",
+      "filePath": "src/ccbot/bot.py",
+      "summary": "/esc handler — sends the Escape control character to the tmux pane to interrupt Claude.",
+      "tags": ["command", "escape", "tmux"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/ccbot/bot.py:usage_command",
+      "type": "function",
+      "name": "usage_command",
+      "filePath": "src/ccbot/bot.py",
+      "summary": "/usage handler — sends /usage to Claude Code, captures the terminal output, and parses structured usage info or falls back to raw pane text.",
+      "tags": ["command", "usage", "tmux"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/ccbot/bot.py:topic_closed_handler",
+      "type": "function",
+      "name": "topic_closed_handler",
+      "filePath": "src/ccbot/bot.py",
+      "summary": "Handles forum topic closure — kills the associated tmux window and cleans up all per-topic state.",
+      "tags": ["handler", "cleanup", "topic", "lifeycle"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/ccbot/bot.py:topic_edited_handler",
+      "type": "function",
+      "name": "topic_edited_handler",
+      "filePath": "src/ccbot/bot.py",
+      "summary": "Handles forum topic rename — syncs the new topic name to the tmux window name and internal SessionManager state.",
+      "tags": ["handler", "rename", "topic"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/ccbot/bot.py:forward_command_handler",
+      "type": "function",
+      "name": "forward_command_handler",
+      "filePath": "src/ccbot/bot.py",
+      "summary": "Forwards any unknown /command (e.g. /clear, /compact, /cost) to Claude Code as a slash command via tmux, enabling remote Claude interaction.",
+      "tags": ["command", "forwarding", "tmux", "claude"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/ccbot/bot.py:unsupported_content_handler",
+      "type": "function",
+      "name": "unsupported_content_handler",
+      "filePath": "src/ccbot/bot.py",
+      "summary": "Replies to unsupported media types (stickers, video, etc.) with a warning message listing supported types.",
+      "tags": ["handler", "media", "validation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/ccbot/bot.py:photo_handler",
+      "type": "function",
+      "name": "photo_handler",
+      "filePath": "src/ccbot/bot.py",
+      "summary": "Downloads incoming photos to ~/.ccbot/images/ and forwards the file path to Claude Code via tmux, optionally with a text caption.",
+      "tags": ["handler", "photo", "telegram", "tmux"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/ccbot/bot.py:voice_handler",
+      "type": "function",
+      "name": "voice_handler",
+      "filePath": "src/ccbot/bot.py",
+      "summary": "Downloads voice messages, transcribes them via OpenAI API, and forwards the transcribed text to Claude Code.",
+      "tags": ["handler", "voice", "transcription", "openai", "tmux"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/ccbot/bot.py:text_handler",
+      "type": "function",
+      "name": "text_handler",
+      "filePath": "src/ccbot/bot.py",
+      "summary": "Primary text message handler — routes user text to a bound tmux window, or shows the window picker/directory browser for unbound topics. Handles state machine transitions, bash command capture, and interactive UI pre-checks.",
+      "tags": ["handler", "text", "routing", "tmux"],
+      "complexity": "complex",
+      "languageNotes": "Hot path: must never abort after tmux injection. Manages three UI state machines (window-picker, directory-browser, session-picker). Triggers background bash output capture for !-prefixed commands."
+    },
+    {
+      "id": "function:src/ccbot/bot.py:callback_handler",
+      "type": "function",
+      "name": "callback_handler",
+      "filePath": "src/ccbot/bot.py",
+      "summary": "Central callback query dispatcher — routes all inline keyboard interactions (directory browser, window picker, session picker, screenshot keys, history pagination, and interactive UI navigation) based on CB_* prefix constants.",
+      "tags": ["handler", "callback", "routing", "inline-keyboard"],
+      "complexity": "complex",
+      "languageNotes": "Single dispatcher function matching ~20 callback prefixes. Validates topic binding freshness to prevent stale interactions. Handles both old and new history pagination formats."
+    },
+    {
+      "id": "function:src/ccbot/bot.py:handle_new_message",
+      "type": "function",
+      "name": "handle_new_message",
+      "filePath": "src/ccbot/bot.py",
+      "summary": "Callback invoked by SessionMonitor for each new Claude message — routes to the correct user topic, handles interactive UI tools specially, filters by CCBOT_SHOW_TOOL_CALLS, and enqueues content messages for sequential delivery.",
+      "tags": ["notification", "routing", "message-queue", "streaming"],
+      "complexity": "complex",
+      "languageNotes": "Checks interactive tools first before normal content path. Builds response parts via build_response_parts, then enqueues via enqueue_content_message. Updates user read offsets after delivery."
+    },
+    {
+      "id": "function:src/ccbot/bot.py:post_init",
+      "type": "function",
+      "name": "post_init",
+      "filePath": "src/ccbot/bot.py",
+      "summary": "Bot startup lifecycle hook — sets bot commands, resolves stale window IDs, pre-fills the rate limiter bucket, starts the SessionMonitor and the status polling loop.",
+      "tags": ["lifecycle", "initialization", "monitoring"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/ccbot/bot.py:post_shutdown",
+      "type": "function",
+      "name": "post_shutdown",
+      "filePath": "src/ccbot/bot.py",
+      "summary": "Bot shutdown lifecycle hook — cancels status polling, shuts down message queue workers, stops the session monitor, and closes the transcribe HTTP client.",
+      "tags": ["lifecycle", "shutdown", "cleanup"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/ccbot/bot.py:create_bot",
+      "type": "function",
+      "name": "create_bot",
+      "filePath": "src/ccbot/bot.py",
+      "summary": "Application factory — builds a Telegram Application with AIORateLimiter, post_init/post_shutdown hooks, and all command/callback/message handlers registered.",
+      "tags": ["factory", "application", "handlers"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/ccbot/handlers/directory_browser.py:clear_browse_state",
+      "type": "function",
+      "name": "clear_browse_state",
+      "filePath": "src/ccbot/handlers/directory_browser.py",
+      "summary": "Clears all directory browsing state keys from user_data.",
+      "tags": ["state", "cleanup", "ui"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/ccbot/handlers/directory_browser.py:clear_window_picker_state",
+      "type": "function",
+      "name": "clear_window_picker_state",
+      "filePath": "src/ccbot/handlers/directory_browser.py",
+      "summary": "Clears window picker state keys from user_data.",
+      "tags": ["state", "cleanup", "ui"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/ccbot/handlers/directory_browser.py:clear_session_picker_state",
+      "type": "function",
+      "name": "clear_session_picker_state",
+      "filePath": "src/ccbot/handlers/directory_browser.py",
+      "summary": "Clears session picker state keys from user_data.",
+      "tags": ["state", "cleanup", "ui"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/ccbot/handlers/directory_browser.py:build_window_picker",
+      "type": "function",
+      "name": "build_window_picker",
+      "filePath": "src/ccbot/handlers/directory_browser.py",
+      "summary": "Builds an inline keyboard UI listing unbound tmux windows for quick binding, with New Session and Cancel buttons.",
+      "tags": ["ui", "keyboard", "window-picker"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/ccbot/handlers/directory_browser.py:build_directory_browser",
+      "type": "function",
+      "name": "build_directory_browser",
+      "filePath": "src/ccbot/handlers/directory_browser.py",
+      "summary": "Builds a paginated inline keyboard directory browser UI with folder navigation, Select, Cancel, and page controls.",
+      "tags": ["ui", "keyboard", "directory-navigation", "pagination"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/ccbot/handlers/directory_browser.py:build_session_picker",
+      "type": "function",
+      "name": "build_session_picker",
+      "filePath": "src/ccbot/handlers/directory_browser.py",
+      "summary": "Builds an inline keyboard UI for selecting an existing Claude session to resume, with relative time and message count info.",
+      "tags": ["ui", "keyboard", "session-picker"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/ccbot/screenshot.py:text_to_image",
+      "type": "function",
+      "name": "text_to_image",
+      "filePath": "src/ccbot/screenshot.py",
+      "summary": "Renders monospace terminal text (with optional ANSI color codes) onto a dark-background PNG image using a three-tier font fallback chain. Offloads CPU-bound Pillow rendering to a thread pool.",
+      "tags": ["rendering", "image", "ansi", "font"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/ccbot/transcribe.py:transcribe_voice",
+      "type": "function",
+      "name": "transcribe_voice",
+      "filePath": "src/ccbot/transcribe.py",
+      "summary": "Transcribes OGG voice data to text via the OpenAI audio/transcriptions API using the gpt-4o-transcribe model.",
+      "tags": ["voice", "transcription", "openai"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/ccbot/transcribe.py:close_client",
+      "type": "function",
+      "name": "close_client",
+      "filePath": "src/ccbot/transcribe.py",
+      "summary": "Closes the lazily-initialized httpx AsyncClient singleton. Called during bot shutdown.",
+      "tags": ["lifecycle", "cleanup", "http"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/ccbot/utils.py:ccbot_dir",
+      "type": "function",
+      "name": "ccbot_dir",
+      "filePath": "src/ccbot/utils.py",
+      "summary": "Returns the configuration directory path from CCBOT_DIR env var, defaulting to ~/.ccbot.",
+      "tags": ["utility", "path"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/ccbot/utils.py:atomic_write_json",
+      "type": "function",
+      "name": "atomic_write_json",
+      "filePath": "src/ccbot/utils.py",
+      "summary": "Atomically writes JSON data to a file using a temp-file-then-rename pattern to prevent corruption.",
+      "tags": ["utility", "json", "io", "atomic"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/ccbot/utils.py:read_cwd_from_jsonl",
+      "type": "function",
+      "name": "read_cwd_from_jsonl",
+      "filePath": "src/ccbot/utils.py",
+      "summary": "Extracts the cwd field from the first JSONL entry that contains one.",
+      "tags": ["utility", "jsonl", "parsing"],
+      "complexity": "simple"
+    },
+    {
+      "id": "concept:topic-routing",
+      "type": "concept",
+      "name": "Topic-to-Session Routing",
+      "filePath": "",
+      "summary": "The 1:1 mapping between Telegram forum topics and tmux windows. Each topic is bound to one tmux window running one Claude Code instance, with per-user thread bindings stored in session_manager state.",
+      "tags": ["routing", "topics", "tmux", "sessions"],
+      "complexity": "moderate",
+      "languageNotes": "Keyed by tmux window ID (@0, @12), not window name. No backward-compat for non-topic mode. Group chat_id required for supergroup message routing."
+    },
+    {
+      "id": "concept:session-monitoring",
+      "type": "concept",
+      "name": "Session Monitoring via JSONL Polling",
+      "filePath": "",
+      "summary": "Async polling loop that watches Claude Code's JSONL session files, detects new entries via byte-offset tracking, parses them through TranscriptParser, and emits NewMessage objects for delivery to users.",
+      "tags": ["monitoring", "polling", "jsonl", "parsing"],
+      "complexity": "complex",
+      "languageNotes": "Uses aiofiles for non-blocking reads. Handles file truncation (/clear), corrupted offsets, and partial writes. Maintains per-session pending tool_use state across poll cycles."
+    },
+    {
+      "id": "concept:message-queue",
+      "type": "concept",
+      "name": "Per-User Message Queue",
+      "filePath": "",
+      "summary": "FIFO message queue per Telegram user with message merging (3800-char limit) and tool_use/tool_result pairing. Ensures status messages always appear last in the queue.",
+      "tags": ["queue", "messaging", "ordering", "concurrency"],
+      "complexity": "complex"
+    },
+    {
+      "id": "concept:inline-keyboard-routing",
+      "type": "concept",
+      "name": "Callback Query Routing",
+      "filePath": "",
+      "summary": "Central callback handler dispatches all inline keyboard interactions by matching CB_* prefix constants. Validates topic binding freshness and supports both old/new callback data formats.",
+      "tags": ["routing", "callback", "inline-keyboard", "telegram"],
+      "complexity": "moderate",
+      "languageNotes": "Callback payloads must stay under Telegram's 64-byte limit. Prefix-based dispatching with topic-mismatch validation."
+    },
+    {
+      "id": "concept:directory-browser",
+      "type": "concept",
+      "name": "Directory Browser UI",
+      "filePath": "",
+      "summary": "Paginated inline keyboard interface for navigating the filesystem to select a working directory for a new Claude Code session. Supports hidden directory toggling and parent directory navigation.",
+      "tags": ["ui", "navigation", "filesystem", "pagination"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "concept:interactive-ui",
+      "type": "concept",
+      "name": "Terminal Interactive UI Handling",
+      "filePath": "",
+      "summary": "Detects and renders terminal-based interactive UIs (permission prompts, selection menus, model pickers) as Telegram inline keyboards for remote interaction with tk or text-based UIs.",
+      "tags": ["interactive", "ui", "terminal", "telegram"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "concept:screenshot-rendering",
+      "type": "concept",
+      "name": "Screenshot Rendering",
+      "filePath": "",
+      "summary": "Renders captured tmux pane text (with ANSI color codes) into a dark-background PNG image using Pillow with multi-font fallback support.",
+      "tags": ["screenshot", "image", "rendering", "ansi"],
+      "complexity": "complex"
+    },
+    {
+      "id": "concept:ansi-color-parsing",
+      "type": "concept",
+      "name": "ANSI Color Parsing",
+      "filePath": "",
+      "summary": "Parses ANSI escape code SGR sequences (16 colors, 256-color palette, and full RGB) into TextStyle objects for rendering. Handles 0-107 color codes with bold/bright variants.",
+      "tags": ["ansi", "parsing", "color", "terminal"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "concept:voice-transcription",
+      "type": "concept",
+      "name": "Voice Message Transcription",
+      "filePath": "",
+      "summary": "Transcribes OGG voice messages to text via the OpenAI audio/transcriptions API using gpt-4o-transcribe, then forwards the result to Claude Code.",
+      "tags": ["voice", "transcription", "openai", "audio"],
+      "complexity": "simple"
+    },
+    {
+      "id": "concept:state-persistence",
+      "type": "concept",
+      "name": "State Persistence",
+      "filePath": "",
+      "summary": "Crash-safe persistent storage for thread bindings (state.json), session_map (session_map.json), and monitor byte offsets (monitor_state.json). Uses atomic temp-file-rename writes to prevent corruption.",
+      "tags": ["persistence", "state", "json", "filesystem"],
+      "complexity": "moderate",
+      "languageNotes": "Three state files under CCBOT_DIR. atomic_write_json ensures crash safety. Monitor state uses dirty-flag optimization."
+    },
+    {
+      "id": "concept:rate-limiting",
+      "type": "concept",
+      "name": "Telegram API Rate Limiting",
+      "filePath": "",
+      "summary": "Uses AIORateLimiter with max_retries=5 to handle Telegram's server-side rate limits. Pre-fills the bucket on restart to match Telegram's persisted counter.",
+      "tags": ["rate-limiting", "telegram", "api", "concurrency"],
+      "complexity": "simple",
+      "languageNotes": "AIORateLimiter from python-telegram-bot. Bucket pre-fill hack sets _level=max_rate on restart."
+    },
+    {
+      "id": "concept:status-polling",
+      "type": "concept",
+      "name": "Terminal Status Polling",
+      "filePath": "",
+      "summary": "Background polling loop that periodically checks the Claude Code terminal status line and sends/replies to users with status updates. Detects interactive UIs and idle states.",
+      "tags": ["polling", "status", "terminal", "telegram"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "concept:configuration",
+      "type": "concept",
+      "name": "Environment-Based Configuration",
+      "filePath": "",
+      "summary": "Centralized configuration loaded from environment variables with .env file support, providing bot token, user allowlist, tmux paths, monitoring intervals, and feature flags to all modules.",
+      "tags": ["configuration", "environment", "env"],
+      "complexity": "simple"
+    },
+    {
+      "id": "concept:user-authorization",
+      "type": "concept",
+      "name": "User Authorization",
+      "filePath": "",
+      "summary": "Access control via the ALLOWED_USERS environment variable — a comma-separated list of Telegram user IDs. Every handler checks is_user_allowed() before processing.",
+      "tags": ["authorization", "security", "access-control"],
+      "complexity": "simple"
+    },
+    {
+      "id": "concept:bash-capture",
+      "type": "concept",
+      "name": "Background Bash Output Capture",
+      "filePath": "",
+      "summary": "Background asyncio task that captures the output of !-prefixed bash commands from the tmux pane, sending incremental updates to the user as a streaming message that gets edited in-place.",
+      "tags": ["bash", "capture", "streaming", "tmux"],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "file:src/ccbot/config.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "file:src/ccbot/handlers/callback_data.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "file:src/ccbot/handlers/directory_browser.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "file:src/ccbot/screenshot.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "file:src/ccbot/session_monitor.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "file:src/ccbot/transcribe.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "file:src/ccbot/utils.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/ccbot/config.py",
+      "target": "file:src/ccbot/utils.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/ccbot/handlers/directory_browser.py",
+      "target": "file:src/ccbot/config.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/ccbot/handlers/directory_browser.py",
+      "target": "file:src/ccbot/handlers/callback_data.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/ccbot/monitor_state.py",
+      "target": "file:src/ccbot/utils.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/ccbot/session_monitor.py",
+      "target": "file:src/ccbot/config.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/ccbot/session_monitor.py",
+      "target": "file:src/ccbot/monitor_state.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/ccbot/session_monitor.py",
+      "target": "file:src/ccbot/utils.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/ccbot/transcribe.py",
+      "target": "file:src/ccbot/config.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "function:src/ccbot/bot.py:is_user_allowed",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "function:src/ccbot/bot.py:start_command",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "function:src/ccbot/bot.py:history_command",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "function:src/ccbot/bot.py:screenshot_command",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "function:src/ccbot/bot.py:unbind_command",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "function:src/ccbot/bot.py:esc_command",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "function:src/ccbot/bot.py:usage_command",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "function:src/ccbot/bot.py:topic_closed_handler",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "function:src/ccbot/bot.py:topic_edited_handler",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "function:src/ccbot/bot.py:forward_command_handler",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "function:src/ccbot/bot.py:unsupported_content_handler",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "function:src/ccbot/bot.py:photo_handler",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "function:src/ccbot/bot.py:voice_handler",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "function:src/ccbot/bot.py:text_handler",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "function:src/ccbot/bot.py:callback_handler",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "function:src/ccbot/bot.py:handle_new_message",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "function:src/ccbot/bot.py:post_init",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "function:src/ccbot/bot.py:post_shutdown",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "function:src/ccbot/bot.py:create_bot",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/config.py",
+      "target": "class:src/ccbot/config.py:Config",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/handlers/directory_browser.py",
+      "target": "function:src/ccbot/handlers/directory_browser.py:clear_browse_state",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/handlers/directory_browser.py",
+      "target": "function:src/ccbot/handlers/directory_browser.py:clear_window_picker_state",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/handlers/directory_browser.py",
+      "target": "function:src/ccbot/handlers/directory_browser.py:clear_session_picker_state",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/handlers/directory_browser.py",
+      "target": "function:src/ccbot/handlers/directory_browser.py:build_window_picker",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/handlers/directory_browser.py",
+      "target": "function:src/ccbot/handlers/directory_browser.py:build_directory_browser",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/handlers/directory_browser.py",
+      "target": "function:src/ccbot/handlers/directory_browser.py:build_session_picker",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/monitor_state.py",
+      "target": "class:src/ccbot/monitor_state.py:TrackedSession",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/monitor_state.py",
+      "target": "class:src/ccbot/monitor_state.py:MonitorState",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/screenshot.py",
+      "target": "class:src/ccbot/screenshot.py:TextStyle",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/screenshot.py",
+      "target": "class:src/ccbot/screenshot.py:StyledSegment",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/screenshot.py",
+      "target": "function:src/ccbot/screenshot.py:text_to_image",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/session_monitor.py",
+      "target": "class:src/ccbot/session_monitor.py:SessionInfo",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/session_monitor.py",
+      "target": "class:src/ccbot/session_monitor.py:NewMessage",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/session_monitor.py",
+      "target": "class:src/ccbot/session_monitor.py:SessionMonitor",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/transcribe.py",
+      "target": "function:src/ccbot/transcribe.py:transcribe_voice",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/transcribe.py",
+      "target": "function:src/ccbot/transcribe.py:close_client",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/utils.py",
+      "target": "function:src/ccbot/utils.py:ccbot_dir",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/utils.py",
+      "target": "function:src/ccbot/utils.py:atomic_write_json",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/utils.py",
+      "target": "function:src/ccbot/utils.py:read_cwd_from_jsonl",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/config.py",
+      "target": "function:src/ccbot/utils.py:ccbot_dir",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/ccbot/monitor_state.py:MonitorState",
+      "target": "function:src/ccbot/utils.py:atomic_write_json",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/ccbot/bot.py:post_init",
+      "target": "class:src/ccbot/session_monitor.py:SessionMonitor",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/ccbot/bot.py:post_shutdown",
+      "target": "function:src/ccbot/transcribe.py:close_client",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/ccbot/bot.py:create_bot",
+      "target": "class:src/ccbot/config.py:Config",
+      "type": "depends_on",
+      "weight": 0.6
+    },
+    {
+      "source": "function:src/ccbot/bot.py:voice_handler",
+      "target": "function:src/ccbot/transcribe.py:transcribe_voice",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/ccbot/bot.py:screenshot_command",
+      "target": "function:src/ccbot/screenshot.py:text_to_image",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/ccbot/bot.py:callback_handler",
+      "target": "function:src/ccbot/handlers/directory_browser.py:build_directory_browser",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/ccbot/bot.py:callback_handler",
+      "target": "function:src/ccbot/handlers/directory_browser.py:build_window_picker",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/ccbot/bot.py:callback_handler",
+      "target": "function:src/ccbot/handlers/directory_browser.py:build_session_picker",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/ccbot/bot.py:callback_handler",
+      "target": "function:src/ccbot/handlers/directory_browser.py:clear_browse_state",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/ccbot/bot.py:callback_handler",
+      "target": "function:src/ccbot/handlers/directory_browser.py:clear_window_picker_state",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/ccbot/bot.py:callback_handler",
+      "target": "function:src/ccbot/handlers/directory_browser.py:clear_session_picker_state",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/ccbot/bot.py:text_handler",
+      "target": "function:src/ccbot/handlers/directory_browser.py:build_directory_browser",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/ccbot/bot.py:text_handler",
+      "target": "function:src/ccbot/handlers/directory_browser.py:build_window_picker",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/ccbot/bot.py:text_handler",
+      "target": "function:src/ccbot/screenshot.py:text_to_image",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/ccbot/bot.py:handle_new_message",
+      "target": "class:src/ccbot/session_monitor.py:NewMessage",
+      "type": "depends_on",
+      "weight": 0.6
+    },
+    {
+      "source": "class:src/ccbot/session_monitor.py:SessionMonitor",
+      "target": "class:src/ccbot/monitor_state.py:MonitorState",
+      "type": "depends_on",
+      "weight": 0.6
+    },
+    {
+      "source": "class:src/ccbot/session_monitor.py:SessionMonitor",
+      "target": "class:src/ccbot/monitor_state.py:TrackedSession",
+      "type": "depends_on",
+      "weight": 0.6
+    },
+    {
+      "source": "class:src/ccbot/session_monitor.py:SessionMonitor",
+      "target": "class:src/ccbot/config.py:Config",
+      "type": "depends_on",
+      "weight": 0.6
+    },
+    {
+      "source": "concept:session-monitoring",
+      "target": "concept:state-persistence",
+      "type": "depends_on",
+      "weight": 0.6
+    },
+    {
+      "source": "concept:inline-keyboard-routing",
+      "target": "concept:topic-routing",
+      "type": "depends_on",
+      "weight": 0.6
+    },
+    {
+      "source": "concept:directory-browser",
+      "target": "concept:topic-routing",
+      "type": "depends_on",
+      "weight": 0.6
+    },
+    {
+      "source": "concept:screenshot-rendering",
+      "target": "concept:ansi-color-parsing",
+      "type": "depends_on",
+      "weight": 0.6
+    },
+    {
+      "source": "concept:status-polling",
+      "target": "concept:session-monitoring",
+      "type": "depends_on",
+      "weight": 0.6
+    },
+    {
+      "source": "concept:message-queue",
+      "target": "concept:inline-keyboard-routing",
+      "type": "depends_on",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "concept:topic-routing",
+      "type": "configures",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "concept:user-authorization",
+      "type": "configures",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "concept:bash-capture",
+      "type": "configures",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "concept:inline-keyboard-routing",
+      "type": "configures",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/ccbot/config.py",
+      "target": "concept:configuration",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/ccbot/handlers/callback_data.py",
+      "target": "concept:inline-keyboard-routing",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/ccbot/handlers/directory_browser.py",
+      "target": "concept:directory-browser",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/ccbot/monitor_state.py",
+      "target": "concept:state-persistence",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/ccbot/screenshot.py",
+      "target": "concept:screenshot-rendering",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/ccbot/screenshot.py",
+      "target": "concept:ansi-color-parsing",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/ccbot/session_monitor.py",
+      "target": "concept:session-monitoring",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/ccbot/session_monitor.py",
+      "target": "concept:state-persistence",
+      "type": "configures",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/ccbot/transcribe.py",
+      "target": "concept:voice-transcription",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/ccbot/utils.py",
+      "target": "concept:state-persistence",
+      "type": "configures",
+      "weight": 0.6
+    },
+    {
+      "source": "class:src/ccbot/session_monitor.py:SessionMonitor",
+      "target": "class:src/ccbot/session_monitor.py:NewMessage",
+      "type": "exports",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/ccbot/session_monitor.py:SessionMonitor",
+      "target": "class:src/ccbot/session_monitor.py:SessionInfo",
+      "type": "exports",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/ccbot/monitor_state.py:MonitorState",
+      "target": "class:src/ccbot/monitor_state.py:TrackedSession",
+      "type": "exports",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/ccbot/bot.py:photo_handler",
+      "target": "function:src/ccbot/transcribe.py:transcribe_voice",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/ccbot/bot.py:handle_new_message",
+      "target": "class:src/ccbot/session_monitor.py:SessionMonitor",
+      "type": "depends_on",
+      "weight": 0.6
+    }
+  ]
+}

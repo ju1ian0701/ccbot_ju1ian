@@ -12,7 +12,6 @@ Key functions: hook_main() (CLI entry), _install_hook().
 """
 
 import argparse
-import fcntl
 import json
 import logging
 import os
@@ -21,6 +20,8 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
+
+from .utils import LOCK_EX, LOCK_UN, flock
 
 logger = logging.getLogger(__name__)
 
@@ -236,7 +237,7 @@ def hook_main() -> None:
     lock_path = map_file.with_suffix(".lock")
     try:
         with open(lock_path, "w") as lock_f:
-            fcntl.flock(lock_f, fcntl.LOCK_EX)
+            flock(lock_f, LOCK_EX)
             logger.debug("Acquired lock on %s", lock_path)
             try:
                 session_map: dict[str, dict[str, str]] = {}
@@ -271,6 +272,6 @@ def hook_main() -> None:
                     cwd,
                 )
             finally:
-                fcntl.flock(lock_f, fcntl.LOCK_UN)
+                flock(lock_f, LOCK_UN)
     except OSError as e:
         logger.error("Failed to write session_map: %s", e)

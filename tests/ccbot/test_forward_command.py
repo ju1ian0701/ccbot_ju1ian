@@ -33,23 +33,7 @@ def _make_context() -> MagicMock:
     return context
 
 
-@contextmanager
-def _forward_stack(mock_sm: MagicMock, mock_tmux: MagicMock):
-    """Patch session_guard + bot for require_session / send."""
-    with ExitStack() as stack:
-        stack.enter_context(
-            patch("ccbot.session_guard.config.is_user_allowed", return_value=True)
-        )
-        stack.enter_context(patch("ccbot.session_guard.get_thread_id", return_value=42))
-        stack.enter_context(patch("ccbot.session_guard.session_manager", mock_sm))
-        stack.enter_context(patch("ccbot.session_guard.tmux_manager", mock_tmux))
-        stack.enter_context(patch("ccbot.bot.session_manager", mock_sm))
-        stack.enter_context(patch("ccbot.bot.tmux_manager", mock_tmux))
-        stack.enter_context(
-            patch("ccbot.session_guard.safe_reply", new_callable=AsyncMock)
-        )
-        stack.enter_context(patch("ccbot.bot.safe_reply", new_callable=AsyncMock))
-        yield
+_CH = "ccbot.handlers.command_handlers"
 
 
 class TestForwardCommand:
@@ -58,17 +42,20 @@ class TestForwardCommand:
         """/model → send_to_window called with "/model"."""
         update = _make_update("/model")
         context = _make_context()
-        mock_sm = MagicMock()
-        mock_tmux = MagicMock()
-        mock_sm.resolve_window_for_thread.return_value = "@5"
-        mock_sm.get_display_name.return_value = "project"
-        mock_tmux.find_window_by_id = AsyncMock(
-            return_value=TmuxWindow(window_id="@5", window_name="project", cwd="/tmp")
-        )
-        mock_sm.send_to_window = AsyncMock(return_value=(True, "ok"))
 
-        with _forward_stack(mock_sm, mock_tmux):
-            from ccbot.bot import forward_command_handler
+        with (
+            patch(f"{_CH}.is_user_allowed", return_value=True),
+            patch(f"{_CH}.get_thread_id", return_value=42),
+            patch(f"{_CH}.session_manager") as mock_sm,
+            patch(f"{_CH}.tmux_manager") as mock_tmux,
+            patch(f"{_CH}.safe_reply", new_callable=AsyncMock),
+        ):
+            mock_sm.resolve_window_for_thread.return_value = "@5"
+            mock_sm.get_display_name.return_value = "project"
+            mock_tmux.find_window_by_id = AsyncMock(return_value=MagicMock())
+            mock_sm.send_to_window = AsyncMock(return_value=(True, "ok"))
+
+            from ccbot.handlers.command_handlers import forward_command_handler
 
             await forward_command_handler(update, context)
 
@@ -79,17 +66,20 @@ class TestForwardCommand:
         """/cost → send_to_window called with "/cost"."""
         update = _make_update("/cost")
         context = _make_context()
-        mock_sm = MagicMock()
-        mock_tmux = MagicMock()
-        mock_sm.resolve_window_for_thread.return_value = "@5"
-        mock_sm.get_display_name.return_value = "project"
-        mock_tmux.find_window_by_id = AsyncMock(
-            return_value=TmuxWindow(window_id="@5", window_name="project", cwd="/tmp")
-        )
-        mock_sm.send_to_window = AsyncMock(return_value=(True, "ok"))
 
-        with _forward_stack(mock_sm, mock_tmux):
-            from ccbot.bot import forward_command_handler
+        with (
+            patch(f"{_CH}.is_user_allowed", return_value=True),
+            patch(f"{_CH}.get_thread_id", return_value=42),
+            patch(f"{_CH}.session_manager") as mock_sm,
+            patch(f"{_CH}.tmux_manager") as mock_tmux,
+            patch(f"{_CH}.safe_reply", new_callable=AsyncMock),
+        ):
+            mock_sm.resolve_window_for_thread.return_value = "@5"
+            mock_sm.get_display_name.return_value = "project"
+            mock_tmux.find_window_by_id = AsyncMock(return_value=MagicMock())
+            mock_sm.send_to_window = AsyncMock(return_value=(True, "ok"))
+
+            from ccbot.handlers.command_handlers import forward_command_handler
 
             await forward_command_handler(update, context)
 
@@ -100,17 +90,20 @@ class TestForwardCommand:
         """/clear → send_to_window + clear_window_session."""
         update = _make_update("/clear")
         context = _make_context()
-        mock_sm = MagicMock()
-        mock_tmux = MagicMock()
-        mock_sm.resolve_window_for_thread.return_value = "@5"
-        mock_sm.get_display_name.return_value = "project"
-        mock_tmux.find_window_by_id = AsyncMock(
-            return_value=TmuxWindow(window_id="@5", window_name="project", cwd="/tmp")
-        )
-        mock_sm.send_to_window = AsyncMock(return_value=(True, "ok"))
 
-        with _forward_stack(mock_sm, mock_tmux):
-            from ccbot.bot import forward_command_handler
+        with (
+            patch(f"{_CH}.is_user_allowed", return_value=True),
+            patch(f"{_CH}.get_thread_id", return_value=42),
+            patch(f"{_CH}.session_manager") as mock_sm,
+            patch(f"{_CH}.tmux_manager") as mock_tmux,
+            patch(f"{_CH}.safe_reply", new_callable=AsyncMock),
+        ):
+            mock_sm.resolve_window_for_thread.return_value = "@5"
+            mock_sm.get_display_name.return_value = "project"
+            mock_tmux.find_window_by_id = AsyncMock(return_value=MagicMock())
+            mock_sm.send_to_window = AsyncMock(return_value=(True, "ok"))
+
+            from ccbot.handlers.command_handlers import forward_command_handler
 
             await forward_command_handler(update, context)
 

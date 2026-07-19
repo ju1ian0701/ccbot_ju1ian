@@ -1,0 +1,40 @@
+{
+  "issues": [
+    "File node 'file:src/ccbot/fonts/NotoSansMonoCJKsc-Regular.otf' not in any layer"
+  ],
+  "warnings": [
+    "Node 'config:.env.example' has no edges (orphan)",
+    "Node 'document:AGENTS.md' has no edges (orphan)",
+    "Node 'document:CLAUDE.md' has no edges (orphan)",
+    "Node 'document:README.md' has no edges (orphan)",
+    "Node 'document:README_CN.md' has no edges (orphan)",
+    "Node 'document:README_RU.md' has no edges (orphan)",
+    "Node 'config:pyproject.toml' has no edges (orphan)",
+    "Node 'document:src/ccbot/fonts/LICENSE-JetBrainsMono.txt' has no edges (orphan)",
+    "Node 'document:src/ccbot/fonts/LICENSE-NotoSansMono.txt' has no edges (orphan)",
+    "Node 'document:src/ccbot/fonts/LICENSE-Symbola.txt' has no edges (orphan)",
+    "Node 'file:src/ccbot/__init__.py' has no edges (orphan)",
+    "Node 'file:src/ccbot/fonts/NotoSansMonoCJKsc-Regular.otf' has no edges (orphan)",
+    "Node 'file:src/ccbot/handlers/__init__.py' has no edges (orphan)",
+    "Node 'file:tests/conftest.py' has no edges (orphan)"
+  ],
+  "stats": {
+    "totalNodes": 262,
+    "totalEdges": 368,
+    "totalLayers": 9,
+    "tourSteps": 8,
+    "nodeTypes": {
+      "config": 2,
+      "document": 8,
+      "file": 46,
+      "function": 132,
+      "class": 74
+    },
+    "edgeTypes": {
+      "contains": 206,
+      "calls": 84,
+      "imports": 64,
+      "tested_by": 14
+    }
+  }
+}

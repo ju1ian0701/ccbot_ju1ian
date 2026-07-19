@@ -12,16 +12,16 @@ import sys
 import tempfile
 import types
 
-# session.py uses fcntl for file locks (POSIX). On Windows local runs,
-# provide a minimal stub so unit tests that mock I/O can still import.
+# Windows has no fcntl; session.py / hook.py import it for file locking.
+# Stub before any ccbot import so unit tests can run on Windows CI/dev hosts.
 if sys.platform == "win32" and "fcntl" not in sys.modules:
     _fcntl = types.ModuleType("fcntl")
     _fcntl.LOCK_EX = 2  # type: ignore[attr-defined]
-    _fcntl.LOCK_SH = 1  # type: ignore[attr-defined]
     _fcntl.LOCK_UN = 8  # type: ignore[attr-defined]
+    _fcntl.LOCK_SH = 1  # type: ignore[attr-defined]
     _fcntl.LOCK_NB = 4  # type: ignore[attr-defined]
 
-    def _flock(_fd: int, _op: int) -> None:
+    def _flock(fd: int, op: int) -> None:  # noqa: ARG001
         return None
 
     _fcntl.flock = _flock  # type: ignore[attr-defined]

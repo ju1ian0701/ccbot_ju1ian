@@ -1,0 +1,50 @@
+[
+  {
+    "order": 1,
+    "title": "Project Overview — What CCBot Does",
+    "description": "Start here to understand the big picture. CCBot bridges Telegram Forum topics to Claude Code sessions running inside tmux windows. Each Telegram topic maps 1:1 to a tmux window running a Claude Code instance. Read the README first for the user-facing story, then AGENTS.md for the technical design constraints and architectural rules that govern the codebase (1 topic = 1 window, topic-only mode, hook-based session tracking, MarkdownV2-only).",
+    "nodeIds": ["document:README.md", "document:AGENTS.md"]
+  },
+  {
+    "order": 2,
+    "title": "Entry Point & Configuration Bootstrap",
+    "description": "The CLI dispatcher at src/ccbot/main.py handles two modes: `ccbot hook` (delegates to hook.py for Claude Code SessionStart processing) and the default mode, which configures logging, validates config, ensures a tmux session exists, and calls bot.create_bot(). Config loads from environment variables with `.env` file support; the module-level `config` singleton is imported by nearly every other module. Understanding the two execution modes is critical — the hook runs as a child process inside Claude Code, while the bot runs as a long-lived daemon.",
+    "nodeIds": ["file:src/ccbot/main.py", "file:src/ccbot/config.py", "file:src/ccbot/hook.py"]
+  },
+  {
+    "order": 3,
+    "title": "Bot Application Core — Routing & Lifecycle",
+    "description": "The heart of the system at src/ccbot/bot.py. This file registers all Telegram command/callback/message handlers and manages the bot lifecycle via python-telegram-bot's Application. Key patterns: `text_handler` is the main message routing function — it checks authorization, resolves thread→window bindings, shows window pickers or directory browsers for unbound topics, and forwards messages to Claude Code via tmux. Topic-closed and topic-edited handlers sync Telegram topic lifecycle to tmux windows. The `_create_and_bind_window` helper is shared across directory browser, session picker, and window picker flows.",
+    "nodeIds": ["file:src/ccbot/bot.py"]
+  },
+  {
+    "order": 4,
+    "title": "Session & State Management — The Routing Backbone",
+    "description": "SessionManager (singleton in session.py) is the state hub: it manages window→session mappings (which Claude session_id a tmux window holds), user→thread→window bindings (topic routing), per-user read offsets, group chat ID mapping for supergroup routing, and state persistence to state.json. The session_map.json file (written by Claude Code's SessionStart hook) drives the session monitor. The session_monitor.py runs a background polling loop that watches JSONL transcript files via byte-offset tracking and emits NewMessage objects. TranscriptParser parses the JSONL files into display-ready entries, handling tool_use/tool_result pairing, thinking blocks, and expandable quotes. Follow the data flow: hook writes session_map → monitor polls and reads JSONL → TranscriptParser parses → messages routed to bound topics.",
+    "nodeIds": ["file:src/ccbot/session.py", "file:src/ccbot/session_monitor.py", "file:src/ccbot/transcript_parser.py", "file:src/ccbot/monitor_state.py"]
+  },
+  {
+    "order": 5,
+    "title": "Terminal & Tmux Integration — The Bridge Layer",
+    "description": "TmuxManager wraps libtmux to provide async-friendly operations on a single tmux session: listing windows, capturing pane content (with or without ANSI colors), sending keystrokes, creating/killing windows. The `send_keys` method has special handling for Claude Code's TUI (e.g., delayed Enter for `!` bash commands). terminal_parser.py extracts status lines, interactive UI content (ask questions, permission prompts), and bash output from captured pane text. screenshot.py renders terminal content to PNG images. Together these files form the bridge layer: TmuxManager talks to tmux, terminal_parser interprets what's on screen, and the bot layer feeds this to Telegram.",
+    "nodeIds": ["file:src/ccbot/tmux_manager.py", "file:src/ccbot/terminal_parser.py", "file:src/ccbot/screenshot.py"]
+  },
+  {
+    "order": 6,
+    "title": "Message Processing Pipeline — Queue, Format, Send",
+    "description": "Messages flow through a structured pipeline. telegram_sender.py splits long messages at 4096 chars. markdown_v2.py converts markdown to Telegram's MarkdownV2 with automatic fallback to plain text. response_builder.py builds paginated response parts per content type (text, thinking, tool_use, tool_result) with truncation and page numbering. The message_queue.py implements per-user FIFO queues with background workers that merge consecutive content messages (up to 3800 chars), handle tool_use/tool_result editing (editing tool_use messages in-place with results), track status messages (single ephemeral message per user+thread), and implement flood control with RetryAfter handling. The queue ensures ordered delivery without overwhelming Telegram's rate limits.",
+    "nodeIds": ["file:src/ccbot/telegram_sender.py", "file:src/ccbot/markdown_v2.py", "file:src/ccbot/handlers/response_builder.py", "file:src/ccbot/handlers/message_queue.py", "file:src/ccbot/handlers/message_sender.py"]
+  },
+  {
+    "order": 7,
+    "title": "Handler Layer — Interactive UI, Polling & Session Management",
+    "description": "The handler modules implement the interactive features. interactive_ui.py captures Claude Code's terminal UIs (AskUserQuestion, ExitPlanMode, Permission Prompts) and renders them with inline keyboard navigation (arrows, enter, esc, tab). status_polling.py runs a 1-second background loop that polls terminal status lines for all bound threads, detects interactive UIs in real-time, and probes topic existence every 60 seconds to clean up deleted topics. directory_browser.py provides an inline directory navigation UI for creating new sessions, plus window pickers and session pickers (with resume support). history.py implements paginated message history with byte-range-aware navigation. cleanup.py handles topic state cleanup on close. Follow the data flow: status_polling detects changes → interactive_ui renders prompts → message_queue enqueues updates → message_sender delivers to Telegram.",
+    "nodeIds": ["file:src/ccbot/handlers/interactive_ui.py", "file:src/ccbot/handlers/status_polling.py", "file:src/ccbot/handlers/directory_browser.py", "file:src/ccbot/handlers/history.py", "file:src/ccbot/handlers/cleanup.py", "file:src/ccbot/handlers/callback_data.py"]
+  },
+  {
+    "order": 8,
+    "title": "Infrastructure & Cross-Cutting Concerns",
+    "description": "The project infrastructure ties everything together. pyproject.toml declares dependencies (python-telegram-bot, libtmux, aiofiles, ruff, pyright). The .env.example shows required configuration (TELEGRAM_BOT_TOKEN, ALLOWED_USERS, OPENAI_API_KEY). hook.py implements the SessionStart hook that writes session_map.json — this is the critical contract between Claude Code and CCBot that enables session tracking. utils.py provides shared utilities (atomic_write_json, ccbot_dir). transcribe.py handles voice message transcription via OpenAI API. The cross-cutting patterns to note: MarkdownV2-only with fallback, FIFO message queues with merging, hook-based session tracking, and 1-topic=1-window routing without backward-compat for non-topic mode.",
+    "nodeIds": ["config:pyproject.toml", "config:.env.example", "file:src/ccbot/hook.py", "file:src/ccbot/utils.py", "file:src/ccbot/transcribe.py", "file:src/ccbot/__init__.py"]
+  }
+]

@@ -8,6 +8,15 @@ from ccbot.monitor_state import TrackedSession
 from ccbot.session_monitor import SessionMonitor
 
 
+def _write_jsonl(path, text: str) -> None:
+    """Write JSONL with LF line endings (matches Claude Code / Linux production).
+
+    Path.write_text / text-mode open on Windows would expand ``\\n`` to
+    ``\\r\\n`` and break byte-offset assertions.
+    """
+    path.write_bytes(text.encode("utf-8"))
+
+
 class TestReadNewLinesOffsetRecovery:
     """Tests for _read_new_lines offset corruption recovery."""
 
@@ -26,9 +35,9 @@ class TestReadNewLinesOffsetRecovery:
         jsonl_file = tmp_path / "session.jsonl"
         entry1 = make_jsonl_entry(msg_type="assistant", content="first message")
         entry2 = make_jsonl_entry(msg_type="assistant", content="second message")
-        jsonl_file.write_text(
+        _write_jsonl(
+            jsonl_file,
             json.dumps(entry1) + "\n" + json.dumps(entry2) + "\n",
-            encoding="utf-8",
         )
 
         # Calculate offset pointing into the middle of line 1
@@ -57,9 +66,9 @@ class TestReadNewLinesOffsetRecovery:
         jsonl_file = tmp_path / "session.jsonl"
         entry1 = make_jsonl_entry(msg_type="assistant", content="first")
         entry2 = make_jsonl_entry(msg_type="assistant", content="second")
-        jsonl_file.write_text(
+        _write_jsonl(
+            jsonl_file,
             json.dumps(entry1) + "\n" + json.dumps(entry2) + "\n",
-            encoding="utf-8",
         )
 
         # Offset at 0 should read both lines
@@ -83,9 +92,9 @@ class TestReadNewLinesOffsetRecovery:
         """
         jsonl_file = tmp_path / "session.jsonl"
         good = make_jsonl_entry(msg_type="assistant", content="ok")
-        jsonl_file.write_text(
+        _write_jsonl(
+            jsonl_file,
             json.dumps(good) + "\n" + "{corrupt json!!!\n" + json.dumps(good) + "\n",
-            encoding="utf-8",
         )
         session = TrackedSession(
             session_id="test-session",
@@ -107,7 +116,7 @@ class TestReadNewLinesOffsetRecovery:
         jsonl_file = tmp_path / "session.jsonl"
         good = make_jsonl_entry(msg_type="assistant", content="ok")
         good_line = json.dumps(good) + "\n"
-        jsonl_file.write_text(good_line + '{"type": "assis', encoding="utf-8")
+        _write_jsonl(jsonl_file, good_line + '{"type": "assis')
         session = TrackedSession(
             session_id="test-session",
             file_path=str(jsonl_file),
@@ -120,9 +129,9 @@ class TestReadNewLinesOffsetRecovery:
         # Offset stops at the partial line, not EOF
         assert session.last_byte_offset == len(good_line.encode("utf-8"))
 
-        # Writer completes the line — next cycle picks it up
-        with open(jsonl_file, "a", encoding="utf-8") as f:
-            f.write('tant", "message": {"content": "done"}}\n')
+        # Writer completes the line — next cycle picks it up (binary append, LF)
+        with open(jsonl_file, "ab") as f:
+            f.write(b'tant", "message": {"content": "done"}}\n')
         result2 = await monitor._read_new_lines(session, jsonl_file)
         assert len(result2) == 1
         assert session.last_byte_offset == jsonl_file.stat().st_size
@@ -132,7 +141,7 @@ class TestReadNewLinesOffsetRecovery:
         """Detect file truncation and reset offset."""
         jsonl_file = tmp_path / "session.jsonl"
         entry = make_jsonl_entry(msg_type="assistant", content="content")
-        jsonl_file.write_text(json.dumps(entry) + "\n", encoding="utf-8")
+        _write_jsonl(jsonl_file, json.dumps(entry) + "\n")
 
         # Set offset beyond file size (simulates truncation)
         session = TrackedSession(

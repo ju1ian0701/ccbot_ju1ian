@@ -1,0 +1,52 @@
+{
+  "tour": [
+    {
+      "order": 1,
+      "title": "Project Overview",
+      "description": "CCBot bridges Telegram Forum topics to Claude Code sessions via tmux windows. Each topic maps to a tmux window running one Claude Code instance.",
+      "nodeIds": ["document:README.md"]
+    },
+    {
+      "order": 2,
+      "title": "Entry Point & Configuration",
+      "description": "main.py starts the bot with logging and rate limiting. The Config class reads environment variables for tokens, paths, and settings.",
+      "nodeIds": ["file:src/ccbot/main.py", "file:src/ccbot/config.py", "config:pyproject.toml"]
+    },
+    {
+      "order": 3,
+      "title": "Core Bot & Auth",
+      "description": "bot.py orchestrates all handlers, manages user authorization, creates tmux windows, and routes messages/text/voice/photos. auth.py handles user authentication checks.",
+      "nodeIds": ["file:src/ccbot/bot.py", "file:src/ccbot/handlers/auth.py", "file:src/ccbot/handlers/window_bind.py"]
+    },
+    {
+      "order": 4,
+      "title": "Session & State Management",
+      "description": "SessionManager tracks thread-to-window bindings. MonitorState manages read offsets for JSONL log tailing. SessionMonitor polls Claude Code logs for new messages.",
+      "nodeIds": ["file:src/ccbot/session.py", "file:src/ccbot/session_monitor.py", "file:src/ccbot/monitor_state.py", "file:src/ccbot/utils.py"]
+    },
+    {
+      "order": 5,
+      "title": "Terminal & Tmux Integration",
+      "description": "TmuxManager wraps libtmux for window create/manage/kill. TerminalParser extracts interactive UIs, status lines, and bash output. TranscriptParser decodes Claude Code JSONL entries.",
+      "nodeIds": ["file:src/ccbot/tmux_manager.py", "file:src/ccbot/terminal_parser.py", "file:src/ccbot/transcript_parser.py"]
+    },
+    {
+      "order": 6,
+      "title": "Message Pipeline & Notifications",
+      "description": "Messages flow through the queue system with merging. MessageSender handles Telegram API calls with MarkdownV2. Notifications broadcast session events. message_handlers processes incoming text/commands.",
+      "nodeIds": ["file:src/ccbot/handlers/message_queue.py", "file:src/ccbot/handlers/message_sender.py", "file:src/ccbot/handlers/response_builder.py", "file:src/ccbot/markdown_v2.py", "file:src/ccbot/handlers/notifications.py", "file:src/ccbot/handlers/message_handlers.py"]
+    },
+    {
+      "order": 7,
+      "title": "Interactive UI & Callback Routing",
+      "description": "Interactive UI handles AskUserQuestion/ExitPlanMode/Permission prompts via inline keyboards. callback_router dispatches callback queries. screenshot_controls manages terminal screenshots.",
+      "nodeIds": ["file:src/ccbot/handlers/interactive_ui.py", "file:src/ccbot/handlers/callback_router.py", "file:src/ccbot/handlers/callback_data.py", "file:src/ccbot/handlers/command_handlers.py", "file:src/ccbot/handlers/screenshot_controls.py", "file:src/ccbot/handlers/directory_browser.py", "file:src/ccbot/screenshot.py"]
+    },
+    {
+      "order": 8,
+      "title": "Testing Infrastructure",
+      "description": "Tests cover unit tests per module and integration tests. Fixtures provide sample terminal output, JSONL entries, and mock bots.",
+      "nodeIds": ["file:tests/ccbot/conftest.py", "file:tests/ccbot/test_session.py", "file:tests/ccbot/test_terminal_parser.py", "file:tests/ccbot/test_transcript_parser.py", "file:tests/ccbot/handlers/test_interactive_ui.py", "file:tests/integration/test_config_integration.py"]
+    }
+  ]
+}

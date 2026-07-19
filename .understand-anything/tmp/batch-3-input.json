@@ -1,0 +1,232 @@
+{
+    "projectRoot":  "D:\\CCbot_tmux\\ccbot\\ccbot_ju1ian",
+    "batchImportData":  {
+                            "src/ccbot/handlers/directory_browser.py":  [
+
+                                                                        ],
+                            "src/ccbot/handlers/window_bind.py":  [
+
+                                                                  ],
+                            "src/ccbot/handlers/cleanup.py":  [
+
+                                                              ],
+                            "src/ccbot/handlers/auth.py":  [
+
+                                                           ],
+                            "src/ccbot/hook.py":  [
+
+                                                  ],
+                            "src/ccbot/__init__.py":  [
+
+                                                      ],
+                            "src/ccbot/handlers/notifications.py":  [
+
+                                                                    ],
+                            "src/ccbot/handlers/callback_data.py":  [
+
+                                                                    ],
+                            "src/ccbot/main.py":  [
+
+                                                  ],
+                            "src/ccbot/handlers/message_queue.py":  [
+
+                                                                    ],
+                            "src/ccbot/bot.py":  [
+
+                                                 ],
+                            "src/ccbot/config.py":  [
+
+                                                    ],
+                            "src/ccbot/handlers/response_builder.py":  [
+
+                                                                       ],
+                            "src/ccbot/handlers/callback_router.py":  [
+
+                                                                      ],
+                            "src/ccbot/handlers/message_handlers.py":  [
+
+                                                                       ],
+                            "src/ccbot/fonts/NotoSansMonoCJKsc-Regular.otf":  [
+
+                                                                              ],
+                            "src/ccbot/handlers/message_sender.py":  [
+
+                                                                     ],
+                            "src/ccbot/handlers/__init__.py":  [
+
+                                                               ],
+                            "src/ccbot/markdown_v2.py":  [
+
+                                                         ],
+                            "src/ccbot/handlers/history.py":  [
+
+                                                              ],
+                            "src/ccbot/handlers/interactive_ui.py":  [
+
+                                                                     ],
+                            "src/ccbot/handlers/screenshot_controls.py":  [
+
+                                                                          ],
+                            "src/ccbot/handlers/status_polling.py":  [
+
+                                                                     ],
+                            "src/ccbot/monitor_state.py":  [
+
+                                                           ],
+                            "src/ccbot/handlers/command_handlers.py":  [
+
+                                                                       ]
+                        },
+    "batchFiles":  [
+                       {
+                           "path":  "src/ccbot/__init__.py",
+                           "language":  "python",
+                           "sizeLines":  7,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "src/ccbot/bot.py",
+                           "language":  "python",
+                           "sizeLines":  219,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "src/ccbot/config.py",
+                           "language":  "python",
+                           "sizeLines":  130,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "src/ccbot/fonts/NotoSansMonoCJKsc-Regular.otf",
+                           "language":  "otf",
+                           "sizeLines":  215956,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "src/ccbot/handlers/__init__.py",
+                           "language":  "python",
+                           "sizeLines":  20,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "src/ccbot/handlers/auth.py",
+                           "language":  "python",
+                           "sizeLines":  29,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "src/ccbot/handlers/callback_data.py",
+                           "language":  "python",
+                           "sizeLines":  51,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "src/ccbot/handlers/callback_router.py",
+                           "language":  "python",
+                           "sizeLines":  652,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "src/ccbot/handlers/cleanup.py",
+                           "language":  "python",
+                           "sizeLines":  49,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "src/ccbot/handlers/command_handlers.py",
+                           "language":  "python",
+                           "sizeLines":  358,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "src/ccbot/handlers/directory_browser.py",
+                           "language":  "python",
+                           "sizeLines":  256,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "src/ccbot/handlers/history.py",
+                           "language":  "python",
+                           "sizeLines":  235,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "src/ccbot/handlers/interactive_ui.py",
+                           "language":  "python",
+                           "sizeLines":  273,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "src/ccbot/handlers/message_handlers.py",
+                           "language":  "python",
+                           "sizeLines":  510,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "src/ccbot/handlers/message_queue.py",
+                           "language":  "python",
+                           "sizeLines":  737,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "src/ccbot/handlers/message_sender.py",
+                           "language":  "python",
+                           "sizeLines":  198,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "src/ccbot/handlers/notifications.py",
+                           "language":  "python",
+                           "sizeLines":  121,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "src/ccbot/handlers/response_builder.py",
+                           "language":  "python",
+                           "sizeLines":  97,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "src/ccbot/handlers/screenshot_controls.py",
+                           "language":  "python",
+                           "sizeLines":  61,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "src/ccbot/handlers/status_polling.py",
+                           "language":  "python",
+                           "sizeLines":  204,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "src/ccbot/handlers/window_bind.py",
+                           "language":  "python",
+                           "sizeLines":  146,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "src/ccbot/hook.py",
+                           "language":  "python",
+                           "sizeLines":  277,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "src/ccbot/main.py",
+                           "language":  "python",
+                           "sizeLines":  75,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "src/ccbot/markdown_v2.py",
+                           "language":  "python",
+                           "sizeLines":  205,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "src/ccbot/monitor_state.py",
+                           "language":  "python",
+                           "sizeLines":  109,
+                           "fileCategory":  "code"
+                       }
+                   ]
+}
