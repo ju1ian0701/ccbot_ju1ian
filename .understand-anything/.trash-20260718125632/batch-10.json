@@ -1,0 +1,180 @@
+{
+  "nodes": [
+    {
+      "id": ".understand-anything/tmp/batch-1-input.json",
+      "type": "file",
+      "label": "batch-1-input.json",
+      "description": "Intermediate metadata file for understand-anything pipeline batch 1. Catalogs 7 GitHub Actions workflow YAML files (.github/workflows/) with their sizes and categories. ImportData section lists all batch files in this pipeline with empty import arrays. Part of a multi-batch processing pipeline that splits the project into chunks for incremental analysis.",
+      "properties": {
+        "language": "json",
+        "sizeLines": 69,
+        "fileCategory": "config",
+        "batchIndex": 1,
+        "catalogedFiles": [
+          ".github/workflows/agentic-analyze.yml",
+          ".github/workflows/agentic-implement.yml",
+          ".github/workflows/agentic-orchestrator.yml",
+          ".github/workflows/agentic-plan.yml",
+          ".github/workflows/check.yml",
+          ".github/workflows/claude-code-review.yml",
+          ".github/workflows/claude.yml"
+        ]
+      }
+    },
+    {
+      "id": ".understand-anything/tmp/batch-2-input.json",
+      "type": "file",
+      "label": "batch-2-input.json",
+      "description": "Intermediate metadata file for understand-anything pipeline batch 2. Catalogs 6 files from the .agentic/ directory: HANDOFF.md, HANDOFF_REF-006.md, IMPLEMENTATION_PLAN.md, README.md, config.json, policies.json. ImportData shows cross-references between batch files with empty import arrays.",
+      "properties": {
+        "language": "json",
+        "sizeLines": 33,
+        "fileCategory": "config",
+        "batchIndex": 2,
+        "catalogedFiles": [
+          ".agentic/HANDOFF.md",
+          ".agentic/HANDOFF_REF-006.md",
+          ".agentic/IMPLEMENTATION_PLAN.md",
+          ".agentic/README.md",
+          ".agentic/config.json",
+          ".agentic/policies.json"
+        ]
+      }
+    },
+    {
+      "id": ".understand-anything/tmp/batch-3-input.json",
+      "type": "file",
+      "label": "batch-3-input.json",
+      "description": "Intermediate metadata file for understand-anything pipeline batch 3. Catalogs 5 markdown prompt files from .agentic/prompts/: analyze.md, implement.md, plan.md, pr-body.md, review.md. These are AI agent prompt templates used by the agentic workflow system.",
+      "properties": {
+        "language": "json",
+        "sizeLines": 231,
+        "fileCategory": "config",
+        "batchIndex": 3,
+        "catalogedFiles": [
+          ".agentic/prompts/analyze.md",
+          ".agentic/prompts/implement.md",
+          ".agentic/prompts/plan.md",
+          ".agentic/prompts/pr-body.md",
+          ".agentic/prompts/review.md"
+        ]
+      }
+    },
+    {
+      "id": ".understand-anything/tmp/batch-4-input.json",
+      "type": "file",
+      "label": "batch-4-input.json",
+      "description": "Intermediate metadata file for understand-anything pipeline batch 4. Catalogs 3 Claude Code rule files from .claude/rules/: architecture.md, message-handling.md, topic-architecture.md. These define coding conventions and architectural guidelines for Claude Code sessions.",
+      "properties": {
+        "language": "json",
+        "sizeLines": 231,
+        "fileCategory": "config",
+        "batchIndex": 4,
+        "catalogedFiles": [
+          ".claude/rules/architecture.md",
+          ".claude/rules/message-handling.md",
+          ".claude/rules/topic-architecture.md"
+        ]
+      }
+    },
+    {
+      "id": ".understand-anything/tmp/batch-5-input.json",
+      "type": "file",
+      "label": "batch-5-input.json",
+      "description": "Intermediate metadata file for understand-anything pipeline batch 5. Catalogs 8 root-level project files: .env.example, AGENTS.md, CLAUDE.md, README.md, README_CN.md, README_RU.md, pyproject.toml, test.txt. These are top-level documentation and configuration files.",
+      "properties": {
+        "language": "json",
+        "sizeLines": 33,
+        "fileCategory": "config",
+        "batchIndex": 5,
+        "catalogedFiles": [
+          ".env.example",
+          "AGENTS.md",
+          "CLAUDE.md",
+          "README.md",
+          "README_CN.md",
+          "README_RU.md",
+          "pyproject.toml",
+          "test.txt"
+        ]
+      }
+    },
+    {
+      "id": ".understand-anything/tmp/changed-files.txt",
+      "type": "file",
+      "label": "changed-files.txt",
+      "description": "Flat space-separated list of changed/modified file paths across the entire project. Contains over 200 paths covering .agentic/, .github/workflows/, .grok/, .understand-anything/, src/, tests/, and root-level files. Used by the understand-anything pipeline to track which files have been modified and need re-analysis.",
+      "properties": {
+        "language": "txt",
+        "sizeLines": 0,
+        "fileCategory": "docs",
+        "fileCount": 200,
+        "scope": "project-wide change tracking"
+      }
+    },
+    {
+      "id": ".understand-anything/tmp/import-map-input.json",
+      "type": "file",
+      "label": "import-map-input.json",
+      "description": "Complete project-wide import map used by the understand-anything pipeline. Lists all 67 project files with their fileCategory (code, config, docs) and language (python, markdown, json, yaml, toml, txt, otf). Includes all source files under src/ccbot/ (core bot, handlers, utilities), tests/, config files, and documentation. Serves as the master file registry for the analysis pipeline.",
+      "properties": {
+        "language": "json",
+        "sizeLines": 319,
+        "fileCategory": "config",
+        "totalFiles": 67,
+        "pythonFiles": 38,
+        "markdownFiles": 12,
+        "jsonFiles": 1,
+        "yamlFiles": 7,
+        "tomlFiles": 1,
+        "configFiles": 1,
+        "txtFiles": 4,
+        "otfFiles": 1
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": ".understand-anything/tmp/batch-10-input.json",
+      "target": ".understand-anything/tmp/batch-1-input.json",
+      "type": "contains",
+      "label": "references batch 1 catalog"
+    },
+    {
+      "source": ".understand-anything/tmp/batch-10-input.json",
+      "target": ".understand-anything/tmp/batch-2-input.json",
+      "type": "contains",
+      "label": "references batch 2 catalog"
+    },
+    {
+      "source": ".understand-anything/tmp/batch-10-input.json",
+      "target": ".understand-anything/tmp/batch-3-input.json",
+      "type": "contains",
+      "label": "references batch 3 catalog"
+    },
+    {
+      "source": ".understand-anything/tmp/batch-10-input.json",
+      "target": ".understand-anything/tmp/batch-4-input.json",
+      "type": "contains",
+      "label": "references batch 4 catalog"
+    },
+    {
+      "source": ".understand-anything/tmp/batch-10-input.json",
+      "target": ".understand-anything/tmp/batch-5-input.json",
+      "type": "contains",
+      "label": "references batch 5 catalog"
+    },
+    {
+      "source": ".understand-anything/tmp/batch-10-input.json",
+      "target": ".understand-anything/tmp/changed-files.txt",
+      "type": "contains",
+      "label": "references changed files list"
+    },
+    {
+      "source": ".understand-anything/tmp/batch-10-input.json",
+      "target": ".understand-anything/tmp/import-map-input.json",
+      "type": "contains",
+      "label": "references import map"
+    }
+  ]
+}

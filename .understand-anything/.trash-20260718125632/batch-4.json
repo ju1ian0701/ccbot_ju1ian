@@ -1,0 +1,707 @@
+{
+  "nodes": [
+    {
+      "id": "document:.claude/rules/architecture.md",
+      "type": "document",
+      "label": "System Architecture",
+      "properties": {
+        "filePath": ".claude/rules/architecture.md",
+        "language": "markdown",
+        "sizeLines": 102,
+        "category": "docs",
+        "summary": "High-level system architecture covering the Telegram bot module layout, handler modules, state files, and key design decisions including topic-centric routing, window ID-centric state, hook-based session tracking, tool_use↔tool_result pairing, MarkdownV2 with fallback, and startup re-resolution."
+      }
+    },
+    {
+      "id": "document:.claude/rules/message-handling.md",
+      "type": "document",
+      "label": "Message Handling Architecture",
+      "properties": {
+        "filePath": ".claude/rules/message-handling.md",
+        "language": "markdown",
+        "sizeLines": 41,
+        "category": "docs",
+        "summary": "Per-user message queue architecture with FIFO ordering, content/status merging, rate limiting via AIORateLimiter, mtime cache for poll efficiency, byte-offset incremental reads, and no-truncation policy at parse layer."
+      }
+    },
+    {
+      "id": "document:.claude/rules/topic-architecture.md",
+      "type": "document",
+      "label": "Topic-Only Architecture",
+      "properties": {
+        "filePath": ".claude/rules/topic-architecture.md",
+        "language": "markdown",
+        "sizeLines": 73,
+        "category": "docs",
+        "summary": "Exclusive Telegram Forum (topics) mode architecture defining 1 Topic = 1 Window = 1 Session mapping, thread_bindings (Topic→WindowID), session_map.json (WindowID→SessionID), message flows for outbound/inbound/new/resume sessions, topic lifecycle, and session lifecycle cleanup."
+      }
+    },
+    {
+      "id": "module:src/ccbot/bot.py",
+      "type": "module",
+      "label": "bot.py",
+      "properties": {
+        "filePath": "src/ccbot/bot.py",
+        "summary": "Telegram Bot main module: topic-based routing, /history, /screenshot, /esc, text forwarding, interactive UI handling, per-user message queue, MarkdownV2 output"
+      }
+    },
+    {
+      "id": "module:src/ccbot/markdown_v2.py",
+      "type": "module",
+      "label": "markdown_v2.py",
+      "properties": {
+        "filePath": "src/ccbot/markdown_v2.py",
+        "summary": "Markdown → MarkdownV2 conversion with expandable quotes"
+      }
+    },
+    {
+      "id": "module:src/ccbot/telegram_sender.py",
+      "type": "module",
+      "label": "telegram_sender.py",
+      "properties": {
+        "filePath": "src/ccbot/telegram_sender.py",
+        "summary": "Message sending: split_message (4096 char limit), rate_limit_send, safe_reply/safe_edit/safe_send with fallback"
+      }
+    },
+    {
+      "id": "module:src/ccbot/terminal_parser.py",
+      "type": "module",
+      "label": "terminal_parser.py",
+      "properties": {
+        "filePath": "src/ccbot/terminal_parser.py",
+        "summary": "Terminal output parser: detect interactive UIs (AskUserQuestion, ExitPlanMode, Permission), parse status line (spinner + working text)"
+      }
+    },
+    {
+      "id": "module:src/ccbot/session_monitor.py",
+      "type": "module",
+      "label": "session_monitor.py",
+      "properties": {
+        "filePath": "src/ccbot/session_monitor.py",
+        "summary": "SessionMonitor: polls JSONL every 2s, detects mtime changes, parses new lines, tracks pending tools across poll cycles"
+      }
+    },
+    {
+      "id": "module:src/ccbot/tmux_manager.py",
+      "type": "module",
+      "label": "tmux_manager.py",
+      "properties": {
+        "filePath": "src/ccbot/tmux_manager.py",
+        "summary": "TmuxManager: list/find/create/kill windows, send_keys to pane, capture_pane for screenshot"
+      }
+    },
+    {
+      "id": "module:src/ccbot/transcript_parser.py",
+      "type": "module",
+      "label": "transcript_parser.py",
+      "properties": {
+        "filePath": "src/ccbot/transcript_parser.py",
+        "summary": "TranscriptParser: parse JSONL entries, pair tool_use↔tool_result, format expandable quotes, extract history"
+      }
+    },
+    {
+      "id": "module:src/ccbot/session.py",
+      "type": "module",
+      "label": "session.py",
+      "properties": {
+        "filePath": "src/ccbot/session.py",
+        "summary": "SessionManager: window↔session resolution, thread bindings (topic→window), message history retrieval, startup re-resolution"
+      }
+    },
+    {
+      "id": "module:src/ccbot/monitor_state.py",
+      "type": "module",
+      "label": "monitor_state.py",
+      "properties": {
+        "filePath": "src/ccbot/monitor_state.py",
+        "summary": "MonitorState: track byte offset per JSONL, prevent duplicate processing after restart"
+      }
+    },
+    {
+      "id": "module:src/ccbot/hook.py",
+      "type": "module",
+      "label": "hook.py",
+      "properties": {
+        "filePath": "src/ccbot/hook.py",
+        "summary": "Hook: receive hook stdin from Claude Code SessionStart, write session_map.json"
+      }
+    },
+    {
+      "id": "module:src/ccbot/screenshot.py",
+      "type": "module",
+      "label": "screenshot.py",
+      "properties": {
+        "filePath": "src/ccbot/screenshot.py",
+        "summary": "Terminal text→PNG rendering with ANSI color support and font fallback"
+      }
+    },
+    {
+      "id": "module:src/ccbot/transcribe.py",
+      "type": "module",
+      "label": "transcribe.py",
+      "properties": {
+        "filePath": "src/ccbot/transcribe.py",
+        "summary": "Voice-to-text transcription via OpenAI API (gpt-4o-transcribe)"
+      }
+    },
+    {
+      "id": "module:src/ccbot/main.py",
+      "type": "module",
+      "label": "main.py",
+      "properties": {
+        "filePath": "src/ccbot/main.py",
+        "summary": "CLI entry point"
+      }
+    },
+    {
+      "id": "module:src/ccbot/utils.py",
+      "type": "module",
+      "label": "utils.py",
+      "properties": {
+        "filePath": "src/ccbot/utils.py",
+        "summary": "Shared utilities: ccbot_dir, atomic_write_json"
+      }
+    },
+    {
+      "id": "module:src/ccbot/handlers/message_sender.py",
+      "type": "module",
+      "label": "message_sender.py handler",
+      "properties": {
+        "filePath": "src/ccbot/handlers/message_sender.py",
+        "summary": "safe_reply/safe_edit/safe_send helpers with rate_limit_send"
+      }
+    },
+    {
+      "id": "module:src/ccbot/handlers/message_queue.py",
+      "type": "module",
+      "label": "message_queue.py handler",
+      "properties": {
+        "filePath": "src/ccbot/handlers/message_queue.py",
+        "summary": "Per-user queue + worker with message merging and status dedup"
+      }
+    },
+    {
+      "id": "module:src/ccbot/handlers/status_polling.py",
+      "type": "module",
+      "label": "status_polling.py handler",
+      "properties": {
+        "filePath": "src/ccbot/handlers/status_polling.py",
+        "summary": "Background status line polling at 1-second interval"
+      }
+    },
+    {
+      "id": "module:src/ccbot/handlers/response_builder.py",
+      "type": "module",
+      "label": "response_builder.py handler",
+      "properties": {
+        "filePath": "src/ccbot/handlers/response_builder.py",
+        "summary": "Response pagination and formatting"
+      }
+    },
+    {
+      "id": "module:src/ccbot/handlers/interactive_ui.py",
+      "type": "module",
+      "label": "interactive_ui.py handler",
+      "properties": {
+        "filePath": "src/ccbot/handlers/interactive_ui.py",
+        "summary": "Interactive UI: AskUserQuestion, ExitPlanMode, Permission handling"
+      }
+    },
+    {
+      "id": "module:src/ccbot/handlers/directory_browser.py",
+      "type": "module",
+      "label": "directory_browser.py handler",
+      "properties": {
+        "filePath": "src/ccbot/handlers/directory_browser.py",
+        "summary": "Directory selection + session picker UI for new topic creation"
+      }
+    },
+    {
+      "id": "module:src/ccbot/handlers/cleanup.py",
+      "type": "module",
+      "label": "cleanup.py handler",
+      "properties": {
+        "filePath": "src/ccbot/handlers/cleanup.py",
+        "summary": "Topic state cleanup on close/delete"
+      }
+    },
+    {
+      "id": "module:src/ccbot/handlers/callback_data.py",
+      "type": "module",
+      "label": "callback_data.py handler",
+      "properties": {
+        "filePath": "src/ccbot/handlers/callback_data.py",
+        "summary": "Callback data constants"
+      }
+    },
+    {
+      "id": "state:state.json",
+      "type": "state_file",
+      "label": "state.json",
+      "properties": {
+        "filePath": "state.json",
+        "summary": "Persistent state: thread_bindings, window_states, display_names, read_offsets"
+      }
+    },
+    {
+      "id": "state:session_map.json",
+      "type": "state_file",
+      "label": "session_map.json",
+      "properties": {
+        "filePath": "session_map.json",
+        "summary": "Hook-generated window_id→session_id mapping (format: tmux_session:window_id)"
+      }
+    },
+    {
+      "id": "state:monitor_state.json",
+      "type": "state_file",
+      "label": "monitor_state.json",
+      "properties": {
+        "filePath": "monitor_state.json",
+        "summary": "Monitor poll progress: byte offset per JSONL file"
+      }
+    },
+    {
+      "id": "concept:topic-window-session",
+      "type": "concept",
+      "label": "1 Topic = 1 Window = 1 Session",
+      "properties": {
+        "summary": "Core mapping: each Telegram topic binds to one tmux window which hosts one Claude Code session"
+      }
+    },
+    {
+      "id": "concept:thread_bindings",
+      "type": "concept",
+      "label": "thread_bindings",
+      "properties": {
+        "summary": "user_id → {thread_id → window_id} mapping stored in memory + state.json for routing user messages to tmux windows"
+      }
+    },
+    {
+      "id": "concept:tool_use_tool_result_pairing",
+      "type": "concept",
+      "label": "Tool Use ↔ Tool Result Pairing",
+      "properties": {
+        "summary": "tool_use_id tracked across poll cycles; tool_result edits the original tool_use Telegram message in-place"
+      }
+    },
+    {
+      "id": "concept:message_queue_architecture",
+      "type": "concept",
+      "label": "Per-User Message Queue",
+      "properties": {
+        "summary": "FIFO queue per user with worker that merges consecutive content messages, breaks on tool_use/tool_result, and handles status dedup"
+      }
+    },
+    {
+      "id": "concept:rate_limiting",
+      "type": "concept",
+      "label": "Rate Limiting",
+      "properties": {
+        "summary": "AIORateLimiter(max_retries=5) on Application (30/s global), 429 handling with retry_after, pre-filled bucket on restart"
+      }
+    },
+    {
+      "id": "concept:startup_re_resolution",
+      "type": "concept",
+      "label": "Startup Re-Resolution",
+      "properties": {
+        "summary": "resolve_stale_ids() matches persisted display names against live windows to re-map window IDs after tmux server restart"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "document:.claude/rules/architecture.md",
+      "target": "document:.claude/rules/message-handling.md",
+      "relationship": "references",
+      "properties": {
+        "summary": "Architecture overview references message queue and handling patterns"
+      }
+    },
+    {
+      "source": "document:.claude/rules/architecture.md",
+      "target": "document:.claude/rules/topic-architecture.md",
+      "relationship": "references",
+      "properties": {
+        "summary": "Architecture overview references topic-only design"
+      }
+    },
+    {
+      "source": "document:.claude/rules/message-handling.md",
+      "target": "document:.claude/rules/architecture.md",
+      "relationship": "references",
+      "properties": {
+        "summary": "Message handling doc references bot architecture for context"
+      }
+    },
+    {
+      "source": "document:.claude/rules/topic-architecture.md",
+      "target": "document:.claude/rules/architecture.md",
+      "relationship": "references",
+      "properties": {
+        "summary": "Topic architecture doc references overall architecture"
+      }
+    },
+    {
+      "source": "document:.claude/rules/architecture.md",
+      "target": "module:src/ccbot/bot.py",
+      "relationship": "describes",
+      "properties": {
+        "summary": "Architecture doc describes bot.py as the main Telegram Bot module with topic routing, commands, and message forwarding"
+      }
+    },
+    {
+      "source": "document:.claude/rules/architecture.md",
+      "target": "module:src/ccbot/markdown_v2.py",
+      "relationship": "describes",
+      "properties": {
+        "summary": "Architecture doc describes markdown_v2.py for MD→MarkdownV2 conversion with expandable quotes"
+      }
+    },
+    {
+      "source": "document:.claude/rules/architecture.md",
+      "target": "module:src/ccbot/telegram_sender.py",
+      "relationship": "describes",
+      "properties": {
+        "summary": "Architecture doc describes telegram_sender.py for split_message and sending"
+      }
+    },
+    {
+      "source": "document:.claude/rules/architecture.md",
+      "target": "module:src/ccbot/terminal_parser.py",
+      "relationship": "describes",
+      "properties": {
+        "summary": "Architecture doc describes terminal_parser.py for UI detection and status line parsing"
+      }
+    },
+    {
+      "source": "document:.claude/rules/architecture.md",
+      "target": "module:src/ccbot/session_monitor.py",
+      "relationship": "describes",
+      "properties": {
+        "summary": "Architecture doc describes SessionMonitor: polls JSONL every 2s, detects mtime changes, tracks pending tools"
+      }
+    },
+    {
+      "source": "document:.claude/rules/architecture.md",
+      "target": "module:src/ccbot/tmux_manager.py",
+      "relationship": "describes",
+      "properties": {
+        "summary": "Architecture doc describes TmuxManager for window management and pane capture"
+      }
+    },
+    {
+      "source": "document:.claude/rules/architecture.md",
+      "target": "module:src/ccbot/transcript_parser.py",
+      "relationship": "describes",
+      "properties": {
+        "summary": "Architecture doc describes TranscriptParser for JSONL parsing and tool_use↔tool_result pairing"
+      }
+    },
+    {
+      "source": "document:.claude/rules/architecture.md",
+      "target": "module:src/ccbot/session.py",
+      "relationship": "describes",
+      "properties": {
+        "summary": "Architecture doc describes SessionManager for window↔session resolution, thread bindings, and message history"
+      }
+    },
+    {
+      "source": "document:.claude/rules/architecture.md",
+      "target": "module:src/ccbot/monitor_state.py",
+      "relationship": "describes",
+      "properties": {
+        "summary": "Architecture doc describes MonitorState for byte offset tracking and duplicate prevention"
+      }
+    },
+    {
+      "source": "document:.claude/rules/architecture.md",
+      "target": "module:src/ccbot/hook.py",
+      "relationship": "describes",
+      "properties": {
+        "summary": "Architecture doc describes Hook for receiving SessionStart hook and writing session_map.json"
+      }
+    },
+    {
+      "source": "document:.claude/rules/architecture.md",
+      "target": "module:src/ccbot/screenshot.py",
+      "relationship": "describes",
+      "properties": {
+        "summary": "Architecture doc lists screenshot.py for terminal→PNG rendering"
+      }
+    },
+    {
+      "source": "document:.claude/rules/architecture.md",
+      "target": "module:src/ccbot/transcribe.py",
+      "relationship": "describes",
+      "properties": {
+        "summary": "Architecture doc lists transcribe.py for voice-to-text via OpenAI"
+      }
+    },
+    {
+      "source": "document:.claude/rules/architecture.md",
+      "target": "module:src/ccbot/main.py",
+      "relationship": "describes",
+      "properties": {
+        "summary": "Architecture doc lists main.py as CLI entry point"
+      }
+    },
+    {
+      "source": "document:.claude/rules/architecture.md",
+      "target": "module:src/ccbot/utils.py",
+      "relationship": "describes",
+      "properties": {
+        "summary": "Architecture doc lists utils.py for shared utilities (ccbot_dir, atomic_write_json)"
+      }
+    },
+    {
+      "source": "document:.claude/rules/architecture.md",
+      "target": "module:src/ccbot/handlers/message_sender.py",
+      "relationship": "describes",
+      "properties": {
+        "summary": "Architecture doc lists message_sender.py handler for safe_reply/safe_edit/safe_send"
+      }
+    },
+    {
+      "source": "document:.claude/rules/architecture.md",
+      "target": "module:src/ccbot/handlers/message_queue.py",
+      "relationship": "describes",
+      "properties": {
+        "summary": "Architecture doc lists message_queue.py handler for per-user queue and worker"
+      }
+    },
+    {
+      "source": "document:.claude/rules/architecture.md",
+      "target": "module:src/ccbot/handlers/status_polling.py",
+      "relationship": "describes",
+      "properties": {
+        "summary": "Architecture doc lists status_polling.py handler for background status line polling"
+      }
+    },
+    {
+      "source": "document:.claude/rules/architecture.md",
+      "target": "module:src/ccbot/handlers/response_builder.py",
+      "relationship": "describes",
+      "properties": {
+        "summary": "Architecture doc lists response_builder.py handler for response pagination and formatting"
+      }
+    },
+    {
+      "source": "document:.claude/rules/architecture.md",
+      "target": "module:src/ccbot/handlers/interactive_ui.py",
+      "relationship": "describes",
+      "properties": {
+        "summary": "Architecture doc lists interactive_ui.py handler for AskUserQuestion/ExitPlanMode/Permission UI"
+      }
+    },
+    {
+      "source": "document:.claude/rules/architecture.md",
+      "target": "module:src/ccbot/handlers/directory_browser.py",
+      "relationship": "describes",
+      "properties": {
+        "summary": "Architecture doc lists directory_browser.py handler for directory selection and session picker"
+      }
+    },
+    {
+      "source": "document:.claude/rules/architecture.md",
+      "target": "module:src/ccbot/handlers/cleanup.py",
+      "relationship": "describes",
+      "properties": {
+        "summary": "Architecture doc lists cleanup.py handler for topic state cleanup"
+      }
+    },
+    {
+      "source": "document:.claude/rules/architecture.md",
+      "target": "module:src/ccbot/handlers/callback_data.py",
+      "relationship": "describes",
+      "properties": {
+        "summary": "Architecture doc lists callback_data.py handler for callback data constants"
+      }
+    },
+    {
+      "source": "document:.claude/rules/architecture.md",
+      "target": "state:state.json",
+      "relationship": "describes",
+      "properties": {
+        "summary": "Architecture doc describes state.json for thread bindings, window states, display names, read offsets"
+      }
+    },
+    {
+      "source": "document:.claude/rules/architecture.md",
+      "target": "state:session_map.json",
+      "relationship": "describes",
+      "properties": {
+        "summary": "Architecture doc describes session_map.json for hook-generated window_id→session mapping"
+      }
+    },
+    {
+      "source": "document:.claude/rules/architecture.md",
+      "target": "state:monitor_state.json",
+      "relationship": "describes",
+      "properties": {
+        "summary": "Architecture doc describes monitor_state.json for poll progress tracking"
+      }
+    },
+    {
+      "source": "document:.claude/rules/architecture.md",
+      "target": "concept:topic-window-session",
+      "relationship": "defines",
+      "properties": {
+        "summary": "Architecture doc establishes 1 topic = 1 window = 1 session as core design principle"
+      }
+    },
+    {
+      "source": "document:.claude/rules/architecture.md",
+      "target": "concept:tool_use_tool_result_pairing",
+      "relationship": "defines",
+      "properties": {
+        "summary": "Architecture doc defines tool_use_id tracking across poll cycles for in-place editing"
+      }
+    },
+    {
+      "source": "document:.claude/rules/architecture.md",
+      "target": "concept:startup_re_resolution",
+      "relationship": "defines",
+      "properties": {
+        "summary": "Architecture doc defines resolve_stale_ids() for window ID remapping after tmux restart"
+      }
+    },
+    {
+      "source": "document:.claude/rules/topic-architecture.md",
+      "target": "concept:topic-window-session",
+      "relationship": "defines",
+      "properties": {
+        "summary": "Topic architecture doc formalizes the 1 Topic = 1 Window = 1 Session mapping with two mapping layers"
+      }
+    },
+    {
+      "source": "document:.claude/rules/topic-architecture.md",
+      "target": "concept:thread_bindings",
+      "relationship": "defines",
+      "properties": {
+        "summary": "Topic architecture doc defines thread_bindings as user_id→{thread_id→window_id} mapping stored in state.json"
+      }
+    },
+    {
+      "source": "document:.claude/rules/topic-architecture.md",
+      "target": "module:src/ccbot/session.py",
+      "relationship": "references",
+      "properties": {
+        "summary": "Topic architecture doc references SessionManager which manages thread_bindings"
+      }
+    },
+    {
+      "source": "document:.claude/rules/topic-architecture.md",
+      "target": "state:session_map.json",
+      "relationship": "references",
+      "properties": {
+        "summary": "Topic architecture doc references session_map.json as key mapping from window_id to session_id"
+      }
+    },
+    {
+      "source": "document:.claude/rules/topic-architecture.md",
+      "target": "module:src/ccbot/session_monitor.py",
+      "relationship": "references",
+      "properties": {
+        "summary": "Topic architecture doc references SessionMonitor which uses session_map.json to decide which sessions to watch"
+      }
+    },
+    {
+      "source": "document:.claude/rules/topic-architecture.md",
+      "target": "module:src/ccbot/handlers/directory_browser.py",
+      "relationship": "references",
+      "properties": {
+        "summary": "Topic architecture doc references directory browser for new topic creation flow"
+      }
+    },
+    {
+      "source": "document:.claude/rules/topic-architecture.md",
+      "target": "module:src/ccbot/handlers/cleanup.py",
+      "relationship": "references",
+      "properties": {
+        "summary": "Topic architecture doc references cleanup for topic lifecycle management"
+      }
+    },
+    {
+      "source": "document:.claude/rules/message-handling.md",
+      "target": "concept:message_queue_architecture",
+      "relationship": "defines",
+      "properties": {
+        "summary": "Message handling doc defines per-user FIFO queue with content merging, tool_use/tool_result breaks"
+      }
+    },
+    {
+      "source": "document:.claude/rules/message-handling.md",
+      "target": "concept:rate_limiting",
+      "relationship": "defines",
+      "properties": {
+        "summary": "Message handling doc defines AIORateLimiter configuration and 429 handling"
+      }
+    },
+    {
+      "source": "document:.claude/rules/message-handling.md",
+      "target": "module:src/ccbot/handlers/message_queue.py",
+      "relationship": "references",
+      "properties": {
+        "summary": "Message handling doc describes the per-user queue implementation in message_queue.py"
+      }
+    },
+    {
+      "source": "document:.claude/rules/message-handling.md",
+      "target": "module:src/ccbot/handlers/status_polling.py",
+      "relationship": "references",
+      "properties": {
+        "summary": "Message handling doc references status_polling.py for background terminal status polling"
+      }
+    },
+    {
+      "source": "document:.claude/rules/message-handling.md",
+      "target": "module:src/ccbot/handlers/message_sender.py",
+      "relationship": "references",
+      "properties": {
+        "summary": "Message handling doc references safe_reply/safe_edit/safe_send for no-truncation send-layer split"
+      }
+    },
+    {
+      "source": "document:.claude/rules/message-handling.md",
+      "target": "module:src/ccbot/telegram_sender.py",
+      "relationship": "references",
+      "properties": {
+        "summary": "Message handling doc references split_message for 4096-char splitting at send layer"
+      }
+    },
+    {
+      "source": "concept:topic-window-session",
+      "target": "state:state.json",
+      "relationship": "persists_in",
+      "properties": {
+        "summary": "Topic→Window binding is persisted in state.json via thread_bindings"
+      }
+    },
+    {
+      "source": "concept:topic-window-session",
+      "target": "state:session_map.json",
+      "relationship": "persists_in",
+      "properties": {
+        "summary": "Window→Session mapping is persisted in session_map.json via hook"
+      }
+    },
+    {
+      "source": "concept:thread_bindings",
+      "target": "state:state.json",
+      "relationship": "persists_in",
+      "properties": {
+        "summary": "thread_bindings are stored in state.json and loaded into memory on startup"
+      }
+    },
+    {
+      "source": "concept:message_queue_architecture",
+      "target": "module:src/ccbot/handlers/message_queue.py",
+      "relationship": "implemented_by",
+      "properties": {
+        "summary": "Per-user queue + worker with merge logic is implemented in message_queue.py"
+      }
+    }
+  ]
+}

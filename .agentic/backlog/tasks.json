@@ -96,7 +96,7 @@
       "id": "REF-005",
       "title": "Encapsulate global mutable state",
       "priority": "high",
-      "status": "ready",
+      "status": "done",
       "categories": [
         "concurrency"
       ],
@@ -110,7 +110,8 @@
       "estimated_risk": "high",
       "acceptance_criteria": [
         "MessageQueueManager class added"
-      ]
+      ],
+      "status_updated_at": "2026-07-18T10:44:01.212763+00:00"
     },
     {
       "id": "REF-006",

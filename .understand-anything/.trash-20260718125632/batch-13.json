@@ -1,0 +1,3014 @@
+{
+  "nodes": [
+    {
+      "id": "file:scripts/agentic/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "scripts/agentic/__init__.py",
+      "summary": "scripts/agentic/__init__.py (python, 3 lines)",
+      "tags": [
+        "python",
+        "file",
+        "code"
+      ],
+      "complexity": "simple",
+      "languageNotes": "python"
+    },
+    {
+      "id": "file:scripts/agentic/analyze_graph.py",
+      "type": "file",
+      "name": "analyze_graph.py",
+      "filePath": "scripts/agentic/analyze_graph.py",
+      "summary": "scripts/agentic/analyze_graph.py (python, 262 lines)",
+      "tags": [
+        "python",
+        "file",
+        "code"
+      ],
+      "complexity": "complex",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/analyze_graph.py:_edge_type",
+      "type": "function",
+      "name": "_edge_type",
+      "filePath": "scripts/agentic/analyze_graph.py",
+      "summary": "Function _edge_type in scripts/agentic/analyze_graph.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/analyze_graph.py:_normalize_path",
+      "type": "function",
+      "name": "_normalize_path",
+      "filePath": "scripts/agentic/analyze_graph.py",
+      "summary": "Function _normalize_path in scripts/agentic/analyze_graph.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/analyze_graph.py:analyze_graph",
+      "type": "function",
+      "name": "analyze_graph",
+      "filePath": "scripts/agentic/analyze_graph.py",
+      "summary": "Function analyze_graph in scripts/agentic/analyze_graph.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/analyze_graph.py:_recommendations",
+      "type": "function",
+      "name": "_recommendations",
+      "filePath": "scripts/agentic/analyze_graph.py",
+      "summary": "Function _recommendations in scripts/agentic/analyze_graph.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/analyze_graph.py:render_markdown",
+      "type": "function",
+      "name": "render_markdown",
+      "filePath": "scripts/agentic/analyze_graph.py",
+      "summary": "Function render_markdown in scripts/agentic/analyze_graph.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/analyze_graph.py:run",
+      "type": "function",
+      "name": "run",
+      "filePath": "scripts/agentic/analyze_graph.py",
+      "summary": "Function run in scripts/agentic/analyze_graph.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "file:scripts/agentic/build_context_pack.py",
+      "type": "file",
+      "name": "build_context_pack.py",
+      "filePath": "scripts/agentic/build_context_pack.py",
+      "summary": "scripts/agentic/build_context_pack.py (python, 203 lines)",
+      "tags": [
+        "python",
+        "file",
+        "code"
+      ],
+      "complexity": "complex",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/build_context_pack.py:_edge_type",
+      "type": "function",
+      "name": "_edge_type",
+      "filePath": "scripts/agentic/build_context_pack.py",
+      "summary": "Function _edge_type in scripts/agentic/build_context_pack.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/build_context_pack.py:_node_path",
+      "type": "function",
+      "name": "_node_path",
+      "filePath": "scripts/agentic/build_context_pack.py",
+      "summary": "Function _node_path in scripts/agentic/build_context_pack.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/build_context_pack.py:_seed_ids",
+      "type": "function",
+      "name": "_seed_ids",
+      "filePath": "scripts/agentic/build_context_pack.py",
+      "summary": "Function _seed_ids in scripts/agentic/build_context_pack.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/build_context_pack.py:build_context_pack",
+      "type": "function",
+      "name": "build_context_pack",
+      "filePath": "scripts/agentic/build_context_pack.py",
+      "summary": "Function build_context_pack in scripts/agentic/build_context_pack.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/build_context_pack.py:run",
+      "type": "function",
+      "name": "run",
+      "filePath": "scripts/agentic/build_context_pack.py",
+      "summary": "Function run in scripts/agentic/build_context_pack.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "file:scripts/agentic/cli.py",
+      "type": "file",
+      "name": "cli.py",
+      "filePath": "scripts/agentic/cli.py",
+      "summary": "scripts/agentic/cli.py (python, 183 lines)",
+      "tags": [
+        "python",
+        "file",
+        "code"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/cli.py:cmd_analyze",
+      "type": "function",
+      "name": "cmd_analyze",
+      "filePath": "scripts/agentic/cli.py",
+      "summary": "Function cmd_analyze in scripts/agentic/cli.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/cli.py:cmd_plan",
+      "type": "function",
+      "name": "cmd_plan",
+      "filePath": "scripts/agentic/cli.py",
+      "summary": "Function cmd_plan in scripts/agentic/cli.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/cli.py:cmd_select",
+      "type": "function",
+      "name": "cmd_select",
+      "filePath": "scripts/agentic/cli.py",
+      "summary": "Function cmd_select in scripts/agentic/cli.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/cli.py:cmd_validate",
+      "type": "function",
+      "name": "cmd_validate",
+      "filePath": "scripts/agentic/cli.py",
+      "summary": "Function cmd_validate in scripts/agentic/cli.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/cli.py:cmd_sync",
+      "type": "function",
+      "name": "cmd_sync",
+      "filePath": "scripts/agentic/cli.py",
+      "summary": "Function cmd_sync in scripts/agentic/cli.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/cli.py:cmd_run",
+      "type": "function",
+      "name": "cmd_run",
+      "filePath": "scripts/agentic/cli.py",
+      "summary": "Function cmd_run in scripts/agentic/cli.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/cli.py:cmd_context",
+      "type": "function",
+      "name": "cmd_context",
+      "filePath": "scripts/agentic/cli.py",
+      "summary": "Function cmd_context in scripts/agentic/cli.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/cli.py:cmd_status",
+      "type": "function",
+      "name": "cmd_status",
+      "filePath": "scripts/agentic/cli.py",
+      "summary": "Function cmd_status in scripts/agentic/cli.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/cli.py:cmd_list",
+      "type": "function",
+      "name": "cmd_list",
+      "filePath": "scripts/agentic/cli.py",
+      "summary": "Function cmd_list in scripts/agentic/cli.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/cli.py:build_parser",
+      "type": "function",
+      "name": "build_parser",
+      "filePath": "scripts/agentic/cli.py",
+      "summary": "Function build_parser in scripts/agentic/cli.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/cli.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "scripts/agentic/cli.py",
+      "summary": "Function main in scripts/agentic/cli.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "file:scripts/agentic/mcp_server.py",
+      "type": "file",
+      "name": "mcp_server.py",
+      "filePath": "scripts/agentic/mcp_server.py",
+      "summary": "scripts/agentic/mcp_server.py (python, 499 lines)",
+      "tags": [
+        "python",
+        "file",
+        "code"
+      ],
+      "complexity": "complex",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/mcp_server.py:_root",
+      "type": "function",
+      "name": "_root",
+      "filePath": "scripts/agentic/mcp_server.py",
+      "summary": "Function _root in scripts/agentic/mcp_server.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/mcp_server.py:_ok_text",
+      "type": "function",
+      "name": "_ok_text",
+      "filePath": "scripts/agentic/mcp_server.py",
+      "summary": "Function _ok_text in scripts/agentic/mcp_server.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/mcp_server.py:_err_text",
+      "type": "function",
+      "name": "_err_text",
+      "filePath": "scripts/agentic/mcp_server.py",
+      "summary": "Function _err_text in scripts/agentic/mcp_server.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/mcp_server.py:tool_list_tasks",
+      "type": "function",
+      "name": "tool_list_tasks",
+      "filePath": "scripts/agentic/mcp_server.py",
+      "summary": "Function tool_list_tasks in scripts/agentic/mcp_server.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/mcp_server.py:tool_get_task",
+      "type": "function",
+      "name": "tool_get_task",
+      "filePath": "scripts/agentic/mcp_server.py",
+      "summary": "Function tool_get_task in scripts/agentic/mcp_server.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/mcp_server.py:tool_select_next_task",
+      "type": "function",
+      "name": "tool_select_next_task",
+      "filePath": "scripts/agentic/mcp_server.py",
+      "summary": "Function tool_select_next_task in scripts/agentic/mcp_server.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/mcp_server.py:tool_get_analysis",
+      "type": "function",
+      "name": "tool_get_analysis",
+      "filePath": "scripts/agentic/mcp_server.py",
+      "summary": "Function tool_get_analysis in scripts/agentic/mcp_server.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/mcp_server.py:tool_get_context_pack",
+      "type": "function",
+      "name": "tool_get_context_pack",
+      "filePath": "scripts/agentic/mcp_server.py",
+      "summary": "Function tool_get_context_pack in scripts/agentic/mcp_server.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/mcp_server.py:tool_get_implement_prompt",
+      "type": "function",
+      "name": "tool_get_implement_prompt",
+      "filePath": "scripts/agentic/mcp_server.py",
+      "summary": "Function tool_get_implement_prompt in scripts/agentic/mcp_server.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/mcp_server.py:tool_mark_task_status",
+      "type": "function",
+      "name": "tool_mark_task_status",
+      "filePath": "scripts/agentic/mcp_server.py",
+      "summary": "Function tool_mark_task_status in scripts/agentic/mcp_server.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/mcp_server.py:tool_run_validate",
+      "type": "function",
+      "name": "tool_run_validate",
+      "filePath": "scripts/agentic/mcp_server.py",
+      "summary": "Function tool_run_validate in scripts/agentic/mcp_server.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/mcp_server.py:tool_pipeline_status",
+      "type": "function",
+      "name": "tool_pipeline_status",
+      "filePath": "scripts/agentic/mcp_server.py",
+      "summary": "Function tool_pipeline_status in scripts/agentic/mcp_server.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/mcp_server.py:tool_run_analyze",
+      "type": "function",
+      "name": "tool_run_analyze",
+      "filePath": "scripts/agentic/mcp_server.py",
+      "summary": "Function tool_run_analyze in scripts/agentic/mcp_server.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/mcp_server.py:_tools_list_payload",
+      "type": "function",
+      "name": "_tools_list_payload",
+      "filePath": "scripts/agentic/mcp_server.py",
+      "summary": "Function _tools_list_payload in scripts/agentic/mcp_server.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/mcp_server.py:_handle_tools_call",
+      "type": "function",
+      "name": "_handle_tools_call",
+      "filePath": "scripts/agentic/mcp_server.py",
+      "summary": "Function _handle_tools_call in scripts/agentic/mcp_server.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/mcp_server.py:_dispatch",
+      "type": "function",
+      "name": "_dispatch",
+      "filePath": "scripts/agentic/mcp_server.py",
+      "summary": "Function _dispatch in scripts/agentic/mcp_server.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/mcp_server.py:_read_message",
+      "type": "function",
+      "name": "_read_message",
+      "filePath": "scripts/agentic/mcp_server.py",
+      "summary": "Function _read_message in scripts/agentic/mcp_server.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/mcp_server.py:_write_message",
+      "type": "function",
+      "name": "_write_message",
+      "filePath": "scripts/agentic/mcp_server.py",
+      "summary": "Function _write_message in scripts/agentic/mcp_server.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/mcp_server.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "scripts/agentic/mcp_server.py",
+      "summary": "Function main in scripts/agentic/mcp_server.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "file:scripts/agentic/mcp_smoke_test.py",
+      "type": "file",
+      "name": "mcp_smoke_test.py",
+      "filePath": "scripts/agentic/mcp_smoke_test.py",
+      "summary": "scripts/agentic/mcp_smoke_test.py (python, 154 lines)",
+      "tags": [
+        "python",
+        "file",
+        "code"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/mcp_smoke_test.py:_frame",
+      "type": "function",
+      "name": "_frame",
+      "filePath": "scripts/agentic/mcp_smoke_test.py",
+      "summary": "Function _frame in scripts/agentic/mcp_smoke_test.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/mcp_smoke_test.py:_read_one",
+      "type": "function",
+      "name": "_read_one",
+      "filePath": "scripts/agentic/mcp_smoke_test.py",
+      "summary": "Function _read_one in scripts/agentic/mcp_smoke_test.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/mcp_smoke_test.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "scripts/agentic/mcp_smoke_test.py",
+      "summary": "Function main in scripts/agentic/mcp_smoke_test.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "file:scripts/agentic/paths.py",
+      "type": "file",
+      "name": "paths.py",
+      "filePath": "scripts/agentic/paths.py",
+      "summary": "scripts/agentic/paths.py (python, 44 lines)",
+      "tags": [
+        "python",
+        "file",
+        "code"
+      ],
+      "complexity": "simple",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/paths.py:find_repo_root",
+      "type": "function",
+      "name": "find_repo_root",
+      "filePath": "scripts/agentic/paths.py",
+      "summary": "Function find_repo_root in scripts/agentic/paths.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/paths.py:load_json",
+      "type": "function",
+      "name": "load_json",
+      "filePath": "scripts/agentic/paths.py",
+      "summary": "Function load_json in scripts/agentic/paths.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/paths.py:write_json",
+      "type": "function",
+      "name": "write_json",
+      "filePath": "scripts/agentic/paths.py",
+      "summary": "Function write_json in scripts/agentic/paths.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/paths.py:write_text",
+      "type": "function",
+      "name": "write_text",
+      "filePath": "scripts/agentic/paths.py",
+      "summary": "Function write_text in scripts/agentic/paths.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/paths.py:load_config",
+      "type": "function",
+      "name": "load_config",
+      "filePath": "scripts/agentic/paths.py",
+      "summary": "Function load_config in scripts/agentic/paths.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/paths.py:out_dir",
+      "type": "function",
+      "name": "out_dir",
+      "filePath": "scripts/agentic/paths.py",
+      "summary": "Function out_dir in scripts/agentic/paths.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "file:scripts/agentic/prioritize.py",
+      "type": "file",
+      "name": "prioritize.py",
+      "filePath": "scripts/agentic/prioritize.py",
+      "summary": "scripts/agentic/prioritize.py (python, 240 lines)",
+      "tags": [
+        "python",
+        "file",
+        "code"
+      ],
+      "complexity": "complex",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/prioritize.py:_task_file_paths",
+      "type": "function",
+      "name": "_task_file_paths",
+      "filePath": "scripts/agentic/prioritize.py",
+      "summary": "Function _task_file_paths in scripts/agentic/prioritize.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/prioritize.py:_deps_satisfied",
+      "type": "function",
+      "name": "_deps_satisfied",
+      "filePath": "scripts/agentic/prioritize.py",
+      "summary": "Function _deps_satisfied in scripts/agentic/prioritize.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/prioritize.py:score_task",
+      "type": "function",
+      "name": "score_task",
+      "filePath": "scripts/agentic/prioritize.py",
+      "summary": "Function score_task in scripts/agentic/prioritize.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/prioritize.py:build_plan",
+      "type": "function",
+      "name": "build_plan",
+      "filePath": "scripts/agentic/prioritize.py",
+      "summary": "Function build_plan in scripts/agentic/prioritize.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/prioritize.py:render_plan_md",
+      "type": "function",
+      "name": "render_plan_md",
+      "filePath": "scripts/agentic/prioritize.py",
+      "summary": "Function render_plan_md in scripts/agentic/prioritize.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/prioritize.py:run",
+      "type": "function",
+      "name": "run",
+      "filePath": "scripts/agentic/prioritize.py",
+      "summary": "Function run in scripts/agentic/prioritize.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "file:scripts/agentic/render_prompt.py",
+      "type": "file",
+      "name": "render_prompt.py",
+      "filePath": "scripts/agentic/render_prompt.py",
+      "summary": "scripts/agentic/render_prompt.py (python, 93 lines)",
+      "tags": [
+        "python",
+        "file",
+        "code"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/render_prompt.py:_checklist",
+      "type": "function",
+      "name": "_checklist",
+      "filePath": "scripts/agentic/render_prompt.py",
+      "summary": "Function _checklist in scripts/agentic/render_prompt.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/render_prompt.py:render_implement_prompt",
+      "type": "function",
+      "name": "render_implement_prompt",
+      "filePath": "scripts/agentic/render_prompt.py",
+      "summary": "Function render_implement_prompt in scripts/agentic/render_prompt.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/render_prompt.py:render_pr_body",
+      "type": "function",
+      "name": "render_pr_body",
+      "filePath": "scripts/agentic/render_prompt.py",
+      "summary": "Function render_pr_body in scripts/agentic/render_prompt.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/render_prompt.py:run",
+      "type": "function",
+      "name": "run",
+      "filePath": "scripts/agentic/render_prompt.py",
+      "summary": "Function run in scripts/agentic/render_prompt.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "file:scripts/agentic/service.py",
+      "type": "file",
+      "name": "service.py",
+      "filePath": "scripts/agentic/service.py",
+      "summary": "scripts/agentic/service.py (python, 307 lines)",
+      "tags": [
+        "python",
+        "file",
+        "code"
+      ],
+      "complexity": "complex",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/service.py:repo_root",
+      "type": "function",
+      "name": "repo_root",
+      "filePath": "scripts/agentic/service.py",
+      "summary": "Function repo_root in scripts/agentic/service.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/service.py:list_tasks",
+      "type": "function",
+      "name": "list_tasks",
+      "filePath": "scripts/agentic/service.py",
+      "summary": "Function list_tasks in scripts/agentic/service.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/service.py:get_task",
+      "type": "function",
+      "name": "get_task",
+      "filePath": "scripts/agentic/service.py",
+      "summary": "Function get_task in scripts/agentic/service.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/service.py:select_next_task",
+      "type": "function",
+      "name": "select_next_task",
+      "filePath": "scripts/agentic/service.py",
+      "summary": "Function select_next_task in scripts/agentic/service.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/service.py:get_analysis",
+      "type": "function",
+      "name": "get_analysis",
+      "filePath": "scripts/agentic/service.py",
+      "summary": "Function get_analysis in scripts/agentic/service.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/service.py:get_context_pack",
+      "type": "function",
+      "name": "get_context_pack",
+      "filePath": "scripts/agentic/service.py",
+      "summary": "Function get_context_pack in scripts/agentic/service.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/service.py:get_implement_prompt",
+      "type": "function",
+      "name": "get_implement_prompt",
+      "filePath": "scripts/agentic/service.py",
+      "summary": "Function get_implement_prompt in scripts/agentic/service.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/service.py:mark_task_status",
+      "type": "function",
+      "name": "mark_task_status",
+      "filePath": "scripts/agentic/service.py",
+      "summary": "Function mark_task_status in scripts/agentic/service.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/service.py:validate",
+      "type": "function",
+      "name": "validate",
+      "filePath": "scripts/agentic/service.py",
+      "summary": "Function validate in scripts/agentic/service.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/service.py:pipeline_status",
+      "type": "function",
+      "name": "pipeline_status",
+      "filePath": "scripts/agentic/service.py",
+      "summary": "Function pipeline_status in scripts/agentic/service.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/service.py:dumps_result",
+      "type": "function",
+      "name": "dumps_result",
+      "filePath": "scripts/agentic/service.py",
+      "summary": "Function dumps_result in scripts/agentic/service.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "file:scripts/agentic/sync_issues.py",
+      "type": "file",
+      "name": "sync_issues.py",
+      "filePath": "scripts/agentic/sync_issues.py",
+      "summary": "scripts/agentic/sync_issues.py (python, 174 lines)",
+      "tags": [
+        "python",
+        "file",
+        "code"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/sync_issues.py:_gh",
+      "type": "function",
+      "name": "_gh",
+      "filePath": "scripts/agentic/sync_issues.py",
+      "summary": "Function _gh in scripts/agentic/sync_issues.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/sync_issues.py:_issue_body",
+      "type": "function",
+      "name": "_issue_body",
+      "filePath": "scripts/agentic/sync_issues.py",
+      "summary": "Function _issue_body in scripts/agentic/sync_issues.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/sync_issues.py:list_existing_task_issues",
+      "type": "function",
+      "name": "list_existing_task_issues",
+      "filePath": "scripts/agentic/sync_issues.py",
+      "summary": "Function list_existing_task_issues in scripts/agentic/sync_issues.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/sync_issues.py:sync",
+      "type": "function",
+      "name": "sync",
+      "filePath": "scripts/agentic/sync_issues.py",
+      "summary": "Function sync in scripts/agentic/sync_issues.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/sync_issues.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "scripts/agentic/sync_issues.py",
+      "summary": "Function main in scripts/agentic/sync_issues.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "file:scripts/agentic/update_backlog_status.py",
+      "type": "file",
+      "name": "update_backlog_status.py",
+      "filePath": "scripts/agentic/update_backlog_status.py",
+      "summary": "scripts/agentic/update_backlog_status.py (python, 49 lines)",
+      "tags": [
+        "python",
+        "file",
+        "code"
+      ],
+      "complexity": "simple",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/update_backlog_status.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "scripts/agentic/update_backlog_status.py",
+      "summary": "Function main in scripts/agentic/update_backlog_status.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "file:scripts/agentic/validate_changes.py",
+      "type": "file",
+      "name": "validate_changes.py",
+      "filePath": "scripts/agentic/validate_changes.py",
+      "summary": "scripts/agentic/validate_changes.py (python, 216 lines)",
+      "tags": [
+        "python",
+        "file",
+        "code"
+      ],
+      "complexity": "complex",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/validate_changes.py:_run",
+      "type": "function",
+      "name": "_run",
+      "filePath": "scripts/agentic/validate_changes.py",
+      "summary": "Function _run in scripts/agentic/validate_changes.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/validate_changes.py:_git_changed_files",
+      "type": "function",
+      "name": "_git_changed_files",
+      "filePath": "scripts/agentic/validate_changes.py",
+      "summary": "Function _git_changed_files in scripts/agentic/validate_changes.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/validate_changes.py:_match_any",
+      "type": "function",
+      "name": "_match_any",
+      "filePath": "scripts/agentic/validate_changes.py",
+      "summary": "Function _match_any in scripts/agentic/validate_changes.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/validate_changes.py:check_guardrails",
+      "type": "function",
+      "name": "check_guardrails",
+      "filePath": "scripts/agentic/validate_changes.py",
+      "summary": "Function check_guardrails in scripts/agentic/validate_changes.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/validate_changes.py:run",
+      "type": "function",
+      "name": "run",
+      "filePath": "scripts/agentic/validate_changes.py",
+      "summary": "Function run in scripts/agentic/validate_changes.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/validate_changes.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "scripts/agentic/validate_changes.py",
+      "summary": "Function main in scripts/agentic/validate_changes.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:scripts/agentic/validate_changes.py:json_dumps_summary",
+      "type": "function",
+      "name": "json_dumps_summary",
+      "filePath": "scripts/agentic/validate_changes.py",
+      "summary": "Function json_dumps_summary in scripts/agentic/validate_changes.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "file:src/ccbot/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "src/ccbot/__init__.py",
+      "summary": "src/ccbot/__init__.py (python, 7 lines)",
+      "tags": [
+        "python",
+        "file",
+        "code"
+      ],
+      "complexity": "simple",
+      "languageNotes": "python"
+    },
+    {
+      "id": "file:src/ccbot/bot.py",
+      "type": "file",
+      "name": "bot.py",
+      "filePath": "src/ccbot/bot.py",
+      "summary": "src/ccbot/bot.py (python, 219 lines)",
+      "tags": [
+        "python",
+        "file",
+        "code"
+      ],
+      "complexity": "complex",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:src/ccbot/bot.py:post_init",
+      "type": "function",
+      "name": "post_init",
+      "filePath": "src/ccbot/bot.py",
+      "summary": "Function post_init in src/ccbot/bot.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:src/ccbot/bot.py:post_shutdown",
+      "type": "function",
+      "name": "post_shutdown",
+      "filePath": "src/ccbot/bot.py",
+      "summary": "Function post_shutdown in src/ccbot/bot.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:src/ccbot/bot.py:create_bot",
+      "type": "function",
+      "name": "create_bot",
+      "filePath": "src/ccbot/bot.py",
+      "summary": "Function create_bot in src/ccbot/bot.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "file:src/ccbot/config.py",
+      "type": "file",
+      "name": "config.py",
+      "filePath": "src/ccbot/config.py",
+      "summary": "src/ccbot/config.py (python, 130 lines)",
+      "tags": [
+        "python",
+        "file",
+        "code"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "class:src/ccbot/config.py:Config",
+      "type": "class",
+      "name": "Config",
+      "filePath": "src/ccbot/config.py",
+      "summary": "Class Config in src/ccbot/config.py",
+      "tags": [
+        "class",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:src/ccbot/config.py:__init__",
+      "type": "function",
+      "name": "__init__",
+      "filePath": "src/ccbot/config.py",
+      "summary": "Method __init__ in Config",
+      "tags": [
+        "method",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:src/ccbot/config.py:is_user_allowed",
+      "type": "function",
+      "name": "is_user_allowed",
+      "filePath": "src/ccbot/config.py",
+      "summary": "Method is_user_allowed in Config",
+      "tags": [
+        "method",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "file:src/ccbot/handlers/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "src/ccbot/handlers/__init__.py",
+      "summary": "src/ccbot/handlers/__init__.py (python, 20 lines)",
+      "tags": [
+        "python",
+        "file",
+        "code"
+      ],
+      "complexity": "simple",
+      "languageNotes": "python"
+    },
+    {
+      "id": "file:.understand-anything/tmp/convert-structure-to-graph.py",
+      "type": "file",
+      "name": "convert-structure-to-graph.py",
+      "filePath": ".understand-anything/tmp/convert-structure-to-graph.py",
+      "summary": ".understand-anything/tmp/convert-structure-to-graph.py (python, 194 lines)",
+      "tags": [
+        "python",
+        "file",
+        "code"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:.understand-anything/tmp/convert-structure-to-graph.py:convert_file",
+      "type": "function",
+      "name": "convert_file",
+      "filePath": ".understand-anything/tmp/convert-structure-to-graph.py",
+      "summary": "Function convert_file in .understand-anything/tmp/convert-structure-to-graph.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    },
+    {
+      "id": "function:.understand-anything/tmp/convert-structure-to-graph.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": ".understand-anything/tmp/convert-structure-to-graph.py",
+      "summary": "Function main in .understand-anything/tmp/convert-structure-to-graph.py",
+      "tags": [
+        "function",
+        "python"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "python"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:scripts/agentic/analyze_graph.py",
+      "target": "stdlib:collections",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/analyze_graph.py",
+      "target": "stdlib:datetime",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/analyze_graph.py",
+      "target": "stdlib:pathlib",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/analyze_graph.py",
+      "target": "stdlib:typing",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/analyze_graph.py",
+      "target": "file:scripts/agentic/paths.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/analyze_graph.py",
+      "target": "function:scripts/agentic/analyze_graph.py:_edge_type",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/analyze_graph.py",
+      "target": "function:scripts/agentic/analyze_graph.py:_normalize_path",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/analyze_graph.py",
+      "target": "function:scripts/agentic/analyze_graph.py:analyze_graph",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/analyze_graph.py",
+      "target": "function:scripts/agentic/analyze_graph.py:_recommendations",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/analyze_graph.py",
+      "target": "function:scripts/agentic/analyze_graph.py:render_markdown",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/analyze_graph.py",
+      "target": "function:scripts/agentic/analyze_graph.py:run",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "function:scripts/agentic/analyze_graph.py:analyze_graph",
+      "target": "function:scripts/agentic/analyze_graph.py:_edge_type",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/analyze_graph.py:analyze_graph",
+      "target": "function:scripts/agentic/analyze_graph.py:_normalize_path",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/analyze_graph.py:analyze_graph",
+      "target": "function:scripts/agentic/analyze_graph.py:_recommendations",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/analyze_graph.py:run",
+      "target": "function:scripts/agentic/analyze_graph.py:analyze_graph",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/analyze_graph.py:run",
+      "target": "function:scripts/agentic/analyze_graph.py:render_markdown",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/agentic/build_context_pack.py",
+      "target": "stdlib:pathlib",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/build_context_pack.py",
+      "target": "stdlib:typing",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/build_context_pack.py",
+      "target": "file:scripts/agentic/paths.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/build_context_pack.py",
+      "target": "function:scripts/agentic/build_context_pack.py:_edge_type",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/build_context_pack.py",
+      "target": "function:scripts/agentic/build_context_pack.py:_node_path",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/build_context_pack.py",
+      "target": "function:scripts/agentic/build_context_pack.py:_seed_ids",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/build_context_pack.py",
+      "target": "function:scripts/agentic/build_context_pack.py:build_context_pack",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/build_context_pack.py",
+      "target": "function:scripts/agentic/build_context_pack.py:run",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "function:scripts/agentic/build_context_pack.py:build_context_pack",
+      "target": "function:scripts/agentic/build_context_pack.py:_edge_type",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/build_context_pack.py:build_context_pack",
+      "target": "function:scripts/agentic/build_context_pack.py:_node_path",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/build_context_pack.py:build_context_pack",
+      "target": "function:scripts/agentic/build_context_pack.py:_seed_ids",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/build_context_pack.py:run",
+      "target": "function:scripts/agentic/build_context_pack.py:build_context_pack",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/agentic/cli.py",
+      "target": "stdlib:argparse",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/cli.py",
+      "target": "stdlib:json",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/cli.py",
+      "target": "stdlib:sys",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/cli.py",
+      "target": "stdlib:pathlib",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/cli.py",
+      "target": "file:scripts/agentic/analyze_graph.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/cli.py",
+      "target": "file:scripts/agentic/build_context_pack.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/cli.py",
+      "target": "file:scripts/agentic/paths.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/cli.py",
+      "target": "file:scripts/agentic/prioritize.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/cli.py",
+      "target": "file:scripts/agentic/render_prompt.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/cli.py",
+      "target": "file:scripts/agentic/service.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/cli.py",
+      "target": "file:scripts/agentic/sync_issues.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/cli.py",
+      "target": "file:scripts/agentic/validate_changes.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/cli.py",
+      "target": "function:scripts/agentic/cli.py:cmd_analyze",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/cli.py",
+      "target": "function:scripts/agentic/cli.py:cmd_plan",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/cli.py",
+      "target": "function:scripts/agentic/cli.py:cmd_select",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/cli.py",
+      "target": "function:scripts/agentic/cli.py:cmd_validate",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/cli.py",
+      "target": "function:scripts/agentic/cli.py:cmd_sync",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/cli.py",
+      "target": "function:scripts/agentic/cli.py:cmd_run",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/cli.py",
+      "target": "function:scripts/agentic/cli.py:cmd_context",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/cli.py",
+      "target": "function:scripts/agentic/cli.py:cmd_status",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/cli.py",
+      "target": "function:scripts/agentic/cli.py:cmd_list",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/cli.py",
+      "target": "function:scripts/agentic/cli.py:build_parser",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/cli.py",
+      "target": "function:scripts/agentic/cli.py:main",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "function:scripts/agentic/cli.py:main",
+      "target": "function:scripts/agentic/cli.py:build_parser",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/cli.py:main",
+      "target": "function:scripts/agentic/cli.py:cmd_analyze",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/cli.py:main",
+      "target": "function:scripts/agentic/cli.py:cmd_plan",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/cli.py:main",
+      "target": "function:scripts/agentic/cli.py:cmd_select",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/cli.py:main",
+      "target": "function:scripts/agentic/cli.py:cmd_validate",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/cli.py:main",
+      "target": "function:scripts/agentic/cli.py:cmd_sync",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/cli.py:main",
+      "target": "function:scripts/agentic/cli.py:cmd_run",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/cli.py:main",
+      "target": "function:scripts/agentic/cli.py:cmd_context",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/cli.py:main",
+      "target": "function:scripts/agentic/cli.py:cmd_status",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/cli.py:main",
+      "target": "function:scripts/agentic/cli.py:cmd_list",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/cli.py:cmd_select",
+      "target": "function:scripts/agentic/cli.py:cmd_plan",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/agentic/mcp_server.py",
+      "target": "stdlib:json",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/mcp_server.py",
+      "target": "stdlib:os",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/mcp_server.py",
+      "target": "stdlib:sys",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/mcp_server.py",
+      "target": "stdlib:traceback",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/mcp_server.py",
+      "target": "stdlib:pathlib",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/mcp_server.py",
+      "target": "stdlib:typing",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/mcp_server.py",
+      "target": "file:scripts/agentic/paths.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/mcp_server.py",
+      "target": "file:scripts/agentic/service.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/mcp_server.py",
+      "target": "file:scripts/agentic/analyze_graph.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/mcp_server.py",
+      "target": "function:scripts/agentic/mcp_server.py:_root",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/mcp_server.py",
+      "target": "function:scripts/agentic/mcp_server.py:_ok_text",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/mcp_server.py",
+      "target": "function:scripts/agentic/mcp_server.py:_err_text",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/mcp_server.py",
+      "target": "function:scripts/agentic/mcp_server.py:tool_list_tasks",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/mcp_server.py",
+      "target": "function:scripts/agentic/mcp_server.py:tool_get_task",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/mcp_server.py",
+      "target": "function:scripts/agentic/mcp_server.py:tool_select_next_task",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/mcp_server.py",
+      "target": "function:scripts/agentic/mcp_server.py:tool_get_analysis",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/mcp_server.py",
+      "target": "function:scripts/agentic/mcp_server.py:tool_get_context_pack",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/mcp_server.py",
+      "target": "function:scripts/agentic/mcp_server.py:tool_get_implement_prompt",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/mcp_server.py",
+      "target": "function:scripts/agentic/mcp_server.py:tool_mark_task_status",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/mcp_server.py",
+      "target": "function:scripts/agentic/mcp_server.py:tool_run_validate",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/mcp_server.py",
+      "target": "function:scripts/agentic/mcp_server.py:tool_pipeline_status",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/mcp_server.py",
+      "target": "function:scripts/agentic/mcp_server.py:tool_run_analyze",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/mcp_server.py",
+      "target": "function:scripts/agentic/mcp_server.py:_tools_list_payload",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/mcp_server.py",
+      "target": "function:scripts/agentic/mcp_server.py:_handle_tools_call",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/mcp_server.py",
+      "target": "function:scripts/agentic/mcp_server.py:_dispatch",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/mcp_server.py",
+      "target": "function:scripts/agentic/mcp_server.py:_read_message",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/mcp_server.py",
+      "target": "function:scripts/agentic/mcp_server.py:_write_message",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/mcp_server.py",
+      "target": "function:scripts/agentic/mcp_server.py:main",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "function:scripts/agentic/mcp_server.py:tool_run_analyze",
+      "target": "function:scripts/agentic/analyze_graph.py:analyze_graph",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/mcp_server.py:_dispatch",
+      "target": "function:scripts/agentic/mcp_server.py:_tools_list_payload",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/mcp_server.py:_dispatch",
+      "target": "function:scripts/agentic/mcp_server.py:_handle_tools_call",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/mcp_server.py:_handle_tools_call",
+      "target": "function:scripts/agentic/mcp_server.py:tool_list_tasks",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/mcp_server.py:_handle_tools_call",
+      "target": "function:scripts/agentic/mcp_server.py:tool_get_task",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/mcp_server.py:_handle_tools_call",
+      "target": "function:scripts/agentic/mcp_server.py:tool_select_next_task",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/mcp_server.py:_handle_tools_call",
+      "target": "function:scripts/agentic/mcp_server.py:tool_get_analysis",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/mcp_server.py:_handle_tools_call",
+      "target": "function:scripts/agentic/mcp_server.py:tool_get_context_pack",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/mcp_server.py:_handle_tools_call",
+      "target": "function:scripts/agentic/mcp_server.py:tool_get_implement_prompt",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/mcp_server.py:_handle_tools_call",
+      "target": "function:scripts/agentic/mcp_server.py:tool_mark_task_status",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/mcp_server.py:_handle_tools_call",
+      "target": "function:scripts/agentic/mcp_server.py:tool_run_validate",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/mcp_server.py:_handle_tools_call",
+      "target": "function:scripts/agentic/mcp_server.py:tool_pipeline_status",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/mcp_server.py:_handle_tools_call",
+      "target": "function:scripts/agentic/mcp_server.py:tool_run_analyze",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/mcp_server.py:main",
+      "target": "function:scripts/agentic/mcp_server.py:_root",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/mcp_server.py:main",
+      "target": "function:scripts/agentic/mcp_server.py:_read_message",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/mcp_server.py:main",
+      "target": "function:scripts/agentic/mcp_server.py:_dispatch",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/mcp_server.py:main",
+      "target": "function:scripts/agentic/mcp_server.py:_write_message",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/agentic/mcp_smoke_test.py",
+      "target": "stdlib:json",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/mcp_smoke_test.py",
+      "target": "stdlib:os",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/mcp_smoke_test.py",
+      "target": "stdlib:subprocess",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/mcp_smoke_test.py",
+      "target": "stdlib:sys",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/mcp_smoke_test.py",
+      "target": "stdlib:pathlib",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/mcp_smoke_test.py",
+      "target": "function:scripts/agentic/mcp_smoke_test.py:_frame",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/mcp_smoke_test.py",
+      "target": "function:scripts/agentic/mcp_smoke_test.py:_read_one",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/mcp_smoke_test.py",
+      "target": "function:scripts/agentic/mcp_smoke_test.py:main",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "function:scripts/agentic/mcp_smoke_test.py:main",
+      "target": "function:scripts/agentic/mcp_smoke_test.py:_frame",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/mcp_smoke_test.py:main",
+      "target": "function:scripts/agentic/mcp_smoke_test.py:_read_one",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/agentic/paths.py",
+      "target": "stdlib:json",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/paths.py",
+      "target": "stdlib:pathlib",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/paths.py",
+      "target": "stdlib:typing",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/paths.py",
+      "target": "function:scripts/agentic/paths.py:find_repo_root",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/paths.py",
+      "target": "function:scripts/agentic/paths.py:load_json",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/paths.py",
+      "target": "function:scripts/agentic/paths.py:write_json",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/paths.py",
+      "target": "function:scripts/agentic/paths.py:write_text",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/paths.py",
+      "target": "function:scripts/agentic/paths.py:load_config",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/paths.py",
+      "target": "function:scripts/agentic/paths.py:out_dir",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "function:scripts/agentic/paths.py:load_config",
+      "target": "function:scripts/agentic/paths.py:load_json",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/paths.py:load_config",
+      "target": "function:scripts/agentic/paths.py:find_repo_root",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/paths.py:out_dir",
+      "target": "function:scripts/agentic/paths.py:find_repo_root",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/paths.py:write_json",
+      "target": "function:scripts/agentic/paths.py:load_json",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/agentic/prioritize.py",
+      "target": "stdlib:datetime",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/prioritize.py",
+      "target": "stdlib:pathlib",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/prioritize.py",
+      "target": "stdlib:typing",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/prioritize.py",
+      "target": "file:scripts/agentic/paths.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/prioritize.py",
+      "target": "function:scripts/agentic/prioritize.py:_task_file_paths",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/prioritize.py",
+      "target": "function:scripts/agentic/prioritize.py:_deps_satisfied",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/prioritize.py",
+      "target": "function:scripts/agentic/prioritize.py:score_task",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/prioritize.py",
+      "target": "function:scripts/agentic/prioritize.py:build_plan",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/prioritize.py",
+      "target": "function:scripts/agentic/prioritize.py:render_plan_md",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/prioritize.py",
+      "target": "function:scripts/agentic/prioritize.py:run",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "function:scripts/agentic/prioritize.py:score_task",
+      "target": "function:scripts/agentic/prioritize.py:_task_file_paths",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/prioritize.py:score_task",
+      "target": "function:scripts/agentic/prioritize.py:_deps_satisfied",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/prioritize.py:build_plan",
+      "target": "function:scripts/agentic/prioritize.py:score_task",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/prioritize.py:run",
+      "target": "function:scripts/agentic/prioritize.py:build_plan",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/prioritize.py:run",
+      "target": "function:scripts/agentic/prioritize.py:render_plan_md",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/prioritize.py:run",
+      "target": "function:scripts/agentic/prioritize.py:score_task",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/agentic/render_prompt.py",
+      "target": "stdlib:json",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/render_prompt.py",
+      "target": "stdlib:pathlib",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/render_prompt.py",
+      "target": "stdlib:typing",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/render_prompt.py",
+      "target": "file:scripts/agentic/paths.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/render_prompt.py",
+      "target": "function:scripts/agentic/render_prompt.py:_checklist",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/render_prompt.py",
+      "target": "function:scripts/agentic/render_prompt.py:render_implement_prompt",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/render_prompt.py",
+      "target": "function:scripts/agentic/render_prompt.py:render_pr_body",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/render_prompt.py",
+      "target": "function:scripts/agentic/render_prompt.py:run",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "function:scripts/agentic/render_prompt.py:run",
+      "target": "function:scripts/agentic/render_prompt.py:_checklist",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/render_prompt.py:run",
+      "target": "function:scripts/agentic/render_prompt.py:render_implement_prompt",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/render_prompt.py:run",
+      "target": "function:scripts/agentic/render_prompt.py:render_pr_body",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/agentic/service.py",
+      "target": "stdlib:json",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/service.py",
+      "target": "stdlib:datetime",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/service.py",
+      "target": "stdlib:pathlib",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/service.py",
+      "target": "stdlib:typing",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/service.py",
+      "target": "file:scripts/agentic/analyze_graph.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/service.py",
+      "target": "file:scripts/agentic/build_context_pack.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/service.py",
+      "target": "file:scripts/agentic/paths.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/service.py",
+      "target": "file:scripts/agentic/prioritize.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/service.py",
+      "target": "file:scripts/agentic/render_prompt.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/service.py",
+      "target": "file:scripts/agentic/validate_changes.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/service.py",
+      "target": "function:scripts/agentic/service.py:repo_root",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/service.py",
+      "target": "function:scripts/agentic/service.py:list_tasks",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/service.py",
+      "target": "function:scripts/agentic/service.py:get_task",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/service.py",
+      "target": "function:scripts/agentic/service.py:select_next_task",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/service.py",
+      "target": "function:scripts/agentic/service.py:get_analysis",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/service.py",
+      "target": "function:scripts/agentic/service.py:get_context_pack",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/service.py",
+      "target": "function:scripts/agentic/service.py:get_implement_prompt",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/service.py",
+      "target": "function:scripts/agentic/service.py:mark_task_status",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/service.py",
+      "target": "function:scripts/agentic/service.py:validate",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/service.py",
+      "target": "function:scripts/agentic/service.py:pipeline_status",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/service.py",
+      "target": "function:scripts/agentic/service.py:dumps_result",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "function:scripts/agentic/service.py:list_tasks",
+      "target": "function:scripts/agentic/service.py:repo_root",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/service.py:get_task",
+      "target": "function:scripts/agentic/service.py:repo_root",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/service.py:select_next_task",
+      "target": "function:scripts/agentic/service.py:repo_root",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/service.py:get_analysis",
+      "target": "function:scripts/agentic/service.py:repo_root",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/service.py:get_context_pack",
+      "target": "function:scripts/agentic/service.py:repo_root",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/service.py:get_implement_prompt",
+      "target": "function:scripts/agentic/service.py:repo_root",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/service.py:mark_task_status",
+      "target": "function:scripts/agentic/service.py:repo_root",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/service.py:validate",
+      "target": "function:scripts/agentic/service.py:repo_root",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/service.py:pipeline_status",
+      "target": "function:scripts/agentic/service.py:repo_root",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/agentic/sync_issues.py",
+      "target": "stdlib:json",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/sync_issues.py",
+      "target": "stdlib:subprocess",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/sync_issues.py",
+      "target": "stdlib:sys",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/sync_issues.py",
+      "target": "stdlib:pathlib",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/sync_issues.py",
+      "target": "stdlib:typing",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/sync_issues.py",
+      "target": "file:scripts/agentic/paths.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/sync_issues.py",
+      "target": "function:scripts/agentic/sync_issues.py:_gh",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/sync_issues.py",
+      "target": "function:scripts/agentic/sync_issues.py:_issue_body",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/sync_issues.py",
+      "target": "function:scripts/agentic/sync_issues.py:list_existing_task_issues",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/sync_issues.py",
+      "target": "function:scripts/agentic/sync_issues.py:sync",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/sync_issues.py",
+      "target": "function:scripts/agentic/sync_issues.py:main",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "function:scripts/agentic/sync_issues.py:list_existing_task_issues",
+      "target": "function:scripts/agentic/sync_issues.py:_gh",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/sync_issues.py:sync",
+      "target": "function:scripts/agentic/sync_issues.py:_gh",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/sync_issues.py:sync",
+      "target": "function:scripts/agentic/sync_issues.py:_issue_body",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/sync_issues.py:sync",
+      "target": "function:scripts/agentic/sync_issues.py:list_existing_task_issues",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/agentic/update_backlog_status.py",
+      "target": "stdlib:argparse",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/update_backlog_status.py",
+      "target": "stdlib:sys",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/update_backlog_status.py",
+      "target": "stdlib:datetime",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/update_backlog_status.py",
+      "target": "stdlib:pathlib",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/update_backlog_status.py",
+      "target": "file:scripts/agentic/paths.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/update_backlog_status.py",
+      "target": "function:scripts/agentic/update_backlog_status.py:main",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/validate_changes.py",
+      "target": "stdlib:fnmatch",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/validate_changes.py",
+      "target": "stdlib:os",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/validate_changes.py",
+      "target": "stdlib:subprocess",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/validate_changes.py",
+      "target": "stdlib:sys",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/validate_changes.py",
+      "target": "stdlib:datetime",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/validate_changes.py",
+      "target": "stdlib:pathlib",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/validate_changes.py",
+      "target": "stdlib:typing",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/validate_changes.py",
+      "target": "file:scripts/agentic/paths.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/agentic/validate_changes.py",
+      "target": "function:scripts/agentic/validate_changes.py:_run",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/validate_changes.py",
+      "target": "function:scripts/agentic/validate_changes.py:_git_changed_files",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/validate_changes.py",
+      "target": "function:scripts/agentic/validate_changes.py:_match_any",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/validate_changes.py",
+      "target": "function:scripts/agentic/validate_changes.py:check_guardrails",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/validate_changes.py",
+      "target": "function:scripts/agentic/validate_changes.py:run",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/validate_changes.py",
+      "target": "function:scripts/agentic/validate_changes.py:main",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/agentic/validate_changes.py",
+      "target": "function:scripts/agentic/validate_changes.py:json_dumps_summary",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "function:scripts/agentic/validate_changes.py:check_guardrails",
+      "target": "function:scripts/agentic/validate_changes.py:_match_any",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/validate_changes.py:run",
+      "target": "function:scripts/agentic/validate_changes.py:_git_changed_files",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/validate_changes.py:run",
+      "target": "function:scripts/agentic/validate_changes.py:check_guardrails",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/agentic/validate_changes.py:run",
+      "target": "function:scripts/agentic/validate_changes.py:_run",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "stdlib:asyncio",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "stdlib:logging",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "stdlib:telegram",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "file:src/ccbot/config.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "file:src/ccbot/handlers/__init__.py",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "package:ccbot.handlers.auth",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "package:ccbot.handlers.callback_router",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "package:ccbot.handlers.command_handlers",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "package:ccbot.handlers.message_handlers",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "package:ccbot.handlers.message_queue",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "package:ccbot.handlers.notifications",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "package:ccbot.handlers.status_polling",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "package:ccbot.session",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "package:ccbot.session_monitor",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "package:ccbot.transcribe",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "function:src/ccbot/bot.py:post_init",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "function:src/ccbot/bot.py:post_shutdown",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/bot.py",
+      "target": "function:src/ccbot/bot.py:create_bot",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/ccbot/config.py",
+      "target": "stdlib:logging",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/ccbot/config.py",
+      "target": "stdlib:os",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/ccbot/config.py",
+      "target": "stdlib:pathlib",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/ccbot/config.py",
+      "target": "stdlib:dotenv",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/ccbot/config.py",
+      "target": "package:ccbot.utils",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/ccbot/config.py",
+      "target": "class:src/ccbot/config.py:Config",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/ccbot/config.py:Config",
+      "target": "function:src/ccbot/config.py:__init__",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/ccbot/config.py:Config",
+      "target": "function:src/ccbot/config.py:is_user_allowed",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:.understand-anything/tmp/convert-structure-to-graph.py",
+      "target": "stdlib:json",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:.understand-anything/tmp/convert-structure-to-graph.py",
+      "target": "stdlib:sys",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:.understand-anything/tmp/convert-structure-to-graph.py",
+      "target": "stdlib:os",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:.understand-anything/tmp/convert-structure-to-graph.py",
+      "target": "stdlib:pathlib",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:.understand-anything/tmp/convert-structure-to-graph.py",
+      "target": "function:.understand-anything/tmp/convert-structure-to-graph.py:convert_file",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:.understand-anything/tmp/convert-structure-to-graph.py",
+      "target": "function:.understand-anything/tmp/convert-structure-to-graph.py:main",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "function:.understand-anything/tmp/convert-structure-to-graph.py:main",
+      "target": "function:.understand-anything/tmp/convert-structure-to-graph.py:convert_file",
+      "type": "calls",
+      "weight": 0.8
+    }
+  ]
+}

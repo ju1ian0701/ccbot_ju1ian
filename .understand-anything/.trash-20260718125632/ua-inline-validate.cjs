@@ -23,7 +23,7 @@ try {
     if (!nodeIds.has(e.source)) issues.push(`Edge[${i}] source '${e.source}' not found`);
     if (!nodeIds.has(e.target)) issues.push(`Edge[${i}] target '${e.target}' not found`);
   });
-  const fileLevelTypes = new Set(['file', 'config', 'document', 'service', 'pipeline', 'table', 'schema', 'resource', 'endpoint']);
+  const fileLevelTypes = new Set(['file','config','document','service','pipeline','table','schema','resource','endpoint']);
   const fileNodes = graph.nodes.filter(n => fileLevelTypes.has(n.type)).map(n => n.id);
   const assigned = new Map();
   if (!Array.isArray(graph.layers)) { if (graph.layers) warnings.push('graph.layers is not an array'); graph.layers = []; }
@@ -35,29 +35,15 @@ try {
       assigned.set(id, layer.id);
     });
   });
-  fileNodes.forEach(id => {
-    if (!assigned.has(id)) issues.push(`File node '${id}' not in any layer`);
-  });
+  fileNodes.forEach(id => { if (!assigned.has(id)) issues.push(`File node '${id}' not in any layer`); });
   graph.tour.forEach((step, i) => {
-    (step.nodeIds || []).forEach(id => {
-      if (!nodeIds.has(id)) issues.push(`Tour step[${i}] refs missing node '${id}'`);
-    });
+    (step.nodeIds || []).forEach(id => { if (!nodeIds.has(id)) issues.push(`Tour step[${i}] refs missing node '${id}'`); });
   });
-  const withEdges = new Set([
-    ...graph.edges.map(e => e.source),
-    ...graph.edges.map(e => e.target)
-  ]);
-  graph.nodes.forEach(n => {
-    if (!withEdges.has(n.id)) warnings.push(`Node '${n.id}' has no edges (orphan)`);
-  });
-  const stats = {
-    totalNodes: graph.nodes.length,
-    totalEdges: graph.edges.length,
-    totalLayers: graph.layers.length,
-    tourSteps: graph.tour.length,
+  const withEdges = new Set([...graph.edges.map(e => e.source), ...graph.edges.map(e => e.target)]);
+  graph.nodes.forEach(n => { if (!withEdges.has(n.id)) warnings.push(`Node '${n.id}' has no edges (orphan)`); });
+  const stats = { totalNodes: graph.nodes.length, totalEdges: graph.edges.length, totalLayers: graph.layers.length, tourSteps: graph.tour.length,
     nodeTypes: graph.nodes.reduce((a, n) => { a[n.type] = (a[n.type]||0)+1; return a; }, {}),
-    edgeTypes: graph.edges.reduce((a, e) => { a[e.type] = (a[e.type]||0)+1; return a; }, {})
-  };
+    edgeTypes: graph.edges.reduce((a, e) => { a[e.type] = (a[e.type]||0)+1; return a; }, {}) };
   fs.writeFileSync(outputPath, JSON.stringify({ issues, warnings, stats }, null, 2));
   process.exit(0);
 } catch (err) { process.stderr.write(err.message + '\n'); process.exit(1); }

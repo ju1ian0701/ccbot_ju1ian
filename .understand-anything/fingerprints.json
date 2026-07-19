@@ -1,8 +1,647 @@
 {
   "version": "1.0.0",
-  "gitCommitHash": "2f85b4d1ed9e922f9a53c42f997310f231bf7b7a",
-  "generatedAt": "2026-07-17T13:56:19.466Z",
+  "gitCommitHash": "96a7eea25f86399fec9873dfb263c3b2856c4987",
+  "generatedAt": "2026-07-18T10:56:22.587Z",
   "files": {
+    "_d_apply.py": {
+      "filePath": "_d_apply.py",
+      "contentHash": "6f11ccd89df722a2d42acb98666f4d7ee80e6b8b1e5062b11604971c028fce35",
+      "functions": [
+        {
+          "name": "load",
+          "params": [
+            "path"
+          ],
+          "exported": true,
+          "lineCount": 2
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "marshal",
+          "specifiers": [
+            "marshal"
+          ]
+        },
+        {
+          "source": "types",
+          "specifiers": [
+            "types"
+          ]
+        },
+        {
+          "source": "dis",
+          "specifiers": [
+            "dis"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        }
+      ],
+      "exports": [
+        "load"
+      ],
+      "totalLines": 18,
+      "hasStructuralAnalysis": true
+    },
+    "_d3.py": {
+      "filePath": "_d3.py",
+      "contentHash": "f79b5f3fb4e8a8e58ef672c34bee8ede7696219fb2d3fa924ca37dbe79092809",
+      "functions": [
+        {
+          "name": "load_pyc",
+          "params": [
+            "path"
+          ],
+          "exported": true,
+          "lineCount": 2
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "marshal",
+          "specifiers": [
+            "marshal"
+          ]
+        },
+        {
+          "source": "dis",
+          "specifiers": [
+            "dis"
+          ]
+        },
+        {
+          "source": "types",
+          "specifiers": [
+            "types"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        }
+      ],
+      "exports": [
+        "load_pyc"
+      ],
+      "totalLines": 19,
+      "hasStructuralAnalysis": true
+    },
+    "_d4.py": {
+      "filePath": "_d4.py",
+      "contentHash": "38eb9b2ccf6ff063a49c392009741aa81c65da3f3554617a3380f6e03a1a9002",
+      "functions": [
+        {
+          "name": "load_pyc",
+          "params": [
+            "path"
+          ],
+          "exported": true,
+          "lineCount": 2
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "marshal",
+          "specifiers": [
+            "marshal"
+          ]
+        },
+        {
+          "source": "types",
+          "specifiers": [
+            "types"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        }
+      ],
+      "exports": [
+        "load_pyc"
+      ],
+      "totalLines": 20,
+      "hasStructuralAnalysis": true
+    },
+    "_decomp.py": {
+      "filePath": "_decomp.py",
+      "contentHash": "5d84b7f677e7bb740547821710ea2b348b8af13ff8615d6d5d7553a6c6a3ba45",
+      "functions": [
+        {
+          "name": "load_pyc",
+          "params": [
+            "path"
+          ],
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "dump_code",
+          "params": [
+            "c",
+            "indent"
+          ],
+          "exported": true,
+          "lineCount": 12
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "marshal",
+          "specifiers": [
+            "marshal"
+          ]
+        },
+        {
+          "source": "dis",
+          "specifiers": [
+            "dis"
+          ]
+        },
+        {
+          "source": "types",
+          "specifiers": [
+            "types"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        }
+      ],
+      "exports": [
+        "load_pyc",
+        "dump_code"
+      ],
+      "totalLines": 29,
+      "hasStructuralAnalysis": true
+    },
+    "_decomp2.py": {
+      "filePath": "_decomp2.py",
+      "contentHash": "a16504af5fa4e71bbf126f0c90149fa7a59c4cf07df2def188ef229db4ff47d1",
+      "functions": [
+        {
+          "name": "load_pyc",
+          "params": [
+            "path"
+          ],
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "walk",
+          "params": [
+            "c",
+            "out"
+          ],
+          "exported": true,
+          "lineCount": 8
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "marshal",
+          "specifiers": [
+            "marshal"
+          ]
+        },
+        {
+          "source": "types",
+          "specifiers": [
+            "types"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        }
+      ],
+      "exports": [
+        "load_pyc",
+        "walk"
+      ],
+      "totalLines": 24,
+      "hasStructuralAnalysis": true
+    },
+    "_dump_mig.py": {
+      "filePath": "_dump_mig.py",
+      "contentHash": "0bea8d6218c8529b3d899bf873577d7ccee3e7c78e5437ddb085045e3f4ba6f3",
+      "functions": [
+        {
+          "name": "load",
+          "params": [
+            "path"
+          ],
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "walk",
+          "params": [
+            "c",
+            "depth"
+          ],
+          "exported": true,
+          "lineCount": 9
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "marshal",
+          "specifiers": [
+            "marshal"
+          ]
+        },
+        {
+          "source": "types",
+          "specifiers": [
+            "types"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        }
+      ],
+      "exports": [
+        "load",
+        "walk"
+      ],
+      "totalLines": 32,
+      "hasStructuralAnalysis": true
+    },
+    "_dump_tests.py": {
+      "filePath": "_dump_tests.py",
+      "contentHash": "1d7706528413d757de0e0abf2476d3d4981899c53c2f584a5d327ea0feda8afd",
+      "functions": [
+        {
+          "name": "load",
+          "params": [
+            "path"
+          ],
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "walk",
+          "params": [
+            "c",
+            "out",
+            "depth"
+          ],
+          "exported": true,
+          "lineCount": 9
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "marshal",
+          "specifiers": [
+            "marshal"
+          ]
+        },
+        {
+          "source": "types",
+          "specifiers": [
+            "types"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        }
+      ],
+      "exports": [
+        "load",
+        "walk"
+      ],
+      "totalLines": 27,
+      "hasStructuralAnalysis": true
+    },
+    "_dump2.py": {
+      "filePath": "_dump2.py",
+      "contentHash": "385b092f25f3498ece5b40e404b17f6617da34fb52d0213d777f2f9e961ac620",
+      "functions": [
+        {
+          "name": "load",
+          "params": [
+            "path"
+          ],
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "dump_test",
+          "params": [
+            "path",
+            "names"
+          ],
+          "exported": true,
+          "lineCount": 18
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "marshal",
+          "specifiers": [
+            "marshal"
+          ]
+        },
+        {
+          "source": "types",
+          "specifiers": [
+            "types"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        }
+      ],
+      "exports": [
+        "load",
+        "dump_test"
+      ],
+      "totalLines": 30,
+      "hasStructuralAnalysis": true
+    },
+    "_q.py": {
+      "filePath": "_q.py",
+      "contentHash": "955172d827892de4f8607c2c59439c9bf5f4c346337ade5b2e50d0b242e0ece9",
+      "functions": [
+        {
+          "name": "load",
+          "params": [
+            "p"
+          ],
+          "exported": true,
+          "lineCount": 2
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "marshal",
+          "specifiers": [
+            "marshal"
+          ]
+        },
+        {
+          "source": "types",
+          "specifiers": [
+            "types"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        }
+      ],
+      "exports": [
+        "load"
+      ],
+      "totalLines": 25,
+      "hasStructuralAnalysis": true
+    },
+    "_q2.py": {
+      "filePath": "_q2.py",
+      "contentHash": "66628326aa61996b9b270f9594523fa2cfdd766250622b0eabedaeccffaed24d",
+      "functions": [
+        {
+          "name": "load",
+          "params": [
+            "p"
+          ],
+          "exported": true,
+          "lineCount": 2
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "marshal",
+          "specifiers": [
+            "marshal"
+          ]
+        },
+        {
+          "source": "types",
+          "specifiers": [
+            "types"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        }
+      ],
+      "exports": [
+        "load"
+      ],
+      "totalLines": 14,
+      "hasStructuralAnalysis": true
+    },
+    ".agentic/backlog/source-report.md": {
+      "filePath": ".agentic/backlog/source-report.md",
+      "contentHash": "2d06910ac1362c79e8d133535d71bfa2d1b7ccc1bf00d605b3c6586313856395",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 223,
+      "hasStructuralAnalysis": true
+    },
+    ".agentic/backlog/tasks.json": {
+      "filePath": ".agentic/backlog/tasks.json",
+      "contentHash": "f520cb62872577a61589cf1d6a8b384b82321ffaf74178e66958196ae7e06488",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 203,
+      "hasStructuralAnalysis": true
+    },
+    ".agentic/config.json": {
+      "filePath": ".agentic/config.json",
+      "contentHash": "a454319f659af300f821638fe1b18787402e8e570fe1b5727ef6f050ab66e629",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 114,
+      "hasStructuralAnalysis": true
+    },
+    ".agentic/HANDOFF_REF-006.md": {
+      "filePath": ".agentic/HANDOFF_REF-006.md",
+      "contentHash": "40c366a02e6b46e9fbc327528da2b76ed4ad832128bed75c829ab51fa074a789",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 135,
+      "hasStructuralAnalysis": true
+    },
+    ".agentic/HANDOFF.md": {
+      "filePath": ".agentic/HANDOFF.md",
+      "contentHash": "c8b6469c748c9befdf2fc5f6399f6e8d510aed5e69973afcd4e2f468e858ca75",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 400,
+      "hasStructuralAnalysis": true
+    },
+    ".agentic/IMPLEMENTATION_PLAN.md": {
+      "filePath": ".agentic/IMPLEMENTATION_PLAN.md",
+      "contentHash": "b4ed4d808ac877c18c579a4be6a2285fa4228c58d7dc5494302db01dbdf1d0e7",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1027,
+      "hasStructuralAnalysis": true
+    },
+    ".agentic/mcp/README.md": {
+      "filePath": ".agentic/mcp/README.md",
+      "contentHash": "59db41327a574f66f2a85712cffde6f3b0ebc08c8cd726a0d741b3df62ed9489",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 62,
+      "hasStructuralAnalysis": true
+    },
+    ".agentic/policies.json": {
+      "filePath": ".agentic/policies.json",
+      "contentHash": "15d8e63f4aa0a9a104efdb18985923d75a5483fa669807eb278cb7dfd0db64f9",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 37,
+      "hasStructuralAnalysis": true
+    },
+    ".agentic/prompts/analyze.md": {
+      "filePath": ".agentic/prompts/analyze.md",
+      "contentHash": "a2357630fa757fd1d7ce7a758ddb3eae5269cc5fedf88220d0f4fdad5b036b42",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 29,
+      "hasStructuralAnalysis": true
+    },
+    ".agentic/prompts/implement.md": {
+      "filePath": ".agentic/prompts/implement.md",
+      "contentHash": "f387be59c88cd31a2f237ecc268bd09dc5e954ce881ca8edbaac4e015238a49e",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 48,
+      "hasStructuralAnalysis": true
+    },
+    ".agentic/prompts/plan.md": {
+      "filePath": ".agentic/prompts/plan.md",
+      "contentHash": "98af87a4bfa0500a961fb578599365fe5b37fcfccf1f6a315cba5801a3433e1b",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 32,
+      "hasStructuralAnalysis": true
+    },
+    ".agentic/prompts/pr-body.md": {
+      "filePath": ".agentic/prompts/pr-body.md",
+      "contentHash": "f41b3652237f2df9663dccc7f40d2340c68d30d4a212480eee9c4c95999eb88b",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 36,
+      "hasStructuralAnalysis": true
+    },
+    ".agentic/prompts/review.md": {
+      "filePath": ".agentic/prompts/review.md",
+      "contentHash": "074e9ba34986580a6d5b4ada3609753499ee1498321c63574c70a20bc7d4d46b",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 25,
+      "hasStructuralAnalysis": true
+    },
+    ".agentic/README.md": {
+      "filePath": ".agentic/README.md",
+      "contentHash": "4f88bc968c6f7c6798a6b48f8de449f6794b192cea675450c8d712b68189a42f",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 92,
+      "hasStructuralAnalysis": true
+    },
+    ".claude/rules/architecture.md": {
+      "filePath": ".claude/rules/architecture.md",
+      "contentHash": "d0ce02af7d201a40af573aa8f62dab3c0055347099df93c8ddc9d87fc525d4fd",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 103,
+      "hasStructuralAnalysis": true
+    },
+    ".claude/rules/message-handling.md": {
+      "filePath": ".claude/rules/message-handling.md",
+      "contentHash": "477286fda626bf01ba91b634690f24cb0f78aeaf40ade73297aeb73ca209e7a8",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 42,
+      "hasStructuralAnalysis": true
+    },
+    ".claude/rules/topic-architecture.md": {
+      "filePath": ".claude/rules/topic-architecture.md",
+      "contentHash": "73fc143c52629add96ba578bf926a38c4684cae4fccfe7bb2b9d2c15498df326",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 74,
+      "hasStructuralAnalysis": true
+    },
     ".env.example": {
       "filePath": ".env.example",
       "contentHash": "de445bb1c75950f8400f1f29b59591e4a3941552137dd5f41991f60183e6112d",
@@ -11,6 +650,953 @@
       "imports": [],
       "exports": [],
       "totalLines": 15,
+      "hasStructuralAnalysis": true
+    },
+    ".github/workflows/agentic-analyze.yml": {
+      "filePath": ".github/workflows/agentic-analyze.yml",
+      "contentHash": "88c6cbcc08bded52935204a19cd21d5dd89e47f21edf9656f8979fa7e959ed73",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 63,
+      "hasStructuralAnalysis": true
+    },
+    ".github/workflows/agentic-implement.yml": {
+      "filePath": ".github/workflows/agentic-implement.yml",
+      "contentHash": "1ea6a7d9c0b53ea118554147069b6b82918fbe780a964b6ca86398c831add01a",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 220,
+      "hasStructuralAnalysis": true
+    },
+    ".github/workflows/agentic-orchestrator.yml": {
+      "filePath": ".github/workflows/agentic-orchestrator.yml",
+      "contentHash": "246ec22739a9970a8bb67bbe2aa837e7e1e12e4ac73321b705b7407d4ad0e3fd",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 125,
+      "hasStructuralAnalysis": true
+    },
+    ".github/workflows/agentic-plan.yml": {
+      "filePath": ".github/workflows/agentic-plan.yml",
+      "contentHash": "0dff4329b597bbc3077691be3f256cfd5773708e7a9e7d62da720ec7eec0e6e4",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 83,
+      "hasStructuralAnalysis": true
+    },
+    ".github/workflows/check.yml": {
+      "filePath": ".github/workflows/check.yml",
+      "contentHash": "75da606b5ca87e8077cd2548b7b25ddda2e2da2718aad756b26d6c612b579f2a",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 29,
+      "hasStructuralAnalysis": true
+    },
+    ".github/workflows/claude-code-review.yml": {
+      "filePath": ".github/workflows/claude-code-review.yml",
+      "contentHash": "08068cdb733294f737db6dcb21609370f05c9cf9b9b9e00e240cb10f992589b3",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 46,
+      "hasStructuralAnalysis": true
+    },
+    ".github/workflows/claude.yml": {
+      "filePath": ".github/workflows/claude.yml",
+      "contentHash": "08333ae929477fac81fb2f2b5b7deffd9b5c1b1629438087900a7fe98061163b",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 51,
+      "hasStructuralAnalysis": true
+    },
+    ".grok/config.toml": {
+      "filePath": ".grok/config.toml",
+      "contentHash": "2ac5c17b1fa79d7bacd36847517b1f3212430073ae3d0b3c8eb9bd6a1178e068",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 19,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784056220,61967/assembled-graph.json": {
+      "filePath": ".understand-anything/.trash-1784056220,61967/assembled-graph.json",
+      "contentHash": "dd1e4ba531442eb215fbcaeb2488ae15ce9f521226ed58021c55a02fe7bf6739",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 11476,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784056220,61967/batch-1.json": {
+      "filePath": ".understand-anything/.trash-1784056220,61967/batch-1.json",
+      "contentHash": "ad430b5d31649416fb0c34a4029b4b73d37bf72f0add5be3551f3dec4452368c",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1189,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784056220,61967/batch-2.json": {
+      "filePath": ".understand-anything/.trash-1784056220,61967/batch-2.json",
+      "contentHash": "9dfd54be11917d728e28813b92d9a31bf05b2f7c2147bdd9d5c4df90d4654740",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1985,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784056220,61967/batch-3.json": {
+      "filePath": ".understand-anything/.trash-1784056220,61967/batch-3.json",
+      "contentHash": "e1bee02bd75a2f8ed3815ba2cfe4331556a8bc6dfa0121024e43a6f881c5786f",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 147,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784056220,61967/batch-4.json": {
+      "filePath": ".understand-anything/.trash-1784056220,61967/batch-4.json",
+      "contentHash": "9939ad3290e33da94d7868ce49ce5112bfbbf2cf1b165fc75b1482ffc642aeda",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 46,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784056220,61967/batch-5.json": {
+      "filePath": ".understand-anything/.trash-1784056220,61967/batch-5.json",
+      "contentHash": "ec5917b91b4c3e4ee5bf88ba2ec6bf35d25beda97fe0b1c5d67c3c59532e91dc",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 99,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784056220,61967/batch-6.json": {
+      "filePath": ".understand-anything/.trash-1784056220,61967/batch-6.json",
+      "contentHash": "f07975cf410a557b3a4a81f77611c1eabe5198c7c93e72a30986a0d69435a774",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 903,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784056220,61967/batch-7.json": {
+      "filePath": ".understand-anything/.trash-1784056220,61967/batch-7.json",
+      "contentHash": "bcc48e3024cdc2a7c26b0f7ccfad06d29692ad6e6aa2c60b5ec10720e8c5b36b",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 121,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784056220,61967/batch-8.json": {
+      "filePath": ".understand-anything/.trash-1784056220,61967/batch-8.json",
+      "contentHash": "66b11226f8bb96bad90384af3c2888229869ebff82b3e1861524dfc1b0362aa0",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 3981,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784056220,61967/batch-9.json": {
+      "filePath": ".understand-anything/.trash-1784056220,61967/batch-9.json",
+      "contentHash": "6a05c9d2ea2f67c938c29dd412c6b1ca34b75afcc68887fa3c0574f157084e4f",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 293,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784056220,61967/batches.json": {
+      "filePath": ".understand-anything/.trash-1784056220,61967/batches.json",
+      "contentHash": "141f8c41873c3e741748fa55b0a7ca29acbddac6d21ff808e016187d4ad38058",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1710,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784056220,61967/final-graph.json": {
+      "filePath": ".understand-anything/.trash-1784056220,61967/final-graph.json",
+      "contentHash": "01e1d51aa37a9138ae8184067d2d3b94d2f507f4dd94f62de9b7966671ad1262",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 12,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784056220,61967/fingerprint-input.json": {
+      "filePath": ".understand-anything/.trash-1784056220,61967/fingerprint-input.json",
+      "contentHash": "410af56593a8391f2cf57b1388c555280443f7c29d3f8f43e819eccd2bd9215c",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 72,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784056220,61967/import-map-input.json": {
+      "filePath": ".understand-anything/.trash-1784056220,61967/import-map-input.json",
+      "contentHash": "1be3e3f8b3a9784959039f5eaff4007d96830301ff5aee517b8fdeeb635078ee",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 51,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784056220,61967/import-map.json": {
+      "filePath": ".understand-anything/.trash-1784056220,61967/import-map.json",
+      "contentHash": "8b0d65a399bc3a546b2b07761eba761dd64cd53e5a53099a70fbd71dbc142dda",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 133,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784056220,61967/layers.json": {
+      "filePath": ".understand-anything/.trash-1784056220,61967/layers.json",
+      "contentHash": "d3170a44da2cc36c3eadac3147a5c2906b87bbf3c0aadb11beccfb16f5bf4a33",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 110,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784056220,61967/review.json": {
+      "filePath": ".understand-anything/.trash-1784056220,61967/review.json",
+      "contentHash": "68d91fe60a13bd359ea04cf0b1fba05d33534f3da12e03a730ea19185bac7784",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 154,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784056220,61967/tmp/assemble-final.py": {
+      "filePath": ".understand-anything/.trash-1784056220,61967/tmp/assemble-final.py",
+      "contentHash": "2ae12038b1b81b7ae978d09dbbfd1f022461e6726918dd090ec487956364cf42",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "datetime",
+          "specifiers": [
+            "datetime",
+            "timezone"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 87,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784056220,61967/tmp/find-ids.py": {
+      "filePath": ".understand-anything/.trash-1784056220,61967/tmp/find-ids.py",
+      "contentHash": "5049580395a75c55bb622239b5ebabf66130e9467d12d49824db4a4e7b94fe87",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 12,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784056220,61967/tmp/fix-dupes.py": {
+      "filePath": ".understand-anything/.trash-1784056220,61967/tmp/fix-dupes.py",
+      "contentHash": "dcff56bd32baeec815bdc7bd49c89a13d8d960420ae2367a51390fd58bf990c5",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 31,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784056220,61967/tmp/fix-final.py": {
+      "filePath": ".understand-anything/.trash-1784056220,61967/tmp/fix-final.py",
+      "contentHash": "2dcb6f15188e45c1d33702adfb7f07da1723c1dd199f1ab367bd940fac167909",
+      "functions": [
+        {
+          "name": "resolve",
+          "params": [
+            "ref"
+          ],
+          "exported": true,
+          "lineCount": 30
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        }
+      ],
+      "exports": [
+        "resolve"
+      ],
+      "totalLines": 86,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784056220,61967/tmp/fix-graph.py": {
+      "filePath": ".understand-anything/.trash-1784056220,61967/tmp/fix-graph.py",
+      "contentHash": "09bd2fbc172d464e051c33947cff635a511099fb1577cbb54ac8df4b77002a3f",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 49,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784056220,61967/tmp/fix-layers.py": {
+      "filePath": ".understand-anything/.trash-1784056220,61967/tmp/fix-layers.py",
+      "contentHash": "670bd47ac23b6116b5c4442bc86ff15f1cd32cadb9b4acf1ce8164b28d978722",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 80,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784056220,61967/tmp/fix-missing-fps.py": {
+      "filePath": ".understand-anything/.trash-1784056220,61967/tmp/fix-missing-fps.py",
+      "contentHash": "db2e50d7a4b4a2ecbdbc89af70683287b918555bb9926be8ef3e98574566be06",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 149,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784056220,61967/tmp/ua-inline-validate.cjs": {
+      "filePath": ".understand-anything/.trash-1784056220,61967/tmp/ua-inline-validate.cjs",
+      "contentHash": "53d6c23bc6dc373574130fbfab2a414be1889de623420b06022752bc0398f3d4",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 68,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784056220,61967/tour.json": {
+      "filePath": ".understand-anything/.trash-1784056220,61967/tour.json",
+      "contentHash": "e8068fee8a4ed6a56f9e7a744e5fd4892afcbf666487d77aed574c5c6ccb5490",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 51,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784291606,08255/assembled-graph.json": {
+      "filePath": ".understand-anything/.trash-1784291606,08255/assembled-graph.json",
+      "contentHash": "0ae003ab907a320b8d2d63d1d1ef69d3e5303bb9a9405ec3e201827ccd05f212",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 6296,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784291606,08255/batch-1.json": {
+      "filePath": ".understand-anything/.trash-1784291606,08255/batch-1.json",
+      "contentHash": "77bfa9c428c1c46e02c2fd31a57185a0a61a1c0ac5a63e7a20c462b34147fa88",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 103,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784291606,08255/batch-2.json": {
+      "filePath": ".understand-anything/.trash-1784291606,08255/batch-2.json",
+      "contentHash": "9385fe065a8cba95dd08fdaf9edbdc460039a8101eb6538e75952cd0dc755d73",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 47,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784291606,08255/batch-3.json": {
+      "filePath": ".understand-anything/.trash-1784291606,08255/batch-3.json",
+      "contentHash": "af12fe64bbe86348db4d582c18051c0680545cdb31474997b2034f3062bd1888",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 3801,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784291606,08255/batch-4.json": {
+      "filePath": ".understand-anything/.trash-1784291606,08255/batch-4.json",
+      "contentHash": "41324009d7cf33e75493621b2165775474ff591d9cab277acdaf3530f81e0d09",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1915,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784291606,08255/batches.json": {
+      "filePath": ".understand-anything/.trash-1784291606,08255/batches.json",
+      "contentHash": "72c7847431c9b707a7ce2fee846ad37d9db09eaf9a4eefc9e6077b94a6012a96",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 727,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784291606,08255/fingerprint-input.json": {
+      "filePath": ".understand-anything/.trash-1784291606,08255/fingerprint-input.json",
+      "contentHash": "5e13506e7fd799f927d731bd38d3aeaef583471c5e4f4cbbf1c66cf1f217fecb",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 62,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784291606,08255/import-map.json": {
+      "filePath": ".understand-anything/.trash-1784291606,08255/import-map.json",
+      "contentHash": "1a2dc51df97bc7c6b44453794bbade822326df4168676e5d1b21640c9b742a49",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 146,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784291606,08255/layers.json": {
+      "filePath": ".understand-anything/.trash-1784291606,08255/layers.json",
+      "contentHash": "5c97bc4fbaa384350f68e6507edd7dc7ee33d74d3eb16f1538a9708398d28e27",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 125,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784291606,08255/review.json": {
+      "filePath": ".understand-anything/.trash-1784291606,08255/review.json",
+      "contentHash": "ce6d5a3b0ed9684ae0c06130f4bf1dbbeb52c74c9621e68a9fc467d66f050240",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 40,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784291606,08255/tmp/batch-1-input.json": {
+      "filePath": ".understand-anything/.trash-1784291606,08255/tmp/batch-1-input.json",
+      "contentHash": "242f21f78e5ca86a1764d8f5985645f3b37a83063b0ccc5b45c310096cc01463",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 70,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784291606,08255/tmp/batch-2-input.json": {
+      "filePath": ".understand-anything/.trash-1784291606,08255/tmp/batch-2-input.json",
+      "contentHash": "e092b5cd3a87b606a543ce4f084b598332f0caf7612355c6fced0b4484a4a3d2",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 34,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784291606,08255/tmp/batch-3-input.json": {
+      "filePath": ".understand-anything/.trash-1784291606,08255/tmp/batch-3-input.json",
+      "contentHash": "a265523bd233ef0f39ca2a5895faad39f6220f7455dd46cc53b8f76efa3d3b0b",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 232,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784291606,08255/tmp/batch-4-input.json": {
+      "filePath": ".understand-anything/.trash-1784291606,08255/tmp/batch-4-input.json",
+      "contentHash": "65bf884c1b8dafc13552bde2200c35ec75035adba734f83fea40716355c74436",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 196,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784291606,08255/tmp/convert-structure-to-graph.py": {
+      "filePath": ".understand-anything/.trash-1784291606,08255/tmp/convert-structure-to-graph.py",
+      "contentHash": "75480ce3eb4994d50b6fd2d5058d766f7055a6babbd15d981f8e2ef90bad1583",
+      "functions": [
+        {
+          "name": "convert_file",
+          "params": [
+            "file_result",
+            "import_map"
+          ],
+          "exported": true,
+          "lineCount": 141
+        },
+        {
+          "name": "main",
+          "params": [],
+          "exported": true,
+          "lineCount": 29
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "sys",
+          "specifiers": [
+            "sys"
+          ]
+        },
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        }
+      ],
+      "exports": [
+        "convert_file",
+        "main"
+      ],
+      "totalLines": 195,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784291606,08255/tmp/import-map-input.json": {
+      "filePath": ".understand-anything/.trash-1784291606,08255/tmp/import-map-input.json",
+      "contentHash": "e76e47f006d90e2ff8ba12959b01e48edd9f430ed4307e5d13c164318aecf77f",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 285,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784291606,08255/tmp/ua-inline-validate.cjs": {
+      "filePath": ".understand-anything/.trash-1784291606,08255/tmp/ua-inline-validate.cjs",
+      "contentHash": "078b742bb9f82b67345eb1354bea78e27c4dcfd647d610ff977743d2fb7f51a1",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 64,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.trash-1784291606,08255/tour.json": {
+      "filePath": ".understand-anything/.trash-1784291606,08255/tour.json",
+      "contentHash": "5c171ac3b7023c469b00b3427f58605e87cc8640a0e4560d702006e02f2b41b7",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 52,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.understandignore": {
+      "filePath": ".understand-anything/.understandignore",
+      "contentHash": "a76e6701c0faff9ed387ae2237c1090ed3fec8806fb353181b2f53856196c668",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 95,
+      "hasStructuralAnalysis": false
+    },
+    ".understand-anything/assembled-graph.json": {
+      "filePath": ".understand-anything/assembled-graph.json",
+      "contentHash": "818e785f2fed244d883730923d249e95ebf0ed7b1bbd5d21ed12d1a608dd3327",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 6455,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/batch-1.json": {
+      "filePath": ".understand-anything/batch-1.json",
+      "contentHash": "77bfa9c428c1c46e02c2fd31a57185a0a61a1c0ac5a63e7a20c462b34147fa88",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 103,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/batch-2.json": {
+      "filePath": ".understand-anything/batch-2.json",
+      "contentHash": "9385fe065a8cba95dd08fdaf9edbdc460039a8101eb6538e75952cd0dc755d73",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 47,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/batch-3.json": {
+      "filePath": ".understand-anything/batch-3.json",
+      "contentHash": "99c393aeaa4fd6ba8bd9945f86f529f46d272555e56876e975592327bcbaf298",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 2861,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/batch-4.json": {
+      "filePath": ".understand-anything/batch-4.json",
+      "contentHash": "f6d8eb049915f56ebcd7f80fbd071229494286ee5eda2e5df058b876d4efdb3a",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 2759,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/batch-5.json": {
+      "filePath": ".understand-anything/batch-5.json",
+      "contentHash": "df9d331fd7cdb17eb6bf5ae1ec5ae9caf20d2895fc46d0f99e74fd7971529a05",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 86,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/batches.json": {
+      "filePath": ".understand-anything/batches.json",
+      "contentHash": "924002a48739e431c76fc8072e90b152493baed247600cabc5abf3c06674fec1",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 798,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/fingerprint-input.json": {
+      "filePath": ".understand-anything/fingerprint-input.json",
+      "contentHash": "fec7eca3bfa79fbec6f900858896cb2d3c910562a969bb83b2dc9c4637dbceb0",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 69,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/fingerprints.json": {
+      "filePath": ".understand-anything/fingerprints.json",
+      "contentHash": "bba011760c2c21e54e76a178f007d78afcf2d837ff1f06816ee6d3ca81efe3fa",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 5102,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/import-map.json": {
+      "filePath": ".understand-anything/import-map.json",
+      "contentHash": "9a6da3f9606f385d61d66484644396b43d2267c2f7c58cc92fd4797255512b69",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 196,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/intermediate/scan-result.json": {
+      "filePath": ".understand-anything/intermediate/scan-result.json",
+      "contentHash": "e743fecf8c8584607ac996eb3ad05eb0c87652428a629bee58151f6b83c72cc1",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1153,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/knowledge-graph.json": {
+      "filePath": ".understand-anything/knowledge-graph.json",
+      "contentHash": "54674f73e42921b90c97307e1a37ece32d7a5916e56c8723f155be747f472018",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 12768,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/layers.json": {
+      "filePath": ".understand-anything/layers.json",
+      "contentHash": "5d6ce5557c32684ea1e81d2a37f589ea087a0f204828c1fb2611a072944753b3",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 58,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/meta.json": {
+      "filePath": ".understand-anything/meta.json",
+      "contentHash": "acd215cb689531cb53ec802040dea019051ca41a0c3d8503b2a9bfe03f799bb5",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 6,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/review.json": {
+      "filePath": ".understand-anything/review.json",
+      "contentHash": "e519c2fc3237542125be13ceaa52cb38f3c02aaac560bfc0ef89a3fe3e5abfad",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 38,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/tmp/batch-1-input.json": {
+      "filePath": ".understand-anything/tmp/batch-1-input.json",
+      "contentHash": "8473c16d46111a14ac6dc7c8ce92250f5d5185385a3871ff69ad31f5f09d29cc",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/tmp/batch-2-input.json": {
+      "filePath": ".understand-anything/tmp/batch-2-input.json",
+      "contentHash": "f577341f36e857595d25c0aed3b5c4c32ce1d939a1f601f1895da47a633f45ec",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/tmp/batch-3-input.json": {
+      "filePath": ".understand-anything/tmp/batch-3-input.json",
+      "contentHash": "a16c291a0864b7c2f1dc340d4917fd7cc1a3d7c7e2727e4eb999dab3e03b532f",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/tmp/batch-4-input.json": {
+      "filePath": ".understand-anything/tmp/batch-4-input.json",
+      "contentHash": "21a49cc3c852acaff6b34ed5e37dcc568bb1a00f1f9599326ad8e96ace4234d2",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/tmp/batch-5-input.json": {
+      "filePath": ".understand-anything/tmp/batch-5-input.json",
+      "contentHash": "d9462bb35947c2add360e519bb1aa048cb1b3a79d1cbaac2c0cf45b2f731a34c",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/tmp/changed-files.txt": {
+      "filePath": ".understand-anything/tmp/changed-files.txt",
+      "contentHash": "800d059189bd0c14b1b686b93a7b7654b0a23fc295fe3a3002ccf776d7a7a7af",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1,
+      "hasStructuralAnalysis": false
+    },
+    ".understand-anything/tmp/convert-structure-to-graph.py": {
+      "filePath": ".understand-anything/tmp/convert-structure-to-graph.py",
+      "contentHash": "75480ce3eb4994d50b6fd2d5058d766f7055a6babbd15d981f8e2ef90bad1583",
+      "functions": [
+        {
+          "name": "convert_file",
+          "params": [
+            "file_result",
+            "import_map"
+          ],
+          "exported": true,
+          "lineCount": 141
+        },
+        {
+          "name": "main",
+          "params": [],
+          "exported": true,
+          "lineCount": 29
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "sys",
+          "specifiers": [
+            "sys"
+          ]
+        },
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        }
+      ],
+      "exports": [
+        "convert_file",
+        "main"
+      ],
+      "totalLines": 195,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/tmp/import-map-input.json": {
+      "filePath": ".understand-anything/tmp/import-map-input.json",
+      "contentHash": "f365498895237a5f84543c6f5d71a969ab9720e7304c0e88b28d411dc7602917",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 320,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/tmp/ua-inline-validate.cjs": {
+      "filePath": ".understand-anything/tmp/ua-inline-validate.cjs",
+      "contentHash": "eb7a1dc5f719a48b2736f0bfe65a0efa5e1a254a9e13e1d5b0a65cf0c6b93151",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 50,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/tour.json": {
+      "filePath": ".understand-anything/tour.json",
+      "contentHash": "f574cbd7241a2d4e67eec93041db77acf88b4ea214e8797c3d262edbc36aa6c0",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 52,
       "hasStructuralAnalysis": true
     },
     "AGENTS.md": {
@@ -33,6 +1619,26 @@
       "totalLines": 60,
       "hasStructuralAnalysis": true
     },
+    "doc/telegram-bot-features.md": {
+      "filePath": "doc/telegram-bot-features.md",
+      "contentHash": "5441594679e86cca223223eff4b78b0954b50f6d45046f0112acfef40e2b364b",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 204,
+      "hasStructuralAnalysis": true
+    },
+    "doc/WEBSOCKET_PROTOCOL_REVERSED.md": {
+      "filePath": "doc/WEBSOCKET_PROTOCOL_REVERSED.md",
+      "contentHash": "ccf585f5fc6db5206a768ca625f617e88b07f4fa4896da7af6658af7926932c2",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1356,
+      "hasStructuralAnalysis": true
+    },
     "pyproject.toml": {
       "filePath": "pyproject.toml",
       "contentHash": "26a863b10a1633edf72839636a8aeacc77a3f24466c07b61af7b1eb7c79adab2",
@@ -41,16 +1647,6 @@
       "imports": [],
       "exports": [],
       "totalLines": 61,
-      "hasStructuralAnalysis": true
-    },
-    "README.md": {
-      "filePath": "README.md",
-      "contentHash": "7d9cf91a41d43b79d99d3808a983721eb76e933ed997118516e0414e7e3d542e",
-      "functions": [],
-      "classes": [],
-      "imports": [],
-      "exports": [],
-      "totalLines": 287,
       "hasStructuralAnalysis": true
     },
     "README_CN.md": {
@@ -73,6 +1669,1573 @@
       "totalLines": 296,
       "hasStructuralAnalysis": true
     },
+    "README.md": {
+      "filePath": "README.md",
+      "contentHash": "7d9cf91a41d43b79d99d3808a983721eb76e933ed997118516e0414e7e3d542e",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 287,
+      "hasStructuralAnalysis": true
+    },
+    "scripts/agentic/__init__.py": {
+      "filePath": "scripts/agentic/__init__.py",
+      "contentHash": "5b073341580d0c6de7576771c558b07a024deba830bd4193935cca85c50b2bef",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 4,
+      "hasStructuralAnalysis": true
+    },
+    "scripts/agentic/analyze_graph.py": {
+      "filePath": "scripts/agentic/analyze_graph.py",
+      "contentHash": "7222cbd9817e2a9538187f01298dd51b4b7edd9fb1714d35892908ee768e87f7",
+      "functions": [
+        {
+          "name": "_edge_type",
+          "params": [
+            "edge"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "_normalize_path",
+          "params": [
+            "path"
+          ],
+          "returnType": "str | None",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "analyze_graph",
+          "params": [
+            "graph",
+            "config"
+          ],
+          "returnType": "dict[str, Any]",
+          "exported": true,
+          "lineCount": 134
+        },
+        {
+          "name": "_recommendations",
+          "params": [
+            "hotspots",
+            "untested",
+            "complex_files"
+          ],
+          "returnType": "list[str]",
+          "exported": true,
+          "lineCount": 26
+        },
+        {
+          "name": "render_markdown",
+          "params": [
+            "report"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 33
+        },
+        {
+          "name": "run",
+          "params": [
+            "repo_root"
+          ],
+          "returnType": "dict[str, Any]",
+          "exported": true,
+          "lineCount": 19
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "collections",
+          "specifiers": [
+            "Counter",
+            "defaultdict"
+          ]
+        },
+        {
+          "source": "datetime",
+          "specifiers": [
+            "datetime",
+            "timezone"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        },
+        {
+          "source": "typing",
+          "specifiers": [
+            "Any"
+          ]
+        },
+        {
+          "source": "paths",
+          "specifiers": [
+            "find_repo_root",
+            "load_config",
+            "load_json",
+            "out_dir",
+            "write_json",
+            "write_text"
+          ]
+        }
+      ],
+      "exports": [
+        "_edge_type",
+        "_normalize_path",
+        "analyze_graph",
+        "_recommendations",
+        "render_markdown",
+        "run"
+      ],
+      "totalLines": 263,
+      "hasStructuralAnalysis": true
+    },
+    "scripts/agentic/build_context_pack.py": {
+      "filePath": "scripts/agentic/build_context_pack.py",
+      "contentHash": "2704cfa189b292d9b3a2bdf128f8cbdc1561f929e7433b1cd699f99c207c6d1a",
+      "functions": [
+        {
+          "name": "_edge_type",
+          "params": [
+            "edge"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "_node_path",
+          "params": [
+            "node"
+          ],
+          "returnType": "str | None",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "_seed_ids",
+          "params": [
+            "task",
+            "node_by_id"
+          ],
+          "returnType": "set[str]",
+          "exported": true,
+          "lineCount": 26
+        },
+        {
+          "name": "build_context_pack",
+          "params": [
+            "graph",
+            "task",
+            "hops",
+            "max_nodes",
+            "max_edges"
+          ],
+          "returnType": "dict[str, Any]",
+          "exported": true,
+          "lineCount": 113
+        },
+        {
+          "name": "run",
+          "params": [
+            "task_id",
+            "repo_root",
+            "hops"
+          ],
+          "returnType": "dict[str, Any]",
+          "exported": true,
+          "lineCount": 24
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        },
+        {
+          "source": "typing",
+          "specifiers": [
+            "Any"
+          ]
+        },
+        {
+          "source": "paths",
+          "specifiers": [
+            "find_repo_root",
+            "load_config",
+            "load_json",
+            "out_dir",
+            "write_json"
+          ]
+        }
+      ],
+      "exports": [
+        "_edge_type",
+        "_node_path",
+        "_seed_ids",
+        "build_context_pack",
+        "run"
+      ],
+      "totalLines": 204,
+      "hasStructuralAnalysis": true
+    },
+    "scripts/agentic/cli.py": {
+      "filePath": "scripts/agentic/cli.py",
+      "contentHash": "17988c50f4836121fdb5702096af735c54ee535a56d7ae6de76076686969d518",
+      "functions": [
+        {
+          "name": "cmd_analyze",
+          "params": [
+            "_args"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "cmd_plan",
+          "params": [
+            "args"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "cmd_select",
+          "params": [
+            "args"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 10
+        },
+        {
+          "name": "cmd_validate",
+          "params": [
+            "args"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "cmd_sync",
+          "params": [
+            "args"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "cmd_run",
+          "params": [
+            "args"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 25
+        },
+        {
+          "name": "cmd_context",
+          "params": [
+            "args"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "cmd_status",
+          "params": [
+            "_args"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "cmd_list",
+          "params": [
+            "args"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "build_parser",
+          "params": [],
+          "returnType": "argparse.ArgumentParser",
+          "exported": true,
+          "lineCount": 34
+        },
+        {
+          "name": "main",
+          "params": [
+            "argv"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 17
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "argparse",
+          "specifiers": [
+            "argparse"
+          ]
+        },
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "sys",
+          "specifiers": [
+            "sys"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        },
+        {
+          "source": "analyze_graph",
+          "specifiers": [
+            "run_analyze"
+          ]
+        },
+        {
+          "source": "build_context_pack",
+          "specifiers": [
+            "run_context"
+          ]
+        },
+        {
+          "source": "paths",
+          "specifiers": [
+            "find_repo_root"
+          ]
+        },
+        {
+          "source": "prioritize",
+          "specifiers": [
+            "run_plan"
+          ]
+        },
+        {
+          "source": "render_prompt",
+          "specifiers": [
+            "run_render"
+          ]
+        },
+        {
+          "source": "service",
+          "specifiers": [
+            "svc_list_tasks"
+          ]
+        },
+        {
+          "source": "service",
+          "specifiers": [
+            "svc_pipeline_status"
+          ]
+        },
+        {
+          "source": "sync_issues",
+          "specifiers": [
+            "run_sync"
+          ]
+        },
+        {
+          "source": "validate_changes",
+          "specifiers": [
+            "run_validate"
+          ]
+        }
+      ],
+      "exports": [
+        "cmd_analyze",
+        "cmd_plan",
+        "cmd_select",
+        "cmd_validate",
+        "cmd_sync",
+        "cmd_run",
+        "cmd_context",
+        "cmd_status",
+        "cmd_list",
+        "build_parser",
+        "main"
+      ],
+      "totalLines": 184,
+      "hasStructuralAnalysis": true
+    },
+    "scripts/agentic/mcp_server.py": {
+      "filePath": "scripts/agentic/mcp_server.py",
+      "contentHash": "406229f5a06ba5774a83e354f14ea649ad32a3ad206e31a642e7963c01d31c29",
+      "functions": [
+        {
+          "name": "_root",
+          "params": [],
+          "returnType": "Path",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "_ok_text",
+          "params": [
+            "data"
+          ],
+          "returnType": "dict[str, Any]",
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "_err_text",
+          "params": [
+            "message"
+          ],
+          "returnType": "dict[str, Any]",
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "tool_list_tasks",
+          "params": [
+            "args"
+          ],
+          "returnType": "dict[str, Any]",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "tool_get_task",
+          "params": [
+            "args"
+          ],
+          "returnType": "dict[str, Any]",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "tool_select_next_task",
+          "params": [
+            "args"
+          ],
+          "returnType": "dict[str, Any]",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "tool_get_analysis",
+          "params": [
+            "args"
+          ],
+          "returnType": "dict[str, Any]",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "tool_get_context_pack",
+          "params": [
+            "args"
+          ],
+          "returnType": "dict[str, Any]",
+          "exported": true,
+          "lineCount": 10
+        },
+        {
+          "name": "tool_get_implement_prompt",
+          "params": [
+            "args"
+          ],
+          "returnType": "dict[str, Any]",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "tool_mark_task_status",
+          "params": [
+            "args"
+          ],
+          "returnType": "dict[str, Any]",
+          "exported": true,
+          "lineCount": 13
+        },
+        {
+          "name": "tool_run_validate",
+          "params": [
+            "args"
+          ],
+          "returnType": "dict[str, Any]",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "tool_pipeline_status",
+          "params": [
+            "args"
+          ],
+          "returnType": "dict[str, Any]",
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "tool_run_analyze",
+          "params": [
+            "args"
+          ],
+          "returnType": "dict[str, Any]",
+          "exported": true,
+          "lineCount": 15
+        },
+        {
+          "name": "_tools_list_payload",
+          "params": [],
+          "returnType": "list[dict[str, Any]]",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "_handle_tools_call",
+          "params": [
+            "params"
+          ],
+          "returnType": "dict[str, Any]",
+          "exported": true,
+          "lineCount": 11
+        },
+        {
+          "name": "_dispatch",
+          "params": [
+            "msg"
+          ],
+          "returnType": "dict[str, Any] | None",
+          "exported": true,
+          "lineCount": 49
+        },
+        {
+          "name": "_read_message",
+          "params": [],
+          "returnType": "dict[str, Any] | None",
+          "exported": true,
+          "lineCount": 30
+        },
+        {
+          "name": "_write_message",
+          "params": [
+            "msg"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "main",
+          "params": [],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 31
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "sys",
+          "specifiers": [
+            "sys"
+          ]
+        },
+        {
+          "source": "traceback",
+          "specifiers": [
+            "traceback"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        },
+        {
+          "source": "typing",
+          "specifiers": [
+            "Any",
+            "Callable"
+          ]
+        },
+        {
+          "source": "paths",
+          "specifiers": [
+            "find_repo_root"
+          ]
+        },
+        {
+          "source": "service",
+          "specifiers": [
+            "dumps_result",
+            "get_analysis",
+            "get_context_pack",
+            "get_implement_prompt",
+            "get_task",
+            "list_tasks",
+            "mark_task_status",
+            "pipeline_status",
+            "select_next_task",
+            "validate"
+          ]
+        }
+      ],
+      "exports": [
+        "_root",
+        "_ok_text",
+        "_err_text",
+        "tool_list_tasks",
+        "tool_get_task",
+        "tool_select_next_task",
+        "tool_get_analysis",
+        "tool_get_context_pack",
+        "tool_get_implement_prompt",
+        "tool_mark_task_status",
+        "tool_run_validate",
+        "tool_pipeline_status",
+        "tool_run_analyze",
+        "_tools_list_payload",
+        "_handle_tools_call",
+        "_dispatch",
+        "_read_message",
+        "_write_message",
+        "main"
+      ],
+      "totalLines": 500,
+      "hasStructuralAnalysis": true
+    },
+    "scripts/agentic/mcp_smoke_test.py": {
+      "filePath": "scripts/agentic/mcp_smoke_test.py",
+      "contentHash": "04b8855735d1afb84c108dbc6adbae0b558ccdd314e6d7ddf9f7e935fae30723",
+      "functions": [
+        {
+          "name": "_frame",
+          "params": [
+            "obj"
+          ],
+          "returnType": "bytes",
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "_read_one",
+          "params": [
+            "proc"
+          ],
+          "returnType": "dict",
+          "exported": true,
+          "lineCount": 16
+        },
+        {
+          "name": "main",
+          "params": [],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 112
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "subprocess",
+          "specifiers": [
+            "subprocess"
+          ]
+        },
+        {
+          "source": "sys",
+          "specifiers": [
+            "sys"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        }
+      ],
+      "exports": [
+        "_frame",
+        "_read_one",
+        "main"
+      ],
+      "totalLines": 155,
+      "hasStructuralAnalysis": true
+    },
+    "scripts/agentic/paths.py": {
+      "filePath": "scripts/agentic/paths.py",
+      "contentHash": "e5df194ef491ba5c2e4c8227e827248ed58dd0ddc509a6a256e2822119cebedd",
+      "functions": [
+        {
+          "name": "find_repo_root",
+          "params": [
+            "start"
+          ],
+          "returnType": "Path",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "load_json",
+          "params": [
+            "path"
+          ],
+          "returnType": "Any",
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "write_json",
+          "params": [
+            "path",
+            "data"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "write_text",
+          "params": [
+            "path",
+            "text"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "load_config",
+          "params": [
+            "repo_root"
+          ],
+          "returnType": "dict[str, Any]",
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "out_dir",
+          "params": [
+            "repo_root",
+            "config"
+          ],
+          "returnType": "Path",
+          "exported": true,
+          "lineCount": 2
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        },
+        {
+          "source": "typing",
+          "specifiers": [
+            "Any"
+          ]
+        }
+      ],
+      "exports": [
+        "find_repo_root",
+        "load_json",
+        "write_json",
+        "write_text",
+        "load_config",
+        "out_dir"
+      ],
+      "totalLines": 45,
+      "hasStructuralAnalysis": true
+    },
+    "scripts/agentic/prioritize.py": {
+      "filePath": "scripts/agentic/prioritize.py",
+      "contentHash": "472ce7f2b8213326c2f54b0798b7a48963bd28332069ef42e852a0149c382b4b",
+      "functions": [
+        {
+          "name": "_task_file_paths",
+          "params": [
+            "task"
+          ],
+          "returnType": "list[str]",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "_deps_satisfied",
+          "params": [
+            "task",
+            "by_id"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "score_task",
+          "params": [
+            "task",
+            "config",
+            "path_scores",
+            "by_id"
+          ],
+          "returnType": "dict[str, Any]",
+          "exported": true,
+          "lineCount": 82
+        },
+        {
+          "name": "build_plan",
+          "params": [
+            "backlog",
+            "analysis",
+            "config"
+          ],
+          "returnType": "dict[str, Any]",
+          "exported": true,
+          "lineCount": 33
+        },
+        {
+          "name": "render_plan_md",
+          "params": [
+            "plan"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 45
+        },
+        {
+          "name": "run",
+          "params": [
+            "repo_root",
+            "task_id"
+          ],
+          "returnType": "dict[str, Any]",
+          "exported": true,
+          "lineCount": 33
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "datetime",
+          "specifiers": [
+            "datetime",
+            "timezone"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        },
+        {
+          "source": "typing",
+          "specifiers": [
+            "Any"
+          ]
+        },
+        {
+          "source": "paths",
+          "specifiers": [
+            "find_repo_root",
+            "load_config",
+            "load_json",
+            "out_dir",
+            "write_json",
+            "write_text"
+          ]
+        }
+      ],
+      "exports": [
+        "_task_file_paths",
+        "_deps_satisfied",
+        "score_task",
+        "build_plan",
+        "render_plan_md",
+        "run"
+      ],
+      "totalLines": 241,
+      "hasStructuralAnalysis": true
+    },
+    "scripts/agentic/README.md": {
+      "filePath": "scripts/agentic/README.md",
+      "contentHash": "7c338de2d57a2987b48ea308bb681a16be34504e9a6e4c607837d5a5b7d2998b",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 27,
+      "hasStructuralAnalysis": true
+    },
+    "scripts/agentic/render_prompt.py": {
+      "filePath": "scripts/agentic/render_prompt.py",
+      "contentHash": "c493d459364336de887f5d30cbc956c201d8106ad703111dc7be411485ce1054",
+      "functions": [
+        {
+          "name": "_checklist",
+          "params": [
+            "items"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "render_implement_prompt",
+          "params": [
+            "template",
+            "task"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "render_pr_body",
+          "params": [
+            "template",
+            "task",
+            "graph_commit"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 15
+        },
+        {
+          "name": "run",
+          "params": [
+            "repo_root"
+          ],
+          "returnType": "dict[str, str]",
+          "exported": true,
+          "lineCount": 48
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        },
+        {
+          "source": "typing",
+          "specifiers": [
+            "Any"
+          ]
+        },
+        {
+          "source": "paths",
+          "specifiers": [
+            "find_repo_root",
+            "load_config",
+            "load_json",
+            "out_dir",
+            "write_text"
+          ]
+        }
+      ],
+      "exports": [
+        "_checklist",
+        "render_implement_prompt",
+        "render_pr_body",
+        "run"
+      ],
+      "totalLines": 94,
+      "hasStructuralAnalysis": true
+    },
+    "scripts/agentic/service.py": {
+      "filePath": "scripts/agentic/service.py",
+      "contentHash": "6ca31caf73e362b9be25ef39f3c9970d1fb781d9f92efb991f2ff98afa711b40",
+      "functions": [
+        {
+          "name": "repo_root",
+          "params": [
+            "cwd"
+          ],
+          "returnType": "Path",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "list_tasks",
+          "params": [
+            "status",
+            "root",
+            "include_ranking"
+          ],
+          "returnType": "dict[str, Any]",
+          "exported": true,
+          "lineCount": 62
+        },
+        {
+          "name": "get_task",
+          "params": [
+            "task_id",
+            "root"
+          ],
+          "returnType": "dict[str, Any]",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "select_next_task",
+          "params": [
+            "task_id",
+            "root",
+            "skip_analyze"
+          ],
+          "returnType": "dict[str, Any]",
+          "exported": true,
+          "lineCount": 46
+        },
+        {
+          "name": "get_analysis",
+          "params": [
+            "root",
+            "refresh"
+          ],
+          "returnType": "dict[str, Any]",
+          "exported": true,
+          "lineCount": 23
+        },
+        {
+          "name": "get_context_pack",
+          "params": [
+            "task_id",
+            "hops",
+            "root",
+            "refresh"
+          ],
+          "returnType": "dict[str, Any]",
+          "exported": true,
+          "lineCount": 17
+        },
+        {
+          "name": "get_implement_prompt",
+          "params": [
+            "root"
+          ],
+          "returnType": "dict[str, Any]",
+          "exported": true,
+          "lineCount": 19
+        },
+        {
+          "name": "mark_task_status",
+          "params": [
+            "task_id",
+            "status",
+            "note",
+            "root"
+          ],
+          "returnType": "dict[str, Any]",
+          "exported": true,
+          "lineCount": 28
+        },
+        {
+          "name": "validate",
+          "params": [
+            "base_ref",
+            "skip_quality",
+            "root"
+          ],
+          "returnType": "dict[str, Any]",
+          "exported": true,
+          "lineCount": 25
+        },
+        {
+          "name": "pipeline_status",
+          "params": [
+            "root"
+          ],
+          "returnType": "dict[str, Any]",
+          "exported": true,
+          "lineCount": 36
+        },
+        {
+          "name": "dumps_result",
+          "params": [
+            "data"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 2
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "datetime",
+          "specifiers": [
+            "datetime",
+            "timezone"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        },
+        {
+          "source": "typing",
+          "specifiers": [
+            "Any"
+          ]
+        },
+        {
+          "source": "analyze_graph",
+          "specifiers": [
+            "run_analyze"
+          ]
+        },
+        {
+          "source": "build_context_pack",
+          "specifiers": [
+            "run_context_pack"
+          ]
+        },
+        {
+          "source": "paths",
+          "specifiers": [
+            "find_repo_root",
+            "load_config",
+            "load_json",
+            "out_dir",
+            "write_json"
+          ]
+        },
+        {
+          "source": "prioritize",
+          "specifiers": [
+            "run_plan"
+          ]
+        },
+        {
+          "source": "render_prompt",
+          "specifiers": [
+            "run_render"
+          ]
+        },
+        {
+          "source": "validate_changes",
+          "specifiers": [
+            "run_validate"
+          ]
+        }
+      ],
+      "exports": [
+        "repo_root",
+        "list_tasks",
+        "get_task",
+        "select_next_task",
+        "get_analysis",
+        "get_context_pack",
+        "get_implement_prompt",
+        "mark_task_status",
+        "validate",
+        "pipeline_status",
+        "dumps_result"
+      ],
+      "totalLines": 308,
+      "hasStructuralAnalysis": true
+    },
+    "scripts/agentic/sync_issues.py": {
+      "filePath": "scripts/agentic/sync_issues.py",
+      "contentHash": "2590e0e0d14e69905d6a57789d179963f21bfad6e54c30fc8ef79f3aaff38b5a",
+      "functions": [
+        {
+          "name": "_gh",
+          "params": [
+            "args",
+            "cwd"
+          ],
+          "returnType": "subprocess.CompletedProcess[str]",
+          "exported": true,
+          "lineCount": 10
+        },
+        {
+          "name": "_issue_body",
+          "params": [
+            "task"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 34
+        },
+        {
+          "name": "list_existing_task_issues",
+          "params": [
+            "root"
+          ],
+          "returnType": "dict[str, int]",
+          "exported": true,
+          "lineCount": 31
+        },
+        {
+          "name": "sync",
+          "params": [
+            "repo_root",
+            "dry_run",
+            "statuses"
+          ],
+          "returnType": "dict[str, Any]",
+          "exported": true,
+          "lineCount": 54
+        },
+        {
+          "name": "main",
+          "params": [
+            "argv"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 20
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "subprocess",
+          "specifiers": [
+            "subprocess"
+          ]
+        },
+        {
+          "source": "sys",
+          "specifiers": [
+            "sys"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        },
+        {
+          "source": "typing",
+          "specifiers": [
+            "Any"
+          ]
+        },
+        {
+          "source": "paths",
+          "specifiers": [
+            "find_repo_root",
+            "load_config",
+            "load_json"
+          ]
+        }
+      ],
+      "exports": [
+        "_gh",
+        "_issue_body",
+        "list_existing_task_issues",
+        "sync",
+        "main"
+      ],
+      "totalLines": 175,
+      "hasStructuralAnalysis": true
+    },
+    "scripts/agentic/update_backlog_status.py": {
+      "filePath": "scripts/agentic/update_backlog_status.py",
+      "contentHash": "41877b9d573dc169ed28596a340f005abc27a18419850426061b622d8974a498",
+      "functions": [
+        {
+          "name": "main",
+          "params": [
+            "argv"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 27
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "argparse",
+          "specifiers": [
+            "argparse"
+          ]
+        },
+        {
+          "source": "sys",
+          "specifiers": [
+            "sys"
+          ]
+        },
+        {
+          "source": "datetime",
+          "specifiers": [
+            "datetime",
+            "timezone"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        },
+        {
+          "source": "paths",
+          "specifiers": [
+            "find_repo_root",
+            "load_config",
+            "load_json",
+            "write_json"
+          ]
+        }
+      ],
+      "exports": [
+        "main"
+      ],
+      "totalLines": 50,
+      "hasStructuralAnalysis": true
+    },
+    "scripts/agentic/validate_changes.py": {
+      "filePath": "scripts/agentic/validate_changes.py",
+      "contentHash": "28d784d2f2962b9099fbfe47a13c07e621b11beedb94a6e0e4efdfa16aaf206e",
+      "functions": [
+        {
+          "name": "_run",
+          "params": [
+            "cmd",
+            "cwd"
+          ],
+          "returnType": "dict[str, Any]",
+          "exported": true,
+          "lineCount": 26
+        },
+        {
+          "name": "_git_changed_files",
+          "params": [
+            "root",
+            "base_ref"
+          ],
+          "returnType": "list[str]",
+          "exported": true,
+          "lineCount": 28
+        },
+        {
+          "name": "_match_any",
+          "params": [
+            "path",
+            "globs"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 24
+        },
+        {
+          "name": "check_guardrails",
+          "params": [
+            "changed",
+            "config"
+          ],
+          "returnType": "dict[str, Any]",
+          "exported": true,
+          "lineCount": 42
+        },
+        {
+          "name": "run",
+          "params": [
+            "repo_root",
+            "base_ref",
+            "skip_quality"
+          ],
+          "returnType": "dict[str, Any]",
+          "exported": true,
+          "lineCount": 42
+        },
+        {
+          "name": "main",
+          "params": [
+            "argv"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 10
+        },
+        {
+          "name": "json_dumps_summary",
+          "params": [
+            "report"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 13
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "fnmatch",
+          "specifiers": [
+            "fnmatch"
+          ]
+        },
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "subprocess",
+          "specifiers": [
+            "subprocess"
+          ]
+        },
+        {
+          "source": "sys",
+          "specifiers": [
+            "sys"
+          ]
+        },
+        {
+          "source": "datetime",
+          "specifiers": [
+            "datetime",
+            "timezone"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        },
+        {
+          "source": "typing",
+          "specifiers": [
+            "Any"
+          ]
+        },
+        {
+          "source": "paths",
+          "specifiers": [
+            "find_repo_root",
+            "load_config",
+            "out_dir",
+            "write_json"
+          ]
+        }
+      ],
+      "exports": [
+        "_run",
+        "_git_changed_files",
+        "_match_any",
+        "check_guardrails",
+        "run",
+        "main",
+        "json_dumps_summary"
+      ],
+      "totalLines": 217,
+      "hasStructuralAnalysis": true
+    },
+    "scripts/restart.sh": {
+      "filePath": "scripts/restart.sh",
+      "contentHash": "94f01002b60f5b53aba102e23edf7ab9479e10e53b53a0934af040d53f38f6a3",
+      "functions": [
+        {
+          "name": "is_ccbot_running",
+          "params": [],
+          "exported": false,
+          "lineCount": 3
+        }
+      ],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 81,
+      "hasStructuralAnalysis": true
+    },
     "src/ccbot/__init__.py": {
       "filePath": "src/ccbot/__init__.py",
       "contentHash": "2fc32613fd03c93db12c9bc0671cc45c785080258f99b9f5307ad80d029ffb1c",
@@ -85,7 +3248,7 @@
     },
     "src/ccbot/bot.py": {
       "filePath": "src/ccbot/bot.py",
-      "contentHash": "e936a882977d60e8a5f0a40074d3db0f404ec1a88dc74ba47fe21343f26014f5",
+      "contentHash": "9d5a8b5b2bdd2442dc9e4d672d1f1677dd833873650aea265e896e44ea895675",
       "functions": [
         {
           "name": "post_init",
@@ -328,7 +3491,7 @@
     },
     "src/ccbot/handlers/__init__.py": {
       "filePath": "src/ccbot/handlers/__init__.py",
-      "contentHash": "bba2bdeb952083a00bea184bc53e0c728c8beb51d828133d15e92e5d9e4a8499",
+      "contentHash": "ff9f789128236f122b482efea03976b698948f0b0c0dfb3401744013f3908153",
       "functions": [],
       "classes": [],
       "imports": [],
@@ -338,7 +3501,7 @@
     },
     "src/ccbot/handlers/auth.py": {
       "filePath": "src/ccbot/handlers/auth.py",
-      "contentHash": "157ae80f06bcbdc2103df732fbe7db611dc865ffeefd354460a4c2dcf2010c2e",
+      "contentHash": "4ec1a527e42bd312836b0c865d4b13c5a52aa26e31566a3d46c40c8affd8c616",
       "functions": [
         {
           "name": "is_user_allowed",
@@ -393,7 +3556,7 @@
     },
     "src/ccbot/handlers/callback_router.py": {
       "filePath": "src/ccbot/handlers/callback_router.py",
-      "contentHash": "4ed263436983d8c9b618b1aa13b8b1e37e52240b4386ebcd03b16965f02077bc",
+      "contentHash": "008bf715f6529611fa760502098f65bbe40f5f9d7f6374e7d77af662618365fd",
       "functions": [
         {
           "name": "callback_handler",
@@ -611,7 +3774,7 @@
     },
     "src/ccbot/handlers/command_handlers.py": {
       "filePath": "src/ccbot/handlers/command_handlers.py",
-      "contentHash": "52bdd8d1f97fb74f1d49295a15be8c7b25bf3a21f0943a06244b0fbc897168ac",
+      "contentHash": "8a57c84b66098ff77e7900da3475ddae191446e7b9d1a83800ca6776a0093552",
       "functions": [
         {
           "name": "start_command",
@@ -1219,7 +4382,7 @@
     },
     "src/ccbot/handlers/message_handlers.py": {
       "filePath": "src/ccbot/handlers/message_handlers.py",
-      "contentHash": "2e0e128b442c62bd3b8a1a59c4dca93a793becc1b41a4d31a3b577bfa9a3b8ef",
+      "contentHash": "0d61f6646adcd6cf8b9bad9f1221d4dc574028521a858431ba8ab5afd34c283b",
       "functions": [
         {
           "name": "photo_handler",
@@ -1423,7 +4586,7 @@
     },
     "src/ccbot/handlers/message_queue.py": {
       "filePath": "src/ccbot/handlers/message_queue.py",
-      "contentHash": "ce70192eb7287d804ad82e68b54f83d0fcc348c4e99ff758aab216a9f110293f",
+      "contentHash": "5483fb2d9c32d0d6006905f50c6db203639f022ab5185327c686aa2b5c64569e",
       "functions": [
         {
           "name": "_ensure_formatted",
@@ -1451,7 +4614,34 @@
           ],
           "returnType": "asyncio.Queue[MessageTask]",
           "exported": true,
-          "lineCount": 10
+          "lineCount": 3
+        },
+        {
+          "name": "clear_status_msg_info",
+          "params": [
+            "user_id",
+            "thread_id"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "clear_tool_msg_ids_for_topic",
+          "params": [
+            "user_id",
+            "thread_id"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "shutdown_workers",
+          "params": [],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 3
         },
         {
           "name": "_inspect_queue",
@@ -1503,7 +4693,7 @@
           ],
           "returnType": "None",
           "exported": true,
-          "lineCount": 74
+          "lineCount": 72
         },
         {
           "name": "_send_kwargs",
@@ -1547,7 +4737,7 @@
           ],
           "returnType": "int | None",
           "exported": true,
-          "lineCount": 55
+          "lineCount": 54
         },
         {
           "name": "_process_status_update_task",
@@ -1582,7 +4772,7 @@
           ],
           "returnType": "None",
           "exported": true,
-          "lineCount": 15
+          "lineCount": 14
         },
         {
           "name": "_check_and_send_status",
@@ -1624,34 +4814,7 @@
           ],
           "returnType": "None",
           "exported": true,
-          "lineCount": 35
-        },
-        {
-          "name": "clear_status_msg_info",
-          "params": [
-            "user_id",
-            "thread_id"
-          ],
-          "returnType": "None",
-          "exported": true,
-          "lineCount": 4
-        },
-        {
-          "name": "clear_tool_msg_ids_for_topic",
-          "params": [
-            "user_id",
-            "thread_id"
-          ],
-          "returnType": "None",
-          "exported": true,
-          "lineCount": 12
-        },
-        {
-          "name": "shutdown_workers",
-          "params": [],
-          "returnType": "None",
-          "exported": true,
-          "lineCount": 12
+          "lineCount": 33
         }
       ],
       "classes": [
@@ -1670,6 +4833,41 @@
           ],
           "exported": true,
           "lineCount": 12
+        },
+        {
+          "name": "StatusTracker",
+          "methods": [
+            "__init__",
+            "set_status",
+            "get_status",
+            "pop_status",
+            "set_tool_msg_id",
+            "get_tool_msg_id",
+            "pop_tool_msg_id",
+            "clear_tools_for_topic",
+            "clear_status_for_topic",
+            "clear_all"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 62
+        },
+        {
+          "name": "MessageQueueManager",
+          "methods": [
+            "__init__",
+            "get_queue",
+            "get_or_create_queue",
+            "set_flood",
+            "is_flooded",
+            "flood_remaining",
+            "clear_flood",
+            "get_lock",
+            "shutdown"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 56
         }
       ],
       "imports": [
@@ -1760,8 +4958,13 @@
       "exports": [
         "_ensure_formatted",
         "MessageTask",
+        "StatusTracker",
+        "MessageQueueManager",
         "get_message_queue",
         "get_or_create_queue",
+        "clear_status_msg_info",
+        "clear_tool_msg_ids_for_topic",
+        "shutdown_workers",
         "_inspect_queue",
         "_can_merge_tasks",
         "_merge_content_tasks",
@@ -1776,12 +4979,9 @@
         "_do_clear_status_message",
         "_check_and_send_status",
         "enqueue_content_message",
-        "enqueue_status_update",
-        "clear_status_msg_info",
-        "clear_tool_msg_ids_for_topic",
-        "shutdown_workers"
+        "enqueue_status_update"
       ],
-      "totalLines": 738,
+      "totalLines": 821,
       "hasStructuralAnalysis": true
     },
     "src/ccbot/handlers/message_sender.py": {
@@ -1923,7 +5123,7 @@
     },
     "src/ccbot/handlers/notifications.py": {
       "filePath": "src/ccbot/handlers/notifications.py",
-      "contentHash": "9cd602d893125a8980bd051d3b905108b35e2f5afb9ea260d404570c6dc8e8b0",
+      "contentHash": "cfc16e764abf3f6c3fee48f24f4a4b342af4b8438a25678466c26ad3ae24e91a",
       "functions": [
         {
           "name": "handle_new_message",
@@ -2057,7 +5257,7 @@
     },
     "src/ccbot/handlers/screenshot_controls.py": {
       "filePath": "src/ccbot/handlers/screenshot_controls.py",
-      "contentHash": "8078f9980cd785261e9ddf83590b42866e46a720a939eadf96bddf1b38712da6",
+      "contentHash": "a42ffa3eaa11c12d54c03dc256a80dd13e7dee28850ded8d6757aa759ef122f0",
       "functions": [
         {
           "name": "build_screenshot_keyboard",
@@ -2201,7 +5401,7 @@
     },
     "src/ccbot/handlers/window_bind.py": {
       "filePath": "src/ccbot/handlers/window_bind.py",
-      "contentHash": "2a3dee8f6c7907d0ecf9a7b3639763c360ea81f826a85eb53d2095481f8b6a20",
+      "contentHash": "f0c96c07eff16a16435223633de012650562d4c47db4dd23cc9f7d9470778d6d",
       "functions": [
         {
           "name": "create_and_bind_window",
@@ -2745,6 +5945,143 @@
       "totalLines": 337,
       "hasStructuralAnalysis": true
     },
+    "src/ccbot/session_monitor.py": {
+      "filePath": "src/ccbot/session_monitor.py",
+      "contentHash": "c3fc6fc644692da5344f09e7992a3e388418a17b8af65a629411da469321d1bd",
+      "functions": [],
+      "classes": [
+        {
+          "name": "SessionInfo",
+          "methods": [],
+          "properties": [
+            "session_id",
+            "file_path"
+          ],
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "NewMessage",
+          "methods": [],
+          "properties": [
+            "session_id",
+            "text",
+            "is_complete",
+            "content_type",
+            "tool_use_id",
+            "role",
+            "tool_name",
+            "image_data"
+          ],
+          "exported": true,
+          "lineCount": 11
+        },
+        {
+          "name": "SessionMonitor",
+          "methods": [
+            "__init__",
+            "set_message_callback",
+            "_get_active_cwds",
+            "scan_projects",
+            "_read_new_lines",
+            "check_for_updates",
+            "_load_current_session_map",
+            "_cleanup_all_stale_sessions",
+            "_detect_and_cleanup_changes",
+            "_monitor_loop",
+            "start",
+            "stop"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 507
+        }
+      ],
+      "imports": [
+        {
+          "source": "asyncio",
+          "specifiers": [
+            "asyncio"
+          ]
+        },
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "logging",
+          "specifiers": [
+            "logging"
+          ]
+        },
+        {
+          "source": "dataclasses",
+          "specifiers": [
+            "dataclass"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        },
+        {
+          "source": "typing",
+          "specifiers": [
+            "Any",
+            "Callable",
+            "Awaitable"
+          ]
+        },
+        {
+          "source": "aiofiles",
+          "specifiers": [
+            "aiofiles"
+          ]
+        },
+        {
+          "source": ".config",
+          "specifiers": [
+            "config"
+          ]
+        },
+        {
+          "source": ".monitor_state",
+          "specifiers": [
+            "MonitorState",
+            "TrackedSession"
+          ]
+        },
+        {
+          "source": ".tmux_manager",
+          "specifiers": [
+            "tmux_manager"
+          ]
+        },
+        {
+          "source": ".transcript_parser",
+          "specifiers": [
+            "TranscriptParser"
+          ]
+        },
+        {
+          "source": ".utils",
+          "specifiers": [
+            "read_cwd_from_jsonl"
+          ]
+        }
+      ],
+      "exports": [
+        "SessionInfo",
+        "NewMessage",
+        "SessionMonitor"
+      ],
+      "totalLines": 561,
+      "hasStructuralAnalysis": true
+    },
     "src/ccbot/session.py": {
       "filePath": "src/ccbot/session.py",
       "contentHash": "ee20f8643a7a56c8cf7d175cfe9fe05901fca8c312cfb723f24a582996fdfb4c",
@@ -2914,143 +6251,6 @@
         "SessionManager"
       ],
       "totalLines": 1011,
-      "hasStructuralAnalysis": true
-    },
-    "src/ccbot/session_monitor.py": {
-      "filePath": "src/ccbot/session_monitor.py",
-      "contentHash": "c3fc6fc644692da5344f09e7992a3e388418a17b8af65a629411da469321d1bd",
-      "functions": [],
-      "classes": [
-        {
-          "name": "SessionInfo",
-          "methods": [],
-          "properties": [
-            "session_id",
-            "file_path"
-          ],
-          "exported": true,
-          "lineCount": 5
-        },
-        {
-          "name": "NewMessage",
-          "methods": [],
-          "properties": [
-            "session_id",
-            "text",
-            "is_complete",
-            "content_type",
-            "tool_use_id",
-            "role",
-            "tool_name",
-            "image_data"
-          ],
-          "exported": true,
-          "lineCount": 11
-        },
-        {
-          "name": "SessionMonitor",
-          "methods": [
-            "__init__",
-            "set_message_callback",
-            "_get_active_cwds",
-            "scan_projects",
-            "_read_new_lines",
-            "check_for_updates",
-            "_load_current_session_map",
-            "_cleanup_all_stale_sessions",
-            "_detect_and_cleanup_changes",
-            "_monitor_loop",
-            "start",
-            "stop"
-          ],
-          "properties": [],
-          "exported": true,
-          "lineCount": 507
-        }
-      ],
-      "imports": [
-        {
-          "source": "asyncio",
-          "specifiers": [
-            "asyncio"
-          ]
-        },
-        {
-          "source": "json",
-          "specifiers": [
-            "json"
-          ]
-        },
-        {
-          "source": "logging",
-          "specifiers": [
-            "logging"
-          ]
-        },
-        {
-          "source": "dataclasses",
-          "specifiers": [
-            "dataclass"
-          ]
-        },
-        {
-          "source": "pathlib",
-          "specifiers": [
-            "Path"
-          ]
-        },
-        {
-          "source": "typing",
-          "specifiers": [
-            "Any",
-            "Callable",
-            "Awaitable"
-          ]
-        },
-        {
-          "source": "aiofiles",
-          "specifiers": [
-            "aiofiles"
-          ]
-        },
-        {
-          "source": ".config",
-          "specifiers": [
-            "config"
-          ]
-        },
-        {
-          "source": ".monitor_state",
-          "specifiers": [
-            "MonitorState",
-            "TrackedSession"
-          ]
-        },
-        {
-          "source": ".tmux_manager",
-          "specifiers": [
-            "tmux_manager"
-          ]
-        },
-        {
-          "source": ".transcript_parser",
-          "specifiers": [
-            "TranscriptParser"
-          ]
-        },
-        {
-          "source": ".utils",
-          "specifiers": [
-            "read_cwd_from_jsonl"
-          ]
-        }
-      ],
-      "exports": [
-        "SessionInfo",
-        "NewMessage",
-        "SessionMonitor"
-      ],
-      "totalLines": 561,
       "hasStructuralAnalysis": true
     },
     "src/ccbot/telegram_sender.py": {
@@ -3585,6 +6785,16 @@
       "totalLines": 96,
       "hasStructuralAnalysis": true
     },
+    "test.txt": {
+      "filePath": "test.txt",
+      "contentHash": "90db33f312dc521d29b9f9511a848c77ab321dae191f5eaaea38d103efeea917",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 2,
+      "hasStructuralAnalysis": false
+    },
     "tests/ccbot/conftest.py": {
       "filePath": "tests/ccbot/conftest.py",
       "contentHash": "83e8c73e9c56b985989e34ae70315c0e34e3bd2d990cb2bd48ae108a45a5f37d",
@@ -3782,6 +6992,129 @@
         "TestKeyboardLayoutForSettings"
       ],
       "totalLines": 112,
+      "hasStructuralAnalysis": true
+    },
+    "tests/ccbot/handlers/test_message_queue_state.py": {
+      "filePath": "tests/ccbot/handlers/test_message_queue_state.py",
+      "contentHash": "bed59dac27ee48826717225bc97e4dead4d1edf7f547cbbc90872ee3c4b57dc6",
+      "functions": [
+        {
+          "name": "test_can_merge_same_window_text",
+          "params": [],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "test_cannot_merge_tool_use",
+          "params": [],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "test_merge_content_tasks_respects_limit",
+          "params": [],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 17
+        },
+        {
+          "name": "test_module_singleton_exists",
+          "params": [],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "_concurrent_status_increment",
+          "params": [
+            "st",
+            "lock",
+            "user_id",
+            "thread_id"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 24
+        },
+        {
+          "name": "test_gather_50_status_updates_lose_without_lock",
+          "params": [],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 11
+        },
+        {
+          "name": "test_gather_50_status_updates_safe_with_lock",
+          "params": [],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 10
+        }
+      ],
+      "classes": [
+        {
+          "name": "TestStatusTracker",
+          "methods": [
+            "test_status_roundtrip",
+            "test_tool_ids_and_topic_clear",
+            "test_clear_all"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 25
+        },
+        {
+          "name": "TestMessageQueueManager",
+          "methods": [
+            "test_flood_lifecycle",
+            "test_get_queue_none_until_created",
+            "test_shutdown_clears_state"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 34
+        }
+      ],
+      "imports": [
+        {
+          "source": "asyncio",
+          "specifiers": [
+            "asyncio"
+          ]
+        },
+        {
+          "source": "pytest",
+          "specifiers": [
+            "pytest"
+          ]
+        },
+        {
+          "source": "ccbot.handlers.message_queue",
+          "specifiers": [
+            "MERGE_MAX_LENGTH",
+            "MessageQueueManager",
+            "MessageTask",
+            "StatusTracker",
+            "_can_merge_tasks",
+            "_merge_content_tasks",
+            "queue_manager"
+          ]
+        }
+      ],
+      "exports": [
+        "TestStatusTracker",
+        "TestMessageQueueManager",
+        "test_can_merge_same_window_text",
+        "test_cannot_merge_tool_use",
+        "test_merge_content_tasks_respects_limit",
+        "test_module_singleton_exists",
+        "_concurrent_status_increment",
+        "test_gather_50_status_updates_lose_without_lock",
+        "test_gather_50_status_updates_safe_with_lock"
+      ],
+      "totalLines": 176,
       "hasStructuralAnalysis": true
     },
     "tests/ccbot/handlers/test_response_builder.py": {
@@ -3982,7 +7315,7 @@
     },
     "tests/ccbot/test_forward_command.py": {
       "filePath": "tests/ccbot/test_forward_command.py",
-      "contentHash": "2e9996002a8e882e15aa3a4befadc9d629da4441e7c61dbca4910904f6487132",
+      "contentHash": "79dc202c576d285d71fc8b8dea7c463f902902049d48bd1de36736a10a0fd6ee",
       "functions": [
         {
           "name": "_make_update",
@@ -4270,6 +7603,70 @@
       "totalLines": 146,
       "hasStructuralAnalysis": true
     },
+    "tests/ccbot/test_session_monitor.py": {
+      "filePath": "tests/ccbot/test_session_monitor.py",
+      "contentHash": "31a61221b8d44bf6c506c3aa1969e6e740b7ea26bdab4854ed6c8cde0fe796e7",
+      "functions": [
+        {
+          "name": "_write_jsonl",
+          "params": [
+            "path",
+            "text"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 7
+        }
+      ],
+      "classes": [
+        {
+          "name": "TestReadNewLinesOffsetRecovery",
+          "methods": [
+            "monitor",
+            "test_mid_line_offset_recovery",
+            "test_valid_offset_reads_normally",
+            "test_poison_line_skipped",
+            "test_partial_line_at_eof_retried",
+            "test_truncation_detection"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 138
+        }
+      ],
+      "imports": [
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "pytest",
+          "specifiers": [
+            "pytest"
+          ]
+        },
+        {
+          "source": "ccbot.monitor_state",
+          "specifiers": [
+            "TrackedSession"
+          ]
+        },
+        {
+          "source": "ccbot.session_monitor",
+          "specifiers": [
+            "SessionMonitor"
+          ]
+        }
+      ],
+      "exports": [
+        "_write_jsonl",
+        "TestReadNewLinesOffsetRecovery"
+      ],
+      "totalLines": 158,
+      "hasStructuralAnalysis": true
+    },
     "tests/ccbot/test_session.py": {
       "filePath": "tests/ccbot/test_session.py",
       "contentHash": "8d7d6097eeb61d3631dc246a0a2a3d046ddeb9eabfc4d0a4d80748dd02670874",
@@ -4440,70 +7837,6 @@
         "TestLoadSessionMapMigration"
       ],
       "totalLines": 345,
-      "hasStructuralAnalysis": true
-    },
-    "tests/ccbot/test_session_monitor.py": {
-      "filePath": "tests/ccbot/test_session_monitor.py",
-      "contentHash": "ddf2cbb099a763eb0061005b5361c0d698fc50a380f745ce117859fdb89aae45",
-      "functions": [
-        {
-          "name": "_write_jsonl",
-          "params": [
-            "path",
-            "text"
-          ],
-          "returnType": "None",
-          "exported": true,
-          "lineCount": 7
-        }
-      ],
-      "classes": [
-        {
-          "name": "TestReadNewLinesOffsetRecovery",
-          "methods": [
-            "monitor",
-            "test_mid_line_offset_recovery",
-            "test_valid_offset_reads_normally",
-            "test_poison_line_skipped",
-            "test_partial_line_at_eof_retried",
-            "test_truncation_detection"
-          ],
-          "properties": [],
-          "exported": true,
-          "lineCount": 138
-        }
-      ],
-      "imports": [
-        {
-          "source": "json",
-          "specifiers": [
-            "json"
-          ]
-        },
-        {
-          "source": "pytest",
-          "specifiers": [
-            "pytest"
-          ]
-        },
-        {
-          "source": "ccbot.monitor_state",
-          "specifiers": [
-            "TrackedSession"
-          ]
-        },
-        {
-          "source": "ccbot.session_monitor",
-          "specifiers": [
-            "SessionMonitor"
-          ]
-        }
-      ],
-      "exports": [
-        "_write_jsonl",
-        "TestReadNewLinesOffsetRecovery"
-      ],
-      "totalLines": 158,
       "hasStructuralAnalysis": true
     },
     "tests/ccbot/test_telegram_sender.py": {

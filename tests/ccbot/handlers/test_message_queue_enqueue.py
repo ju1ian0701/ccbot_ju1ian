@@ -1,9 +1,8 @@
-"""Focused tests for message queue enqueue / flood / worker (REF-009)."""
+"""Focused tests for message queue enqueue / flood / worker (REF-009 + REF-005)."""
 
 from __future__ import annotations
 
 import asyncio
-import time
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -15,28 +14,17 @@ from ccbot.handlers.message_queue import (
     enqueue_status_update,
     get_message_queue,
     get_or_create_queue,
+    queue_manager,
     shutdown_workers,
 )
 
 
 @pytest.fixture(autouse=True)
 async def _isolate_queue_state():
-    """Reset module queue state around each test (no leftover workers)."""
+    """Reset queue_manager state around each test (no leftover workers)."""
     await shutdown_workers()
-    mq._message_queues.clear()
-    mq._queue_workers.clear()
-    mq._queue_locks.clear()
-    mq._tool_msg_ids.clear()
-    mq._status_msg_info.clear()
-    mq._flood_until.clear()
     yield
     await shutdown_workers()
-    mq._message_queues.clear()
-    mq._queue_workers.clear()
-    mq._queue_locks.clear()
-    mq._tool_msg_ids.clear()
-    mq._status_msg_info.clear()
-    mq._flood_until.clear()
 
 
 @pytest.mark.asyncio
@@ -65,7 +53,7 @@ async def test_enqueue_content_creates_queue_and_task() -> None:
 @pytest.mark.asyncio
 async def test_enqueue_status_skipped_during_flood() -> None:
     bot = MagicMock()
-    mq._flood_until[1] = time.monotonic() + 99
+    queue_manager.set_flood(1, 99)
     with patch.object(mq, "_message_queue_worker", new_callable=AsyncMock):
         await enqueue_status_update(
             bot,
@@ -81,7 +69,7 @@ async def test_enqueue_status_skipped_during_flood() -> None:
 async def test_enqueue_status_dedupes_same_text() -> None:
     bot = MagicMock()
     with patch.object(mq, "_message_queue_worker", new_callable=AsyncMock):
-        mq._status_msg_info[(1, 5)] = (10, "@2", "same")
+        queue_manager.status.set_status(1, 5, 10, "@2", "same")
         await enqueue_status_update(
             bot,
             user_id=1,
@@ -134,10 +122,10 @@ async def test_worker_processes_content_and_marks_done() -> None:
 
     with patch.object(mq, "_process_content_with_retry", side_effect=fake_process):
         q: asyncio.Queue[MessageTask] = asyncio.Queue()
-        mq._message_queues[3] = q
-        mq._queue_locks[3] = asyncio.Lock()
+        queue_manager._queues[3] = q
+        queue_manager._locks[3] = asyncio.Lock()
         worker = asyncio.create_task(mq._message_queue_worker(bot, 3))
-        mq._queue_workers[3] = worker
+        queue_manager._workers[3] = worker
         await q.put(
             MessageTask(
                 task_type="content",

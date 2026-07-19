@@ -92,9 +92,12 @@ class TestListWindows:
 
 class TestScrubEnv:
     def test_scrub_swallows_missing_vars(self, mgr: TmuxManager) -> None:
+        # libtmux raises ValueError when unset-environment fails (var missing)
         sess = MagicMock()
-        sess.unset_environment.side_effect = Exception("not set")
-        mgr._scrub_session_env(sess)
+        sess.unset_environment.side_effect = ValueError(
+            "tmux set-environment stderr: not set"
+        )
+        mgr._scrub_session_env(sess)  # must not raise
         assert sess.unset_environment.called
 
 
