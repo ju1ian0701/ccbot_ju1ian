@@ -51,7 +51,7 @@
       "id": "REF-003",
       "title": "Replace broad except Exception with specific errors",
       "priority": "high",
-      "status": "ready",
+      "status": "done",
       "categories": [
         "error-handling"
       ],
@@ -68,7 +68,8 @@
       "estimated_risk": "medium",
       "acceptance_criteria": [
         "No silent exception swallowing"
-      ]
+      ],
+      "status_updated_at": "2026-07-18T09:02:54.406187+00:00"
     },
     {
       "id": "REF-004",
@@ -199,5 +200,5 @@
       ]
     }
   ],
-  "updated_at": "2026-07-17"
+  "updated_at": "2026-07-18"
 }

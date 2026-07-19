@@ -7,6 +7,7 @@ Uses telegramify-markdown for MarkdownV2 formatting.
 
 Functions:
   - send_with_fallback: Send with formatting → plain text fallback
+  - edit_with_fallback: Edit with formatting → plain text fallback
   - send_photo: Photo sending (single or media group)
   - safe_reply: Reply with formatting, fallback to plain text
   - safe_edit: Edit message with formatting, fallback to plain text
@@ -21,8 +22,9 @@ import logging
 from typing import Any
 
 from telegram import Bot, InputMediaPhoto, LinkPreviewOptions, Message
-from telegram.error import RetryAfter
+from telegram.error import RetryAfter, TelegramError
 
+from ..errors import log_exception
 from ..markdown_v2 import convert_markdown
 from ..transcript_parser import TranscriptParser
 
@@ -72,16 +74,69 @@ async def send_with_fallback(
         )
     except RetryAfter:
         raise
-    except Exception:
+    except TelegramError:
         try:
             return await bot.send_message(
                 chat_id=chat_id, text=strip_sentinels(text), **kwargs
             )
         except RetryAfter:
             raise
-        except Exception as e:
-            logger.error(f"Failed to send message to {chat_id}: {e}")
+        except TelegramError as e:
+            log_exception(
+                logger,
+                "Failed to send message",
+                e,
+                level=logging.ERROR,
+                chat_id=chat_id,
+            )
             return None
+
+
+async def edit_with_fallback(
+    bot: Bot,
+    chat_id: int,
+    message_id: int,
+    text: str,
+    **kwargs: Any,
+) -> bool:
+    """Edit message with MarkdownV2, falling back to plain text on failure.
+
+    Returns True on success, False if both attempts fail.
+    RetryAfter is re-raised for caller handling.
+    """
+    kwargs.setdefault("link_preview_options", NO_LINK_PREVIEW)
+    try:
+        await bot.edit_message_text(
+            chat_id=chat_id,
+            message_id=message_id,
+            text=_ensure_formatted(text),
+            parse_mode=PARSE_MODE,
+            **kwargs,
+        )
+        return True
+    except RetryAfter:
+        raise
+    except TelegramError:
+        try:
+            await bot.edit_message_text(
+                chat_id=chat_id,
+                message_id=message_id,
+                text=strip_sentinels(text),
+                **kwargs,
+            )
+            return True
+        except RetryAfter:
+            raise
+        except TelegramError as e:
+            log_exception(
+                logger,
+                "Failed to edit message",
+                e,
+                level=logging.DEBUG,
+                chat_id=chat_id,
+                message_id=message_id,
+            )
+            return False
 
 
 async def send_photo(
@@ -122,8 +177,14 @@ async def send_photo(
             )
     except RetryAfter:
         raise
-    except Exception as e:
-        logger.error("Failed to send photo to %d: %s", chat_id, e)
+    except TelegramError as e:
+        log_exception(
+            logger,
+            "Failed to send photo",
+            e,
+            level=logging.ERROR,
+            chat_id=chat_id,
+        )
 
 
 async def safe_reply(message: Message, text: str, **kwargs: Any) -> Message:
@@ -137,13 +198,13 @@ async def safe_reply(message: Message, text: str, **kwargs: Any) -> Message:
         )
     except RetryAfter:
         raise
-    except Exception:
+    except TelegramError:
         try:
             return await message.reply_text(strip_sentinels(text), **kwargs)
         except RetryAfter:
             raise
-        except Exception as e:
-            logger.error(f"Failed to reply: {e}")
+        except TelegramError as e:
+            log_exception(logger, "Failed to reply", e, level=logging.ERROR)
             raise
 
 
@@ -158,13 +219,13 @@ async def safe_edit(target: Any, text: str, **kwargs: Any) -> None:
         )
     except RetryAfter:
         raise
-    except Exception:
+    except TelegramError:
         try:
             await target.edit_message_text(strip_sentinels(text), **kwargs)
         except RetryAfter:
             raise
-        except Exception as e:
-            logger.error("Failed to edit message: %s", e)
+        except TelegramError as e:
+            log_exception(logger, "Failed to edit message", e, level=logging.ERROR)
 
 
 async def safe_send(
@@ -175,24 +236,6 @@ async def safe_send(
     **kwargs: Any,
 ) -> None:
     """Send message with formatting, falling back to plain text on failure."""
-    kwargs.setdefault("link_preview_options", NO_LINK_PREVIEW)
     if message_thread_id is not None:
         kwargs.setdefault("message_thread_id", message_thread_id)
-    try:
-        await bot.send_message(
-            chat_id=chat_id,
-            text=_ensure_formatted(text),
-            parse_mode=PARSE_MODE,
-            **kwargs,
-        )
-    except RetryAfter:
-        raise
-    except Exception:
-        try:
-            await bot.send_message(
-                chat_id=chat_id, text=strip_sentinels(text), **kwargs
-            )
-        except RetryAfter:
-            raise
-        except Exception as e:
-            logger.error(f"Failed to send message to {chat_id}: {e}")
+    await send_with_fallback(bot, chat_id, text, **kwargs)

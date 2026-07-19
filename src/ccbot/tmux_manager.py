@@ -20,10 +20,15 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import libtmux
+from libtmux.exc import LibTmuxException
 
 from .config import SENSITIVE_ENV_VARS, config
+from .errors import log_exception
 
 logger = logging.getLogger(__name__)
+
+# libtmux + subprocess / OS failures around the tmux server
+_TMUX_ERRORS = (LibTmuxException, OSError, RuntimeError, ValueError, KeyError)
 
 # Claude session IDs are UUIDs (JSONL filename stems)
 _UUID_RE = re.compile(
@@ -64,7 +69,10 @@ class TmuxManager:
         """Get the tmux session if it exists."""
         try:
             return self.server.sessions.get(session_name=self.session_name)
-        except Exception:
+        except _TMUX_ERRORS as e:
+            log_exception(
+                logger, "tmux get_session failed", e, session=self.session_name
+            )
             return None
 
     def get_or_create_session(self) -> libtmux.Session:
@@ -95,8 +103,9 @@ class TmuxManager:
         for var in SENSITIVE_ENV_VARS:
             try:
                 session.unset_environment(var)
-            except Exception:
-                pass  # var not set in session env — nothing to remove
+            except _TMUX_ERRORS as e:
+                # var not set in session env — nothing to remove
+                log_exception(logger, "tmux unset_environment skipped", e, var=var)
 
     async def list_windows(self) -> list[TmuxWindow]:
         """List all windows in the session with their working directories.
@@ -136,8 +145,8 @@ class TmuxManager:
                             pane_current_command=pane_cmd,
                         )
                     )
-                except Exception as e:
-                    logger.debug(f"Error getting window info: {e}")
+                except _TMUX_ERRORS as e:
+                    log_exception(logger, "Error getting window info", e)
 
             return windows
 
@@ -205,8 +214,14 @@ class TmuxManager:
                     f"Failed to capture pane {window_id}: {stderr.decode('utf-8')}"
                 )
                 return None
-            except Exception as e:
-                logger.error(f"Unexpected error capturing pane {window_id}: {e}")
+            except _TMUX_ERRORS as e:
+                log_exception(
+                    logger,
+                    "Unexpected error capturing pane",
+                    e,
+                    level=logging.ERROR,
+                    window_id=window_id,
+                )
                 return None
 
         # Original implementation for plain text - wrap in thread
@@ -223,8 +238,14 @@ class TmuxManager:
                     return None
                 lines = pane.capture_pane()
                 return "\n".join(lines) if isinstance(lines, list) else str(lines)
-            except Exception as e:
-                logger.error(f"Failed to capture pane {window_id}: {e}")
+            except _TMUX_ERRORS as e:
+                log_exception(
+                    logger,
+                    "Failed to capture pane",
+                    e,
+                    level=logging.ERROR,
+                    window_id=window_id,
+                )
                 return None
 
         return await asyncio.to_thread(_sync_capture)
@@ -266,8 +287,14 @@ class TmuxManager:
                         return False
                     pane.send_keys(chars, enter=False, literal=True)
                     return True
-                except Exception as e:
-                    logger.error(f"Failed to send keys to window {window_id}: {e}")
+                except _TMUX_ERRORS as e:
+                    log_exception(
+                        logger,
+                        "Failed to send keys to window",
+                        e,
+                        level=logging.ERROR,
+                        window_id=window_id,
+                    )
                     return False
 
             def _send_enter() -> bool:
@@ -283,8 +310,14 @@ class TmuxManager:
                         return False
                     pane.send_keys("", enter=True, literal=False)
                     return True
-                except Exception as e:
-                    logger.error(f"Failed to send Enter to window {window_id}: {e}")
+                except _TMUX_ERRORS as e:
+                    log_exception(
+                        logger,
+                        "Failed to send Enter to window",
+                        e,
+                        level=logging.ERROR,
+                        window_id=window_id,
+                    )
                     return False
 
             # Claude Code's ! command mode: send "!" first so the TUI
@@ -324,8 +357,14 @@ class TmuxManager:
                 pane.send_keys(text, enter=enter, literal=literal)
                 return True
 
-            except Exception as e:
-                logger.error(f"Failed to send keys to window {window_id}: {e}")
+            except _TMUX_ERRORS as e:
+                log_exception(
+                    logger,
+                    "Failed to send keys to window",
+                    e,
+                    level=logging.ERROR,
+                    window_id=window_id,
+                )
                 return False
 
         return await asyncio.to_thread(_sync_send_keys)
@@ -344,8 +383,14 @@ class TmuxManager:
                 window.rename_window(new_name)
                 logger.info("Renamed window %s to '%s'", window_id, new_name)
                 return True
-            except Exception as e:
-                logger.error(f"Failed to rename window {window_id}: {e}")
+            except _TMUX_ERRORS as e:
+                log_exception(
+                    logger,
+                    "Failed to rename window",
+                    e,
+                    level=logging.ERROR,
+                    window_id=window_id,
+                )
                 return False
 
         return await asyncio.to_thread(_sync_rename)
@@ -364,8 +409,14 @@ class TmuxManager:
                 window.kill()
                 logger.info("Killed window %s", window_id)
                 return True
-            except Exception as e:
-                logger.error(f"Failed to kill window {window_id}: {e}")
+            except _TMUX_ERRORS as e:
+                log_exception(
+                    logger,
+                    "Failed to kill window",
+                    e,
+                    level=logging.ERROR,
+                    window_id=window_id,
+                )
                 return False
 
         return await asyncio.to_thread(_sync_kill)
@@ -449,8 +500,13 @@ class TmuxManager:
                     wid,
                 )
 
-            except Exception as e:
-                logger.error(f"Failed to create window: {e}")
+            except _TMUX_ERRORS as e:
+                log_exception(
+                    logger,
+                    "Failed to create window",
+                    e,
+                    level=logging.ERROR,
+                )
                 return False, f"Failed to create window: {e}", "", ""
 
         return await asyncio.to_thread(_create_and_start)
