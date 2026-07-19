@@ -51,7 +51,7 @@
       "id": "REF-003",
       "title": "Replace broad except Exception with specific errors",
       "priority": "high",
-      "status": "ready",
+      "status": "done",
       "categories": [
         "error-handling"
       ],
@@ -68,7 +68,8 @@
       "estimated_risk": "medium",
       "acceptance_criteria": [
         "No silent exception swallowing"
-      ]
+      ],
+      "status_updated_at": "2026-07-18T09:02:54.406187+00:00"
     },
     {
       "id": "REF-004",
@@ -114,7 +115,7 @@
       "id": "REF-006",
       "title": "Migrate callback_data parsing to dataclasses",
       "priority": "medium",
-      "status": "ready",
+      "status": "done",
       "categories": [
         "validation"
       ],
@@ -130,7 +131,9 @@
       "estimated_risk": "low",
       "acceptance_criteria": [
         "String split replaced with typed dataclasses"
-      ]
+      ],
+      "status_updated_at": "2026-07-17T15:54:36.021680+00:00",
+      "status_note": "Typed encode/parse dataclasses for callback_data; producers+router migrated; tests added"
     },
     {
       "id": "REF-007",

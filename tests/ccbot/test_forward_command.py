@@ -1,8 +1,11 @@
 """Tests for forward_command_handler — command forwarding to Claude Code."""
 
+from contextlib import ExitStack, contextmanager
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
+
+from ccbot.tmux_manager import TmuxWindow
 
 
 def _make_update(text: str, user_id: int = 1, thread_id: int = 42) -> MagicMock:
@@ -15,6 +18,7 @@ def _make_update(text: str, user_id: int = 1, thread_id: int = 42) -> MagicMock:
     update.message.message_thread_id = thread_id
     update.message.chat = MagicMock()
     update.message.chat.send_action = AsyncMock()
+    update.callback_query = None
     update.effective_chat = MagicMock()
     update.effective_chat.type = "supergroup"
     update.effective_chat.id = 100
