@@ -25,15 +25,16 @@ from ..config import config
 from .callback_data import (
     CB_DIR_CANCEL,
     CB_DIR_CONFIRM,
-    CB_DIR_PAGE,
-    CB_DIR_SELECT,
     CB_DIR_UP,
     CB_SESSION_CANCEL,
     CB_SESSION_NEW,
-    CB_SESSION_SELECT,
-    CB_WIN_BIND,
     CB_WIN_CANCEL,
     CB_WIN_NEW,
+    DirPageCallback,
+    DirSelectCallback,
+    SessionSelectCallback,
+    WinBindCallback,
+    safe_callback_data,
 )
 
 # Directories per page in directory browser
@@ -103,15 +104,20 @@ def build_window_picker(
             display = name[:12] + "…" if len(name) > 13 else name
             row.append(
                 InlineKeyboardButton(
-                    f"🖥 {display}", callback_data=f"{CB_WIN_BIND}{i + j}"
+                    f"🖥 {display}",
+                    callback_data=safe_callback_data(WinBindCallback(index=i + j)),
                 )
             )
         buttons.append(row)
 
     buttons.append(
         [
-            InlineKeyboardButton("➕ New Session", callback_data=CB_WIN_NEW),
-            InlineKeyboardButton("Cancel", callback_data=CB_WIN_CANCEL),
+            InlineKeyboardButton(
+                "➕ New Session", callback_data=safe_callback_data(CB_WIN_NEW)
+            ),
+            InlineKeyboardButton(
+                "Cancel", callback_data=safe_callback_data(CB_WIN_CANCEL)
+            ),
         ]
     )
 
@@ -156,7 +162,8 @@ def build_directory_browser(
             idx = start + i + j
             row.append(
                 InlineKeyboardButton(
-                    f"📁 {display}", callback_data=f"{CB_DIR_SELECT}{idx}"
+                    f"📁 {display}",
+                    callback_data=safe_callback_data(DirSelectCallback(index=idx)),
                 )
             )
         buttons.append(row)
@@ -165,23 +172,38 @@ def build_directory_browser(
         nav: list[InlineKeyboardButton] = []
         if page > 0:
             nav.append(
-                InlineKeyboardButton("◀", callback_data=f"{CB_DIR_PAGE}{page - 1}")
+                InlineKeyboardButton(
+                    "◀",
+                    callback_data=safe_callback_data(DirPageCallback(page=page - 1)),
+                )
             )
         nav.append(
-            InlineKeyboardButton(f"{page + 1}/{total_pages}", callback_data="noop")
+            InlineKeyboardButton(
+                f"{page + 1}/{total_pages}",
+                callback_data=safe_callback_data("noop"),
+            )
         )
         if page < total_pages - 1:
             nav.append(
-                InlineKeyboardButton("▶", callback_data=f"{CB_DIR_PAGE}{page + 1}")
+                InlineKeyboardButton(
+                    "▶",
+                    callback_data=safe_callback_data(DirPageCallback(page=page + 1)),
+                )
             )
         buttons.append(nav)
 
     action_row: list[InlineKeyboardButton] = []
     # Allow going up unless at filesystem root
     if path != path.parent:
-        action_row.append(InlineKeyboardButton("..", callback_data=CB_DIR_UP))
-    action_row.append(InlineKeyboardButton("Select", callback_data=CB_DIR_CONFIRM))
-    action_row.append(InlineKeyboardButton("Cancel", callback_data=CB_DIR_CANCEL))
+        action_row.append(
+            InlineKeyboardButton("..", callback_data=safe_callback_data(CB_DIR_UP))
+        )
+    action_row.append(
+        InlineKeyboardButton("Select", callback_data=safe_callback_data(CB_DIR_CONFIRM))
+    )
+    action_row.append(
+        InlineKeyboardButton("Cancel", callback_data=safe_callback_data(CB_DIR_CANCEL))
+    )
     buttons.append(action_row)
 
     display_path = str(path).replace(str(Path.home()), "~")
@@ -240,15 +262,22 @@ def build_session_picker(
             label = s.summary[:14] + "…" if len(s.summary) > 14 else s.summary
             row.append(
                 InlineKeyboardButton(
-                    f"▶ {label}", callback_data=f"{CB_SESSION_SELECT}{i + j}"
+                    f"▶ {label}",
+                    callback_data=safe_callback_data(
+                        SessionSelectCallback(index=i + j)
+                    ),
                 )
             )
         buttons.append(row)
 
     buttons.append(
         [
-            InlineKeyboardButton("➕ New Session", callback_data=CB_SESSION_NEW),
-            InlineKeyboardButton("Cancel", callback_data=CB_SESSION_CANCEL),
+            InlineKeyboardButton(
+                "➕ New Session", callback_data=safe_callback_data(CB_SESSION_NEW)
+            ),
+            InlineKeyboardButton(
+                "Cancel", callback_data=safe_callback_data(CB_SESSION_CANCEL)
+            ),
         ]
     )
 

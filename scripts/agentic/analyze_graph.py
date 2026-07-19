@@ -42,7 +42,6 @@ def analyze_graph(graph: dict[str, Any], config: dict[str, Any]) -> dict[str, An
     layers: list[dict[str, Any]] = graph.get("layers") or []
     tour: list[dict[str, Any]] = graph.get("tour") or []
 
-    node_by_id = {n["id"]: n for n in nodes if n.get("id")}
     fan_in: dict[str, int] = defaultdict(int)
     fan_out: dict[str, int] = defaultdict(int)
     edge_types: Counter[str] = Counter()
@@ -259,4 +258,4 @@ def run(repo_root: Path | None = None) -> dict[str, Any]:
 if __name__ == "__main__":
     result = run()
     print(f"Hotspots: {len(result.get('hotspots') or [])}")
-    print(f"Wrote analysis to .agentic/out/")
+    print("Wrote analysis to .agentic/out/")

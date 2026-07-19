@@ -1,4 +1,5 @@
-import json, os
+import json
+import os
 
 root = r"D:\CCbot_tmux\ccbot\ccbot_ju1ian"
 gpath = f"{root}\\.understand-anything\\intermediate\\assembled-graph.json"

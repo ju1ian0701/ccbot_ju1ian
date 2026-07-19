@@ -16,7 +16,7 @@ from ..config import config
 from ..session import session_manager
 from ..telegram_sender import split_message
 from ..transcript_parser import TranscriptParser
-from .callback_data import CB_HISTORY_NEXT, CB_HISTORY_PREV
+from .callback_data import HistoryCallback, safe_callback_data
 from .message_sender import safe_edit, safe_reply, safe_send
 
 logger = logging.getLogger(__name__)
@@ -39,28 +39,41 @@ def _build_history_keyboard(
 
     buttons = []
     if page_index > 0:
-        cb_data = (
-            f"{CB_HISTORY_PREV}{page_index - 1}:{window_id}:{start_byte}:{end_byte}"
-        )
         buttons.append(
             InlineKeyboardButton(
                 "◀ Older",
-                callback_data=cb_data[:64],
+                callback_data=safe_callback_data(
+                    HistoryCallback(
+                        older=True,
+                        page=page_index - 1,
+                        window_id=window_id,
+                        start_byte=start_byte,
+                        end_byte=end_byte,
+                    )
+                ),
             )
         )
 
     buttons.append(
-        InlineKeyboardButton(f"{page_index + 1}/{total_pages}", callback_data="noop")
+        InlineKeyboardButton(
+            f"{page_index + 1}/{total_pages}",
+            callback_data=safe_callback_data("noop"),
+        )
     )
 
     if page_index < total_pages - 1:
-        cb_data = (
-            f"{CB_HISTORY_NEXT}{page_index + 1}:{window_id}:{start_byte}:{end_byte}"
-        )
         buttons.append(
             InlineKeyboardButton(
                 "Newer ▶",
-                callback_data=cb_data[:64],
+                callback_data=safe_callback_data(
+                    HistoryCallback(
+                        older=False,
+                        page=page_index + 1,
+                        window_id=window_id,
+                        start_byte=start_byte,
+                        end_byte=end_byte,
+                    )
+                ),
             )
         )
 

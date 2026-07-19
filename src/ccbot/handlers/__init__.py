@@ -2,7 +2,7 @@
 
 This package contains the Telegram bot handlers split by functionality:
   - auth: is_user_allowed, get_thread_id
-  - callback_data: Callback data constants (CB_* prefixes)
+  - callback_data: CB_* prefixes, typed payloads, encode_*/parse_*
   - callback_router: Central inline-keyboard dispatch
   - command_handlers: Slash commands and topic lifecycle
   - message_handlers: text / photo / voice + bash capture

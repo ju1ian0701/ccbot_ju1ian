@@ -51,7 +51,7 @@
       "id": "REF-003",
       "title": "Replace broad except Exception with specific errors",
       "priority": "high",
-      "status": "ready",
+      "status": "done",
       "categories": [
         "error-handling"
       ],
@@ -68,13 +68,14 @@
       "estimated_risk": "medium",
       "acceptance_criteria": [
         "No silent exception swallowing"
-      ]
+      ],
+      "status_updated_at": "2026-07-18T09:02:54.406187+00:00"
     },
     {
       "id": "REF-004",
       "title": "Simplify session migration and stale ID logic",
       "priority": "high",
-      "status": "ready",
+      "status": "done",
       "categories": [
         "architecture"
       ],
@@ -88,7 +89,8 @@
       "estimated_risk": "high",
       "acceptance_criteria": [
         "Remove legacy window_name support"
-      ]
+      ],
+      "status_updated_at": "2026-07-18T10:07:41.319621+00:00"
     },
     {
       "id": "REF-005",
@@ -115,7 +117,7 @@
       "id": "REF-006",
       "title": "Migrate callback_data parsing to dataclasses",
       "priority": "medium",
-      "status": "ready",
+      "status": "done",
       "categories": [
         "validation"
       ],
@@ -131,7 +133,9 @@
       "estimated_risk": "low",
       "acceptance_criteria": [
         "String split replaced with typed dataclasses"
-      ]
+      ],
+      "status_updated_at": "2026-07-17T15:54:36.021680+00:00",
+      "status_note": "Typed encode/parse dataclasses for callback_data; producers+router migrated; tests added"
     },
     {
       "id": "REF-007",
@@ -161,7 +165,7 @@
       "id": "REF-008",
       "title": "Unify Markdown/plain fallback and RetryAfter handling",
       "priority": "medium",
-      "status": "ready",
+      "status": "done",
       "categories": [
         "dry"
       ],
@@ -177,13 +181,14 @@
       "estimated_risk": "medium",
       "acceptance_criteria": [
         "Single MessageFormatter used"
-      ]
+      ],
+      "status_updated_at": "2026-07-18T09:48:47.555552+00:00"
     },
     {
       "id": "REF-009",
       "title": "Fill test gaps for bot/tmux/queue hotspots",
       "priority": "medium",
-      "status": "ready",
+      "status": "done",
       "categories": [
         "testing"
       ],
@@ -195,7 +200,8 @@
       "estimated_risk": "low",
       "acceptance_criteria": [
         "Coverage for uncovered hotspots"
-      ]
+      ],
+      "status_updated_at": "2026-07-18T09:57:27.416343+00:00"
     }
   ],
   "updated_at": "2026-07-18"
