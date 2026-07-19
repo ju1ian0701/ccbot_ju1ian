@@ -30,7 +30,6 @@ from typing import Any, TypeVar
 from telegram import Bot, InputMediaPhoto, LinkPreviewOptions, Message
 from telegram.error import RetryAfter, TelegramError
 
-from ..errors import log_exception
 from ..markdown_v2 import convert_markdown
 from ..transcript_parser import TranscriptParser
 
@@ -168,24 +167,18 @@ async def send_with_fallback(
             parse_mode=formatter.parse_mode,
             **kwargs,
         )
-    except RetryAfter:
-        raise
-    except TelegramError:
-        try:
-            return await bot.send_message(
-                chat_id=chat_id, text=strip_sentinels(text), **kwargs
-            )
-        except RetryAfter:
-            raise
-        except TelegramError as e:
-            log_exception(
-                logger,
-                "Failed to send message",
-                e,
-                level=logging.ERROR,
-                chat_id=chat_id,
-            )
-            return None
+
+    async def _plain(body: str) -> Message:
+        return await bot.send_message(chat_id=chat_id, text=body, **kwargs)
+
+    return await _run_markdown_fallback(
+        text,
+        _md,
+        _plain,
+        failure_level=logging.ERROR,
+        failure_message="Failed to send message",
+        chat_id=chat_id,
+    )
 
 
 async def edit_with_fallback(
@@ -201,38 +194,36 @@ async def edit_with_fallback(
     RetryAfter is re-raised for caller handling.
     """
     kwargs.setdefault("link_preview_options", NO_LINK_PREVIEW)
-    try:
+
+    async def _md(body: str) -> bool:
         await bot.edit_message_text(
             chat_id=chat_id,
             message_id=message_id,
-            text=_ensure_formatted(text),
-            parse_mode=PARSE_MODE,
+            text=body,
+            parse_mode=formatter.parse_mode,
             **kwargs,
         )
         return True
-    except RetryAfter:
-        raise
-    except TelegramError:
-        try:
-            await bot.edit_message_text(
-                chat_id=chat_id,
-                message_id=message_id,
-                text=strip_sentinels(text),
-                **kwargs,
-            )
-            return True
-        except RetryAfter:
-            raise
-        except TelegramError as e:
-            log_exception(
-                logger,
-                "Failed to edit message",
-                e,
-                level=logging.DEBUG,
-                chat_id=chat_id,
-                message_id=message_id,
-            )
-            return False
+
+    async def _plain(body: str) -> bool:
+        await bot.edit_message_text(
+            chat_id=chat_id,
+            message_id=message_id,
+            text=body,
+            **kwargs,
+        )
+        return True
+
+    result = await _run_markdown_fallback(
+        text,
+        _md,
+        _plain,
+        failure_level=logging.DEBUG,
+        failure_message="Failed to edit message",
+        chat_id=chat_id,
+        message_id=message_id,
+    )
+    return bool(result)
 
 
 async def send_photo(
@@ -274,13 +265,7 @@ async def send_photo(
     except RetryAfter:
         raise
     except TelegramError as e:
-        log_exception(
-            logger,
-            "Failed to send photo",
-            e,
-            level=logging.ERROR,
-            chat_id=chat_id,
-        )
+        logger.error("Failed to send photo to %d: %s: %s", chat_id, type(e).__name__, e)
 
 
 async def safe_reply(message: Message, text: str, **kwargs: Any) -> Message:
@@ -293,16 +278,21 @@ async def safe_reply(message: Message, text: str, **kwargs: Any) -> Message:
             parse_mode=formatter.parse_mode,
             **kwargs,
         )
-    except RetryAfter:
-        raise
-    except TelegramError:
-        try:
-            return await message.reply_text(strip_sentinels(text), **kwargs)
-        except RetryAfter:
-            raise
-        except TelegramError as e:
-            log_exception(logger, "Failed to reply", e, level=logging.ERROR)
-            raise
+
+    async def _plain(body: str) -> Message:
+        return await message.reply_text(body, **kwargs)
+
+    result = await _run_markdown_fallback(
+        text,
+        _md,
+        _plain,
+        reraise_final=True,
+        failure_level=logging.ERROR,
+        failure_message="Failed to reply",
+    )
+    # reraise_final ensures we never get None here on TelegramError
+    assert result is not None
+    return result
 
 
 async def safe_edit(target: Any, text: str, **kwargs: Any) -> None:
@@ -315,15 +305,19 @@ async def safe_edit(target: Any, text: str, **kwargs: Any) -> None:
             parse_mode=formatter.parse_mode,
             **kwargs,
         )
-    except RetryAfter:
-        raise
-    except TelegramError:
-        try:
-            await target.edit_message_text(strip_sentinels(text), **kwargs)
-        except RetryAfter:
-            raise
-        except TelegramError as e:
-            log_exception(logger, "Failed to edit message", e, level=logging.ERROR)
+        return True
+
+    async def _plain(body: str) -> bool:
+        await target.edit_message_text(body, **kwargs)
+        return True
+
+    await _run_markdown_fallback(
+        text,
+        _md,
+        _plain,
+        failure_level=logging.ERROR,
+        failure_message="Failed to edit message",
+    )
 
 
 async def safe_send(

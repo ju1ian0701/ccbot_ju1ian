@@ -22,7 +22,7 @@ for layer in graph["layers"]:
         layer["nodeIds"] = [nid for nid in layer.get("nodeIds", []) if nid not in assigned]
 
 # Remove layers with no nodeIds
-graph["layers"] = [l for l in graph["layers"] if l.get("nodeIds")]
+graph["layers"] = [layer for layer in graph["layers"] if layer.get("nodeIds")]
 
 with open(gpath, "w", encoding="utf-8") as f:
     json.dump(graph, f, indent=2, ensure_ascii=False)
