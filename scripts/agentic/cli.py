@@ -31,7 +31,7 @@ from service import list_tasks as svc_list_tasks  # noqa: E402
 from service import pipeline_status as svc_pipeline_status  # noqa: E402
 from sync_issues import sync as run_sync  # noqa: E402
 from validate_changes import run as run_validate  # noqa: E402
-
+from propose import PROPOSE_HANDLERS, register_propose_commands  # noqa: E402
 
 def cmd_analyze(_args: argparse.Namespace) -> int:
     report = run_analyze()
@@ -157,6 +157,8 @@ def build_parser() -> argparse.ArgumentParser:
     p_run.add_argument("--base-ref", default=None)
     p_run.add_argument("--skip-quality", action="store_true")
 
+    register_propose_commands(sub)
+
     return p
 
 
@@ -176,6 +178,7 @@ def main(argv: list[str] | None = None) -> int:
         "sync-issues": cmd_sync,
         "run": cmd_run,
     }
+    handlers.update(PROPOSE_HANDLERS)
     return handlers[args.command](args)
 
 
