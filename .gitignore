@@ -102,3 +102,7 @@ credentials.json
 .mypy_cache/
 .dmypy.json
 dmypy.json
+
+# Knowledge-graph pipeline trash / intermediate dumps (keep canonical graph/meta)
+.understand-anything/.trash-*
+.understand-anything/intermediate/
