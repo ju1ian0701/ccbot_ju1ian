@@ -5,6 +5,10 @@ Adds commands:
   propose           create proposal artifacts without applying changes
   import-proposal   validate/finalize a manually created proposal.diff
   show-proposal     show proposal artifacts
+  reject            write reject artifact; no working-tree change
+  approve           create approval.json after base_sha freshness check
+  request-changes   archive proposal and save reviewer notes
+  apply             apply diff only with approval + matching base_sha (feature branch)
 
 This module intentionally reuses existing pipeline functions:
   prioritize.run         -- select/plan task
@@ -17,6 +21,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -36,12 +41,15 @@ except Exception:
 AGENTIC_DIR = ROOT / ".agentic"
 OUT_DIR = AGENTIC_DIR / "out"
 PROPOSALS_DIR = OUT_DIR / "proposals"
+REJECTS_DIR = OUT_DIR / "rejects"
+ARCHIVE_DIR = PROPOSALS_DIR / "archive"
 TMP_DIR = AGENTIC_DIR / "tmp"
 
 CONFIG_PATH = AGENTIC_DIR / "config.json"
 TASKS_PATH = AGENTIC_DIR / "backlog" / "tasks.json"
 
 DEFAULT_BASE_REF = "origin/main"
+PROTECTED_BRANCHES = frozenset({"main", "master"})
 
 DEFAULT_CONFIG = {
     "implementation": {
@@ -1071,6 +1079,365 @@ def prepare_pipeline_context(task_id: str) -> None:
 
 
 # ---------------------------------------------------------------------------
+# HITL: reject / approve / request_changes / apply
+# ---------------------------------------------------------------------------
+
+
+def _proposal_id_of(dest: Path, meta: dict | None = None) -> str:
+    if meta and meta.get("proposal_id"):
+        return str(meta["proposal_id"])
+    return dest.name
+
+
+def _load_proposal_meta(dest: Path) -> dict:
+    meta_path = dest / "meta.json"
+    if not meta_path.is_file():
+        raise RuntimeError(f"meta.json missing in proposal: {dest}")
+    meta = load_json(meta_path)
+    if not isinstance(meta, dict):
+        raise RuntimeError(f"meta.json is not an object: {meta_path}")
+    return meta
+
+
+def _update_proposal_meta(dest: Path, **fields) -> dict:
+    meta = _load_proposal_meta(dest)
+    meta.update(fields)
+    meta["updated_at"] = iso_now()
+    write_json(dest / "meta.json", meta)
+    return meta
+
+
+def _current_base_sha(base_ref: str | None = None) -> str:
+    return git_base_sha(base_ref or DEFAULT_BASE_REF)
+
+
+def _assert_base_sha_fresh(
+    expected_sha: str | None,
+    *,
+    base_ref: str | None = None,
+    context: str = "proposal",
+) -> str:
+    """Require that proposal/approval base_sha still matches origin/main (or base_ref)."""
+    if not expected_sha:
+        raise RuntimeError(f"{context}: missing base_sha in metadata")
+
+    ref = base_ref or DEFAULT_BASE_REF
+    current = _current_base_sha(ref)
+    if str(expected_sha) != current:
+        raise RuntimeError(
+            f"stale base_sha for {context}: "
+            f"recorded={expected_sha} current({ref})={current}. "
+            "Re-propose from a fresh base before approve/apply."
+        )
+    return current
+
+
+def _current_branch() -> str:
+    return git("rev-parse", "--abbrev-ref", "HEAD")
+
+
+def _assert_feature_branch() -> str:
+    branch = _current_branch()
+    if branch in PROTECTED_BRANCHES:
+        raise RuntimeError(
+            f"apply blocked on protected branch '{branch}'. "
+            "Checkout a feature branch first."
+        )
+    if branch == "HEAD":
+        raise RuntimeError("apply blocked in detached HEAD state; checkout a feature branch.")
+    return branch
+
+
+def reject(proposal_id: str, reason: str, *, task_id: str | None = None) -> Path:
+    """Reject a proposal: write reject artifact under .agentic/out/rejects/.
+
+    Does **not** modify the git working tree (only writes under .agentic/out/,
+    which is gitignored). Does not mark the task done.
+    """
+    reason = (reason or "").strip()
+    if not reason:
+        raise RuntimeError("reject requires a non-empty reason")
+
+    dest = resolve_proposal_dir(proposal=proposal_id, latest=False, task_id=task_id)
+    meta = _load_proposal_meta(dest)
+    pid = _proposal_id_of(dest, meta)
+
+    payload = {
+        "proposal_id": pid,
+        "task_id": meta.get("task_id"),
+        "decision": "rejected",
+        "reason": reason,
+        "rejected_at": iso_now(),
+        "base_sha": meta.get("base_sha"),
+        "base_ref": meta.get("base_ref") or DEFAULT_BASE_REF,
+        "proposal_path": str(dest.relative_to(ROOT)).replace("\\", "/"),
+        "branch": _current_branch(),
+    }
+
+    reject_path = REJECTS_DIR / f"{pid}.json"
+    write_json(reject_path, payload)
+
+    _update_proposal_meta(
+        dest,
+        status="rejected",
+        decision="rejected",
+        reject_reason=reason,
+        rejected_at=payload["rejected_at"],
+    )
+
+    # Side-car in proposal dir (gitignored via .agentic/out/).
+    write_json(dest / "reject.json", payload)
+
+    return reject_path
+
+
+def approve(
+    proposal_id: str,
+    message: str,
+    *,
+    task_id: str | None = None,
+    base_ref: str | None = None,
+    approver: str | None = None,
+) -> Path:
+    """Approve a proposal: create approval.json after base_sha check.
+
+    Does **not** apply the diff — call apply() separately.
+    """
+    dest = resolve_proposal_dir(proposal=proposal_id, latest=False, task_id=task_id)
+    meta = _load_proposal_meta(dest)
+    pid = _proposal_id_of(dest, meta)
+    ref = base_ref or meta.get("base_ref") or DEFAULT_BASE_REF
+
+    current_sha = _assert_base_sha_fresh(
+        meta.get("base_sha"),
+        base_ref=ref,
+        context=f"approve({pid})",
+    )
+
+    notes = (message or "").strip()
+    who = (approver or "").strip() or (
+        os.environ.get("USER") or os.environ.get("USERNAME") or "human"
+    )
+
+    approval = {
+        "proposal_id": pid,
+        "task_id": meta.get("task_id"),
+        "decision": "approved",
+        "approver": who,
+        "timestamp": iso_now(),
+        "base_sha": current_sha,
+        "base_ref": ref,
+        "notes": notes,
+        "message": notes,
+        "proposal_path": str(dest.relative_to(ROOT)).replace("\\", "/"),
+        "branch": _current_branch(),
+    }
+
+    approval_path = dest / "approval.json"
+    write_json(approval_path, approval)
+
+    _update_proposal_meta(
+        dest,
+        status="approved",
+        decision="approved",
+        approver=who,
+        approved_at=approval["timestamp"],
+        approval_notes=notes,
+        approval_base_sha=current_sha,
+    )
+
+    return approval_path
+
+
+def request_changes(
+    proposal_id: str,
+    notes: str,
+    *,
+    task_id: str | None = None,
+) -> Path:
+    """Request changes: archive the old proposal and persist reviewer notes.
+
+    Does **not** modify the git working tree.
+    """
+    notes = (notes or "").strip()
+    if not notes:
+        raise RuntimeError("request_changes requires non-empty notes")
+
+    dest = resolve_proposal_dir(proposal=proposal_id, latest=False, task_id=task_id)
+    meta = _load_proposal_meta(dest)
+    pid = _proposal_id_of(dest, meta)
+    task = meta.get("task_id") or task_id
+
+    changes_payload = {
+        "proposal_id": pid,
+        "task_id": task,
+        "decision": "changes_requested",
+        "notes": notes,
+        "requested_at": iso_now(),
+        "base_sha": meta.get("base_sha"),
+        "base_ref": meta.get("base_ref") or DEFAULT_BASE_REF,
+        "proposal_path": str(dest.relative_to(ROOT)).replace("\\", "/"),
+        "branch": _current_branch(),
+    }
+
+    write_json(dest / "request_changes.json", changes_payload)
+    _update_proposal_meta(
+        dest,
+        status="changes_requested",
+        decision="changes_requested",
+        change_notes=notes,
+        changes_requested_at=changes_payload["requested_at"],
+    )
+
+    ARCHIVE_DIR.mkdir(parents=True, exist_ok=True)
+    archive_dest = ARCHIVE_DIR / dest.name
+    if archive_dest.exists():
+        archive_dest = ARCHIVE_DIR / f"{dest.name}_{utc_stamp()}"
+
+    shutil.copytree(dest, archive_dest)
+    write_json(archive_dest / "request_changes.json", changes_payload)
+
+    # Point latest pointer away from the archived package if it was current.
+    if task:
+        pointer = PROPOSALS_DIR / f".latest-{task}.json"
+        if pointer.is_file():
+            data = load_json(pointer)
+            rel = str(data.get("path") or "").replace("\\", "/")
+            current_rel = str(dest.relative_to(ROOT)).replace("\\", "/")
+            if rel == current_rel or data.get("latest_proposal_id") == pid:
+                write_json(
+                    pointer,
+                    {
+                        "latest_proposal_id": pid,
+                        "path": str(archive_dest.relative_to(ROOT)).replace("\\", "/"),
+                        "status": "changes_requested",
+                        "archived": True,
+                        "updated_at": iso_now(),
+                    },
+                )
+
+    # Keep live package for show-proposal, but mark archived path.
+    _update_proposal_meta(
+        dest,
+        archived_to=str(archive_dest.relative_to(ROOT)).replace("\\", "/"),
+    )
+    write_json(dest / "request_changes.json", {**changes_payload, "archived_to": str(archive_dest)})
+
+    return archive_dest
+
+
+def apply(
+    proposal_id: str,
+    *,
+    task_id: str | None = None,
+    base_ref: str | None = None,
+    allow_on_main: bool = False,
+) -> Path:
+    """Apply proposal.diff only with approval.json + matching base_sha.
+
+    Blocks apply on main/master unless allow_on_main is explicitly True
+    (never recommended; reserved for emergency tooling).
+    """
+    dest = resolve_proposal_dir(proposal=proposal_id, latest=False, task_id=task_id)
+    meta = _load_proposal_meta(dest)
+    pid = _proposal_id_of(dest, meta)
+    ref = base_ref or meta.get("base_ref") or DEFAULT_BASE_REF
+
+    config = load_config()
+    human_gate = config.get("human_gate") or {}
+    if human_gate.get("required_before_apply", True):
+        approval_path = dest / "approval.json"
+        if not approval_path.is_file():
+            raise RuntimeError(
+                f"apply blocked: approval.json missing for {pid}. "
+                "Run approve first."
+            )
+        approval = load_json(approval_path)
+        if not isinstance(approval, dict):
+            raise RuntimeError(f"approval.json is not an object: {approval_path}")
+        if approval.get("decision") != "approved":
+            raise RuntimeError(
+                f"apply blocked: decision={approval.get('decision')!r}, "
+                "expected 'approved'"
+            )
+        expected_sha = approval.get("base_sha") or meta.get("base_sha")
+        _assert_base_sha_fresh(
+            expected_sha,
+            base_ref=approval.get("base_ref") or ref,
+            context=f"apply({pid})",
+        )
+        # Also require meta base_sha matches approval (tamper / re-base safety).
+        if meta.get("base_sha") and approval.get("base_sha"):
+            if str(meta["base_sha"]) != str(approval["base_sha"]):
+                raise RuntimeError(
+                    f"apply blocked: meta.base_sha ({meta['base_sha']}) != "
+                    f"approval.base_sha ({approval['base_sha']})"
+                )
+    else:
+        _assert_base_sha_fresh(meta.get("base_sha"), base_ref=ref, context=f"apply({pid})")
+
+    if not allow_on_main:
+        _assert_feature_branch()
+
+    diff_path = dest / "proposal.diff"
+    if not diff_path.is_file():
+        raise RuntimeError(f"proposal.diff missing: {diff_path}")
+
+    diff_text = diff_path.read_text(encoding="utf-8")
+    if _is_empty_diff(diff_text):
+        raise RuntimeError("apply blocked: empty proposal.diff")
+
+    check_pure_unified_diff(diff_text)
+
+    # Check then apply against the working tree (feature branch only).
+    check_result = run(
+        ["git", "apply", "--check", "--whitespace=nowarn", str(diff_path)],
+        check=False,
+    )
+    if check_result.returncode != 0:
+        raise RuntimeError(
+            "apply blocked: git apply --check failed.\n"
+            f"stdout:\n{check_result.stdout}\n"
+            f"stderr:\n{check_result.stderr}"
+        )
+
+    apply_result = run(
+        ["git", "apply", "--whitespace=nowarn", str(diff_path)],
+        check=False,
+    )
+    if apply_result.returncode != 0:
+        raise RuntimeError(
+            "apply failed: git apply returned non-zero.\n"
+            f"stdout:\n{apply_result.stdout}\n"
+            f"stderr:\n{apply_result.stderr}"
+        )
+
+    applied_at = iso_now()
+    _update_proposal_meta(
+        dest,
+        status="applied",
+        decision="applied",
+        applied_at=applied_at,
+        applied_branch=_current_branch(),
+        applied_head_sha=git("rev-parse", "HEAD"),
+    )
+    write_json(
+        dest / "apply.json",
+        {
+            "proposal_id": pid,
+            "task_id": meta.get("task_id"),
+            "decision": "applied",
+            "applied_at": applied_at,
+            "branch": _current_branch(),
+            "base_sha": meta.get("base_sha"),
+            "base_ref": ref,
+        },
+    )
+
+    return dest
+
+
+# ---------------------------------------------------------------------------
 # CLI handlers
 # ---------------------------------------------------------------------------
 
@@ -1323,6 +1690,80 @@ def cmd_import_proposal(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_reject(args: argparse.Namespace) -> int:
+    try:
+        reject_path = reject(
+            args.proposal or "latest",
+            args.reason,
+            task_id=args.task,
+        )
+    except RuntimeError as exc:
+        print(f"reject_failed: {exc}", file=sys.stderr)
+        return 1
+
+    print(f"reject_ok proposal={reject_path.stem}")
+    print(f"  reject_artifact={reject_path}")
+    print("  tree=untouched (artifacts under .agentic/out/ only)")
+    return 0
+
+
+def cmd_approve(args: argparse.Namespace) -> int:
+    try:
+        approval_path = approve(
+            args.proposal or "latest",
+            args.message or "",
+            task_id=args.task,
+            base_ref=args.base_ref,
+            approver=args.approver,
+        )
+    except RuntimeError as exc:
+        print(f"approve_failed: {exc}", file=sys.stderr)
+        return 1
+
+    approval = load_json(approval_path)
+    print(f"approve_ok proposal={approval.get('proposal_id')}")
+    print(f"  approval={approval_path}")
+    print(f"  base_sha={approval.get('base_sha')}")
+    print("  status=approved (diff not applied; run apply next)")
+    return 0
+
+
+def cmd_request_changes(args: argparse.Namespace) -> int:
+    try:
+        archive_dest = request_changes(
+            args.proposal or "latest",
+            args.notes,
+            task_id=args.task,
+        )
+    except RuntimeError as exc:
+        print(f"request_changes_failed: {exc}", file=sys.stderr)
+        return 1
+
+    print(f"request_changes_ok archive={archive_dest}")
+    print("  tree=untouched (artifacts under .agentic/out/ only)")
+    return 0
+
+
+def cmd_apply(args: argparse.Namespace) -> int:
+    try:
+        dest = apply(
+            args.proposal or "latest",
+            task_id=args.task,
+            base_ref=args.base_ref,
+            allow_on_main=bool(args.allow_on_main),
+        )
+    except RuntimeError as exc:
+        print(f"apply_failed: {exc}", file=sys.stderr)
+        return 1
+
+    meta = load_json(dest / "meta.json")
+    print(f"apply_ok proposal={meta.get('proposal_id')}")
+    print(f"  dir={dest}")
+    print(f"  branch={meta.get('applied_branch') or _current_branch()}")
+    print("  next: uv run python scripts/agentic/cli.py validate")
+    return 0
+
+
 def register_propose_commands(sub: argparse._SubParsersAction) -> None:
     p_prop = sub.add_parser(
         "propose",
@@ -1382,19 +1823,106 @@ def register_propose_commands(sub: argparse._SubParsersAction) -> None:
     )
 
 
+def register_hitl_commands(sub: argparse._SubParsersAction) -> None:
+    """Register human-in-the-loop gate commands: reject / approve / request-changes / apply."""
+    p_rej = sub.add_parser(
+        "reject",
+        help="Reject a proposal (writes .agentic/out/rejects/; no tree change)",
+    )
+    p_rej.add_argument(
+        "--proposal",
+        default="latest",
+        help="Proposal id, path, folder name, or 'latest'",
+    )
+    p_rej.add_argument("--task", help="Filter latest proposal by task id")
+    p_rej.add_argument("--reason", required=True, help="Rejection reason (required)")
+
+    p_app = sub.add_parser(
+        "approve",
+        help="Approve a proposal (creates approval.json; checks base_sha vs origin/main)",
+    )
+    p_app.add_argument(
+        "--proposal",
+        default="latest",
+        help="Proposal id, path, folder name, or 'latest'",
+    )
+    p_app.add_argument("--task", help="Filter latest proposal by task id")
+    p_app.add_argument(
+        "--message",
+        default="",
+        help="Approval notes / message",
+    )
+    p_app.add_argument(
+        "--base-ref",
+        default=DEFAULT_BASE_REF,
+        help=f"Base ref for freshness check (default: {DEFAULT_BASE_REF})",
+    )
+    p_app.add_argument("--approver", default=None, help="Approver identity (default: $USER)")
+
+    p_rc = sub.add_parser(
+        "request-changes",
+        help="Request changes: archive proposal and save notes (no tree change)",
+    )
+    p_rc.add_argument(
+        "--proposal",
+        default="latest",
+        help="Proposal id, path, folder name, or 'latest'",
+    )
+    p_rc.add_argument("--task", help="Filter latest proposal by task id")
+    p_rc.add_argument("--notes", required=True, help="Reviewer notes for re-propose")
+
+    p_apply = sub.add_parser(
+        "apply",
+        help="Apply proposal.diff only with approval.json + matching base_sha (feature branch)",
+    )
+    p_apply.add_argument(
+        "--proposal",
+        default="latest",
+        help="Proposal id, path, folder name, or 'latest'",
+    )
+    p_apply.add_argument("--task", help="Filter latest proposal by task id")
+    p_apply.add_argument(
+        "--base-ref",
+        default=None,
+        help=f"Override base ref for freshness check (default: proposal meta / {DEFAULT_BASE_REF})",
+    )
+    p_apply.add_argument(
+        "--allow-on-main",
+        action="store_true",
+        help="Dangerous: allow apply on main/master (default: blocked)",
+    )
+
+
 PROPOSE_HANDLERS = {
     "propose": cmd_propose,
     "show-proposal": cmd_show_proposal,
     "import-proposal": cmd_import_proposal,
 }
 
+HITL_HANDLERS = {
+    "reject": cmd_reject,
+    "approve": cmd_approve,
+    "request-changes": cmd_request_changes,
+    "apply": cmd_apply,
+}
+
 
 __all__ = [
     "PROPOSE_HANDLERS",
+    "HITL_HANDLERS",
     "register_propose_commands",
+    "register_hitl_commands",
     "cmd_propose",
     "cmd_show_proposal",
     "cmd_import_proposal",
+    "cmd_reject",
+    "cmd_approve",
+    "cmd_request_changes",
+    "cmd_apply",
+    "reject",
+    "approve",
+    "request_changes",
+    "apply",
     "create_proposal_artifacts",
     "render_default_prompt",
 ]

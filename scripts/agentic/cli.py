@@ -8,6 +8,11 @@ Usage:
   python scripts/agentic/cli.py validate [--base-ref origin/main] [--skip-quality]
   python scripts/agentic/cli.py sync-issues [--apply]
   python scripts/agentic/cli.py run [--task REF-001] [--skip-quality]
+  python scripts/agentic/cli.py propose --task ISS-014 [--diff-file PATH]
+  python scripts/agentic/cli.py reject --proposal latest --reason "..."
+  python scripts/agentic/cli.py approve --proposal latest --message "..."
+  python scripts/agentic/cli.py request-changes --proposal latest --notes "..."
+  python scripts/agentic/cli.py apply --proposal latest
 """
 
 from __future__ import annotations
@@ -31,7 +36,12 @@ from service import list_tasks as svc_list_tasks  # noqa: E402
 from service import pipeline_status as svc_pipeline_status  # noqa: E402
 from sync_issues import sync as run_sync  # noqa: E402
 from validate_changes import run as run_validate  # noqa: E402
-from propose import PROPOSE_HANDLERS, register_propose_commands  # noqa: E402
+from propose import (  # noqa: E402
+    HITL_HANDLERS,
+    PROPOSE_HANDLERS,
+    register_hitl_commands,
+    register_propose_commands,
+)
 
 def cmd_analyze(_args: argparse.Namespace) -> int:
     report = run_analyze()
@@ -158,6 +168,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_run.add_argument("--skip-quality", action="store_true")
 
     register_propose_commands(sub)
+    register_hitl_commands(sub)
 
     return p
 
@@ -179,6 +190,7 @@ def main(argv: list[str] | None = None) -> int:
         "run": cmd_run,
     }
     handlers.update(PROPOSE_HANDLERS)
+    handlers.update(HITL_HANDLERS)
     return handlers[args.command](args)
 
 
