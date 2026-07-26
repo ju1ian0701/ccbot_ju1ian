@@ -429,15 +429,15 @@ def git_base_sha(base_ref: str) -> str:
 
 
 def capture_working_tree_diff(base_ref: str) -> str:
-    """Capture staged + unstaged changes as a pure unified diff.
+    """Capture branch changes vs base_ref as a pure unified diff.
 
-    Only ``git diff HEAD --binary`` output is allowed here — never markdown
-    fences, ``#`` comments, or non-diff section markers.
+    Only ``git diff base_ref...HEAD --binary`` output is allowed here — never
+    markdown fences, ``#`` comments, or non-diff section markers.
 
-    ``base_ref`` is accepted for call-site compatibility; capture is vs HEAD.
+    Without ``--diff-file``, the proposal diff must be against ``base_ref``
+    (e.g. origin/main), not only uncommitted changes vs HEAD.
     """
-    _ = base_ref
-    result = run(["git", "diff", "HEAD", "--binary"], check=False)
+    result = run(["git", "diff", f"{base_ref}...HEAD", "--binary"], check=False)
     diff = result.stdout or ""
 
     if not diff.strip():
