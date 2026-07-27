@@ -1,0 +1,49 @@
+﻿# ISS-002 Evidence
+
+## Date: 2026-07-27T18:54:09.8092385Z
+## Branch: agentic/ISS-002-canonical-auth
+## Commit: 5fa790d881c5d241e88ad035018a7d94c8706c5c (5fa790d)
+## Product commit: 90e0cdc refactor(agentic): ISS-002 single SoT auth via session_guard
+## Proposal: ISS-002_20260727T175352Z (post-factum applied)
+
+### Single Source of Truth verification
+
+#### One canonical definition — is_user_allowed
+```
+src/ccbot\config.py:125:    def is_user_allowed(self, user_id: int) -> bool:
+src/ccbot\session_guard.py:43:def is_user_allowed(user_id: int | None) -> bool:
+```
+
+#### One canonical definition — get_thread_id
+```
+src/ccbot\session_guard.py:48:def get_thread_id(update: Update) -> int | None:
+```
+
+#### Production imports use session_guard
+```
+src/ccbot\bot.py:47:from .session_guard import get_thread_id, is_user_allowed
+src/ccbot\handlers\auth.py:10:from ..session_guard import get_thread_id, is_user_allowed
+src/ccbot\handlers\callback_router.py:20:from ..session_guard import get_thread_id, is_user_allowed
+src/ccbot\handlers\command_handlers.py:23:from ..session_guard import get_thread_id, is_user_allowed
+src/ccbot\handlers\message_handlers.py:28:from ..session_guard import get_thread_id, is_user_allowed
+```
+
+#### No dual definition in handlers/auth.py
+```
+(none — re-export only)
+```
+
+### Quality gates
+
+| Gate | Result |
+|------|--------|
+| ruff check | PASS |
+| ruff format --check | PASS |
+| pyright src/ccbot | PASS |
+| pytest tests/ | PASS (373) |
+| agentic validate --base-ref origin/main | PASS |
+
+### Notes
+
+- apply skipped post-factum (patch already in tree via 90e0cdc)
+- see .agentic/out/notes/process-deviation-ISS-002-apply-skipped.md
