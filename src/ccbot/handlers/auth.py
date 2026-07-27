@@ -1,29 +1,12 @@
-"""Shared auth and topic helpers for Telegram handlers.
+"""Thin re-export of auth/topic helpers (ISS-002).
 
-Provides:
-  - is_user_allowed: check ALLOWED_USERS config
-  - get_thread_id: extract forum topic thread_id from an update
+Canonical definitions live in ``ccbot.session_guard``. This module exists for
+backward-compatible imports (``from ccbot.handlers.auth import …``) only —
+do not reintroduce independent implementations here.
 """
 
 from __future__ import annotations
 
-from telegram import Update
+from ..session_guard import get_thread_id, is_user_allowed
 
-from ..config import config
-
-
-def is_user_allowed(user_id: int | None) -> bool:
-    return user_id is not None and config.is_user_allowed(user_id)
-
-
-def get_thread_id(update: Update) -> int | None:
-    """Extract thread_id from an update, returning None if not in a named topic."""
-    msg = update.message or (
-        update.callback_query.message if update.callback_query else None
-    )
-    if msg is None:
-        return None
-    tid = getattr(msg, "message_thread_id", None)
-    if tid is None or tid == 1:
-        return None
-    return tid
+__all__ = ["get_thread_id", "is_user_allowed"]

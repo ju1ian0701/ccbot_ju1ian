@@ -25,7 +25,7 @@ from ..terminal_parser import extract_bash_output, is_interactive_ui
 from ..tmux_manager import tmux_manager
 from ..transcribe import transcribe_voice
 from ..utils import ccbot_dir
-from .auth import get_thread_id, is_user_allowed
+from ..session_guard import get_thread_id, is_user_allowed
 from .directory_browser import (
     BROWSE_DIRS_KEY,
     BROWSE_PAGE_KEY,

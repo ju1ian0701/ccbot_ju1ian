@@ -1,7 +1,7 @@
 """Telegram bot handlers package — modular handler organization.
 
 This package contains the Telegram bot handlers split by functionality:
-  - auth: is_user_allowed, get_thread_id
+  - auth: thin re-export of is_user_allowed / get_thread_id (canonical: session_guard)
   - callback_data: CB_* prefixes, typed payloads, encode_*/parse_*
   - callback_router: Central inline-keyboard dispatch
   - command_handlers: Slash commands and topic lifecycle

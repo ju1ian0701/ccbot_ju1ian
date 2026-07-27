@@ -26,7 +26,6 @@ from telegram.ext import (
 )
 
 from .config import config
-from .handlers.auth import get_thread_id, is_user_allowed
 from .handlers.callback_router import callback_handler
 from .handlers.command_handlers import (
     esc_command,
@@ -45,6 +44,7 @@ from .handlers.message_queue import shutdown_workers
 from .handlers.notifications import handle_new_message
 from .handlers.status_polling import status_poll_loop
 from .session import session_manager
+from .session_guard import get_thread_id, is_user_allowed
 from .session_monitor import NewMessage, SessionMonitor
 from .transcribe import close_client as close_transcribe_client
 
