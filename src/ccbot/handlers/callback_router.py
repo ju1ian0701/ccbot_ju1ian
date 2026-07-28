@@ -17,7 +17,7 @@ from telegram.ext import ContextTypes
 from ..screenshot import text_to_image
 from ..session import session_manager
 from ..tmux_manager import tmux_manager
-from .auth import get_thread_id, is_user_allowed
+from ..session_guard import get_thread_id, is_user_allowed
 from .callback_data import (
     CB_ASK_DOWN,
     CB_ASK_ENTER,

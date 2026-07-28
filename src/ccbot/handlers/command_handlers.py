@@ -20,7 +20,7 @@ from telegram.ext import ContextTypes
 from ..session import session_manager
 from ..screenshot import text_to_image
 from ..tmux_manager import tmux_manager
-from .auth import get_thread_id, is_user_allowed
+from ..session_guard import get_thread_id, is_user_allowed
 from .cleanup import clear_topic_state
 from .directory_browser import clear_browse_state
 from .history import send_history

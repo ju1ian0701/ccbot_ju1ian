@@ -111,7 +111,8 @@
       "acceptance_criteria": [
         "MessageQueueManager class added"
       ],
-      "status_updated_at": "2026-07-18T10:44:01.212763+00:00"
+      "status_updated_at": "2026-07-18T10:44:01.212763+00:00",
+      "status_note": "Theatrical done: class exists but ISS-003/ISS-010 still open for real encapsulation"
     },
     {
       "id": "REF-006",
@@ -202,7 +203,430 @@
         "Coverage for uncovered hotspots"
       ],
       "status_updated_at": "2026-07-18T09:57:27.416343+00:00"
+    },
+    {
+      "id": "ISS-001",
+      "title": "Migrate handlers onto require_session / require_user / require_bound_window_id",
+      "priority": "high",
+      "status": "ready",
+      "categories": [
+        "dry",
+        "dead-abstraction"
+      ],
+      "files": [
+        "src/ccbot/handlers/command_handlers.py",
+        "src/ccbot/handlers/message_handlers.py",
+        "src/ccbot/session_guard.py"
+      ],
+      "related_nodes": [
+        "file:src/ccbot/handlers/command_handlers.py",
+        "file:src/ccbot/handlers/message_handlers.py",
+        "file:src/ccbot/session_guard.py"
+      ],
+      "depends_on": [
+        "ISS-002"
+      ],
+      "estimated_risk": "medium",
+      "problem": "session_guard.require_* exists and is tested but production handlers still hand-roll auth→thread→window ladder (~14+ sites). Dead abstraction / incomplete REF-001.",
+      "solution": "Rewrite command/message handlers to use require_user / require_bound_window_id / require_session + SessionContext; remove copy-paste ladder; keep UX strings stable or unify explicitly.",
+      "acceptance_criteria": [
+        "rg require_session|require_bound_window_id|require_user in src/ccbot/handlers shows >= 8 production call sites",
+        "Old manual is_user_allowed(user.id) ladder removed or only compatible re-export path",
+        "Tests unauthorized / unbound thread / missing window green",
+        "UX strings stabilized or explicitly unified"
+      ],
+      "ref_note": "REF-001 reopen/follow-up"
+    },
+    {
+      "id": "ISS-002",
+      "title": "Eliminate dual source of truth: handlers/auth.py vs session_guard.py",
+      "priority": "high",
+      "status": "done",
+      "categories": [
+        "dry",
+        "architecture"
+      ],
+      "files": [
+        "src/ccbot/handlers/auth.py",
+        "src/ccbot/session_guard.py",
+        "src/ccbot/bot.py"
+      ],
+      "related_nodes": [
+        "file:src/ccbot/handlers/auth.py",
+        "file:src/ccbot/session_guard.py",
+        "file:src/ccbot/bot.py"
+      ],
+      "depends_on": [],
+      "estimated_risk": "medium",
+      "problem": "is_user_allowed and get_thread_id are defined in both handlers/auth.py and session_guard.py; behavior can diverge (General topic, message vs callback).",
+      "solution": "One canonical module (prefer session_guard); other file thin re-export only; update bot.py aliases and all production imports.",
+      "acceptance_criteria": [
+        "Single canonical def is_user_allowed / get_thread_id (or one re-export)",
+        "All production imports use one path",
+        "Auth/session resolution tests green",
+        "No divergent General-topic or callback vs message path behavior"
+      ],
+      "ref_note": "REF-001",
+      "status_updated_at": "2026-07-27T18:54:00+00:00",
+      "resolution": "canonical auth via session_guard; dual SoT removed; evidence in proposal ISS-002_20260727T175352Z; validate green"
+    },
+    {
+      "id": "ISS-003",
+      "title": "Really encapsulate MessageQueueManager (finish REF-005)",
+      "priority": "high",
+      "status": "ready",
+      "categories": [
+        "encapsulation",
+        "concurrency"
+      ],
+      "files": [
+        "src/ccbot/handlers/message_queue.py"
+      ],
+      "related_nodes": [
+        "file:src/ccbot/handlers/message_queue.py"
+      ],
+      "depends_on": [],
+      "estimated_risk": "high",
+      "problem": "MessageQueueManager owns dicts but worker is free function; external queue_manager._queues/_locks; thin wrappers keep old global API. Theatrical encapsulation.",
+      "solution": "Move worker/merge/process onto class methods; forbid external private field access; shrink or remove module wrappers; optional injectable manager for tests.",
+      "acceptance_criteria": [
+        "No external queue_manager._queues / _locks access outside class",
+        "Worker and process logic are methods of owner class",
+        "Queue/flood/status tests green",
+        "If injectable: test with two independent manager instances"
+      ],
+      "ref_note": "REF-005 reopen/follow-up"
+    },
+    {
+      "id": "ISS-004",
+      "title": "Table-driven callback_router dispatch + single topic-guard",
+      "priority": "high",
+      "status": "ready",
+      "categories": [
+        "spaghetti",
+        "decomposition"
+      ],
+      "files": [
+        "src/ccbot/handlers/callback_router.py",
+        "src/ccbot/handlers/callback_data.py"
+      ],
+      "related_nodes": [
+        "file:src/ccbot/handlers/callback_router.py",
+        "file:src/ccbot/handlers/callback_data.py"
+      ],
+      "depends_on": [],
+      "estimated_risk": "high",
+      "problem": "Giant if/elif prefix routing; stale-topic guard copy-pasted ~10 times; ask-keys nearly identical branches. Wire-format must stay stable.",
+      "solution": "assert_same_topic helper; parse once; registry type/prefix→handler; ask-keys map-driven; no wire-format change without approve.",
+      "acceptance_criteria": [
+        "Single assert_same_topic helper; no copy-paste pending_tid guards",
+        "Parse/dispatch registry exists",
+        "Callback wire-format parity via tests or manual matrix",
+        "Wire-format unchanged without explicit approve"
+      ]
+    },
+    {
+      "id": "ISS-005",
+      "title": "Split god-object SessionManager into stores + facade",
+      "priority": "high",
+      "status": "planned",
+      "categories": [
+        "decomposition",
+        "encapsulation"
+      ],
+      "files": [
+        "src/ccbot/session.py",
+        "src/ccbot/session_migration.py",
+        "src/ccbot/handlers/window_bind.py"
+      ],
+      "related_nodes": [
+        "file:src/ccbot/session.py",
+        "file:src/ccbot/session_migration.py",
+        "file:src/ccbot/handlers/window_bind.py"
+      ],
+      "depends_on": [
+        "ISS-009"
+      ],
+      "estimated_risk": "high",
+      "problem": "SessionManager (~723+ LOC) owns persist, bindings, window state, session_map, routing; public fields; external _save_state.",
+      "solution": "Split into BindingStore, WindowStateStore, SessionMapRepository + thin facade; keep session_migration pure; no state.json break without versioned migration.",
+      "acceptance_criteria": [
+        "Clear store ownership (bindings / window state / session_map)",
+        "No external session_manager._save_state calls",
+        "session.py not on 1k LOC trajectory or split complete",
+        "Load/save/migration/binding/window_bind tests green"
+      ],
+      "ref_note": "beyond REF-004"
+    },
+    {
+      "id": "ISS-006",
+      "title": "Compose require_session from require_bound_window_id",
+      "priority": "medium",
+      "status": "ready",
+      "categories": [
+        "dry"
+      ],
+      "files": [
+        "src/ccbot/session_guard.py"
+      ],
+      "related_nodes": [
+        "file:src/ccbot/session_guard.py"
+      ],
+      "depends_on": [
+        "ISS-002"
+      ],
+      "estimated_risk": "low",
+      "problem": "require_session and require_bound_window_id duplicate ~80% of body (auth→thread→resolve→reply).",
+      "solution": "require_session = require_bound_window_id + live window + optional unbind + SessionContext; unify error/reply paths; update unit tests.",
+      "acceptance_criteria": [
+        "require_session uses require_bound_window_id or shared internal pipeline",
+        "No ~80% copy-paste between the two functions",
+        "session_guard unit tests green",
+        "Error/reply paths unified"
+      ],
+      "ref_note": "REF-001"
+    },
+    {
+      "id": "ISS-007",
+      "title": "Unify auth+window ladder in command handlers via SessionContext",
+      "priority": "medium",
+      "status": "ready",
+      "categories": [
+        "dry"
+      ],
+      "files": [
+        "src/ccbot/handlers/command_handlers.py"
+      ],
+      "related_nodes": [
+        "file:src/ccbot/handlers/command_handlers.py"
+      ],
+      "depends_on": [
+        "ISS-001"
+      ],
+      "estimated_risk": "low",
+      "problem": "screenshot/esc/usage each repeat a ~15-line auth→thread→resolve→window ladder with minor error-string drift.",
+      "solution": "After require_session migration, commands only hold business logic; unify user-facing error strings.",
+      "acceptance_criteria": [
+        "screenshot_command, esc_command, usage_command use require_session or shared helper",
+        "Manual 15-line ladder removed",
+        "User-facing error strings unified or documented",
+        "Command handler tests green"
+      ],
+      "ref_note": "May merge with ISS-001"
+    },
+    {
+      "id": "ISS-008",
+      "title": "Remove type: ignore on _send_kwargs — explicit typed contract",
+      "priority": "medium",
+      "status": "ready",
+      "categories": [
+        "types",
+        "boundary"
+      ],
+      "files": [
+        "src/ccbot/handlers/message_queue.py"
+      ],
+      "related_nodes": [
+        "file:src/ccbot/handlers/message_queue.py"
+      ],
+      "depends_on": [],
+      "estimated_risk": "medium",
+      "problem": "_send_kwargs returns dict and call sites use type: ignore[arg-type]; signature and send API disagree.",
+      "solution": "TypedDict / Unpack / explicit optional message_thread_id kwargs or overloads; 0 type: ignore on send path; pyright clean.",
+      "acceptance_criteria": [
+        "0 # type: ignore on send kwargs path in message_queue.py",
+        "uv run pyright src/ccbot/handlers/message_queue.py clean",
+        "message_thread_id contract is explicit (TypedDict / optional kwarg / overload)"
+      ]
+    },
+    {
+      "id": "ISS-009",
+      "title": "Forbid external session_manager._save_state — public domain API",
+      "priority": "medium",
+      "status": "ready",
+      "categories": [
+        "encapsulation",
+        "api"
+      ],
+      "files": [
+        "src/ccbot/handlers/window_bind.py",
+        "src/ccbot/session.py"
+      ],
+      "related_nodes": [
+        "file:src/ccbot/handlers/window_bind.py",
+        "file:src/ccbot/session.py"
+      ],
+      "depends_on": [],
+      "estimated_risk": "medium",
+      "problem": "window_bind mutates WindowState and calls private _save_state(); boundary leak before SessionManager split.",
+      "solution": "Public set_window_session(...) / persist(); window_bind uses only public API; _save_state stays private.",
+      "acceptance_criteria": [
+        "rg _save_state in src/ccbot/handlers shows 0",
+        "window_bind uses only public domain API",
+        "Public method like set_window_session(...) or persist() exists",
+        "window_bind tests green"
+      ],
+      "ref_note": "Precondition for ISS-005"
+    },
+    {
+      "id": "ISS-010",
+      "title": "Encapsulate bash_capture_tasks global mutable dict",
+      "priority": "medium",
+      "status": "ready",
+      "categories": [
+        "concurrency",
+        "encapsulation"
+      ],
+      "files": [
+        "src/ccbot/handlers/message_handlers.py",
+        "src/ccbot/handlers/message_queue.py"
+      ],
+      "related_nodes": [
+        "file:src/ccbot/handlers/message_handlers.py"
+      ],
+      "depends_on": [
+        "ISS-003"
+      ],
+      "estimated_risk": "medium",
+      "problem": "bash_capture_tasks is a process-wide module-level dict outside the queue manager (incomplete REF-005 scope).",
+      "solution": "Own via MessageQueueManager or CaptureTaskRegistry; cleanup hook on topic close; remove module-level global.",
+      "acceptance_criteria": [
+        "No module-level bash_capture_tasks global dict",
+        "Owner with cleanup on topic close",
+        "Tests or manual matrix show no capture-task leak"
+      ],
+      "ref_note": "REF-005 scope"
+    },
+    {
+      "id": "ISS-011",
+      "title": "Split callback_router into sub-handlers before 1k LOC",
+      "priority": "medium",
+      "status": "planned",
+      "categories": [
+        "decomposition",
+        "file-size"
+      ],
+      "files": [
+        "src/ccbot/handlers/callback_router.py"
+      ],
+      "related_nodes": [
+        "file:src/ccbot/handlers/callback_router.py"
+      ],
+      "depends_on": [
+        "ISS-004"
+      ],
+      "estimated_risk": "medium",
+      "problem": "callback_router ~630 LOC and growing; mixes history, directory, pickers, screenshot keys, interactive UI.",
+      "solution": "After table-driven dispatch, extract callback_history / callback_directory / callback_pickers / callback_interactive; entry ~150–200 LOC.",
+      "acceptance_criteria": [
+        "Entry router only auth, parse, dispatch, thin entry",
+        "Entry LOC roughly <= 150–200",
+        "Submodules exist for major feature groups",
+        "Callback behavior parity preserved"
+      ]
+    },
+    {
+      "id": "ISS-012",
+      "title": "Remove duplicate IMAGES_DIR initialization",
+      "priority": "low",
+      "status": "ready",
+      "categories": [
+        "cleanup"
+      ],
+      "files": [
+        "src/ccbot/handlers/message_handlers.py"
+      ],
+      "related_nodes": [
+        "file:src/ccbot/handlers/message_handlers.py"
+      ],
+      "depends_on": [],
+      "estimated_risk": "low",
+      "problem": "IMAGES_DIR = ccbot_dir()/images and mkdir appear twice in message_handlers.py (paste noise).",
+      "solution": "Single definition + mkdir, or lazy ensure_images_dir() helper.",
+      "acceptance_criteria": [
+        "One IMAGES_DIR definition in message_handlers.py",
+        "One mkdir or lazy helper",
+        "Image save still works"
+      ]
+    },
+    {
+      "id": "ISS-013",
+      "title": "Harden agentic structural-task acceptance criteria",
+      "priority": "low",
+      "status": "ready",
+      "categories": [
+        "process",
+        "agentic"
+      ],
+      "files": [
+        ".agentic/backlog/tasks.json",
+        "scripts/agentic/"
+      ],
+      "related_nodes": [],
+      "depends_on": [],
+      "estimated_risk": "low",
+      "problem": "Tasks can be marked done when a class/file exists without call-site migration or deleted old path (false-done / rubber-stamp).",
+      "solution": "Structural acceptance template: call sites, deleted old path, tests, grep proof; validate evidence patterns; block done without production proof.",
+      "acceptance_criteria": [
+        "Structural task template requires call sites + deleted old path + tests + grep proof",
+        "validate can check evidence patterns",
+        "Demo where validate fails if old path remains",
+        "status done impossible without production call-site proof"
+      ]
+    },
+    {
+      "id": "ISS-014",
+      "title": "Ignore .understand-anything trash/intermediate noise",
+      "priority": "low",
+      "status": "done",
+      "categories": [
+        "repo-hygiene"
+      ],
+      "files": [
+        ".gitignore"
+      ],
+      "related_nodes": [],
+      "depends_on": [],
+      "estimated_risk": "low",
+      "problem": "Large .understand-anything/.trash-* and intermediate dumps pollute git status and PR diffs.",
+      "solution": "Add gitignore rules for trash/intermediate; untrack already-committed trash dumps; keep canonical knowledge-graph.json and meta.json.",
+      "acceptance_criteria": [
+        ".gitignore ignores .understand-anything/.trash-* and intermediate dumps",
+        "git status does not show untracked .understand-anything/.trash-* artifacts",
+        "Canonical knowledge-graph.json / meta.json remain available if needed"
+      ],
+      "status_updated_at": "2026-07-22T00:00:00+00:00",
+      "status_note": "gitignore rules added; trash+intermediate removed from index; canonical KG/meta kept tracked"
+    },
+    {
+      "id": "RR-0",
+      "title": "Robot HITL skeleton: propose → approve → apply → validate",
+      "priority": "high",
+      "status": "ready",
+      "categories": [
+        "process",
+        "agentic",
+        "infrastructure"
+      ],
+      "files": [
+        "scripts/agentic/",
+        ".agentic/"
+      ],
+      "related_nodes": [],
+      "depends_on": [],
+      "estimated_risk": "medium",
+      "problem": "Repair robot needs a non-silent HITL loop so AI never applies patches without human approve.",
+      "solution": "Implement propose (artifacts only), reject (reason + clean tree), approve (base_sha gated), apply only after approved, evidence checker, draft PR after validate.",
+      "acceptance_criteria": [
+        "propose creates artifacts and does not modify working tree",
+        "reject leaves tree clean and stores reason",
+        "approve without matching base_sha is blocked",
+        "apply works only after decision=approved",
+        "evidence checker fails if old path remains",
+        "draft PR only after validate"
+      ],
+      "ref_note": "Infrastructure task for repair robot; not a product ISS from REFACTORING_BACKLOG_ISSUES.md"
     }
   ],
-  "updated_at": "2026-07-18"
+  "updated_at": "2026-07-22"
 }
