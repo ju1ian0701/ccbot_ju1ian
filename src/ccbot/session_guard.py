@@ -7,7 +7,7 @@ Key types:
   - SessionContext: authorized user + topic + window binding for a request
   - require_user: auth only
   - require_bound_window_id: auth + window_id (no live tmux check)
-  - require_session: full path including live TmuxWindow
+  - require_session: compose bound id + live TmuxWindow + optional unbind
 """
 
 from __future__ import annotations
@@ -151,45 +151,40 @@ async def require_session(
 ) -> SessionContext | None:
     """Full auth + window resolve + live tmux window lookup.
 
-    Returns SessionContext on success. On failure, sends the appropriate
-    user-facing message (when configured) and returns None.
+    Composes :func:`require_bound_window_id` with live window lookup and
+    optional unbind. On failure, sends the appropriate user-facing message
+    (when configured) and returns None.
     """
-    if user is None:
-        user = await require_user(update, reply_unauthorized=reply_unauthorized)
-    if user is None:
-        return None
-    if require_message and update.message is None:
+    # Named-topic guard is require_session-only; keep auth→message order.
+    if require_named_topic:
+        if user is None:
+            user = await require_user(update, reply_unauthorized=reply_unauthorized)
+        if user is None:
+            return None
+        if require_message and update.message is None:
+            return None
+        if get_thread_id(update) is None:
+            if update.message is not None:
+                try:
+                    await safe_reply(update.message, named_topic_text)
+                except RetryAfter:
+                    raise
+                except TelegramError as exc:
+                    logger.warning("safe_reply named_topic failed: %s", exc)
+            return None
+
+    bound = await require_bound_window_id(
+        update,
+        reply_unauthorized=reply_unauthorized,
+        require_message=require_message,
+        use_resolve=use_resolve,
+        no_session_text=no_session_text,
+        user=user,
+    )
+    if bound is None:
         return None
 
-    thread_id = get_thread_id(update)
-
-    if require_named_topic and thread_id is None:
-        if update.message is not None:
-            try:
-                await safe_reply(update.message, named_topic_text)
-            except RetryAfter:
-                raise
-            except TelegramError as exc:
-                logger.warning("safe_reply named_topic failed: %s", exc)
-        return None
-
-    if use_resolve:
-        window_id = session_manager.resolve_window_for_thread(user.id, thread_id)
-    else:
-        if thread_id is None:
-            window_id = None
-        else:
-            window_id = session_manager.get_window_for_thread(user.id, thread_id)
-
-    if not window_id:
-        if update.message is not None and no_session_text:
-            try:
-                await safe_reply(update.message, no_session_text)
-            except RetryAfter:
-                raise
-            except TelegramError as exc:
-                logger.warning("safe_reply no_session failed: %s", exc)
-        return None
+    user, thread_id, window_id = bound
 
     window = await tmux_manager.find_window_by_id(window_id)
     if not window:
