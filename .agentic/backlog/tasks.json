@@ -208,7 +208,7 @@
       "id": "ISS-001",
       "title": "Migrate handlers onto require_session / require_user / require_bound_window_id",
       "priority": "high",
-      "status": "PROPOSE",
+      "status": "DONE",
       "categories": [
         "dry",
         "dead-abstraction"
@@ -237,7 +237,11 @@
       ],
       "ref_note": "REF-001 reopen/follow-up",
       "last_proposal_id": "ISS-001_20260728T183408Z",
-      "updated_at": "2026-07-28T18:34:08.762974+00:00"
+      "updated_at": "2026-07-28T18:34:08.762974+00:00",
+      "merged_commit": "a36b018",
+      "pr": "#12",
+      "status_updated_at": "2026-07-28T19:31:36Z",
+      "resolution": "handlers migrated to require_*; residual topic_closed/kill via require_session; PR #12 merged a36b018"
     },
     {
       "id": "ISS-002",
@@ -402,7 +406,7 @@
       "id": "ISS-007",
       "title": "Unify auth+window ladder in command handlers via SessionContext",
       "priority": "medium",
-      "status": "ready",
+      "status": "DONE",
       "categories": [
         "dry"
       ],
@@ -424,7 +428,11 @@
         "User-facing error strings unified or documented",
         "Command handler tests green"
       ],
-      "ref_note": "May merge with ISS-001"
+      "ref_note": "May merge with ISS-001",
+      "status_updated_at": "2026-07-28T19:31:36Z",
+      "merged_commit": "a36b018",
+      "pr": "#12",
+      "resolution": "unified DEFAULT_* error strings in session_guard; screenshot/esc/usage on require_session; merged with ISS-001 PR #12"
     },
     {
       "id": "ISS-008",
@@ -640,5 +648,24 @@
       "ref_note": "Infrastructure task for repair robot; not a product ISS from REFACTORING_BACKLOG_ISSUES.md"
     }
   ],
-  "updated_at": "2026-07-22"
+  "updated_at": "2026-07-28T19:31:36Z",
+  "phases": {
+    "Phase 1": {
+      "name": "Canonical auth + REF-001 done-for-real",
+      "status": "CLOSED",
+      "closed_at": "2026-07-28",
+      "tasks": [
+        "ISS-002",
+        "ISS-006",
+        "ISS-001",
+        "ISS-007"
+      ],
+      "merged_commits": {
+        "ISS-002": "PR #10",
+        "ISS-006": "ee8c0b2",
+        "ISS-001": "a36b018",
+        "ISS-007": "a36b018 (with ISS-001)"
+      }
+    }
+  }
 }
