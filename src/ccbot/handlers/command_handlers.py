@@ -170,7 +170,12 @@ async def usage_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 async def topic_closed_handler(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> None:
-    """Handle topic closure — kill the associated tmux window and clean up state."""
+    """Handle topic closure — kill the associated tmux window and clean up state.
+
+    Uses require_session for auth+bind+live window. Failures are silent
+    (topic lifecycle must not spam UX). Always unbind/clear when a binding
+    existed, including when the live window is already gone.
+    """
     user = await require_user(update, reply_unauthorized=False)
     if user is None:
         return
@@ -179,32 +184,42 @@ async def topic_closed_handler(
     if thread_id is None:
         return
 
-    wid = session_manager.get_window_for_thread(user.id, thread_id)
-    if wid:
-        display = session_manager.get_display_name(wid)
-        w = await tmux_manager.find_window_by_id(wid)
-        if w:
-            await tmux_manager.kill_window(w.window_id)
-            logger.info(
-                "Topic closed: killed window %s (user=%d, thread=%d)",
-                display,
-                user.id,
-                thread_id,
-            )
-        else:
-            logger.info(
-                "Topic closed: window %s already gone (user=%d, thread=%d)",
-                display,
-                user.id,
-                thread_id,
-            )
-        session_manager.unbind_thread(user.id, thread_id)
-        # Clean up all memory state for this topic
-        await clear_topic_state(user.id, thread_id, context.bot, context.user_data)
-    else:
-        logger.debug(
-            "Topic closed: no binding (user=%d, thread=%d)", user.id, thread_id
+    # Silent: no_session / missing_window must not reply on topic close.
+    ctx = await require_session(
+        update,
+        reply_unauthorized=False,
+        require_message=False,
+        use_resolve=False,
+        no_session_text="",
+        missing_window_text="",
+        user=user,
+    )
+    if ctx is not None:
+        display = session_manager.get_display_name(ctx.window_id)
+        await tmux_manager.kill_window(ctx.window.window_id)
+        logger.info(
+            "Topic closed: killed window %s (user=%d, thread=%d)",
+            display,
+            user.id,
+            thread_id,
         )
+    else:
+        wid = session_manager.get_window_for_thread(user.id, thread_id)
+        if not wid:
+            logger.debug(
+                "Topic closed: no binding (user=%d, thread=%d)", user.id, thread_id
+            )
+            return
+        display = session_manager.get_display_name(wid)
+        logger.info(
+            "Topic closed: window %s already gone (user=%d, thread=%d)",
+            display,
+            user.id,
+            thread_id,
+        )
+
+    session_manager.unbind_thread(user.id, thread_id)
+    await clear_topic_state(user.id, thread_id, context.bot, context.user_data)
 
 
 async def topic_edited_handler(
