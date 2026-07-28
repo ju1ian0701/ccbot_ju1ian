@@ -17,7 +17,7 @@ from telegram.ext import ContextTypes
 from ..screenshot import text_to_image
 from ..session import session_manager
 from ..tmux_manager import tmux_manager
-from ..session_guard import get_thread_id, is_user_allowed
+from ..session_guard import get_thread_id, require_user
 from .callback_data import (
     CB_ASK_DOWN,
     CB_ASK_ENTER,
@@ -93,9 +93,8 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     if not query or not query.data:
         return
 
-    user = update.effective_user
-    if not user or not is_user_allowed(user.id):
-        await query.answer("Not authorized")
+    user = await require_user(update, reply_unauthorized=True)
+    if user is None:
         return
 
     data = query.data

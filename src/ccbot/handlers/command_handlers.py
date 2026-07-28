@@ -20,7 +20,12 @@ from telegram.ext import ContextTypes
 from ..session import session_manager
 from ..screenshot import text_to_image
 from ..tmux_manager import tmux_manager
-from ..session_guard import get_thread_id, is_user_allowed
+from ..session_guard import (
+    get_thread_id,
+    require_bound_window_id,
+    require_session,
+    require_user,
+)
 from .cleanup import clear_topic_state
 from .directory_browser import clear_browse_state
 from .history import send_history
@@ -31,10 +36,8 @@ logger = logging.getLogger(__name__)
 
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    user = update.effective_user
-    if not user or not is_user_allowed(user.id):
-        if update.message:
-            await safe_reply(update.message, "You are not authorized to use this bot.")
+    user = await require_user(update, reply_unauthorized=True)
+    if user is None:
         return
 
     clear_browse_state(context.user_data)
@@ -49,18 +52,11 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
 async def history_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Show message history for the active session or bound thread."""
-    user = update.effective_user
-    if not user or not is_user_allowed(user.id):
+    bound = await require_bound_window_id(update, reply_unauthorized=False)
+    if bound is None:
         return
-    if not update.message:
-        return
-
-    thread_id = get_thread_id(update)
-    wid = session_manager.resolve_window_for_thread(user.id, thread_id)
-    if not wid:
-        await safe_reply(update.message, "❌ No session bound to this topic.")
-        return
-
+    _user, _thread_id, wid = bound
+    assert update.message is not None
     await send_history(update.message, wid)
 
 
@@ -68,31 +64,18 @@ async def screenshot_command(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> None:
     """Capture the current tmux pane and send it as an image."""
-    user = update.effective_user
-    if not user or not is_user_allowed(user.id):
+    ctx = await require_session(update, reply_unauthorized=False)
+    if ctx is None:
         return
-    if not update.message:
-        return
+    assert update.message is not None
 
-    thread_id = get_thread_id(update)
-    wid = session_manager.resolve_window_for_thread(user.id, thread_id)
-    if not wid:
-        await safe_reply(update.message, "❌ No session bound to this topic.")
-        return
-
-    w = await tmux_manager.find_window_by_id(wid)
-    if not w:
-        display = session_manager.get_display_name(wid)
-        await safe_reply(update.message, f"❌ Window '{display}' no longer exists.")
-        return
-
-    text = await tmux_manager.capture_pane(w.window_id, with_ansi=True)
+    text = await tmux_manager.capture_pane(ctx.window.window_id, with_ansi=True)
     if not text:
         await safe_reply(update.message, "❌ Failed to capture pane content.")
         return
 
     png_bytes = await text_to_image(text, with_ansi=True)
-    keyboard = build_screenshot_keyboard(wid)
+    keyboard = build_screenshot_keyboard(ctx.window_id)
     await update.message.reply_document(
         document=io.BytesIO(png_bytes),
         filename="screenshot.png",
@@ -102,8 +85,8 @@ async def screenshot_command(
 
 async def unbind_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Unbind this topic from its Claude session without killing the window."""
-    user = update.effective_user
-    if not user or not is_user_allowed(user.id):
+    user = await require_user(update, reply_unauthorized=False)
+    if user is None:
         return
     if not update.message:
         return
@@ -113,10 +96,15 @@ async def unbind_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         await safe_reply(update.message, "❌ This command only works in a topic.")
         return
 
-    wid = session_manager.get_window_for_thread(user.id, thread_id)
-    if not wid:
-        await safe_reply(update.message, "❌ No session bound to this topic.")
+    bound = await require_bound_window_id(
+        update,
+        reply_unauthorized=False,
+        use_resolve=False,
+        user=user,
+    )
+    if bound is None:
         return
+    _user, _tid, wid = bound
 
     display = session_manager.get_display_name(wid)
     session_manager.unbind_thread(user.id, thread_id)
@@ -132,56 +120,33 @@ async def unbind_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 
 async def esc_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send Escape key to interrupt Claude."""
-    user = update.effective_user
-    if not user or not is_user_allowed(user.id):
+    ctx = await require_session(update, reply_unauthorized=False)
+    if ctx is None:
         return
-    if not update.message:
-        return
-
-    thread_id = get_thread_id(update)
-    wid = session_manager.resolve_window_for_thread(user.id, thread_id)
-    if not wid:
-        await safe_reply(update.message, "❌ No session bound to this topic.")
-        return
-
-    w = await tmux_manager.find_window_by_id(wid)
-    if not w:
-        display = session_manager.get_display_name(wid)
-        await safe_reply(update.message, f"❌ Window '{display}' no longer exists.")
-        return
+    assert update.message is not None
 
     # Send Escape control character (no enter)
-    await tmux_manager.send_keys(w.window_id, "\x1b", enter=False)
+    await tmux_manager.send_keys(ctx.window.window_id, "\x1b", enter=False)
     await safe_reply(update.message, "⎋ Sent Escape")
 
 
 async def usage_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Fetch Claude Code usage stats from TUI and send to Telegram."""
-    user = update.effective_user
-    if not user or not is_user_allowed(user.id):
+    ctx = await require_session(update, reply_unauthorized=False)
+    if ctx is None:
         return
-    if not update.message:
-        return
-
-    thread_id = get_thread_id(update)
-    wid = session_manager.resolve_window_for_thread(user.id, thread_id)
-    if not wid:
-        await safe_reply(update.message, "No session bound to this topic.")
-        return
-
-    w = await tmux_manager.find_window_by_id(wid)
-    if not w:
-        await safe_reply(update.message, f"Window '{wid}' no longer exists.")
-        return
+    assert update.message is not None
 
     # Send /usage command to Claude Code TUI
-    await tmux_manager.send_keys(w.window_id, "/usage")
+    await tmux_manager.send_keys(ctx.window.window_id, "/usage")
     # Wait for the modal to render
     await asyncio.sleep(2.0)
     # Capture the pane content
-    pane_text = await tmux_manager.capture_pane(w.window_id)
+    pane_text = await tmux_manager.capture_pane(ctx.window.window_id)
     # Dismiss the modal
-    await tmux_manager.send_keys(w.window_id, "Escape", enter=False, literal=False)
+    await tmux_manager.send_keys(
+        ctx.window.window_id, "Escape", enter=False, literal=False
+    )
 
     if not pane_text:
         await safe_reply(update.message, "Failed to capture usage info.")
@@ -206,8 +171,8 @@ async def topic_closed_handler(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> None:
     """Handle topic closure — kill the associated tmux window and clean up state."""
-    user = update.effective_user
-    if not user or not is_user_allowed(user.id):
+    user = await require_user(update, reply_unauthorized=False)
+    if user is None:
         return
 
     thread_id = get_thread_id(update)
@@ -246,8 +211,8 @@ async def topic_edited_handler(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> None:
     """Handle topic rename — sync new name to tmux window and internal state."""
-    user = update.effective_user
-    if not user or not is_user_allowed(user.id):
+    user = await require_user(update, reply_unauthorized=False)
+    if user is None:
         return
 
     msg = update.message
@@ -287,8 +252,8 @@ async def forward_command_handler(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> None:
     """Forward any non-bot command as a slash command to the active Claude Code session."""
-    user = update.effective_user
-    if not user or not is_user_allowed(user.id):
+    user = await require_user(update, reply_unauthorized=False)
+    if user is None:
         return
     if not update.message:
         return
@@ -305,18 +270,12 @@ async def forward_command_handler(
     cmd_text = update.message.text or ""
     # The full text is already a slash command like "/clear" or "/compact foo"
     cc_slash = cmd_text.split("@")[0]  # strip bot mention
-    wid = session_manager.resolve_window_for_thread(user.id, thread_id)
-    if not wid:
-        await safe_reply(update.message, "❌ No session bound to this topic.")
+
+    ctx = await require_session(update, reply_unauthorized=False, user=user)
+    if ctx is None:
         return
 
-    w = await tmux_manager.find_window_by_id(wid)
-    if not w:
-        display = session_manager.get_display_name(wid)
-        await safe_reply(update.message, f"❌ Window '{display}' no longer exists.")
-        return
-
-    display = session_manager.get_display_name(wid)
+    display = session_manager.get_display_name(ctx.window_id)
     logger.info(
         "Forwarding command %s to window %s (user=%d)", cc_slash, display, user.id
     )
@@ -324,14 +283,14 @@ async def forward_command_handler(
         await update.message.chat.send_action(ChatAction.TYPING)
     except Exception as e:
         logger.warning("send_action(TYPING) failed, continuing to injection: %s", e)
-    success, message = await session_manager.send_to_window(wid, cc_slash)
+    success, message = await session_manager.send_to_window(ctx.window_id, cc_slash)
     if success:
         await safe_reply(update.message, f"⚡ [{display}] Sent: {cc_slash}")
         # If /clear command was sent, clear the session association
         # so we can detect the new session after first message
         if cc_slash.strip().lower() == "/clear":
             logger.info("Clearing session for window %s after /clear", display)
-            session_manager.clear_window_session(wid)
+            session_manager.clear_window_session(ctx.window_id)
 
         # Interactive commands (e.g. /model) render a terminal-based UI
         # with no JSONL tool_use entry.  The status poller already detects
@@ -348,8 +307,8 @@ async def unsupported_content_handler(
     """Reply to non-text messages (stickers, video, etc.)."""
     if not update.message:
         return
-    user = update.effective_user
-    if not user or not is_user_allowed(user.id):
+    user = await require_user(update, reply_unauthorized=False)
+    if user is None:
         return
     logger.debug("Unsupported content from user %d", user.id)
     await safe_reply(

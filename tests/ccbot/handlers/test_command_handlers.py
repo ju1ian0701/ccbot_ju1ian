@@ -1,4 +1,4 @@
-"""Unit tests for command_handlers auth/session paths (REF-009)."""
+"""Unit tests for command_handlers auth/session paths (REF-009 / ISS-001)."""
 
 from __future__ import annotations
 
@@ -11,9 +11,16 @@ from ccbot.handlers.command_handlers import (
     start_command,
     unbind_command,
 )
+from ccbot.session_guard import SessionContext
 from ccbot.tmux_manager import TmuxWindow
 
 _CH = "ccbot.handlers.command_handlers"
+
+
+def _user(uid: int = 1) -> MagicMock:
+    u = MagicMock()
+    u.id = uid
+    return u
 
 
 def _update(
@@ -23,8 +30,7 @@ def _update(
     thread_id: int | None = 42,
 ) -> MagicMock:
     upd = MagicMock()
-    user = MagicMock()
-    user.id = user_id
+    user = _user(user_id)
     upd.effective_user = user
     if message:
         msg = MagicMock()
@@ -44,17 +50,30 @@ def _context() -> MagicMock:
     return ctx
 
 
+def _session_ctx(
+    *,
+    user: MagicMock | None = None,
+    thread_id: int = 42,
+    window_id: str = "@8",
+) -> SessionContext:
+    user = user or _user()
+    win = TmuxWindow(window_id=window_id, window_name="p", cwd="/t")
+    return SessionContext(
+        user=user, thread_id=thread_id, window_id=window_id, window=win
+    )
+
+
 @pytest.mark.asyncio
 async def test_start_unauthorized_no_welcome() -> None:
     upd = _update(user_id=99)
     ctx = _context()
     with (
-        patch(f"{_CH}.is_user_allowed", return_value=False),
+        patch(f"{_CH}.require_user", new_callable=AsyncMock, return_value=None),
         patch(f"{_CH}.safe_reply", new_callable=AsyncMock) as reply,
     ):
         await start_command(upd, ctx)
-        reply.assert_awaited_once()
-        assert "not authorized" in reply.await_args.args[1].lower()
+        # Unauthorized reply is owned by require_user, not the handler.
+        reply.assert_not_awaited()
 
 
 @pytest.mark.asyncio
@@ -62,7 +81,7 @@ async def test_start_authorized_sends_welcome() -> None:
     upd = _update()
     ctx = _context()
     with (
-        patch(f"{_CH}.is_user_allowed", return_value=True),
+        patch(f"{_CH}.require_user", new_callable=AsyncMock, return_value=_user()),
         patch(f"{_CH}.clear_browse_state") as clear,
         patch(f"{_CH}.safe_reply", new_callable=AsyncMock) as reply,
     ):
@@ -77,33 +96,26 @@ async def test_esc_requires_session() -> None:
     upd = _update()
     ctx = _context()
     with (
-        patch(f"{_CH}.is_user_allowed", return_value=True),
-        patch(f"{_CH}.get_thread_id", return_value=42),
-        patch(f"{_CH}.session_manager") as sm,
+        patch(f"{_CH}.require_session", new_callable=AsyncMock, return_value=None),
         patch(f"{_CH}.tmux_manager") as tmux,
         patch(f"{_CH}.safe_reply", new_callable=AsyncMock) as reply,
     ):
-        sm.resolve_window_for_thread.return_value = None
         await esc_command(upd, ctx)
         tmux.send_keys.assert_not_called()
-        reply.assert_awaited_once()
-        assert "No session bound" in reply.await_args.args[1]
+        # No-session reply is owned by require_session.
+        reply.assert_not_awaited()
 
 
 @pytest.mark.asyncio
 async def test_esc_sends_escape_key() -> None:
     upd = _update()
     ctx = _context()
-    win = TmuxWindow(window_id="@8", window_name="p", cwd="/t")
+    sctx = _session_ctx()
     with (
-        patch(f"{_CH}.is_user_allowed", return_value=True),
-        patch(f"{_CH}.get_thread_id", return_value=42),
-        patch(f"{_CH}.session_manager") as sm,
+        patch(f"{_CH}.require_session", new_callable=AsyncMock, return_value=sctx),
         patch(f"{_CH}.tmux_manager") as tmux,
         patch(f"{_CH}.safe_reply", new_callable=AsyncMock) as reply,
     ):
-        sm.resolve_window_for_thread.return_value = "@8"
-        tmux.find_window_by_id = AsyncMock(return_value=win)
         tmux.send_keys = AsyncMock(return_value=True)
         await esc_command(upd, ctx)
         tmux.send_keys.assert_awaited_once_with("@8", "\x1b", enter=False)
@@ -115,7 +127,7 @@ async def test_unbind_requires_topic() -> None:
     upd = _update(thread_id=None)
     ctx = _context()
     with (
-        patch(f"{_CH}.is_user_allowed", return_value=True),
+        patch(f"{_CH}.require_user", new_callable=AsyncMock, return_value=_user()),
         patch(f"{_CH}.get_thread_id", return_value=None),
         patch(f"{_CH}.safe_reply", new_callable=AsyncMock) as reply,
     ):
@@ -127,14 +139,19 @@ async def test_unbind_requires_topic() -> None:
 async def test_unbind_clears_binding() -> None:
     upd = _update(thread_id=9)
     ctx = _context()
+    user = _user()
     with (
-        patch(f"{_CH}.is_user_allowed", return_value=True),
+        patch(f"{_CH}.require_user", new_callable=AsyncMock, return_value=user),
         patch(f"{_CH}.get_thread_id", return_value=9),
+        patch(
+            f"{_CH}.require_bound_window_id",
+            new_callable=AsyncMock,
+            return_value=(user, 9, "@3"),
+        ),
         patch(f"{_CH}.session_manager") as sm,
         patch(f"{_CH}.clear_topic_state", new_callable=AsyncMock) as clear,
         patch(f"{_CH}.safe_reply", new_callable=AsyncMock) as reply,
     ):
-        sm.get_window_for_thread.return_value = "@3"
         sm.get_display_name.return_value = "proj"
         await unbind_command(upd, ctx)
         sm.unbind_thread.assert_called_once_with(1, 9)
@@ -147,15 +164,10 @@ async def test_esc_missing_window() -> None:
     upd = _update()
     ctx = _context()
     with (
-        patch(f"{_CH}.is_user_allowed", return_value=True),
-        patch(f"{_CH}.get_thread_id", return_value=42),
-        patch(f"{_CH}.session_manager") as sm,
+        patch(f"{_CH}.require_session", new_callable=AsyncMock, return_value=None),
         patch(f"{_CH}.tmux_manager") as tmux,
         patch(f"{_CH}.safe_reply", new_callable=AsyncMock) as reply,
     ):
-        sm.resolve_window_for_thread.return_value = "@8"
-        sm.get_display_name.return_value = "gone"
-        tmux.find_window_by_id = AsyncMock(return_value=None)
         await esc_command(upd, ctx)
         tmux.send_keys.assert_not_called()
-        assert "no longer exists" in reply.await_args.args[1]
+        reply.assert_not_awaited()

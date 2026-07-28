@@ -25,7 +25,7 @@ from ..terminal_parser import extract_bash_output, is_interactive_ui
 from ..tmux_manager import tmux_manager
 from ..transcribe import transcribe_voice
 from ..utils import ccbot_dir
-from ..session_guard import get_thread_id, is_user_allowed
+from ..session_guard import get_thread_id, require_session, require_user
 from .directory_browser import (
     BROWSE_DIRS_KEY,
     BROWSE_PAGE_KEY,
@@ -61,10 +61,8 @@ IMAGES_DIR.mkdir(parents=True, exist_ok=True)
 
 async def photo_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle photos sent by the user: download and forward path to Claude Code."""
-    user = update.effective_user
-    if not user or not is_user_allowed(user.id):
-        if update.message:
-            await safe_reply(update.message, "You are not authorized to use this bot.")
+    user = await require_user(update, reply_unauthorized=True)
+    if user is None:
         return
 
     if not update.message or not update.message.photo:
@@ -75,31 +73,15 @@ async def photo_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     if chat.type in ("group", "supergroup") and thread_id is not None:
         session_manager.set_group_chat_id(user.id, thread_id, chat.id)
 
-    # Must be in a named topic
-    if thread_id is None:
-        await safe_reply(
-            update.message,
-            "❌ Please use a named topic. Create a new topic to start a session.",
-        )
-        return
-
-    wid = session_manager.get_window_for_thread(user.id, thread_id)
-    if wid is None:
-        await safe_reply(
-            update.message,
-            "❌ No session bound to this topic. Send a text message first to create one.",
-        )
-        return
-
-    w = await tmux_manager.find_window_by_id(wid)
-    if not w:
-        display = session_manager.get_display_name(wid)
-        session_manager.unbind_thread(user.id, thread_id)
-        await safe_reply(
-            update.message,
-            f"❌ Window '{display}' no longer exists. Binding removed.\n"
-            "Send a message to start a new session.",
-        )
+    ctx = await require_session(
+        update,
+        reply_unauthorized=False,
+        user=user,
+        use_resolve=False,
+        require_named_topic=True,
+        unbind_if_missing=True,
+    )
+    if ctx is None:
         return
 
     # Download the highest-resolution photo
@@ -122,9 +104,9 @@ async def photo_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         await update.message.chat.send_action(ChatAction.TYPING)
     except Exception as e:
         logger.warning("send_action(TYPING) failed, continuing to injection: %s", e)
-    clear_status_msg_info(user.id, thread_id)
+    clear_status_msg_info(user.id, ctx.thread_id)
 
-    success, message = await session_manager.send_to_window(wid, text_to_send)
+    success, message = await session_manager.send_to_window(ctx.window_id, text_to_send)
     if not success:
         await safe_reply(update.message, f"❌ {message}")
         return
@@ -135,10 +117,8 @@ async def photo_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
 async def voice_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle voice messages: transcribe via OpenAI and forward text to Claude Code."""
-    user = update.effective_user
-    if not user or not is_user_allowed(user.id):
-        if update.message:
-            await safe_reply(update.message, "You are not authorized to use this bot.")
+    user = await require_user(update, reply_unauthorized=True)
+    if user is None:
         return
 
     if not update.message or not update.message.voice:
@@ -157,30 +137,15 @@ async def voice_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     if chat.type in ("group", "supergroup") and thread_id is not None:
         session_manager.set_group_chat_id(user.id, thread_id, chat.id)
 
-    if thread_id is None:
-        await safe_reply(
-            update.message,
-            "❌ Please use a named topic. Create a new topic to start a session.",
-        )
-        return
-
-    wid = session_manager.get_window_for_thread(user.id, thread_id)
-    if wid is None:
-        await safe_reply(
-            update.message,
-            "❌ No session bound to this topic. Send a text message first to create one.",
-        )
-        return
-
-    w = await tmux_manager.find_window_by_id(wid)
-    if not w:
-        display = session_manager.get_display_name(wid)
-        session_manager.unbind_thread(user.id, thread_id)
-        await safe_reply(
-            update.message,
-            f"❌ Window '{display}' no longer exists. Binding removed.\n"
-            "Send a message to start a new session.",
-        )
+    ctx = await require_session(
+        update,
+        reply_unauthorized=False,
+        user=user,
+        use_resolve=False,
+        require_named_topic=True,
+        unbind_if_missing=True,
+    )
+    if ctx is None:
         return
 
     # Download voice as in-memory bytes
@@ -202,9 +167,9 @@ async def voice_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         await update.message.chat.send_action(ChatAction.TYPING)
     except Exception as e:
         logger.warning("send_action(TYPING) failed, continuing to injection: %s", e)
-    clear_status_msg_info(user.id, thread_id)
+    clear_status_msg_info(user.id, ctx.thread_id)
 
-    success, message = await session_manager.send_to_window(wid, text)
+    success, message = await session_manager.send_to_window(ctx.window_id, text)
     if not success:
         await safe_reply(update.message, f"❌ {message}")
         return
@@ -305,10 +270,8 @@ async def capture_bash_output(
 
 
 async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    user = update.effective_user
-    if not user or not is_user_allowed(user.id):
-        if update.message:
-            await safe_reply(update.message, "You are not authorized to use this bot.")
+    user = await require_user(update, reply_unauthorized=True)
+    if user is None:
         return
 
     if not update.message or not update.message.text:
@@ -434,23 +397,19 @@ async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         await safe_reply(update.message, msg_text, reply_markup=keyboard)
         return
 
-    # Bound topic — forward to bound window
-    w = await tmux_manager.find_window_by_id(wid)
-    if not w:
-        display = session_manager.get_display_name(wid)
-        logger.info(
-            "Stale binding: window %s gone, unbinding (user=%d, thread=%d)",
-            display,
-            user.id,
-            thread_id,
-        )
-        session_manager.unbind_thread(user.id, thread_id)
-        await safe_reply(
-            update.message,
-            f"❌ Window '{display}' no longer exists. Binding removed.\n"
-            "Send a message to start a new session.",
-        )
+    # Bound topic — live window via shared session guard (unbind if gone).
+    # Unbound path above must NOT call require_session (opens browser/picker).
+    ctx = await require_session(
+        update,
+        reply_unauthorized=False,
+        user=user,
+        use_resolve=False,
+        unbind_if_missing=True,
+    )
+    if ctx is None:
         return
+    wid = ctx.window_id
+    w = ctx.window
 
     # Cosmetic / outbound-Telegram steps below must NEVER abort the handler
     # before the message is injected into tmux. On flaky networks the "typing…"
