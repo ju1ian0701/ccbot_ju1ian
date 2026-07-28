@@ -25,9 +25,15 @@ from .tmux_manager import TmuxWindow, tmux_manager
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_UNAUTHORIZED = "You are not authorized to use this bot."
-DEFAULT_NO_SESSION = "❌ No session bound to this topic."
-DEFAULT_MISSING_WINDOW = "❌ Window '{display}' no longer exists."
+# Unified UX strings (ISS-007). Handlers should not override without cause.
+DEFAULT_UNAUTHORIZED_TEXT = "You are not authorized to use this bot."
+DEFAULT_NO_SESSION_TEXT = "No active session. Use /start to bind a topic."
+DEFAULT_MISSING_WINDOW_TEXT = "Window not found. Re-binding..."
+
+# Back-compat aliases used by require_* defaults and older call sites.
+DEFAULT_UNAUTHORIZED = DEFAULT_UNAUTHORIZED_TEXT
+DEFAULT_NO_SESSION = DEFAULT_NO_SESSION_TEXT
+DEFAULT_MISSING_WINDOW = DEFAULT_MISSING_WINDOW_TEXT
 
 
 @dataclass(frozen=True, slots=True)
@@ -65,7 +71,7 @@ async def require_user(
     update: Update,
     *,
     reply_unauthorized: bool = True,
-    unauthorized_text: str = DEFAULT_UNAUTHORIZED,
+    unauthorized_text: str = DEFAULT_UNAUTHORIZED_TEXT,
     callback_unauthorized_text: str = "Not authorized",
 ) -> User | None:
     """Authorize the effective user or notify and return None."""
@@ -101,7 +107,7 @@ async def require_bound_window_id(
     reply_unauthorized: bool = False,
     require_message: bool = True,
     use_resolve: bool = True,
-    no_session_text: str = DEFAULT_NO_SESSION,
+    no_session_text: str = DEFAULT_NO_SESSION_TEXT,
     user: User | None = None,
 ) -> tuple[User, int | None, str] | None:
     """Auth + resolve window_id for the topic (no live tmux window required)."""
@@ -144,8 +150,8 @@ async def require_session(
     named_topic_text: str = (
         "❌ Please use a named topic. Create a new topic to start a session."
     ),
-    no_session_text: str = DEFAULT_NO_SESSION,
-    missing_window_text: str = DEFAULT_MISSING_WINDOW,
+    no_session_text: str = DEFAULT_NO_SESSION_TEXT,
+    missing_window_text: str = DEFAULT_MISSING_WINDOW_TEXT,
     unbind_if_missing: bool = False,
     user: User | None = None,
 ) -> SessionContext | None:

@@ -208,7 +208,7 @@
       "id": "ISS-001",
       "title": "Migrate handlers onto require_session / require_user / require_bound_window_id",
       "priority": "high",
-      "status": "ready",
+      "status": "PROPOSE",
       "categories": [
         "dry",
         "dead-abstraction"
@@ -235,7 +235,9 @@
         "Tests unauthorized / unbound thread / missing window green",
         "UX strings stabilized or explicitly unified"
       ],
-      "ref_note": "REF-001 reopen/follow-up"
+      "ref_note": "REF-001 reopen/follow-up",
+      "last_proposal_id": "ISS-001_20260728T183408Z",
+      "updated_at": "2026-07-28T18:34:08.762974+00:00"
     },
     {
       "id": "ISS-002",
@@ -364,7 +366,7 @@
       "id": "ISS-006",
       "title": "Compose require_session from require_bound_window_id",
       "priority": "medium",
-      "status": "VALIDATE",
+      "status": "DONE",
       "categories": [
         "dry"
       ],
@@ -390,9 +392,11 @@
       "last_proposal_id": "ISS-006_20260728T141904Z",
       "proposal": "ISS-006_20260728T141904Z",
       "pr": "#11",
-      "status_updated_at": "2026-07-28T00:00:00+00:00",
-      "updated_at": "2026-07-28T14:19:04.381492+00:00",
-      "resolution": "require_session composes require_bound_window_id; unit tests green; draft PR #11; evidence grep PASS"
+      "merged_commit": "ee8c0b2",
+      "merged_at": "2026-07-28T16:08:01Z",
+      "status_updated_at": "2026-07-28T16:08:01+00:00",
+      "updated_at": "2026-07-28T16:08:01+00:00",
+      "resolution": "require_session composes require_bound_window_id; unit tests green; PR #11 merged at ee8c0b2; evidence grep PASS"
     },
     {
       "id": "ISS-007",

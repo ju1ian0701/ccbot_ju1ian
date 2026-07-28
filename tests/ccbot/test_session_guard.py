@@ -138,7 +138,7 @@ async def test_require_session_unbound(monkeypatch: pytest.MonkeyPatch) -> None:
         ctx = await require_session(upd, reply_unauthorized=False)
         assert ctx is None
         reply.assert_awaited_once()
-        assert "No session bound" in reply.await_args.args[1]
+        assert "No active session" in reply.await_args.args[1]
 
 
 @pytest.mark.asyncio
@@ -164,8 +164,8 @@ async def test_require_session_missing_window(
         ctx = await require_session(upd, reply_unauthorized=False)
         assert ctx is None
         reply.assert_awaited_once()
-        assert "mywin" in reply.await_args.args[1]
-        assert "no longer exists" in reply.await_args.args[1]
+        assert "Window not found" in reply.await_args.args[1]
+        assert "Re-binding" in reply.await_args.args[1]
 
 
 @pytest.mark.asyncio
