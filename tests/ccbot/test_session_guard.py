@@ -183,3 +183,86 @@ async def test_require_bound_window_id_ok(monkeypatch: pytest.MonkeyPatch) -> No
     assert u is user
     assert tid == 2
     assert wid == "@1"
+
+
+@pytest.mark.asyncio
+async def test_require_session_composes_require_bound_window_id(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """ISS-006: require_session must call require_bound_window_id (not reimplement)."""
+    user = _user(10)
+    upd = _update(user=user, message=_message(thread_id=3))
+    win = TmuxWindow(window_id="@9", window_name="w", cwd="/tmp")
+    bound = AsyncMock(return_value=(user, 3, "@9"))
+    monkeypatch.setattr("ccbot.session_guard.require_bound_window_id", bound)
+    monkeypatch.setattr(
+        "ccbot.session_guard.tmux_manager.find_window_by_id",
+        AsyncMock(return_value=win),
+    )
+
+    ctx = await require_session(
+        upd,
+        reply_unauthorized=False,
+        require_message=True,
+        use_resolve=False,
+        no_session_text="CUSTOM_NO_SESSION",
+    )
+
+    bound.assert_awaited_once()
+    kwargs = bound.await_args.kwargs
+    assert kwargs["reply_unauthorized"] is False
+    assert kwargs["require_message"] is True
+    assert kwargs["use_resolve"] is False
+    assert kwargs["no_session_text"] == "CUSTOM_NO_SESSION"
+    assert isinstance(ctx, SessionContext)
+    assert ctx.window is win
+    assert ctx.window_id == "@9"
+
+
+@pytest.mark.asyncio
+async def test_require_session_unbind_if_missing(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr("ccbot.session_guard.config.is_user_allowed", lambda _u: True)
+    user = _user(10)
+    msg = _message(thread_id=3)
+    upd = _update(user=user, message=msg)
+    unbind = MagicMock()
+    monkeypatch.setattr(
+        "ccbot.session_guard.session_manager.resolve_window_for_thread",
+        lambda _uid, _tid: "@gone",
+    )
+    monkeypatch.setattr(
+        "ccbot.session_guard.session_manager.get_display_name",
+        lambda wid: "mywin",
+    )
+    monkeypatch.setattr(
+        "ccbot.session_guard.session_manager.unbind_thread",
+        unbind,
+    )
+    monkeypatch.setattr(
+        "ccbot.session_guard.tmux_manager.find_window_by_id",
+        AsyncMock(return_value=None),
+    )
+    with patch("ccbot.session_guard.safe_reply", new_callable=AsyncMock):
+        ctx = await require_session(
+            upd, reply_unauthorized=False, unbind_if_missing=True
+        )
+    assert ctx is None
+    unbind.assert_called_once_with(10, 3)
+
+
+@pytest.mark.asyncio
+async def test_require_session_require_named_topic(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr("ccbot.session_guard.config.is_user_allowed", lambda _u: True)
+    msg = _message(thread_id=1)  # General → get_thread_id None
+    upd = _update(user=_user(10), message=msg)
+    with patch("ccbot.session_guard.safe_reply", new_callable=AsyncMock) as reply:
+        ctx = await require_session(
+            upd, reply_unauthorized=False, require_named_topic=True
+        )
+        assert ctx is None
+        reply.assert_awaited_once()
+        assert "named topic" in reply.await_args.args[1].lower()

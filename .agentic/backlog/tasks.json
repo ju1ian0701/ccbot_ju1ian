@@ -241,7 +241,7 @@
       "id": "ISS-002",
       "title": "Eliminate dual source of truth: handlers/auth.py vs session_guard.py",
       "priority": "high",
-      "status": "done",
+      "status": "DONE",
       "categories": [
         "dry",
         "architecture"
@@ -267,8 +267,10 @@
         "No divergent General-topic or callback vs message path behavior"
       ],
       "ref_note": "REF-001",
-      "status_updated_at": "2026-07-27T18:54:00+00:00",
-      "resolution": "canonical auth via session_guard; dual SoT removed; evidence in proposal ISS-002_20260727T175352Z; validate green"
+      "status_updated_at": "2026-07-28T00:00:00+00:00",
+      "pr": "#10",
+      "merged_at": "2026-07-28T11:10:50Z",
+      "resolution": "canonical auth via session_guard; dual SoT removed; evidence in proposal ISS-002_20260727T175352Z; validate green; PR #10 merged"
     },
     {
       "id": "ISS-003",
@@ -362,7 +364,7 @@
       "id": "ISS-006",
       "title": "Compose require_session from require_bound_window_id",
       "priority": "medium",
-      "status": "ready",
+      "status": "VALIDATE",
       "categories": [
         "dry"
       ],
@@ -384,7 +386,13 @@
         "session_guard unit tests green",
         "Error/reply paths unified"
       ],
-      "ref_note": "REF-001"
+      "ref_note": "REF-001",
+      "last_proposal_id": "ISS-006_20260728T141904Z",
+      "proposal": "ISS-006_20260728T141904Z",
+      "pr": "#11",
+      "status_updated_at": "2026-07-28T00:00:00+00:00",
+      "updated_at": "2026-07-28T14:19:04.381492+00:00",
+      "resolution": "require_session composes require_bound_window_id; unit tests green; draft PR #11; evidence grep PASS"
     },
     {
       "id": "ISS-007",
