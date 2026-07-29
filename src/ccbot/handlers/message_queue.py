@@ -172,6 +172,7 @@ class MessageQueueManager:
         self._flood_until.pop(user_id, None)
 
     def get_lock(self, user_id: int) -> asyncio.Lock:
+        """Public accessor for user's queue lock."""
         return self._locks[user_id]
 
     async def shutdown(self) -> None:
@@ -357,8 +358,12 @@ async def _process_content_with_retry(
 
 async def _message_queue_worker(bot: Bot, user_id: int) -> None:
     """Process message tasks for a user sequentially."""
-    queue = queue_manager._queues[user_id]
-    lock = queue_manager._locks[user_id]
+    queue = queue_manager.get_queue(user_id)
+    if queue is None:
+        # Worker is only started from get_or_create_queue after the queue exists.
+        logger.error("Message queue worker started without queue for user %d", user_id)
+        return
+    lock = queue_manager.get_lock(user_id)
     logger.info(f"Message queue worker started for user {user_id}")
 
     while True:
