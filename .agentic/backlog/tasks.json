@@ -503,17 +503,20 @@
       "id": "ISS-010",
       "title": "Encapsulate bash_capture_tasks global mutable dict",
       "priority": "medium",
-      "status": "ready",
+      "status": "DONE",
       "categories": [
         "concurrency",
         "encapsulation"
       ],
       "files": [
         "src/ccbot/handlers/message_handlers.py",
-        "src/ccbot/handlers/message_queue.py"
+        "src/ccbot/handlers/capture_registry.py",
+        "src/ccbot/handlers/cleanup.py"
       ],
       "related_nodes": [
-        "file:src/ccbot/handlers/message_handlers.py"
+        "file:src/ccbot/handlers/message_handlers.py",
+        "file:src/ccbot/handlers/capture_registry.py",
+        "file:src/ccbot/handlers/cleanup.py"
       ],
       "depends_on": [
         "ISS-003"
@@ -526,7 +529,14 @@
         "Owner with cleanup on topic close",
         "Tests or manual matrix show no capture-task leak"
       ],
-      "ref_note": "REF-005 scope"
+      "ref_note": "REF-005 scope",
+      "last_proposal_id": "ISS-010_20260806T152347Z",
+      "pr": "#16",
+      "merged_commit": "fc861f4",
+      "merged_at": "2026-08-06T15:37:17Z",
+      "status_updated_at": "2026-08-06T15:37:17+00:00",
+      "updated_at": "2026-08-06T15:37:17+00:00",
+      "resolution": "CaptureTaskRegistry + capture_tasks singleton; dual module-level dicts removed; clear_topic_state cancels capture task; 4 registry tests; PR #16 merged fc861f4; Phase 2 CLOSED"
     },
     {
       "id": "ISS-011",
