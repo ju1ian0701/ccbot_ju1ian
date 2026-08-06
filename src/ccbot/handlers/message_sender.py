@@ -151,9 +151,17 @@ async def send_with_fallback(
     bot: Bot,
     chat_id: int,
     text: str,
+    message_thread_id: int | None = None,
     **kwargs: Any,
 ) -> Message | None:
     """Send message with MarkdownV2, falling back to plain text on failure.
+
+    Args:
+        bot: Telegram Bot instance
+        chat_id: Target chat ID
+        text: Source message text (pre-conversion)
+        message_thread_id: Optional forum topic thread ID
+        **kwargs: Extra kwargs passed to bot.send_message
 
     Returns the sent Message on success, None on failure.
     RetryAfter is re-raised for caller handling.
@@ -165,11 +173,17 @@ async def send_with_fallback(
             chat_id=chat_id,
             text=body,
             parse_mode=formatter.parse_mode,
+            message_thread_id=message_thread_id,
             **kwargs,
         )
 
     async def _plain(body: str) -> Message:
-        return await bot.send_message(chat_id=chat_id, text=body, **kwargs)
+        return await bot.send_message(
+            chat_id=chat_id,
+            text=body,
+            message_thread_id=message_thread_id,
+            **kwargs,
+        )
 
     return await _run_markdown_fallback(
         text,
@@ -230,6 +244,7 @@ async def send_photo(
     bot: Bot,
     chat_id: int,
     image_data: list[tuple[str, bytes]],
+    message_thread_id: int | None = None,
     **kwargs: Any,
 ) -> None:
     """Send photo(s) to chat. Sends as media group if multiple images.
@@ -240,6 +255,7 @@ async def send_photo(
         bot: Telegram Bot instance
         chat_id: Target chat ID
         image_data: List of (media_type, raw_bytes) tuples
+        message_thread_id: Optional forum topic thread ID
         **kwargs: Extra kwargs passed to send_photo/send_media_group
     """
     if not image_data:
@@ -250,6 +266,7 @@ async def send_photo(
             await bot.send_photo(
                 chat_id=chat_id,
                 photo=io.BytesIO(raw_bytes),
+                message_thread_id=message_thread_id,
                 **kwargs,
             )
         else:
@@ -260,6 +277,7 @@ async def send_photo(
             await bot.send_media_group(
                 chat_id=chat_id,
                 media=media,
+                message_thread_id=message_thread_id,
                 **kwargs,
             )
     except RetryAfter:
@@ -328,6 +346,10 @@ async def safe_send(
     **kwargs: Any,
 ) -> None:
     """Send message with formatting, falling back to plain text on failure."""
-    if message_thread_id is not None:
-        kwargs.setdefault("message_thread_id", message_thread_id)
-    await send_with_fallback(bot, chat_id, text, **kwargs)
+    await send_with_fallback(
+        bot,
+        chat_id,
+        text,
+        message_thread_id=message_thread_id,
+        **kwargs,
+    )

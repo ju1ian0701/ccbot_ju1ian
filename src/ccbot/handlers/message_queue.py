@@ -450,13 +450,6 @@ async def _message_queue_worker(bot: Bot, user_id: int) -> None:
             )
 
 
-def _send_kwargs(thread_id: int | None) -> dict[str, int]:
-    """Build message_thread_id kwargs for bot.send_message()."""
-    if thread_id is not None:
-        return {"message_thread_id": thread_id}
-    return {}
-
-
 async def _send_task_images(bot: Bot, chat_id: int, task: MessageTask) -> None:
     """Send images attached to a task, if any."""
     if not task.image_data:
@@ -470,7 +463,7 @@ async def _send_task_images(bot: Bot, chat_id: int, task: MessageTask) -> None:
         bot,
         chat_id,
         task.image_data,
-        **_send_kwargs(task.thread_id),  # type: ignore[arg-type]
+        message_thread_id=task.thread_id,
     )
 
 
@@ -526,7 +519,7 @@ async def _process_content_task(bot: Bot, user_id: int, task: MessageTask) -> No
             bot,
             chat_id,
             part,
-            **_send_kwargs(task.thread_id),  # type: ignore[arg-type]
+            message_thread_id=task.thread_id,
         )
 
         if sent:
@@ -667,7 +660,7 @@ async def _do_send_status_message(
         bot,
         chat_id,
         text,
-        **_send_kwargs(thread_id),  # type: ignore[arg-type]
+        message_thread_id=thread_id,
     )
     if sent:
         st.set_status(user_id, thread_id_or_0, sent.message_id, window_id, text)

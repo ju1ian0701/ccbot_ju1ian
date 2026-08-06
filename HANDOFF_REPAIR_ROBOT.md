@@ -1,6 +1,6 @@
 # Handoff: Repair Robot (ccbot_ju1ian)
 
-**Дата снимка:** 2026-07-28  
+**Дата снимка:** 2026-07-29  
 **Репозиторий:** https://github.com/ju1ian0701/ccbot_ju1ian  
 **Локальный клон:** `D:\CCbot_tmux\ccbot\ccbot_ju1ian\`  
 **Инструкция:** `REPAIR_ROBOT_INSTRUCTION.md`  
@@ -51,10 +51,36 @@ rg "require_bound_window_id" src/ccbot/session_guard.py
 
 ---
 
+## Phase 2 — Queue encapsulation + concurrency surface (REF-005 real)
+
+**Status: IN PROGRESS (2026-07-29)** — ISS-003 done; ISS-008 / ISS-010 still backlog.
+
+| Task | Status | Evidence | PR |
+|------|--------|----------|-----|
+| ISS-003 | DONE | encapsulate `_queues`/`_locks` | merged |
+| ISS-008 | BACKLOG | `_send_kwargs` + `type: ignore` | — |
+| ISS-010 | BACKLOG | extract `bash_capture_tasks` | — |
+
+### Детали Phase 2 (ISS-003)
+
+| ID | Что | Артефакты |
+|----|-----|-----------|
+| **ISS-003** | Public accessors `get_queue` / `get_lock`; `_message_queue_worker` больше не трогает `queue_manager._queues` / `._locks` | local apply 2026-07-29; evidence greps ниже; tests `test_message_queue_*` green |
+
+### Evidence greps (ISS-003)
+
+```text
+rg "queue_manager\._queues|queue_manager\._locks" src  → 0
+# self._queues / self._locks only inside MessageQueueManager
+# worker uses get_queue() / get_lock()
+```
+
+---
+
 ## Следующий шаг
 
 1. Phase 1 — **CLOSED** (ISS-002, ISS-006, ISS-001, ISS-007).  
-2. Next structural: **ISS-003** (MessageQueueManager encapsulation) or backlog order from `REPAIR_ROBOT_INSTRUCTION.md`.  
+2. Phase 2 — **IN PROGRESS**: ISS-003 **DONE**; next **ISS-008** (`_send_kwargs` typed contract) or **ISS-010** (`bash_capture_tasks`) per `REPAIR_ROBOT_INSTRUCTION.md`.  
 3. WIP limit: max 1 structural issue in IN_PROGRESS.  
 4. Meta (backlog/handoff) — commit immediately; product — only via propose → approve → apply.
 
