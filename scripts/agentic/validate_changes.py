@@ -13,6 +13,12 @@ from typing import Any
 from paths import find_repo_root, load_config, out_dir, write_json
 
 
+def _venv_python(root: Path) -> Path:
+    if sys.platform == "win32":
+        return root / ".venv" / "Scripts" / "python.exe"
+    return root / ".venv" / "bin" / "python"
+
+
 def _run(cmd: list[str], cwd: Path) -> dict[str, Any]:
     try:
         proc = subprocess.run(
@@ -39,6 +45,25 @@ def _run(cmd: list[str], cwd: Path) -> dict[str, Any]:
             "stdout_tail": "",
             "stderr_tail": str(exc),
         }
+
+
+def _ensure_dev_env(root: Path) -> dict[str, Any] | None:
+    """Sync dev deps when venv/python is missing so pyright can resolve imports."""
+    py = _venv_python(root)
+    site = root / ".venv" / "Lib" / "site-packages"
+    if sys.platform != "win32":
+        # Unix venv layout
+        for candidate in (
+            root / ".venv" / "lib",
+        ):
+            if candidate.is_dir():
+                matches = list(candidate.glob("python*/site-packages"))
+                if matches:
+                    site = matches[0]
+                    break
+    if py.is_file() and site.is_dir() and (site / "telegram").is_dir():
+        return None
+    return _run(["uv", "sync", "--extra", "dev"], root)
 
 
 def _git_changed_files(root: Path, base_ref: str | None) -> list[str]:
@@ -167,8 +192,27 @@ def run(
             steps.append([uv, "run", "ruff", "check", "src/", "tests/"])
             steps.append([uv, "run", "ruff", "format", "--check", "src/", "tests/"])
         if impl.get("require_pyright", True):
-            steps.append([uv, "run", "pyright", "src/ccbot/"])
+            # Force venv interpreter so telegram/dotenv/etc. resolve even when the
+            # process default is system Python without project deps.
+            sync_result = _ensure_dev_env(root)
+            if sync_result is not None:
+                quality.append(sync_result)
+            vpy = str(_venv_python(root))
+            steps.append(
+                [
+                    uv,
+                    "run",
+                    "pyright",
+                    "--pythonpath",
+                    vpy,
+                    "--project",
+                    str(root),
+                    "src/ccbot/",
+                ]
+            )
         if impl.get("require_tests", True):
+            # Always uv run from repo root so src-layout + deps resolve
+            # (bare system pytest → collection ERROR ModuleNotFoundError: ccbot).
             steps.append([uv, "run", "pytest", "--tb=short", "-q"])
         for cmd in steps:
             quality.append(_run(cmd, root))
