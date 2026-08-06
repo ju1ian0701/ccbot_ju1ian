@@ -112,7 +112,7 @@
         "MessageQueueManager class added"
       ],
       "status_updated_at": "2026-07-18T10:44:01.212763+00:00",
-      "status_note": "Theatrical done: class exists but ISS-003/ISS-010 still open for real encapsulation"
+      "status_note": "Class shell closed; ISS-003 DONE (public get_queue/get_lock, no external _queues/_locks). ISS-010 still open for bash_capture_tasks."
     },
     {
       "id": "REF-006",
@@ -282,7 +282,7 @@
       "id": "ISS-003",
       "title": "Really encapsulate MessageQueueManager (finish REF-005)",
       "priority": "high",
-      "status": "ready",
+      "status": "done",
       "categories": [
         "encapsulation",
         "concurrency"
@@ -303,7 +303,9 @@
         "Queue/flood/status tests green",
         "If injectable: test with two independent manager instances"
       ],
-      "ref_note": "REF-005 reopen/follow-up"
+      "ref_note": "REF-005 reopen/follow-up",
+      "status_updated_at": "2026-07-29T00:00:00+00:00",
+      "resolution": "encapsulate _queues/_locks via public get_queue/get_lock; worker no longer touches private fields; queue tests green. Residual (worker as class methods, injectable dual-manager) optional under Phase 2, not reopening ISS-003."
     },
     {
       "id": "ISS-004",
