@@ -46,6 +46,7 @@ coverage.xml
 *.py,cover
 .hypothesis/
 .pytest_cache/
+.pytest_tmp/
 .ruff_cache/
 
 # Translations
@@ -102,6 +103,7 @@ credentials.json
 .mypy_cache/
 .dmypy.json
 dmypy.json
+.agentic/tmp/
 
 # Knowledge-graph pipeline trash / intermediate dumps (keep canonical graph/meta)
 .understand-anything/.trash-*

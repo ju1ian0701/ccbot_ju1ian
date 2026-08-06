@@ -67,6 +67,11 @@
       ".grok/**",
       ".gitignore",
       "pyproject.toml",
+      "pytest.ini",
+      "pyrightconfig.json",
+      "conftest.py",
+      "scripts/typecheck.py",
+      "scripts/run_tests.py",
       "tests/conftest.py"
     ],
     "ignored_path_globs": [
