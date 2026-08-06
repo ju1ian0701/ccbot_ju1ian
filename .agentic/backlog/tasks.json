@@ -440,16 +440,18 @@
       "id": "ISS-008",
       "title": "Remove type: ignore on _send_kwargs — explicit typed contract",
       "priority": "medium",
-      "status": "ready",
+      "status": "DONE",
       "categories": [
         "types",
         "boundary"
       ],
       "files": [
-        "src/ccbot/handlers/message_queue.py"
+        "src/ccbot/handlers/message_queue.py",
+        "src/ccbot/handlers/message_sender.py"
       ],
       "related_nodes": [
-        "file:src/ccbot/handlers/message_queue.py"
+        "file:src/ccbot/handlers/message_queue.py",
+        "file:src/ccbot/handlers/message_sender.py"
       ],
       "depends_on": [],
       "estimated_risk": "medium",
@@ -459,7 +461,14 @@
         "0 # type: ignore on send kwargs path in message_queue.py",
         "uv run pyright src/ccbot/handlers/message_queue.py clean",
         "message_thread_id contract is explicit (TypedDict / optional kwarg / overload)"
-      ]
+      ],
+      "last_proposal_id": "ISS-008_20260806T094220Z",
+      "pr": "#14",
+      "merged_commit": "1fff3af",
+      "merged_at": "2026-08-06T11:58:02Z",
+      "status_updated_at": "2026-08-06T14:26:48+00:00",
+      "updated_at": "2026-08-06T14:26:48+00:00",
+      "resolution": "explicit message_thread_id on send_with_fallback/send_photo/safe_send; _send_kwargs removed; 0 type: ignore on send path; PR #14 merged 1fff3af; validate gate deviation (WinError 5) closed post-factum via PR #15"
     },
     {
       "id": "ISS-009",
