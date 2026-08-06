@@ -11,6 +11,7 @@ from typing import Any
 
 from telegram import Bot
 
+from .capture_registry import capture_tasks
 from .interactive_ui import clear_interactive_msg
 from .message_queue import clear_status_msg_info, clear_tool_msg_ids_for_topic
 
@@ -28,11 +29,15 @@ async def clear_topic_state(
       - A thread binding becomes stale (window deleted externally)
 
     Cleans up:
+      - bash capture tasks (running ``!`` output watchers)
       - _status_msg_info (status message tracking)
       - _tool_msg_ids (tool_use → message_id mapping)
       - _interactive_msgs and _interactive_mode (interactive UI state)
       - user_data pending state (_pending_thread_id, _pending_thread_text)
     """
+    # Cancel any running bash capture task for the topic
+    capture_tasks.cancel(user_id, thread_id)
+
     # Clear status message tracking
     clear_status_msg_info(user_id, thread_id)
 

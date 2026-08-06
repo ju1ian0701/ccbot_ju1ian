@@ -26,6 +26,7 @@ from ..tmux_manager import tmux_manager
 from ..transcribe import transcribe_voice
 from ..utils import ccbot_dir
 from ..session_guard import get_thread_id, require_session, require_user
+from .capture_registry import capture_tasks
 from .directory_browser import (
     BROWSE_DIRS_KEY,
     BROWSE_PAGE_KEY,
@@ -50,9 +51,6 @@ logger = logging.getLogger(__name__)
 # Image directory for incoming photos
 IMAGES_DIR = ccbot_dir() / "images"
 IMAGES_DIR.mkdir(parents=True, exist_ok=True)
-
-# Active bash capture tasks: (user_id, thread_id) → asyncio.Task
-bash_capture_tasks: dict[tuple[int, int], asyncio.Task[None]] = {}
 
 # --- Image directory for incoming photos ---
 IMAGES_DIR = ccbot_dir() / "images"
@@ -177,16 +175,9 @@ async def voice_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     await safe_reply(update.message, f'🎤 "{text}"')
 
 
-# Active bash capture tasks: (user_id, thread_id) → asyncio.Task
-bash_capture_tasks: dict[tuple[int, int], asyncio.Task[None]] = {}
-
-
 def cancel_bash_capture(user_id: int, thread_id: int) -> None:
     """Cancel any running bash capture for this topic."""
-    key = (user_id, thread_id)
-    task = bash_capture_tasks.pop(key, None)
-    if task and not task.done():
-        task.cancel()
+    capture_tasks.cancel(user_id, thread_id)
 
 
 async def capture_bash_output(
@@ -266,7 +257,7 @@ async def capture_bash_output(
     except asyncio.CancelledError:
         return
     finally:
-        bash_capture_tasks.pop((user_id, thread_id), None)
+        capture_tasks.discard(user_id, thread_id)
 
 
 async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -460,7 +451,7 @@ async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         task = asyncio.create_task(
             capture_bash_output(context.bot, user.id, thread_id, wid, bash_cmd)
         )
-        bash_capture_tasks[(user.id, thread_id)] = task
+        capture_tasks.register(user.id, thread_id, task)
 
     # If in interactive mode, refresh the UI after sending text
     interactive_window = get_interactive_window(user.id, thread_id)
