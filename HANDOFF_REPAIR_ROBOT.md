@@ -1,6 +1,6 @@
 # Handoff: Repair Robot (ccbot_ju1ian)
 
-**Дата снимка:** 2026-08-06  
+**Дата снимка:** 2026-08-09  
 **Репозиторий:** https://github.com/ju1ian0701/ccbot_ju1ian  
 **Локальный клон:** `D:\CCbot_tmux\ccbot\ccbot_ju1ian\`  
 **Инструкция:** `REPAIR_ROBOT_INSTRUCTION.md`  
@@ -12,11 +12,12 @@
 
 ## Последний завершённый этап
 
-Последний завершённый этап — **ISS-010: extract `bash_capture_tasks` → `CaptureTaskRegistry` (PR #16, merged)**.
+Последний завершённый этап — **ISS-011: split `callback_router` на sub-handlers (PR #18, merged `4894eac`)**.
 
-- Module-level mutable dict (два дублирующих объявления) заменён на `CaptureTaskRegistry` (новый модуль `capture_registry.py`, синглтон `capture_tasks`);
-- `clear_topic_state` теперь отменяет capture-задачу топика (закрыта утечка clear-on-topic по контракту бэклога);
-- 4 новых теста на семантику registry; полный цикл propose → approve → apply → validate → PR пройден без отклонений.
+- Entry-роутер сокращён 768 → 141 LOC: только auth + group-chat capture + registry dispatch;
+- 6 новых submodules: `callback_topic_guard` (общий `_check_same_topic`/`RouteHandler`), `callback_history`, `callback_directory`, `callback_pickers`, `callback_screenshot`, `callback_interactive`; тела `_handle_*` перенесены 1:1;
+- Behavior parity подтверждён trace-матрицей 60/60 (stub-окружение), wire format неизменён, `test_callback_data.py` 27 passed;
+- Полный цикл без отклонений по коду; единственный мета-долг — пропущенный на паузе мета-коммит ISS-004, закрыт задним числом (`2cd062e`).
 
 ---
 
@@ -121,13 +122,58 @@ rg "CaptureTaskRegistry|capture_tasks" src/ccbot/handlers
 
 ---
 
+## Phase 3 — callback_router: table-driven dispatch + split sub-handlers
+
+**Status: CLOSED (2026-08-09)**
+
+| Task | Status | Evidence | PR |
+|------|--------|----------|-----|
+| ISS-004 | DONE | table-driven dispatch; single topic-guard | #17 (merged `1773c43`) |
+| ISS-011 | DONE | split into 6 submodules; entry 141 LOC | #18 (merged `4894eac`) |
+
+### Детали Phase 3
+
+| ID | Что | Артефакты |
+|----|-----|-----------|
+| **ISS-004** | Registry `_EXACT_ROUTES`/`_PREFIX_ROUTES`/`_match_route`; единый guard `_check_same_topic` + `_clear_pending_thread` (10 copy-paste → 1 helper); `_ASK_ACTIONS` (9 aq-веток → 1 handler); wire format unchanged; parity matrix 43 кейса (поймала порядок cleanup→answer в `db:confirm`) | proposal `ISS-004_20260808T102953Z`; PR #17 `1773c43` |
+| **ISS-011** | Entry 768→141 LOC (auth+capture+dispatch only); 6 submodules (guard/history/directory/pickers/screenshot/interactive); guard вынесен в `callback_topic_guard` (иначе циклический импорт); тела 1:1; parity 60/60 | PR #18 `4894eac` |
+
+### Evidence greps (Phase 3 exit)
+
+```text
+rg "_pending_thread_id" src/ccbot/handlers        → helpers + docstring only
+rg -n "def _handle_" .../callback_router.py       → только _handle_noop
+rg -c "_check_same_topic" src/ccbot/handlers      → 1 def + 11 call sites
+  # нюанс: rg -c считает и import-строки submodules
+pytest tests/ccbot/handlers/test_callback_data.py → 27 passed
+```
+
+### PRs (Phase 3)
+
+| PR | Title | State |
+|----|-------|-------|
+| [#17](https://github.com/ju1ian0701/ccbot_ju1ian/pull/17) | ISS-004 table-driven callback_router | **MERGED** (`1773c43`) |
+| [#18](https://github.com/ju1ian0701/ccbot_ju1ian/pull/18) | ISS-011 split callback_router sub-handlers | **MERGED** (`4894eac`) |
+
+### Уроки Phase 3
+
+- Паритет-матрица на stub-окружении — обязательный evidence при рефакторинге роутеров; ловит и поведенческие (порядок side effects), и сборочные (пропущенный импорт) ошибки;
+- `on_stale`-колбэк в guard — способ сохранить порядок «cleanup → answer» при выносе guard в helper;
+- `gh pr merge --squash --delete-branch` сам делает checkout main + pull + удаление веток (шаги 21–22 автоматом);
+- `analyze` генерирует untracked `.understand-anything/config.json` → `Remove-Item` после прогона; canonical KG (fingerprints/knowledge-graph/meta) — tracked, обновления коммитятся мета-коммитом `chore(kg)`;
+- CRLF-диффы захватывать бинарно (universal newlines съедает `\r` → ложный `patch does not apply`);
+- Мета-коммит шага 23 проверять фактом (`git log --oneline -3`) при возобновлении ветки, а не предполагать (ISS-004 закрыт задним числом).
+
+---
+
 ## Следующий шаг
 
 1. Phase 1 — **CLOSED** (ISS-002, ISS-006, ISS-001, ISS-007).  
 2. Phase 2 — **CLOSED** (ISS-003, ISS-008, ISS-010).  
-3. Phase 3 — next: **ISS-004** (table-driven `callback_router`), then **ISS-011** (split sub-handlers). WIP-слот свободен.  
-4. Meta (backlog/handoff) — commit immediately; product — only via propose → approve → apply.  
-5. Gate: не мержить product PR при красном validate; env-фиксы — отдельной веткой (как PR #15).
+3. Phase 3 — **CLOSED** (ISS-004 #17, ISS-011 #18).  
+4. Phase 4 — **IN PROGRESS**: **ISS-009** (public `set_window_session`; `window_bind` только public API; grep `._save_state(` вне `session.py` = 0) → затем **ISS-005 epic**: 4a `BindingStore` (topic→window + `group_chat_ids`), 4b `WindowStateStore` (window→session/cwd/name), 4c `SessionMapRepository` (session_map + flock RMW), 4d thin facade; `session_migration` — pure, не трогаем. Gap карты: `user_window_offsets` без owner — решение на старте 4b (residual facade vs store). Зона одна (Z4) → строго один structural PR за раз.  
+5. Meta (backlog/handoff) — commit immediately; product — only via propose → approve → apply.  
+6. Gate: не мержить product PR при красном validate; env-фиксы — отдельной веткой (как PR #15).
 
 ---
 
