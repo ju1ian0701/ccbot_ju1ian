@@ -311,7 +311,7 @@
       "id": "ISS-004",
       "title": "Table-driven callback_router dispatch + single topic-guard",
       "priority": "high",
-      "status": "ready",
+      "status": "DONE",
       "categories": [
         "spaghetti",
         "decomposition"
@@ -333,7 +333,14 @@
         "Parse/dispatch registry exists",
         "Callback wire-format parity via tests or manual matrix",
         "Wire-format unchanged without explicit approve"
-      ]
+      ],
+      "last_proposal_id": "ISS-004_20260808T102953Z",
+      "pr": "#17",
+      "merged_commit": "1773c43",
+      "merged_at": "2026-08-08T00:00:00Z",
+      "status_updated_at": "2026-08-09T00:00:00+00:00",
+      "updated_at": "2026-08-09T00:00:00+00:00",
+      "resolution": "Table-driven dispatch: _EXACT_ROUTES/_PREFIX_ROUTES/_match_route; single _check_same_topic guard + _clear_pending_thread; _ASK_ACTIONS table; wire format unchanged; parity matrix; PR #17 merged 1773c43"
     },
     {
       "id": "ISS-005",
@@ -542,7 +549,7 @@
       "id": "ISS-011",
       "title": "Split callback_router into sub-handlers before 1k LOC",
       "priority": "medium",
-      "status": "planned",
+      "status": "DONE",
       "categories": [
         "decomposition",
         "file-size"
@@ -564,7 +571,13 @@
         "Entry LOC roughly <= 150–200",
         "Submodules exist for major feature groups",
         "Callback behavior parity preserved"
-      ]
+      ],
+      "pr": "#18",
+      "merged_commit": "4894eac",
+      "merged_at": "2026-08-09T00:00:00Z",
+      "status_updated_at": "2026-08-09T00:00:00+00:00",
+      "updated_at": "2026-08-09T00:00:00+00:00",
+      "resolution": "Split into 6 submodules; entry 768->141 LOC (auth+capture+dispatch only); guard in callback_topic_guard; handler bodies 1:1; parity matrix 60/60; wire format unchanged; PR #18 merged 4894eac"
     },
     {
       "id": "ISS-012",
