@@ -481,7 +481,7 @@
       "id": "ISS-009",
       "title": "Forbid external session_manager._save_state — public domain API",
       "priority": "medium",
-      "status": "ready",
+      "status": "DONE",
       "categories": [
         "encapsulation",
         "api"
@@ -504,7 +504,13 @@
         "Public method like set_window_session(...) or persist() exists",
         "window_bind tests green"
       ],
-      "ref_note": "Precondition for ISS-005"
+      "ref_note": "Precondition for ISS-005",
+      "pr": "#19",
+      "merged_commit": "65907e5",
+      "merged_at": "2026-08-09T00:00:00Z",
+      "status_updated_at": "2026-08-09T00:00:00+00:00",
+      "updated_at": "2026-08-09T00:00:00+00:00",
+      "resolution": "Public set_window_session; window_bind only public API; external _save_state = 0; 3 new tests (38/38, suite 383); PR #19 merged 65907e5; precondition for ISS-005 done"
     },
     {
       "id": "ISS-010",
