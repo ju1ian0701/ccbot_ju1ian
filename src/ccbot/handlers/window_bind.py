@@ -71,10 +71,12 @@ async def create_and_bind_window(
                     resume_session_id,
                     selected_path,
                 )
-                ws.session_id = resume_session_id
-                ws.cwd = str(selected_path)
-                ws.window_name = created_wname
-                session_manager._save_state()
+                session_manager.set_window_session(
+                    created_wid,
+                    resume_session_id,
+                    cwd=str(selected_path),
+                    window_name=created_wname,
+                )
             elif ws.session_id != resume_session_id:
                 logger.info(
                     "Resume override: window %s session_id %s -> %s",
@@ -82,8 +84,7 @@ async def create_and_bind_window(
                     ws.session_id,
                     resume_session_id,
                 )
-                ws.session_id = resume_session_id
-                session_manager._save_state()
+                session_manager.set_window_session(created_wid, resume_session_id)
             await session_manager.override_session_map_entry(
                 created_wid,
                 resume_session_id,

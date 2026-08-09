@@ -516,6 +516,23 @@ class SessionManager:
         self._save_state()
         logger.info("Cleared session for window_id %s", window_id)
 
+    def set_window_session(
+        self, window_id: str, session_id: str, cwd: str = "", window_name: str = ""
+    ) -> None:
+        """Set a window's session association and persist state (ISS-009).
+
+        Public write API for the window→session mapping; non-empty
+        ``cwd``/``window_name`` update the corresponding fields.
+        ``_save_state`` stays private.
+        """
+        state = self.get_window_state(window_id)
+        state.session_id = session_id
+        if cwd:
+            state.cwd = cwd
+        if window_name:
+            state.window_name = window_name
+        self._save_state()
+
     @staticmethod
     def _encode_cwd(cwd: str) -> str:
         """Encode a cwd path to match Claude Code's project directory naming.

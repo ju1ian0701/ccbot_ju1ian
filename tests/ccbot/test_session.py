@@ -112,6 +112,31 @@ class TestWindowState:
         assert mgr.get_window_state("@1").session_id == ""
 
 
+class TestSetWindowSession:
+    """ISS-009: public write API replacing direct WindowState mutation + _save_state."""
+
+    def test_sets_all_fields(self, mgr: SessionManager) -> None:
+        mgr.set_window_session("@5", "sid-1", cwd="/proj", window_name="proj")
+        state = mgr.get_window_state("@5")
+        assert state.session_id == "sid-1"
+        assert state.cwd == "/proj"
+        assert state.window_name == "proj"
+
+    def test_partial_update_preserves_cwd_and_name(self, mgr: SessionManager) -> None:
+        mgr.set_window_session("@5", "sid-1", cwd="/proj", window_name="proj")
+        mgr.set_window_session("@5", "sid-2")
+        state = mgr.get_window_state("@5")
+        assert state.session_id == "sid-2"
+        assert state.cwd == "/proj"
+        assert state.window_name == "proj"
+
+    def test_persists_state(self, mgr: SessionManager, monkeypatch) -> None:
+        calls = []
+        monkeypatch.setattr(SessionManager, "_save_state", lambda self: calls.append(1))
+        mgr.set_window_session("@5", "sid-1")
+        assert calls == [1]
+
+
 class TestResolveWindowForThread:
     def test_none_thread_id_returns_none(self, mgr: SessionManager) -> None:
         assert mgr.resolve_window_for_thread(100, None) is None
