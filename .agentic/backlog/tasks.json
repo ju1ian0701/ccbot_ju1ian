@@ -381,6 +381,13 @@
           "merged_commit": "d6bc24a",
           "merged_at": "2026-08-10T00:00:00Z",
           "resolution": "BindingStore owns thread_bindings + group_chat_ids; facade property delegates; state.json byte-for-byte; parity matrix 17/17 + edge cases; suite 383; PR #20 merged d6bc24a"
+        },
+        "4b": {
+          "status": "DONE",
+          "pr": "#21",
+          "merged_commit": "4b43cef",
+          "merged_at": "2026-08-10T00:00:00Z",
+          "resolution": "WindowStateStore owns window_states + window_display_names; WindowState moved with re-export; facade property delegates; user_window_offsets residual at facade (gap resolved); state.json byte-for-byte; parity matrix 14/14 incl load_session_map risk node; suite 383; PR #21 merged 4b43cef"
         }
       },
       "status_updated_at": "2026-08-10T00:00:00+00:00",

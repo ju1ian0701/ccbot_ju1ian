@@ -171,7 +171,7 @@ pytest tests/ccbot/handlers/test_callback_data.py → 27 passed
 1. Phase 1 — **CLOSED** (ISS-002, ISS-006, ISS-001, ISS-007).  
 2. Phase 2 — **CLOSED** (ISS-003, ISS-008, ISS-010).  
 3. Phase 3 — **CLOSED** (ISS-004 #17, ISS-011 #18).  
-4. Phase 4 — **IN PROGRESS**: **ISS-009 DONE** (PR #19 `65907e5`); **ISS-005 4a DONE** (PR #20 `d6bc24a`: `BindingStore` владеет `thread_bindings` + `group_chat_ids`, фасад — property-делегаты) → следующая **4b `WindowStateStore`** (window→session/cwd/name; на старте решить gap `user_window_offsets`: residual facade vs расширить 4b vs отдельный store — предложение агента: residual), затем 4c `SessionMapRepository` (session_map + flock RMW), 4d thin facade; `session_migration` — pure, не трогаем. Зона одна (Z4) → строго один structural PR за раз.  
+4. Phase 4 — **IN PROGRESS**: **ISS-009 DONE** (PR #19 `65907e5`); **ISS-005 4a DONE** (PR #20 `d6bc24a`: `BindingStore`); **ISS-005 4b DONE** (PR #21 `4b43cef`: `WindowStateStore`; gap `user_window_offsets` = residual у фасада) → следующая **4c `SessionMapRepository`** (session_map + flock RMW: `_mutate_session_map_locked`, `override_session_map_entry`, `wait_for_session_map_entry`, `load_session_map`, `_migrate_old_format_map`, `_cleanup_stale_session_map_entries`, `_migrate_old_format_session_map_keys`; риск-узлы: `load_session_map` мутирует 4b-поля — кросс-store через фасад), затем 4d thin facade; `session_migration` — pure, не трогаем. Зона одна (Z4) → строго один structural PR за раз.    
 5. Meta (backlog/handoff) — commit immediately; product — only via propose → approve → apply.  
 6. Gate: не мержить product PR при красном validate; env-фиксы — отдельной веткой (как PR #15).
 
