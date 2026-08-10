@@ -44,40 +44,9 @@ from .session_migration import (
 from .tmux_manager import tmux_manager
 from .transcript_parser import TranscriptParser
 from .utils import LOCK_EX, LOCK_UN, atomic_write_json, flock
+from .window_state_store import WindowState, WindowStateStore
 
 logger = logging.getLogger(__name__)
-
-
-@dataclass
-class WindowState:
-    """Persistent state for a tmux window.
-
-    Attributes:
-        session_id: Associated Claude session ID (empty if not yet detected)
-        cwd: Working directory for direct file path construction
-        window_name: Display name of the window
-    """
-
-    session_id: str = ""
-    cwd: str = ""
-    window_name: str = ""
-
-    def to_dict(self) -> dict[str, Any]:
-        d: dict[str, Any] = {
-            "session_id": self.session_id,
-            "cwd": self.cwd,
-        }
-        if self.window_name:
-            d["window_name"] = self.window_name
-        return d
-
-    @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "WindowState":
-        return cls(
-            session_id=data.get("session_id", ""),
-            cwd=data.get("cwd", ""),
-            window_name=data.get("window_name", ""),
-        )
 
 
 @dataclass
@@ -104,13 +73,14 @@ class SessionManager:
     group_chat_ids: "user_id:thread_id" -> group chat_id (for supergroup routing)
     """
 
-    window_states: dict[str, WindowState] = field(default_factory=dict)
     user_window_offsets: dict[int, dict[str, int]] = field(default_factory=dict)
-    # window_id -> display name (window_name)
-    window_display_names: dict[str, str] = field(default_factory=dict)
-    # thread_bindings and group_chat_ids are owned by BindingStore (ISS-005 4a);
+    # thread_bindings and group_chat_ids are owned by BindingStore (ISS-005 4a),
+    # window_states and window_display_names by WindowStateStore (ISS-005 4b);
     # facade property delegates below keep backward-compatible access.
     _bindings: BindingStore = field(default_factory=BindingStore, repr=False)
+    _window_store: WindowStateStore = field(
+        default_factory=WindowStateStore, repr=False
+    )
 
     def __post_init__(self) -> None:
         self._load_state()
@@ -144,15 +114,36 @@ class SessionManager:
     def group_chat_ids(self, value: dict[str, int]) -> None:
         self._bindings.group_chat_ids = value
 
+    # --- WindowStateStore delegates (ISS-005 4b) ---
+
+    @property
+    def window_states(self) -> dict[str, WindowState]:
+        """Window states (window_id -> WindowState), owned by WindowStateStore."""
+        return self._window_store.window_states
+
+    @window_states.setter
+    def window_states(self, value: dict[str, WindowState]) -> None:
+        self._window_store.window_states = value
+
+    @property
+    def window_display_names(self) -> dict[str, str]:
+        """Display names (window_id -> window_name), owned by WindowStateStore."""
+        return self._window_store.window_display_names
+
+    @window_display_names.setter
+    def window_display_names(self, value: dict[str, str]) -> None:
+        self._window_store.window_display_names = value
+
     def _save_state(self) -> None:
         bindings_state = self._bindings.to_state()
+        window_state = self._window_store.to_state()
         state: dict[str, Any] = {
-            "window_states": {k: v.to_dict() for k, v in self.window_states.items()},
+            "window_states": window_state["window_states"],
             "user_window_offsets": {
                 str(uid): offsets for uid, offsets in self.user_window_offsets.items()
             },
             "thread_bindings": bindings_state["thread_bindings"],
-            "window_display_names": self.window_display_names,
+            "window_display_names": window_state["window_display_names"],
             "group_chat_ids": bindings_state["group_chat_ids"],
         }
         atomic_write_json(config.state_file, state)
@@ -171,16 +162,12 @@ class SessionManager:
         if config.state_file.exists():
             try:
                 state = json.loads(config.state_file.read_text())
-                self.window_states = {
-                    k: WindowState.from_dict(v)
-                    for k, v in state.get("window_states", {}).items()
-                }
+                self._window_store.load_state(state)
                 self.user_window_offsets = {
                     int(uid): offsets
                     for uid, offsets in state.get("user_window_offsets", {}).items()
                 }
                 self._bindings.load_state(state)
-                self.window_display_names = state.get("window_display_names", {})
 
                 if state_needs_legacy_migration(
                     self.window_states, self.thread_bindings
@@ -192,10 +179,9 @@ class SessionManager:
 
             except (json.JSONDecodeError, ValueError) as e:
                 logger.warning("Failed to load state: %s", e)
-                self.window_states = {}
+                self._window_store.reset()
                 self.user_window_offsets = {}
                 self._bindings.reset()
-                self.window_display_names = {}
 
     async def resolve_stale_ids(self) -> None:
         """Re-resolve persisted window IDs against live tmux windows.
@@ -344,14 +330,11 @@ class SessionManager:
 
     def get_display_name(self, window_id: str) -> str:
         """Get display name for a window_id, fallback to window_id itself."""
-        return self.window_display_names.get(window_id, window_id)
+        return self._window_store.get_display_name(window_id)
 
     def update_display_name(self, window_id: str, new_name: str) -> None:
         """Update the display name for a window and persist state."""
-        self.window_display_names[window_id] = new_name
-        # Also update WindowState.window_name if it exists
-        if window_id in self.window_states:
-            self.window_states[window_id].window_name = new_name
+        self._window_store.update_display_name(window_id, new_name)
         self._save_state()
         logger.info("Updated display name: window_id %s -> '%s'", window_id, new_name)
 
@@ -511,14 +494,11 @@ class SessionManager:
 
     def get_window_state(self, window_id: str) -> WindowState:
         """Get or create window state."""
-        if window_id not in self.window_states:
-            self.window_states[window_id] = WindowState()
-        return self.window_states[window_id]
+        return self._window_store.get_window_state(window_id)
 
     def clear_window_session(self, window_id: str) -> None:
         """Clear session association for a window (e.g., after /clear command)."""
-        state = self.get_window_state(window_id)
-        state.session_id = ""
+        self._window_store.clear_window_session(window_id)
         self._save_state()
         logger.info("Cleared session for window_id %s", window_id)
 
@@ -531,12 +511,7 @@ class SessionManager:
         ``cwd``/``window_name`` update the corresponding fields.
         ``_save_state`` stays private.
         """
-        state = self.get_window_state(window_id)
-        state.session_id = session_id
-        if cwd:
-            state.cwd = cwd
-        if window_name:
-            state.window_name = window_name
+        self._window_store.set_window_session(window_id, session_id, cwd, window_name)
         self._save_state()
 
     @staticmethod
