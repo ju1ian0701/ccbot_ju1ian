@@ -1,6 +1,6 @@
 # Handoff: Repair Robot (ccbot_ju1ian)
 
-**Дата снимка:** 2026-08-09  
+**Дата снимка:** 2026-08-10  
 **Репозиторий:** https://github.com/ju1ian0701/ccbot_ju1ian  
 **Локальный клон:** `D:\CCbot_tmux\ccbot\ccbot_ju1ian\`  
 **Инструкция:** `REPAIR_ROBOT_INSTRUCTION.md`  
@@ -12,12 +12,12 @@
 
 ## Последний завершённый этап
 
-Последний завершённый этап — **ISS-011: split `callback_router` на sub-handlers (PR #18, merged `4894eac`)**.
+Последний завершённый этап — **ISS-009: public `set_window_session` (PR #19, merged `65907e5`)**.
 
-- Entry-роутер сокращён 768 → 141 LOC: только auth + group-chat capture + registry dispatch;
-- 6 новых submodules: `callback_topic_guard` (общий `_check_same_topic`/`RouteHandler`), `callback_history`, `callback_directory`, `callback_pickers`, `callback_screenshot`, `callback_interactive`; тела `_handle_*` перенесены 1:1;
-- Behavior parity подтверждён trace-матрицей 60/60 (stub-окружение), wire format неизменён, `test_callback_data.py` 27 passed;
-- Полный цикл без отклонений по коду; единственный мета-долг — пропущенный на паузе мета-коммит ISS-004, закрыт задним числом (`2cd062e`).
+- `SessionManager.set_window_session(window_id, session_id, cwd="", window_name="")` — public write API для window→session; непустые `cwd`/`window_name` обновляют поля; `_save_state` остаётся private;
+- Оба leak-сайта в `window_bind.py` (77, 86) переведены на public API; внешних `._save_state(` вне `session.py` = 0;
+- 3 новых теста (`TestSetWindowSession`: все поля / частичное обновление без затирания / persist); suite **383 passed**; паритет 2/2 в stub-окружении (hook-timeout и override ветки);
+- Цикл: evidence-грепы прогнаны до apply (напоминание о порядке шагов), HANDOFF staged на feature-ветке — отловлено до коммита; product-коммит чист.
 
 ---
 
@@ -171,7 +171,7 @@ pytest tests/ccbot/handlers/test_callback_data.py → 27 passed
 1. Phase 1 — **CLOSED** (ISS-002, ISS-006, ISS-001, ISS-007).  
 2. Phase 2 — **CLOSED** (ISS-003, ISS-008, ISS-010).  
 3. Phase 3 — **CLOSED** (ISS-004 #17, ISS-011 #18).  
-4. Phase 4 — **IN PROGRESS**: **ISS-009** (public `set_window_session`; `window_bind` только public API; grep `._save_state(` вне `session.py` = 0) → затем **ISS-005 epic**: 4a `BindingStore` (topic→window + `group_chat_ids`), 4b `WindowStateStore` (window→session/cwd/name), 4c `SessionMapRepository` (session_map + flock RMW), 4d thin facade; `session_migration` — pure, не трогаем. Gap карты: `user_window_offsets` без owner — решение на старте 4b (residual facade vs store). Зона одна (Z4) → строго один structural PR за раз.  
+4. Phase 4 — **IN PROGRESS**: **ISS-009 DONE** (PR #19 `65907e5`: public `set_window_session`; `window_bind` только public API; внешних `._save_state(` = 0; suite 383) → следующая **ISS-005 epic**: 4a `BindingStore` (topic→window + `group_chat_ids`), 4b `WindowStateStore` (window→session/cwd/name), 4c `SessionMapRepository` (session_map + flock RMW), 4d thin facade; `session_migration` — pure, не трогаем. Gap карты: `user_window_offsets` без owner — решение на старте 4b (residual facade vs store). Зона одна (Z4) → строго один structural PR за раз.  
 5. Meta (backlog/handoff) — commit immediately; product — only via propose → approve → apply.  
 6. Gate: не мержить product PR при красном validate; env-фиксы — отдельной веткой (как PR #15).
 
