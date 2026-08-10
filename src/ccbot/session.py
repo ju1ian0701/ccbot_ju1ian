@@ -32,6 +32,7 @@ from typing import Any
 
 import aiofiles
 
+from .binding_store import BindingStore
 from .config import config
 from .session_migration import (
     apply_startup_state_migration,
@@ -105,34 +106,54 @@ class SessionManager:
 
     window_states: dict[str, WindowState] = field(default_factory=dict)
     user_window_offsets: dict[int, dict[str, int]] = field(default_factory=dict)
-    thread_bindings: dict[int, dict[int, str]] = field(default_factory=dict)
     # window_id -> display name (window_name)
     window_display_names: dict[str, str] = field(default_factory=dict)
-    # "user_id:thread_id" -> group chat_id (for supergroup forum topic routing)
-    # IMPORTANT: This mapping is essential for supergroup/forum topic support.
-    # Telegram Bot API requires group chat_id (negative number like -100xxx)
-    # as the chat_id parameter when sending messages to forum topics.
-    # Using user_id as chat_id will fail with "Message thread not found".
-    # See: https://core.telegram.org/bots/api#sendmessage
-    # History: originally added in 5afc111, erroneously removed in 26cb81f,
-    # restored in PR #23.
-    group_chat_ids: dict[str, int] = field(default_factory=dict)
+    # thread_bindings and group_chat_ids are owned by BindingStore (ISS-005 4a);
+    # facade property delegates below keep backward-compatible access.
+    _bindings: BindingStore = field(default_factory=BindingStore, repr=False)
 
     def __post_init__(self) -> None:
         self._load_state()
 
+    # --- BindingStore delegates (ISS-005 4a) ---
+
+    @property
+    def thread_bindings(self) -> dict[int, dict[int, str]]:
+        """Thread bindings (user_id -> {thread_id -> window_id}), owned by BindingStore."""
+        return self._bindings.thread_bindings
+
+    @thread_bindings.setter
+    def thread_bindings(self, value: dict[int, dict[int, str]]) -> None:
+        self._bindings.thread_bindings = value
+
+    @property
+    def group_chat_ids(self) -> dict[str, int]:
+        """Group chat IDs ("user_id:thread_id" -> chat_id), owned by BindingStore.
+
+        IMPORTANT: This mapping is essential for supergroup/forum topic support.
+        Telegram Bot API requires group chat_id (negative number like -100xxx)
+        as the chat_id parameter when sending messages to forum topics.
+        Using user_id as chat_id will fail with "Message thread not found".
+        See: https://core.telegram.org/bots/api#sendmessage
+        History: originally added in 5afc111, erroneously removed in 26cb81f,
+        restored in PR #23.
+        """
+        return self._bindings.group_chat_ids
+
+    @group_chat_ids.setter
+    def group_chat_ids(self, value: dict[str, int]) -> None:
+        self._bindings.group_chat_ids = value
+
     def _save_state(self) -> None:
+        bindings_state = self._bindings.to_state()
         state: dict[str, Any] = {
             "window_states": {k: v.to_dict() for k, v in self.window_states.items()},
             "user_window_offsets": {
                 str(uid): offsets for uid, offsets in self.user_window_offsets.items()
             },
-            "thread_bindings": {
-                str(uid): {str(tid): wid for tid, wid in bindings.items()}
-                for uid, bindings in self.thread_bindings.items()
-            },
+            "thread_bindings": bindings_state["thread_bindings"],
             "window_display_names": self.window_display_names,
-            "group_chat_ids": self.group_chat_ids,
+            "group_chat_ids": bindings_state["group_chat_ids"],
         }
         atomic_write_json(config.state_file, state)
         logger.debug("State saved to %s", config.state_file)
@@ -158,14 +179,8 @@ class SessionManager:
                     int(uid): offsets
                     for uid, offsets in state.get("user_window_offsets", {}).items()
                 }
-                self.thread_bindings = {
-                    int(uid): {int(tid): wid for tid, wid in bindings.items()}
-                    for uid, bindings in state.get("thread_bindings", {}).items()
-                }
+                self._bindings.load_state(state)
                 self.window_display_names = state.get("window_display_names", {})
-                self.group_chat_ids = {
-                    k: int(v) for k, v in state.get("group_chat_ids", {}).items()
-                }
 
                 if state_needs_legacy_migration(
                     self.window_states, self.thread_bindings
@@ -179,9 +194,8 @@ class SessionManager:
                 logger.warning("Failed to load state: %s", e)
                 self.window_states = {}
                 self.user_window_offsets = {}
-                self.thread_bindings = {}
+                self._bindings.reset()
                 self.window_display_names = {}
-                self.group_chat_ids = {}
 
     async def resolve_stale_ids(self) -> None:
         """Re-resolve persisted window IDs against live tmux windows.
@@ -357,10 +371,7 @@ class SessionManager:
         Without it, all outbound messages in forum topics fail with
         "Message thread not found". See commit history: 5afc111 → 26cb81f → PR #23.
         """
-        tid = thread_id or 0
-        key = f"{user_id}:{tid}"
-        if self.group_chat_ids.get(key) != chat_id:
-            self.group_chat_ids[key] = chat_id
+        if self._bindings.set_group_chat_id(user_id, thread_id, chat_id):
             self._save_state()
             logger.debug(
                 "Stored group chat_id: user=%d, thread=%s, chat_id=%d",
@@ -380,12 +391,7 @@ class SessionManager:
         this method instead of raw user_id. Using user_id directly breaks
         supergroup forum topic routing.
         """
-        if thread_id is not None:
-            key = f"{user_id}:{thread_id}"
-            group_id = self.group_chat_ids.get(key)
-            if group_id is not None:
-                return group_id
-        return user_id
+        return self._bindings.resolve_chat_id(user_id, thread_id)
 
     async def wait_for_session_map_entry(
         self, window_id: str, timeout: float = 5.0, interval: float = 0.5
@@ -692,9 +698,7 @@ class SessionManager:
             window_id: Tmux window ID (e.g. '@0')
             window_name: Display name for the window (optional)
         """
-        if user_id not in self.thread_bindings:
-            self.thread_bindings[user_id] = {}
-        self.thread_bindings[user_id][thread_id] = window_id
+        self._bindings.bind_thread(user_id, thread_id, window_id)
         if window_name:
             self.window_display_names[window_id] = window_name
         self._save_state()
@@ -709,12 +713,9 @@ class SessionManager:
 
     def unbind_thread(self, user_id: int, thread_id: int) -> str | None:
         """Remove a thread binding. Returns the previously bound window_id, or None."""
-        bindings = self.thread_bindings.get(user_id)
-        if not bindings or thread_id not in bindings:
+        window_id = self._bindings.unbind_thread(user_id, thread_id)
+        if window_id is None:
             return None
-        window_id = bindings.pop(thread_id)
-        if not bindings:
-            del self.thread_bindings[user_id]
         self._save_state()
         logger.info(
             "Unbound thread %d (was %s) for user %d",
@@ -726,10 +727,7 @@ class SessionManager:
 
     def get_window_for_thread(self, user_id: int, thread_id: int) -> str | None:
         """Look up the window_id bound to a thread."""
-        bindings = self.thread_bindings.get(user_id)
-        if not bindings:
-            return None
-        return bindings.get(thread_id)
+        return self._bindings.get_window_for_thread(user_id, thread_id)
 
     def resolve_window_for_thread(
         self,
@@ -750,9 +748,7 @@ class SessionManager:
         Provides encapsulated access to thread_bindings without exposing
         the internal data structure directly.
         """
-        for user_id, bindings in self.thread_bindings.items():
-            for thread_id, window_id in bindings.items():
-                yield user_id, thread_id, window_id
+        yield from self._bindings.iter_thread_bindings()
 
     async def find_users_for_session(
         self,
