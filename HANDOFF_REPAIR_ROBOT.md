@@ -12,12 +12,12 @@
 
 ## Последний завершённый этап
 
-Последний завершённый этап — **ISS-009: public `set_window_session` (PR #19, merged `65907e5`)**.
+Последний завершённый этап — **ISS-005 4a: extract `BindingStore` (PR #20, merged `d6bc24a`)**.
 
-- `SessionManager.set_window_session(window_id, session_id, cwd="", window_name="")` — public write API для window→session; непустые `cwd`/`window_name` обновляют поля; `_save_state` остаётся private;
-- Оба leak-сайта в `window_bind.py` (77, 86) переведены на public API; внешних `._save_state(` вне `session.py` = 0;
-- 3 новых теста (`TestSetWindowSession`: все поля / частичное обновление без затирания / persist); suite **383 passed**; паритет 2/2 в stub-окружении (hook-timeout и override ветки);
-- Цикл: evidence-грепы прогнаны до apply (напоминание о порядке шагов), HANDOFF staged на feature-ветке — отловлено до коммита; product-коммит чист.
+- Новый `binding_store.py` (125 LOC): владение `thread_bindings` + `group_chat_ids`; 6 операций (bind/unbind/get/iter/set_group_chat_id/resolve_chat_id) + `to_state`/`load_state`/`reset`; persist и логирование остались в фасаде, store чистый;
+- `session.py` (857→853 LOC): поля ушли из dataclass в `_bindings` + property-делегаты (тесты не тронуты); `bind_thread` пишет `window_display_names` в фасаде — осознанная кросс-store координация до 4b;
+- `state.json` байт-в-байт (порядок ключей сохранён); паритет-матрица **17/17** в stub-окружении + edge cases (round-trip, corrupt state); suite **383 passed**;
+- Gap `user_window_offsets` — residual у фасада, решение на старте 4b.
 
 ---
 
@@ -171,7 +171,7 @@ pytest tests/ccbot/handlers/test_callback_data.py → 27 passed
 1. Phase 1 — **CLOSED** (ISS-002, ISS-006, ISS-001, ISS-007).  
 2. Phase 2 — **CLOSED** (ISS-003, ISS-008, ISS-010).  
 3. Phase 3 — **CLOSED** (ISS-004 #17, ISS-011 #18).  
-4. Phase 4 — **IN PROGRESS**: **ISS-009 DONE** (PR #19 `65907e5`: public `set_window_session`; `window_bind` только public API; внешних `._save_state(` = 0; suite 383) → следующая **ISS-005 epic**: 4a `BindingStore` (topic→window + `group_chat_ids`), 4b `WindowStateStore` (window→session/cwd/name), 4c `SessionMapRepository` (session_map + flock RMW), 4d thin facade; `session_migration` — pure, не трогаем. Gap карты: `user_window_offsets` без owner — решение на старте 4b (residual facade vs store). Зона одна (Z4) → строго один structural PR за раз.  
+4. Phase 4 — **IN PROGRESS**: **ISS-009 DONE** (PR #19 `65907e5`); **ISS-005 4a DONE** (PR #20 `d6bc24a`: `BindingStore` владеет `thread_bindings` + `group_chat_ids`, фасад — property-делегаты) → следующая **4b `WindowStateStore`** (window→session/cwd/name; на старте решить gap `user_window_offsets`: residual facade vs расширить 4b vs отдельный store — предложение агента: residual), затем 4c `SessionMapRepository` (session_map + flock RMW), 4d thin facade; `session_migration` — pure, не трогаем. Зона одна (Z4) → строго один structural PR за раз.  
 5. Meta (backlog/handoff) — commit immediately; product — only via propose → approve → apply.  
 6. Gate: не мержить product PR при красном validate; env-фиксы — отдельной веткой (как PR #15).
 

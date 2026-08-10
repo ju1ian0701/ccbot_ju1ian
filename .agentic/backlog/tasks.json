@@ -346,7 +346,7 @@
       "id": "ISS-005",
       "title": "Split god-object SessionManager into stores + facade",
       "priority": "high",
-      "status": "planned",
+      "status": "in_progress",
       "categories": [
         "decomposition",
         "encapsulation"
@@ -373,7 +373,18 @@
         "session.py not on 1k LOC trajectory or split complete",
         "Load/save/migration/binding/window_bind tests green"
       ],
-      "ref_note": "beyond REF-004"
+      "ref_note": "beyond REF-004",
+      "subphases": {
+        "4a": {
+          "status": "DONE",
+          "pr": "#20",
+          "merged_commit": "d6bc24a",
+          "merged_at": "2026-08-10T00:00:00Z",
+          "resolution": "BindingStore owns thread_bindings + group_chat_ids; facade property delegates; state.json byte-for-byte; parity matrix 17/17 + edge cases; suite 383; PR #20 merged d6bc24a"
+        }
+      },
+      "status_updated_at": "2026-08-10T00:00:00+00:00",
+      "updated_at": "2026-08-10T00:00:00+00:00"
     },
     {
       "id": "ISS-006",
