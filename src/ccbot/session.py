@@ -432,9 +432,9 @@ class SessionManager:
 
         # Clean up window_states entries not in current session_map.
         stale_wids = [w for w in self.window_states if w and w not in valid_wids]
-        for wid in stale_wids:
-            logger.info("Removing stale window_state: %s", wid)
-            del self.window_states[wid]
+        for window_id in stale_wids:
+            logger.info("Removing stale window_state: %s", window_id)
+            del self.window_states[window_id]
             changed = True
 
         if changed:

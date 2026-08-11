@@ -121,18 +121,18 @@ class TestCapturePane:
 class TestCreateWindowValidation:
     @pytest.mark.asyncio
     async def test_rejects_missing_directory(self, mgr: TmuxManager) -> None:
-        ok, msg, name, wid = await mgr.create_window(
+        ok, msg, name, window_id = await mgr.create_window(
             "/nonexistent/path/ccbot-ref009",
             start_claude=False,
         )
         assert ok is False
         assert "does not exist" in msg
         assert name == ""
-        assert wid == ""
+        assert window_id == ""
 
     @pytest.mark.asyncio
     async def test_rejects_non_uuid_resume(self, mgr: TmuxManager, tmp_path) -> None:
-        ok, msg, name, wid = await mgr.create_window(
+        ok, msg, name, window_id = await mgr.create_window(
             str(tmp_path),
             start_claude=False,
             resume_session_id="not-a-uuid",

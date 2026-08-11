@@ -332,11 +332,13 @@ async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         )
         return
 
-    wid = session_manager.get_window_for_thread(user.id, thread_id)
-    if wid is None:
+    window_id = session_manager.get_window_for_thread(user.id, thread_id)
+    if window_id is None:
         # Unbound topic — check for unbound windows first
         all_windows = await tmux_manager.list_windows()
-        bound_ids = {wid for _, _, wid in session_manager.iter_thread_bindings()}
+        bound_ids = {
+            window_id for _, _, window_id in session_manager.iter_thread_bindings()
+        }
         unbound = [
             (w.window_id, w.window_name, w.cwd)
             for w in all_windows
@@ -395,7 +397,7 @@ async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     )
     if ctx is None:
         return
-    wid = ctx.window_id
+    window_id = ctx.window_id
     w = ctx.window
 
     # Cosmetic / outbound-Telegram steps below must NEVER abort the handler
@@ -409,7 +411,7 @@ async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         logger.warning("send_action(TYPING) failed, continuing to injection: %s", e)
     try:
         await enqueue_status_update(
-            context.bot, user.id, wid, None, thread_id=thread_id
+            context.bot, user.id, window_id, None, thread_id=thread_id
         )
     except Exception as e:
         logger.warning("enqueue_status_update failed, continuing to injection: %s", e)
@@ -430,13 +432,13 @@ async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
                 user.id,
                 thread_id,
             )
-            await handle_interactive_ui(context.bot, user.id, wid, thread_id)
+            await handle_interactive_ui(context.bot, user.id, window_id, thread_id)
             # Small delay to let UI render in Telegram before text arrives
             await asyncio.sleep(0.3)
     except Exception as e:
         logger.warning("interactive-UI precheck failed, continuing to injection: %s", e)
 
-    success, message = await session_manager.send_to_window(wid, text)
+    success, message = await session_manager.send_to_window(window_id, text)
     if not success:
         await safe_reply(update.message, f"❌ {message}")
         return
@@ -445,12 +447,12 @@ async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     if text.startswith("!") and len(text) > 1:
         bash_cmd = text[1:]  # strip leading "!"
         task = asyncio.create_task(
-            capture_bash_output(context.bot, user.id, thread_id, wid, bash_cmd)
+            capture_bash_output(context.bot, user.id, thread_id, window_id, bash_cmd)
         )
         capture_tasks.register(user.id, thread_id, task)
 
     # If in interactive mode, refresh the UI after sending text
     interactive_window = get_interactive_window(user.id, thread_id)
-    if interactive_window and interactive_window == wid:
+    if interactive_window and interactive_window == window_id:
         await asyncio.sleep(0.2)
-        await handle_interactive_ui(context.bot, user.id, wid, thread_id)
+        await handle_interactive_ui(context.bot, user.id, window_id, thread_id)
