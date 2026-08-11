@@ -7,7 +7,14 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from paths import find_repo_root, load_config, load_json, out_dir, write_json, write_text
+from paths import (
+    find_repo_root,
+    load_config,
+    load_json,
+    out_dir,
+    write_json,
+    write_text,
+)
 
 
 FILE_LEVEL_TYPES = frozenset(
@@ -62,14 +69,19 @@ def analyze_graph(graph: dict[str, Any], config: dict[str, Any]) -> dict[str, An
             if tgt:
                 tested_targets.add(tgt)
 
-    threshold = int(config["prioritization"]["graph_signals"]["hotspot_threshold_edges"])
+    threshold = int(
+        config["prioritization"]["graph_signals"]["hotspot_threshold_edges"]
+    )
     signals = config["prioritization"]["graph_signals"]
 
     file_nodes = [
         n
         for n in nodes
         if n.get("type") in FILE_LEVEL_TYPES
-        or (n.get("filePath") and str(n.get("type", "")).lower() in {"file", "filenameNode".lower()})
+        or (
+            n.get("filePath")
+            and str(n.get("type", "")).lower() in {"file", "filenameNode".lower()}
+        )
     ]
     # Prefer explicit type==file for hotspot scoring of product code
     code_files = [n for n in nodes if n.get("type") == "file"]
@@ -122,7 +134,9 @@ def analyze_graph(graph: dict[str, Any], config: dict[str, Any]) -> dict[str, An
                 }
             )
 
-    hotspots.sort(key=lambda h: (-h["score"], -(h["fan_in"] + h["fan_out"]), h.get("path") or ""))
+    hotspots.sort(
+        key=lambda h: (-h["score"], -(h["fan_in"] + h["fan_out"]), h.get("path") or "")
+    )
 
     layer_summary = [
         {
@@ -195,7 +209,9 @@ def _recommendations(
             "Multiple complex files detected — avoid multi-file god refactors in a single agent PR."
         )
     if not recs:
-        recs.append("Graph looks balanced; proceed with highest-priority ready backlog tasks.")
+        recs.append(
+            "Graph looks balanced; proceed with highest-priority ready backlog tasks."
+        )
     return recs
 
 

@@ -368,7 +368,9 @@ def latest_proposal_dir(task_id: str | None = None) -> Path | None:
         if not path.is_dir() or path.name.startswith("."):
             continue
         # Pointer dirs like proposals/ISS-014/latest.json only — skip unless full package.
-        has_package = (path / "proposal.md").is_file() and (path / "meta.json").is_file()
+        has_package = (path / "proposal.md").is_file() and (
+            path / "meta.json"
+        ).is_file()
         if not has_package:
             continue
         if task_id and not (
@@ -386,11 +388,15 @@ def latest_proposal_dir(task_id: str | None = None) -> Path | None:
     return candidates[0][2]
 
 
-def resolve_proposal_dir(proposal: str | None, latest: bool, task_id: str | None = None) -> Path:
+def resolve_proposal_dir(
+    proposal: str | None, latest: bool, task_id: str | None = None
+) -> Path:
     if latest or proposal in (None, "", "latest"):
         found = latest_proposal_dir(task_id=task_id)
         if not found:
-            raise RuntimeError("No proposal artifacts found under .agentic/out/proposals/")
+            raise RuntimeError(
+                "No proposal artifacts found under .agentic/out/proposals/"
+            )
         return found
 
     assert proposal is not None
@@ -696,6 +702,7 @@ def check_diff_applies(diff_text: str) -> None:
     finally:
         tmp_path.unlink(missing_ok=True)
 
+
 def diff_numstat(diff_text: str) -> list[dict]:
     """Parse ``git apply --numstat`` for a unified diff."""
     if _is_empty_diff(diff_text):
@@ -785,7 +792,10 @@ def build_files_json(numstat: list[dict], config: dict) -> dict:
             }
         )
 
-    loc_delta = sum(int(entry.get("added") or 0) + int(entry.get("deleted") or 0) for entry in entries)
+    loc_delta = sum(
+        int(entry.get("added") or 0) + int(entry.get("deleted") or 0)
+        for entry in entries
+    )
 
     return {
         "files": entries,
@@ -872,7 +882,9 @@ def build_evidence_plan(task: dict) -> dict:
     }
 
 
-def build_proposal_md(task: dict, proposal_id: str, base_sha: str, paths: list[str]) -> str:
+def build_proposal_md(
+    task: dict, proposal_id: str, base_sha: str, paths: list[str]
+) -> str:
     task_id = task_id_from(task) or "UNKNOWN"
     title = task.get("title") or ""
     problem = task.get("problem") or ""
@@ -883,7 +895,9 @@ def build_proposal_md(task: dict, proposal_id: str, base_sha: str, paths: list[s
     else:
         crit_lines = f"- {criteria}"
 
-    path_lines = "\n".join(f"- `{p}`" for p in paths) or "- (no paths yet — fill proposal.diff)"
+    path_lines = (
+        "\n".join(f"- `{p}`" for p in paths) or "- (no paths yet — fill proposal.diff)"
+    )
 
     return "\n".join(
         [
@@ -962,7 +976,9 @@ def create_proposal_artifacts(
     numstat = diff_numstat(diff_text)
     check_diff_applies(diff_text)
 
-    paths = [item["path"] for item in numstat] or list_changed_paths_from_diff(diff_text)
+    paths = [item["path"] for item in numstat] or list_changed_paths_from_diff(
+        diff_text
+    )
     files_payload = build_files_json(numstat, config)
 
     if files_payload.get("blocked_count", 0) > 0:
@@ -1010,8 +1026,13 @@ def create_proposal_artifacts(
         "max_loc_delta": max_loc,
     }
 
-    write_text(dest / "proposal.diff", diff_text if diff_text.endswith("\n") else diff_text + "\n")
-    write_text(dest / "proposal.md", build_proposal_md(task, proposal_id, base_sha, paths))
+    write_text(
+        dest / "proposal.diff",
+        diff_text if diff_text.endswith("\n") else diff_text + "\n",
+    )
+    write_text(
+        dest / "proposal.md", build_proposal_md(task, proposal_id, base_sha, paths)
+    )
     write_json(dest / "files.json", files_payload)
     write_json(dest / "risk.json", risk_payload)
     write_json(dest / "evidence_plan.json", evidence_payload)
@@ -1146,7 +1167,9 @@ def _assert_feature_branch() -> str:
             "Checkout a feature branch first."
         )
     if branch == "HEAD":
-        raise RuntimeError("apply blocked in detached HEAD state; checkout a feature branch.")
+        raise RuntimeError(
+            "apply blocked in detached HEAD state; checkout a feature branch."
+        )
     return branch
 
 
@@ -1323,7 +1346,10 @@ def request_changes(
         dest,
         archived_to=str(archive_dest.relative_to(ROOT)).replace("\\", "/"),
     )
-    write_json(dest / "request_changes.json", {**changes_payload, "archived_to": str(archive_dest)})
+    write_json(
+        dest / "request_changes.json",
+        {**changes_payload, "archived_to": str(archive_dest)},
+    )
 
     return archive_dest
 
@@ -1351,8 +1377,7 @@ def apply(
         approval_path = dest / "approval.json"
         if not approval_path.is_file():
             raise RuntimeError(
-                f"apply blocked: approval.json missing for {pid}. "
-                "Run approve first."
+                f"apply blocked: approval.json missing for {pid}. Run approve first."
             )
         approval = load_json(approval_path)
         if not isinstance(approval, dict):
@@ -1376,7 +1401,9 @@ def apply(
                     f"approval.base_sha ({approval['base_sha']})"
                 )
     else:
-        _assert_base_sha_fresh(meta.get("base_sha"), base_ref=ref, context=f"apply({pid})")
+        _assert_base_sha_fresh(
+            meta.get("base_sha"), base_ref=ref, context=f"apply({pid})"
+        )
 
     if not allow_on_main:
         _assert_feature_branch()
@@ -1451,7 +1478,9 @@ def cmd_propose(args: argparse.Namespace) -> int:
         selected = load_json(OUT_DIR / "selected-task.json")
         task_id = selected.get("id") or selected.get("task_id")
     if not task_id:
-        print("propose_failed: --task is required (or run select first)", file=sys.stderr)
+        print(
+            "propose_failed: --task is required (or run select first)", file=sys.stderr
+        )
         return 2
 
     try:
@@ -1859,7 +1888,9 @@ def register_hitl_commands(sub: argparse._SubParsersAction) -> None:
         default=DEFAULT_BASE_REF,
         help=f"Base ref for freshness check (default: {DEFAULT_BASE_REF})",
     )
-    p_app.add_argument("--approver", default=None, help="Approver identity (default: $USER)")
+    p_app.add_argument(
+        "--approver", default=None, help="Approver identity (default: $USER)"
+    )
 
     p_rc = sub.add_parser(
         "request-changes",

@@ -152,7 +152,9 @@ def main(argv: list[str] | None = None) -> int:
     import argparse
 
     p = argparse.ArgumentParser(description="Sync backlog tasks to GitHub issues")
-    p.add_argument("--apply", action="store_true", help="Actually create issues (needs gh)")
+    p.add_argument(
+        "--apply", action="store_true", help="Actually create issues (needs gh)"
+    )
     p.add_argument(
         "--statuses",
         default="ready,planned,in_progress",

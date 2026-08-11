@@ -78,7 +78,9 @@ def list_tasks(
         "count": len(items),
         "tasks": items,
         "selected_task_id": (
-            load_json(out_dir(root, config) / config["outputs"]["selected_task"]).get("id")
+            load_json(out_dir(root, config) / config["outputs"]["selected_task"]).get(
+                "id"
+            )
             if (out_dir(root, config) / config["outputs"]["selected_task"]).is_file()
             else None
         ),
@@ -120,7 +122,11 @@ def select_next_task(
             "error": "no selectable task",
             "plan_summary": {
                 "ranked": [
-                    {"id": r.get("id"), "score": r.get("score"), "selectable": r.get("selectable")}
+                    {
+                        "id": r.get("id"),
+                        "score": r.get("score"),
+                        "selectable": r.get("selectable"),
+                    }
                     for r in (plan.get("ranked_tasks") or [])[:10]
                 ]
             },
@@ -138,7 +144,9 @@ def select_next_task(
         "selected_task_id": plan.get("selected_task_id"),
         "selected_task": plan.get("selected_task"),
         "artifacts": paths,
-        "context_pack_stats": (pack or {}).get("stats") if isinstance(pack, dict) else None,
+        "context_pack_stats": (pack or {}).get("stats")
+        if isinstance(pack, dict)
+        else None,
         "analysis_error": analysis_error,
     }
 
@@ -162,7 +170,9 @@ def get_analysis(*, root: Path | None = None, refresh: bool = False) -> dict[str
         "recommendations": report.get("recommendations"),
         "untested_src_files": (report.get("untested_src_files") or [])[:20],
         "path_scores_top": dict(
-            sorted((report.get("path_scores") or {}).items(), key=lambda kv: -kv[1])[:20]
+            sorted((report.get("path_scores") or {}).items(), key=lambda kv: -kv[1])[
+                :20
+            ]
         ),
     }
     return slim
@@ -194,7 +204,9 @@ def get_implement_prompt(*, root: Path | None = None) -> dict[str, Any]:
     prompt_path = out / config["outputs"]["implement_prompt"]
     selected_path = out / config["outputs"]["selected_task"]
     if not prompt_path.is_file():
-        raise FileNotFoundError("implement-prompt.md missing; call select_next_task first")
+        raise FileNotFoundError(
+            "implement-prompt.md missing; call select_next_task first"
+        )
     return {
         "selected_task_id": (
             load_json(selected_path).get("id") if selected_path.is_file() else None

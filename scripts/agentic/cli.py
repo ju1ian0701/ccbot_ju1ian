@@ -69,6 +69,7 @@ _ALL_COMMANDS = (
     "apply",
 )
 
+
 def cmd_analyze(_args: argparse.Namespace) -> int:
     report = run_analyze()
     stats = report.get("stats") or {}
@@ -83,7 +84,9 @@ def cmd_plan(args: argparse.Namespace) -> int:
     plan = run_plan(task_id=args.task)
     print(f"plan_ok selected={plan.get('selected_task_id')}")
     for r in (plan.get("ranked_tasks") or [])[:5]:
-        print(f"  {r.get('score'):4}  {r.get('id')}  {r.get('status')}  {r.get('title')}")
+        print(
+            f"  {r.get('score'):4}  {r.get('id')}  {r.get('status')}  {r.get('title')}"
+        )
     return 0
 
 
@@ -119,7 +122,11 @@ def cmd_validate(args: argparse.Namespace) -> int:
         skip_quality=args.skip_quality,
         evidence=evidence,
     )
-    print(json.dumps({"ok": report.get("ok"), "guardrails": report.get("guardrails")}, indent=2))
+    print(
+        json.dumps(
+            {"ok": report.get("ok"), "guardrails": report.get("guardrails")}, indent=2
+        )
+    )
     for q in report.get("quality") or []:
         status = "OK" if q.get("ok") else "FAIL"
         print(f"[{status}] {' '.join(q.get('cmd') or [])}")
@@ -154,7 +161,9 @@ def cmd_run(args: argparse.Namespace) -> int:
         print(f"  {k}={v}")
     print("== CONTEXT PACK ==")
     pack = run_context(task_id=plan.get("selected_task_id"))
-    print(f"  nodes={pack.get('stats', {}).get('nodes')} edges={pack.get('stats', {}).get('edges')}")
+    print(
+        f"  nodes={pack.get('stats', {}).get('nodes')} edges={pack.get('stats', {}).get('edges')}"
+    )
     print("== VALIDATE (workspace) ==")
     report = run_validate(base_ref=args.base_ref, skip_quality=args.skip_quality)
     print(f"validate_ok={report.get('ok')}")
@@ -205,7 +214,9 @@ def build_parser() -> argparse.ArgumentParser:
     p_sel = sub.add_parser("select", help="Plan + render implement prompt")
     p_sel.add_argument("--task", help="Force task id")
 
-    p_ctx = sub.add_parser("context", help="Build knowledge-graph context pack for a task")
+    p_ctx = sub.add_parser(
+        "context", help="Build knowledge-graph context pack for a task"
+    )
     p_ctx.add_argument("--task", default=None, help="Task id (default: selected)")
     p_ctx.add_argument("--hops", type=int, default=1)
 
