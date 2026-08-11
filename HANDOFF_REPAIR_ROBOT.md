@@ -12,12 +12,12 @@
 
 ## Последний завершённый этап
 
-Последний завершённый этап — **ISS-005 (эпик) DONE: SessionManager split into stores + thin facade (4d PR #23, merged `b5638d6`)**. Phase 4 CLOSED.
+Последний завершённый этап — **ISS-012: remove duplicate `IMAGES_DIR` initialization (PR #24, merged `25966bc`)**.
 
-- Новый `transcript_reader.py` (195 LOC): `ClaudeSession` (перенесён дословно, re-export из `session.py`) + `TranscriptReader` — `projects_path` (dynamic property), `encode_cwd`, `build_session_file_path`, `get_session_direct` (glob fallback), `list_sessions_for_directory`, `read_recent_messages` (byte-range);
-- `session.py` (792→**649 LOC**, старт эпика 857): JSONL-семейство — thin delegates; поля dataclass = `user_window_offsets` (residual) + 4 store-объекта; property-делегаты с сеттерами сохранены;
-- Паритет-матрица **12/12** с реальными JSONL (encode_cwd, direct+glob, list/sort/cap, byte-range read) + edge cases; suite **383 passed**, pyright 0, ruff clean (1 pre-existing I001);
-- Критерии эпика: clear store ownership ✅; external `_save_state` = 0 (ISS-009) ✅; `state.json` байт-в-байт ✅; `session_migration` untouched pure ✅.
+- `message_handlers.py`: убран paste-noise дубль — одна дефиниция `IMAGES_DIR = ccbot_dir() / "images"` + один `mkdir(parents=True, exist_ok=True)`; diff +0/−4, единственный call site (`file_path = IMAGES_DIR / filename`) не тронут;
+- Evidence: `rg -c "IMAGES_DIR = "` → 1, `rg -c "IMAGES_DIR.mkdir"` → 1, карта `rg -n "IMAGES_DIR" src tests` → 3 строки (def/mkdir/call site);
+- Validate green: guardrails ok (1 файл), ruff + format + pyright (0 errors) + pytest **383 passed**;
+- Lazy `ensure_images_dir()` отклонён: один call site — усложнение не оправдано (решение зафиксировано в дизайне итерации).
 
 ---
 
@@ -222,7 +222,7 @@ pytest  → 383 passed;  pyright  → 0 errors;  ruff  → clean (1 pre-existing
 2. Phase 2 — **CLOSED** (ISS-003, ISS-008, ISS-010).  
 3. Phase 3 — **CLOSED** (ISS-004 #17, ISS-011 #18).  
 4. Phase 4 — **CLOSED** (ISS-009 #19 `65907e5`; ISS-005 #20–#23 `b5638d6`: stores + thin facade, `session.py` 857→649 LOC).  
-5. Debt (только по явному решению): ISS-012 hygiene (дубль `IMAGES_DIR` + 12 неформатированных файлов); ISS-014 (KG tracking); smoke-тесты Phase 1; pre-existing race в `discard` capture-registry; I001 pre-existing.  
+5. Debt (только по явному решению): ruff-format hygiene (12 неформатированных файлов, pre-existing — задачи в backlog нет, создать при старте); ISS-013 (ready в backlog); ISS-014 (KG tracking); smoke-тесты Phase 1; pre-existing race в `discard` capture-registry; I001 pre-existing.  
 6. Meta (backlog/handoff) — commit immediately; product — only via propose → approve → apply.  
 7. Gate: не мержить product PR при красном validate; env-фиксы — отдельной веткой (как PR #15).
 

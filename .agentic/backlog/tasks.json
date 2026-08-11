@@ -625,7 +625,7 @@
       "id": "ISS-012",
       "title": "Remove duplicate IMAGES_DIR initialization",
       "priority": "low",
-      "status": "ready",
+      "status": "DONE",
       "categories": [
         "cleanup"
       ],
@@ -643,7 +643,13 @@
         "One IMAGES_DIR definition in message_handlers.py",
         "One mkdir or lazy helper",
         "Image save still works"
-      ]
+      ],
+      "pr": "#24",
+      "merged_commit": "25966bc",
+      "merged_at": "2026-08-11T00:00:00Z",
+      "status_updated_at": "2026-08-11T00:00:00+00:00",
+      "updated_at": "2026-08-11T00:00:00+00:00",
+      "resolution": "Single IMAGES_DIR definition + single mkdir (paste noise removed); call site untouched; evidence rg: def=1, mkdir=1; suite 383 green; PR #24 merged 25966bc"
     },
     {
       "id": "ISS-013",
