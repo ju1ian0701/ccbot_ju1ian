@@ -24,13 +24,9 @@ Key methods for thread binding access:
 import asyncio
 import json
 import logging
-import re
 from dataclasses import dataclass, field
-from pathlib import Path
 from collections.abc import Callable, Iterator
 from typing import Any
-
-import aiofiles
 
 from .binding_store import BindingStore
 from .config import config
@@ -43,21 +39,11 @@ from .session_migration import (
     state_needs_legacy_migration,
 )
 from .tmux_manager import tmux_manager
-from .transcript_parser import TranscriptParser
+from .transcript_reader import ClaudeSession, TranscriptReader
 from .utils import atomic_write_json
 from .window_state_store import WindowState, WindowStateStore
 
 logger = logging.getLogger(__name__)
-
-
-@dataclass
-class ClaudeSession:
-    """Information about a Claude Code session."""
-
-    session_id: str
-    summary: str
-    message_count: int
-    file_path: str
 
 
 @dataclass
@@ -77,7 +63,8 @@ class SessionManager:
     user_window_offsets: dict[int, dict[str, int]] = field(default_factory=dict)
     # thread_bindings and group_chat_ids are owned by BindingStore (ISS-005 4a),
     # window_states and window_display_names by WindowStateStore (ISS-005 4b),
-    # session_map.json file access by SessionMapRepository (ISS-005 4c);
+    # session_map.json file access by SessionMapRepository (ISS-005 4c),
+    # transcript JSONL reads by TranscriptReader (ISS-005 4d);
     # facade property delegates below keep backward-compatible access.
     _bindings: BindingStore = field(default_factory=BindingStore, repr=False)
     _window_store: WindowStateStore = field(
@@ -86,6 +73,7 @@ class SessionManager:
     _session_map: SessionMapRepository = field(
         default_factory=SessionMapRepository, repr=False
     )
+    _transcripts: TranscriptReader = field(default_factory=TranscriptReader, repr=False)
 
     def __post_init__(self) -> None:
         self._load_state()
@@ -476,77 +464,7 @@ class SessionManager:
         self._window_store.set_window_session(window_id, session_id, cwd, window_name)
         self._save_state()
 
-    @staticmethod
-    def _encode_cwd(cwd: str) -> str:
-        """Encode a cwd path to match Claude Code's project directory naming.
-
-        Replaces all non-alphanumeric characters (except dash) with dashes.
-        E.g. /home/user_name/Code/project -> -home-user-name-Code-project
-        """
-        return re.sub(r"[^a-zA-Z0-9-]", "-", cwd)
-
-    def _build_session_file_path(self, session_id: str, cwd: str) -> Path | None:
-        """Build the direct file path for a session from session_id and cwd."""
-        if not session_id or not cwd:
-            return None
-        encoded_cwd = self._encode_cwd(cwd)
-        return config.claude_projects_path / encoded_cwd / f"{session_id}.jsonl"
-
-    async def _get_session_direct(
-        self, session_id: str, cwd: str
-    ) -> ClaudeSession | None:
-        """Get a ClaudeSession directly from session_id and cwd (no scanning)."""
-        file_path = self._build_session_file_path(session_id, cwd)
-
-        # Fallback: glob search if direct path doesn't exist
-        if not file_path or not file_path.exists():
-            pattern = f"*/{session_id}.jsonl"
-            matches = list(config.claude_projects_path.glob(pattern))
-            if matches:
-                file_path = matches[0]
-                logger.debug("Found session via glob: %s", file_path)
-            else:
-                return None
-
-        # Single pass: read file once, extract summary + count messages
-        summary = ""
-        last_user_msg = ""
-        message_count = 0
-        try:
-            async with aiofiles.open(file_path, "r", encoding="utf-8") as f:
-                async for line in f:
-                    line = line.strip()
-                    if not line:
-                        continue
-                    message_count += 1
-                    try:
-                        data = json.loads(line)
-                        # Check for summary
-                        if data.get("type") == "summary":
-                            s = data.get("summary", "")
-                            if s:
-                                summary = s
-                        # Track last user message as fallback
-                        elif TranscriptParser.is_user_message(data):
-                            parsed = TranscriptParser.parse_message(data)
-                            if parsed and parsed.text.strip():
-                                last_user_msg = parsed.text.strip()
-                    except json.JSONDecodeError:
-                        continue
-        except OSError:
-            return None
-
-        if not summary:
-            summary = last_user_msg[:50] if last_user_msg else "Untitled"
-
-        return ClaudeSession(
-            session_id=session_id,
-            summary=summary,
-            message_count=message_count,
-            file_path=str(file_path),
-        )
-
-    # --- Directory session listing ---
+    # --- Directory session listing (ISS-005 4d delegate) ---
 
     async def list_sessions_for_directory(self, cwd: str) -> list[ClaudeSession]:
         """List existing Claude sessions for a directory.
@@ -557,30 +475,7 @@ class SessionManager:
 
         Returns a list sorted by mtime (most recent first), capped at 10.
         """
-        encoded_cwd = self._encode_cwd(cwd)
-        project_dir = config.claude_projects_path / encoded_cwd
-        if not project_dir.is_dir():
-            return []
-
-        # Collect JSONL files sorted by mtime (newest first)
-        jsonl_files = sorted(
-            project_dir.glob("*.jsonl"),
-            key=lambda p: p.stat().st_mtime,
-            reverse=True,
-        )
-
-        # Skip sessions-index and cap at 10
-        sessions: list[ClaudeSession] = []
-        for f in jsonl_files:
-            if f.stem == "sessions-index":
-                continue
-            if len(sessions) >= 10:
-                break
-            session_id = f.stem
-            session = await self._get_session_direct(session_id, cwd)
-            if session and session.message_count > 0:
-                sessions.append(session)
-        return sessions
+        return await self._transcripts.list_sessions_for_directory(cwd)
 
     # --- Window → Session resolution ---
 
@@ -595,7 +490,9 @@ class SessionManager:
         if not state.session_id or not state.cwd:
             return None
 
-        session = await self._get_session_direct(state.session_id, state.cwd)
+        session = await self._transcripts.get_session_direct(
+            state.session_id, state.cwd
+        )
         if session:
             return session
 
@@ -744,47 +641,9 @@ class SessionManager:
         if not session or not session.file_path:
             return [], 0
 
-        file_path = Path(session.file_path)
-        if not file_path.exists():
-            return [], 0
-
-        # Read JSONL entries (optionally filtered by byte range)
-        entries: list[dict] = []
-        try:
-            async with aiofiles.open(file_path, "r", encoding="utf-8") as f:
-                if start_byte > 0:
-                    await f.seek(start_byte)
-
-                while True:
-                    # Check byte limit before reading
-                    if end_byte is not None:
-                        current_pos = await f.tell()
-                        if current_pos >= end_byte:
-                            break
-
-                    line = await f.readline()
-                    if not line:
-                        break
-
-                    data = TranscriptParser.parse_line(line)
-                    if data:
-                        entries.append(data)
-        except OSError as e:
-            logger.error("Error reading session file %s: %s", file_path, e)
-            return [], 0
-
-        parsed_entries, _ = TranscriptParser.parse_entries(entries)
-        all_messages = [
-            {
-                "role": e.role,
-                "text": e.text,
-                "content_type": e.content_type,
-                "timestamp": e.timestamp,
-            }
-            for e in parsed_entries
-        ]
-
-        return all_messages, len(all_messages)
+        return await self._transcripts.read_recent_messages(
+            session.file_path, start_byte=start_byte, end_byte=end_byte
+        )
 
 
 session_manager = SessionManager()
