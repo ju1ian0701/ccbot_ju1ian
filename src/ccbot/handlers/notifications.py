@@ -48,26 +48,26 @@ async def handle_new_message(msg: NewMessage, bot: Bot) -> None:
         logger.info(f"No active users for session {msg.session_id}")
         return
 
-    for user_id, wid, thread_id in active_users:
+    for user_id, window_id, thread_id in active_users:
         # Handle interactive tools specially - capture terminal and send UI
         if msg.tool_name in INTERACTIVE_TOOL_NAMES and msg.content_type == "tool_use":
             # Mark interactive mode BEFORE sleeping so polling skips this window
-            set_interactive_mode(user_id, wid, thread_id)
+            set_interactive_mode(user_id, window_id, thread_id)
             # Flush pending messages (e.g. plan content) before sending interactive UI
             queue = get_message_queue(user_id)
             if queue:
                 await queue.join()
             # Wait briefly for Claude Code to render the question UI
             await asyncio.sleep(0.3)
-            handled = await handle_interactive_ui(bot, user_id, wid, thread_id)
+            handled = await handle_interactive_ui(bot, user_id, window_id, thread_id)
             if handled:
                 # Update user's read offset
-                session = await session_manager.resolve_session_for_window(wid)
+                session = await session_manager.resolve_session_for_window(window_id)
                 if session and session.file_path:
                     try:
                         file_size = Path(session.file_path).stat().st_size
                         session_manager.update_user_window_offset(
-                            user_id, wid, file_size
+                            user_id, window_id, file_size
                         )
                     except OSError:
                         pass
@@ -101,7 +101,7 @@ async def handle_new_message(msg: NewMessage, bot: Bot) -> None:
             await enqueue_content_message(
                 bot=bot,
                 user_id=user_id,
-                window_id=wid,
+                window_id=window_id,
                 parts=parts,
                 tool_use_id=msg.tool_use_id,
                 content_type=msg.content_type,
@@ -112,10 +112,12 @@ async def handle_new_message(msg: NewMessage, bot: Bot) -> None:
 
             # Update user's read offset to current file position
             # This marks these messages as "read" for this user
-            session = await session_manager.resolve_session_for_window(wid)
+            session = await session_manager.resolve_session_for_window(window_id)
             if session and session.file_path:
                 try:
                     file_size = Path(session.file_path).stat().st_size
-                    session_manager.update_user_window_offset(user_id, wid, file_size)
+                    session_manager.update_user_window_offset(
+                        user_id, window_id, file_size
+                    )
                 except OSError:
                     pass

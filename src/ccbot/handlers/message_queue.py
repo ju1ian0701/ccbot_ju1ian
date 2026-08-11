@@ -469,7 +469,7 @@ async def _send_task_images(bot: Bot, chat_id: int, task: MessageTask) -> None:
 
 async def _process_content_task(bot: Bot, user_id: int, task: MessageTask) -> None:
     """Process a content message task."""
-    wid = task.window_id or ""
+    window_id = task.window_id or ""
     tid = task.thread_id or 0
     chat_id = session_manager.resolve_chat_id(user_id, task.thread_id)
     st = queue_manager.status
@@ -490,7 +490,7 @@ async def _process_content_task(bot: Bot, user_id: int, task: MessageTask) -> No
             )
             if edited:
                 await _send_task_images(bot, chat_id, task)
-                await _check_and_send_status(bot, user_id, wid, task.thread_id)
+                await _check_and_send_status(bot, user_id, window_id, task.thread_id)
                 return
             logger.debug("Failed to edit tool msg %s, sending new", edit_msg_id)
             # Fall through to send as new message
@@ -508,7 +508,7 @@ async def _process_content_task(bot: Bot, user_id: int, task: MessageTask) -> No
                 bot,
                 user_id,
                 tid,
-                wid,
+                window_id,
                 part,
             )
             if converted_msg_id is not None:
@@ -533,7 +533,7 @@ async def _process_content_task(bot: Bot, user_id: int, task: MessageTask) -> No
     await _send_task_images(bot, chat_id, task)
 
     # 5. After content, check and send status
-    await _check_and_send_status(bot, user_id, wid, task.thread_id)
+    await _check_and_send_status(bot, user_id, window_id, task.thread_id)
 
 
 async def _convert_status_to_content(
@@ -578,7 +578,7 @@ async def _process_status_update_task(
     bot: Bot, user_id: int, task: MessageTask
 ) -> None:
     """Process a status update task."""
-    wid = task.window_id or ""
+    window_id = task.window_id or ""
     tid = task.thread_id or 0
     chat_id = session_manager.resolve_chat_id(user_id, task.thread_id)
     status_text = task.text or ""
@@ -594,10 +594,10 @@ async def _process_status_update_task(
     if current_info:
         msg_id, stored_wid, last_text = current_info
 
-        if stored_wid != wid:
+        if stored_wid != window_id:
             # Window changed - delete old and send new
             await _do_clear_status_message(bot, user_id, tid)
-            await _do_send_status_message(bot, user_id, tid, wid, status_text)
+            await _do_send_status_message(bot, user_id, tid, window_id, status_text)
         elif status_text == last_text:
             # Same content, skip edit
             return
@@ -615,13 +615,13 @@ async def _process_status_update_task(
                     log_exception(logger, "Failed to send typing action", e)
             edited = await edit_with_fallback(bot, chat_id, msg_id, status_text)
             if edited:
-                st.set_status(user_id, tid, msg_id, wid, status_text)
+                st.set_status(user_id, tid, msg_id, window_id, status_text)
             else:
                 st.pop_status(user_id, tid)
-                await _do_send_status_message(bot, user_id, tid, wid, status_text)
+                await _do_send_status_message(bot, user_id, tid, window_id, status_text)
     else:
         # No existing status message, send new
-        await _do_send_status_message(bot, user_id, tid, wid, status_text)
+        await _do_send_status_message(bot, user_id, tid, window_id, status_text)
 
 
 async def _do_send_status_message(

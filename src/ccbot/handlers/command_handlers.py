@@ -55,9 +55,9 @@ async def history_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     bound = await require_bound_window_id(update, reply_unauthorized=False)
     if bound is None:
         return
-    _user, _thread_id, wid = bound
+    _user, _thread_id, window_id = bound
     assert update.message is not None
-    await send_history(update.message, wid)
+    await send_history(update.message, window_id)
 
 
 async def screenshot_command(
@@ -104,9 +104,9 @@ async def unbind_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     )
     if bound is None:
         return
-    _user, _tid, wid = bound
+    _user, _tid, window_id = bound
 
-    display = session_manager.get_display_name(wid)
+    display = session_manager.get_display_name(window_id)
     session_manager.unbind_thread(user.id, thread_id)
     await clear_topic_state(user.id, thread_id, context.bot, context.user_data)
 
@@ -204,13 +204,13 @@ async def topic_closed_handler(
             thread_id,
         )
     else:
-        wid = session_manager.get_window_for_thread(user.id, thread_id)
-        if not wid:
+        window_id = session_manager.get_window_for_thread(user.id, thread_id)
+        if not window_id:
             logger.debug(
                 "Topic closed: no binding (user=%d, thread=%d)", user.id, thread_id
             )
             return
-        display = session_manager.get_display_name(wid)
+        display = session_manager.get_display_name(window_id)
         logger.info(
             "Topic closed: window %s already gone (user=%d, thread=%d)",
             display,
@@ -243,21 +243,21 @@ async def topic_edited_handler(
     if thread_id is None:
         return
 
-    wid = session_manager.get_window_for_thread(user.id, thread_id)
-    if not wid:
+    window_id = session_manager.get_window_for_thread(user.id, thread_id)
+    if not window_id:
         logger.debug(
             "Topic edited: no binding (user=%d, thread=%d)", user.id, thread_id
         )
         return
 
-    old_name = session_manager.get_display_name(wid)
-    await tmux_manager.rename_window(wid, new_name)
-    session_manager.update_display_name(wid, new_name)
+    old_name = session_manager.get_display_name(window_id)
+    await tmux_manager.rename_window(window_id, new_name)
+    session_manager.update_display_name(window_id, new_name)
     logger.info(
         "Topic renamed: '%s' -> '%s' (window=%s, user=%d, thread=%d)",
         old_name,
         new_name,
-        wid,
+        window_id,
         user.id,
         thread_id,
     )

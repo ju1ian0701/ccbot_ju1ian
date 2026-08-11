@@ -43,7 +43,7 @@ class BindingStore:
         """Serialize owned dicts to state.json sections."""
         return {
             "thread_bindings": {
-                str(uid): {str(tid): wid for tid, wid in bindings.items()}
+                str(uid): {str(tid): window_id for tid, window_id in bindings.items()}
                 for uid, bindings in self.thread_bindings.items()
             },
             "group_chat_ids": self.group_chat_ids,
@@ -52,7 +52,7 @@ class BindingStore:
     def load_state(self, state: dict[str, Any]) -> None:
         """Load owned dicts from a parsed state.json dict."""
         self.thread_bindings = {
-            int(uid): {int(tid): wid for tid, wid in bindings.items()}
+            int(uid): {int(tid): window_id for tid, window_id in bindings.items()}
             for uid, bindings in state.get("thread_bindings", {}).items()
         }
         self.group_chat_ids = {

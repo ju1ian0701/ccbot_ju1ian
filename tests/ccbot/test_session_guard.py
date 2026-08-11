@@ -110,7 +110,7 @@ async def test_require_session_authorized_bound_live(
     )
     monkeypatch.setattr(
         "ccbot.session_guard.session_manager.get_display_name",
-        lambda wid: "disp",
+        lambda window_id: "disp",
     )
     monkeypatch.setattr(
         "ccbot.session_guard.tmux_manager.find_window_by_id",
@@ -154,7 +154,7 @@ async def test_require_session_missing_window(
     )
     monkeypatch.setattr(
         "ccbot.session_guard.session_manager.get_display_name",
-        lambda wid: "mywin",
+        lambda window_id: "mywin",
     )
     monkeypatch.setattr(
         "ccbot.session_guard.tmux_manager.find_window_by_id",
@@ -179,10 +179,10 @@ async def test_require_bound_window_id_ok(monkeypatch: pytest.MonkeyPatch) -> No
     )
     result = await require_bound_window_id(upd, reply_unauthorized=False)
     assert result is not None
-    u, tid, wid = result
+    u, tid, window_id = result
     assert u is user
     assert tid == 2
-    assert wid == "@1"
+    assert window_id == "@1"
 
 
 @pytest.mark.asyncio
@@ -234,7 +234,7 @@ async def test_require_session_unbind_if_missing(
     )
     monkeypatch.setattr(
         "ccbot.session_guard.session_manager.get_display_name",
-        lambda wid: "mywin",
+        lambda window_id: "mywin",
     )
     monkeypatch.setattr(
         "ccbot.session_guard.session_manager.unbind_thread",
