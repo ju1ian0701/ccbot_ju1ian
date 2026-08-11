@@ -12,15 +12,13 @@
 
 ## Последний завершённый этап
 
-Последний завершённый этап — **ISS-013 + RR-0: harden structural acceptance + robot skeleton closed (PR #25, merged `dfaf796`)**.
+Последний завершённый этап — **REF-007 DONE: rename ambiguous variables (R7a PR #26 `f9209fa` + R7b PR #27 `9533103`)**. Рефакторинг-backlog закрыт полностью.
 
-- `validate_changes.py`: `check_evidence` (deleted_paths / call_sites / grep / tests) + `run(evidence=...)`; evidence входит в общий `ok` validation report;
-- `cli.py`: `validate --task ISS-XXX` прогоняет evidence задачи; structural без evidence → exit 2;
-- `update_backlog_status.py`: `done_block_reasons` — done-gate, `done` для structural/evidence задач блокируется без production proof (false-done guard);
-- `propose.py`: `evidence_plan.json` несёт `kind` + `evidence`; `README.md` — секция шаблона;
-- `tests/agentic/` (новое): 14 тестов evidence-checker'а, suite **397 passed**;
-- RR-0 закрыт по факту: скелет в бою с Phase 3 (циклы ISS-004…ISS-013), последний критерий (evidence checker) закрыт ISS-013;
-- Замечено (не в скоупе): quality-гейт validate покрывает `src/`+`tests/`, но не `scripts/agentic/` — робот себя не линтит (pre-existing format/check-шум в scripts/ — кандидат в hygiene-задачу).
+- R7a: `wid` → `window_id` — 67 строк в 11 файлах + 3 переноса под line-length 88;
+- R7b: `tid` → `thread_id` — 28 замен в 3 файлах; 2 семантические ловушки (`tid`-локалка при живом параметре `thread_id` в `enqueue_status_update` и `set_group_chat_id`) — инлайн `thread_id or 0`, не реассайн параметра;
+- `skey` = 0 hits — no-op (зафиксировано в resolution);
+- REF-007 — первый structural tenant механизма ISS-013: `validate --task REF-007` после R7a давал штатный FAIL по `tid`, после R7b — full green (оба absent); done-gate разблокирован;
+- Suite **397 passed** на всём протяжении; pyright 0, ruff clean.
 
 ---
 
@@ -225,7 +223,7 @@ pytest  → 383 passed;  pyright  → 0 errors;  ruff  → clean (1 pre-existing
 2. Phase 2 — **CLOSED** (ISS-003, ISS-008, ISS-010).  
 3. Phase 3 — **CLOSED** (ISS-004 #17, ISS-011 #18).  
 4. Phase 4 — **CLOSED** (ISS-009 #19 `65907e5`; ISS-005 #20–#23 `b5638d6`: stores + thin facade, `session.py` 857→649 LOC).  
-5. REF-007 — **IN PROGRESS**: **R7a DONE** (PR #26 `f9209fa`: `wid`→`window_id`, 11 файлов; evidence `wid` absent=OK) → следующая **R7b** (`tid`→`thread_id`, 3 файла: binding_store, message_queue, test_session_guard); `skey` = 0 hits — no-op; debt (только по явному решению): ruff-format hygiene (12 файлов в src/tests + format/check-шум в scripts/agentic — задачи в backlog нет, создать при старте); smoke-тесты Phase 1 (чек-лист в `.agentic/out/notes/2026-08-11-smoke-phase1.md`, отложены); pre-existing race в `discard` capture-registry; I001 pre-existing.  
+5. **Backlog пуст — все ready-задачи DONE.** Debt (только по явному решению): ruff-format hygiene (12 файлов в src/tests + format/check-шум в scripts/agentic — задачи в backlog нет, создать при старте); smoke-тесты Phase 1 (чек-лист в `.agentic/out/notes/2026-08-11-smoke-phase1.md`, отложены); pre-existing race в `discard` capture-registry; I001 pre-existing.  
 6. Meta (backlog/handoff) — commit immediately; product — only via propose → approve → apply.  
 7. Gate: не мержить product PR при красном validate; env-фиксы — отдельной веткой (как PR #15).
 

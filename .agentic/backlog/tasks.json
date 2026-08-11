@@ -142,7 +142,7 @@
       "id": "REF-007",
       "title": "Rename ambiguous variables (wid/tid/skey)",
       "priority": "medium",
-      "status": "ready",
+      "status": "DONE",
       "categories": [
         "readability"
       ],
@@ -204,11 +204,20 @@
           "resolution": "wid -> window_id: 67 renamed lines +3 wraps (line-length 88), 11 files; evidence wid absent=OK (tid FAIL expected until R7b); suite 397; PR #26 merged f9209fa"
         },
         "R7b": {
-          "status": "pending",
-          "scope": "tid -> thread_id globally (3 files, 26 hits)"
+          "status": "DONE",
+          "scope": "tid -> thread_id globally (3 files, 26 hits)",
+          "pr": "#27",
+          "merged_commit": "9533103",
+          "merged_at": "2026-08-11T00:00:00Z",
+          "resolution": "tid -> thread_id: 28 replacements, 3 files; 2 semantic traps (tid local vs live thread_id param) inlined not reassigned (enqueue_status_update, set_group_chat_id); wraps for line-length 88; evidence tid absent=OK; validate --task REF-007 full green; suite 397; PR #27 merged 9533103"
         }
       },
-      "updated_at": "2026-08-11T00:00:00+00:00"
+      "pr": "#27",
+      "merged_commit": "9533103",
+      "merged_at": "2026-08-11T00:00:00Z",
+      "status_updated_at": "2026-08-11T00:00:00+00:00",
+      "updated_at": "2026-08-11T00:00:00+00:00",
+      "resolution": "wid->window_id (R7a #26 f9209fa, 67 lines, 11 files) + tid->thread_id (R7b #27 9533103, 28 replacements, 3 files); skey = 0 hits (no-op); evidence-gated: validate --task REF-007 full green (wid/tid absent in src); suite 397 throughout; first structural tenant of ISS-013 evidence mechanism"
     },
     {
       "id": "REF-008",
