@@ -225,7 +225,7 @@ pytest  → 383 passed;  pyright  → 0 errors;  ruff  → clean (1 pre-existing
 2. Phase 2 — **CLOSED** (ISS-003, ISS-008, ISS-010).  
 3. Phase 3 — **CLOSED** (ISS-004 #17, ISS-011 #18).  
 4. Phase 4 — **CLOSED** (ISS-009 #19 `65907e5`; ISS-005 #20–#23 `b5638d6`: stores + thin facade, `session.py` 857→649 LOC).  
-5. REF-007 — **IN PROGRESS** (re-scope + evidence готовы; sub-PRs: R7a `wid`→`window_id` 10 файлов, затем R7b `tid`→`thread_id` 3 файла; `skey` = 0 hits — no-op); debt (только по явному решению): ruff-format hygiene (12 файлов в src/tests + format/check-шум в scripts/agentic — задачи в backlog нет, создать при старте); smoke-тесты Phase 1 (чек-лист в `.agentic/out/notes/2026-08-11-smoke-phase1.md`, отложены); pre-existing race в `discard` capture-registry; I001 pre-existing.  
+5. REF-007 — **IN PROGRESS**: **R7a DONE** (PR #26 `f9209fa`: `wid`→`window_id`, 11 файлов; evidence `wid` absent=OK) → следующая **R7b** (`tid`→`thread_id`, 3 файла: binding_store, message_queue, test_session_guard); `skey` = 0 hits — no-op; debt (только по явному решению): ruff-format hygiene (12 файлов в src/tests + format/check-шум в scripts/agentic — задачи в backlog нет, создать при старте); smoke-тесты Phase 1 (чек-лист в `.agentic/out/notes/2026-08-11-smoke-phase1.md`, отложены); pre-existing race в `discard` capture-registry; I001 pre-existing.  
 6. Meta (backlog/handoff) — commit immediately; product — only via propose → approve → apply.  
 7. Gate: не мержить product PR при красном validate; env-фиксы — отдельной веткой (как PR #15).
 

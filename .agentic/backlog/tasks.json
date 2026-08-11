@@ -196,8 +196,12 @@
       },
       "subphases": {
         "R7a": {
-          "status": "pending",
-          "scope": "wid -> window_id globally (10 files, 67 hits)"
+          "status": "DONE",
+          "scope": "wid -> window_id globally (10 files, 67 hits)",
+          "pr": "#26",
+          "merged_commit": "f9209fa",
+          "merged_at": "2026-08-11T00:00:00Z",
+          "resolution": "wid -> window_id: 67 renamed lines +3 wraps (line-length 88), 11 files; evidence wid absent=OK (tid FAIL expected until R7b); suite 397; PR #26 merged f9209fa"
         },
         "R7b": {
           "status": "pending",
