@@ -52,10 +52,6 @@ logger = logging.getLogger(__name__)
 IMAGES_DIR = ccbot_dir() / "images"
 IMAGES_DIR.mkdir(parents=True, exist_ok=True)
 
-# --- Image directory for incoming photos ---
-IMAGES_DIR = ccbot_dir() / "images"
-IMAGES_DIR.mkdir(parents=True, exist_ok=True)
-
 
 async def photo_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle photos sent by the user: download and forward path to Claude Code."""
