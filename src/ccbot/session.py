@@ -34,6 +34,7 @@ import aiofiles
 
 from .binding_store import BindingStore
 from .config import config
+from .session_map_repository import SessionMapRepository
 from .session_migration import (
     apply_startup_state_migration,
     cleanup_stale_session_map_entries,
@@ -43,7 +44,7 @@ from .session_migration import (
 )
 from .tmux_manager import tmux_manager
 from .transcript_parser import TranscriptParser
-from .utils import LOCK_EX, LOCK_UN, atomic_write_json, flock
+from .utils import atomic_write_json
 from .window_state_store import WindowState, WindowStateStore
 
 logger = logging.getLogger(__name__)
@@ -75,11 +76,15 @@ class SessionManager:
 
     user_window_offsets: dict[int, dict[str, int]] = field(default_factory=dict)
     # thread_bindings and group_chat_ids are owned by BindingStore (ISS-005 4a),
-    # window_states and window_display_names by WindowStateStore (ISS-005 4b);
+    # window_states and window_display_names by WindowStateStore (ISS-005 4b),
+    # session_map.json file access by SessionMapRepository (ISS-005 4c);
     # facade property delegates below keep backward-compatible access.
     _bindings: BindingStore = field(default_factory=BindingStore, repr=False)
     _window_store: WindowStateStore = field(
         default_factory=WindowStateStore, repr=False
+    )
+    _session_map: SessionMapRepository = field(
+        default_factory=SessionMapRepository, repr=False
     )
 
     def __post_init__(self) -> None:
@@ -230,39 +235,8 @@ class SessionManager:
     def _mutate_session_map_locked(
         self, mutate: Callable[[dict[str, dict]], bool]
     ) -> bool:
-        """Read-modify-write session_map.json under the same flock the hook uses.
-
-        The SessionStart hook serializes its writes via session_map.lock;
-        any bot-side read-modify-write MUST take the same lock or it can
-        overwrite a concurrent hook write (lost update). Synchronous —
-        call via asyncio.to_thread from async code.
-
-        Returns True if `mutate` reported changes and the file was rewritten.
-        """
-        map_file = config.session_map_file
-        lock_path = map_file.with_suffix(".lock")
-        try:
-            with open(lock_path, "w") as lock_f:
-                flock(lock_f, LOCK_EX)
-                try:
-                    session_map: dict[str, dict] = {}
-                    if map_file.exists():
-                        try:
-                            session_map = json.loads(map_file.read_text())
-                        except (json.JSONDecodeError, OSError):
-                            logger.warning(
-                                "Unreadable session_map.json, skipping mutation"
-                            )
-                            return False
-                    if not mutate(session_map):
-                        return False
-                    atomic_write_json(map_file, session_map)
-                    return True
-                finally:
-                    flock(lock_f, LOCK_UN)
-        except OSError as e:
-            logger.error("Failed to update session_map.json: %s", e)
-            return False
+        """Read-modify-write session_map.json under the hook's flock (ISS-005 4c)."""
+        return self._session_map.mutate_locked(mutate)
 
     async def override_session_map_entry(
         self, window_id: str, session_id: str, cwd: str = "", window_name: str = ""
@@ -391,21 +365,14 @@ class SessionManager:
         key = f"{config.tmux_session_name}:{window_id}"
         deadline = asyncio.get_event_loop().time() + timeout
         while asyncio.get_event_loop().time() < deadline:
-            try:
-                if config.session_map_file.exists():
-                    async with aiofiles.open(config.session_map_file, "r") as f:
-                        content = await f.read()
-                    session_map = json.loads(content)
-                    info = session_map.get(key, {})
-                    if info.get("session_id"):
-                        # Found — load into window_states immediately
-                        logger.debug(
-                            "session_map entry found for window_id %s", window_id
-                        )
-                        await self.load_session_map()
-                        return True
-            except (json.JSONDecodeError, OSError):
-                pass
+            session_map = await self._session_map.read()
+            if session_map is not None:
+                info = session_map.get(key, {})
+                if info.get("session_id"):
+                    # Found — load into window_states immediately
+                    logger.debug("session_map entry found for window_id %s", window_id)
+                    await self.load_session_map()
+                    return True
             await asyncio.sleep(interval)
         logger.warning(
             "Timed out waiting for session_map entry: window_id=%s", window_id
@@ -420,13 +387,8 @@ class SessionManager:
         Also cleans up window_states entries not in current session_map.
         Updates window_display_names from the "window_name" field in values.
         """
-        if not config.session_map_file.exists():
-            return
-        try:
-            async with aiofiles.open(config.session_map_file, "r") as f:
-                content = await f.read()
-            session_map = json.loads(content)
-        except (json.JSONDecodeError, OSError):
+        session_map = await self._session_map.read()
+        if session_map is None:
             return
 
         prefix = f"{config.tmux_session_name}:"
@@ -443,7 +405,7 @@ class SessionManager:
             windows = await tmux_manager.list_windows()
             live_by_name = {w.window_name: w.window_id for w in windows}
             if self._migrate_old_format_map(session_map, live_by_name):
-                atomic_write_json(config.session_map_file, session_map)
+                self._session_map.write(session_map)
                 logger.info("Migrated old-format session_map keys during load")
 
         valid_wids: set[str] = set()
