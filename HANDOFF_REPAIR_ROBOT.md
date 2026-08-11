@@ -12,7 +12,19 @@
 
 ## Последний завершённый этап
 
-Последний завершённый этап — **REF-007 DONE: rename ambiguous variables (R7a PR #26 `f9209fa` + R7b PR #27 `9533103`)**. Рефакторинг-backlog закрыт полностью.
+Последний завершённый этап — **ISS-015 DONE: ruff-format hygiene (PR #28 `562c687`)**. Backlog снова пуст (все задачи DONE).
+
+- Машинный diff `ruff format` через полный HITL-цикл: 12 файлов вне src/tests (`.agentic/IMPLEMENTATION_PLAN.md` + 11 в `scripts/agentic/`), +139/−42, ноль ручных правок;
+- Residual (задокументирован): trailing newline в конце `scripts/agentic/propose.py` — hunk не переживает staging (см. уроки ниже); `ruff format --check` = 111 formatted + 1 residual;
+- Validate green (guardrails + ruff + pyright + pytest 397); suite не пострадал.
+
+### Уроки ISS-015 (line-endings и staging propose)
+
+- При `core.autocrlf=true` `git diff HEAD` выдаёт **LF-нормализованный** diff — не применяется к CRLF-дереву; `git -c core.autocrlf=false diff` даёт whole-file diff (блобы LF, дерево CRLF) — обе формы непригодны;
+- **Staging propose переписывает любой вход в all-CRLF** (`read_text` срезает `\r`, `NamedTemporaryFile("w")` на Windows переводит `\n`→`\r\n`): git-заголовки (`diff --git`/`index`) с `\r` ломают парсер git 2.45.1.windows → рабочая форма diff для propose — **difflib-стиль без git-заголовков** (как REF-007);
+- Hunk с `\ No newline at end of file` в staged-форме не применяется (минус-строка получает `\r`, которого нет на диске) → такие hunk'и вырезать, residual фиксировать в debt;
+- Проверки propose — **ИЛИ** (первый rc=0 из `--check` / `--cached --check` / `--reverse --check`), `--cached` против LF-блобов с `\r`-контентом падает всегда — это штатно;
+- Debt: перевести staging propose на binary (`read_bytes`/`write_bytes`) — после этого trailing newline propose.py доедет маленькой задачей.
 
 - R7a: `wid` → `window_id` — 67 строк в 11 файлах + 3 переноса под line-length 88;
 - R7b: `tid` → `thread_id` — 28 замен в 3 файлах; 2 семантические ловушки (`tid`-локалка при живом параметре `thread_id` в `enqueue_status_update` и `set_group_chat_id`) — инлайн `thread_id or 0`, не реассайн параметра;
@@ -223,7 +235,7 @@ pytest  → 383 passed;  pyright  → 0 errors;  ruff  → clean (1 pre-existing
 2. Phase 2 — **CLOSED** (ISS-003, ISS-008, ISS-010).  
 3. Phase 3 — **CLOSED** (ISS-004 #17, ISS-011 #18).  
 4. Phase 4 — **CLOSED** (ISS-009 #19 `65907e5`; ISS-005 #20–#23 `b5638d6`: stores + thin facade, `session.py` 857→649 LOC).  
-5. **ISS-015 IN PROGRESS — ruff-format hygiene** (12 файлов: `.agentic/IMPLEMENTATION_PLAN.md` + 11 в `scripts/agentic/`; `ruff check` чист — check-шума нет; машинный diff `ruff format` идёт через стандартный цикл propose → approve → apply → validate; задача создана в backlog, статус ready). Debt (только по явному решению): smoke-тесты Phase 1 (чек-лист в `.agentic/out/notes/2026-08-11-smoke-phase1.md`, отложены); pre-existing race в `discard` capture-registry; I001 pre-existing.  
+5. **Backlog пуст — все задачи DONE** (ISS-015 #28 `562c687` закрыл hygiene). Debt (только по явному решению): **binary-safe staging в propose.py** (read_bytes/write_bytes; после фикса — доехать trailing newline propose.py маленькой задачей); smoke-тесты Phase 1 (чек-лист в `.agentic/out/notes/2026-08-11-smoke-phase1.md`, отложены); pre-existing race в `discard` capture-registry; I001 pre-existing.  
 6. Meta (backlog/handoff) — commit immediately; product — only via propose → approve → apply.  
 7. Gate: не мержить product PR при красном validate; env-фиксы — отдельной веткой (как PR #15).
 
