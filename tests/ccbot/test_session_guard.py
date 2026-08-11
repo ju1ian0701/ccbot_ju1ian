@@ -179,9 +179,9 @@ async def test_require_bound_window_id_ok(monkeypatch: pytest.MonkeyPatch) -> No
     )
     result = await require_bound_window_id(upd, reply_unauthorized=False)
     assert result is not None
-    u, tid, window_id = result
+    u, thread_id, window_id = result
     assert u is user
-    assert tid == 2
+    assert thread_id == 2
     assert window_id == "@1"
 
 
