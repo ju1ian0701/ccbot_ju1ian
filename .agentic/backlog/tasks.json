@@ -764,6 +764,40 @@
       "status_note": "gitignore rules added; trash+intermediate removed from index; canonical KG/meta kept tracked"
     },
     {
+      "id": "ISS-015",
+      "title": "ruff format hygiene: 12 unformatted files outside src/tests",
+      "priority": "low",
+      "status": "ready",
+      "categories": [
+        "repo-hygiene"
+      ],
+      "files": [
+        ".agentic/IMPLEMENTATION_PLAN.md",
+        "scripts/agentic/analyze_graph.py",
+        "scripts/agentic/cli.py",
+        "scripts/agentic/mcp_server.py",
+        "scripts/agentic/mcp_smoke_test.py",
+        "scripts/agentic/paths.py",
+        "scripts/agentic/prioritize.py",
+        "scripts/agentic/propose.py",
+        "scripts/agentic/render_prompt.py",
+        "scripts/agentic/service.py",
+        "scripts/agentic/sync_issues.py",
+        "scripts/agentic/validate_changes.py"
+      ],
+      "related_nodes": [],
+      "depends_on": [],
+      "estimated_risk": "low",
+      "problem": "ruff format --check on main flags 12 files as would-be-reformatted (.agentic/IMPLEMENTATION_PLAN.md parses as Python + 11 scripts/agentic modules); the robot does not lint itself. ruff check is clean (no lint noise).",
+      "solution": "Machine-generated diff only: run `ruff format` on main, capture `git diff HEAD` binary into .agentic/tmp, route through standard propose -> approve -> apply -> validate cycle; no hand edits.",
+      "acceptance_criteria": [
+        "ruff format --check: 0 files would be reformatted (112 already formatted)",
+        "ruff check: All checks passed",
+        "pytest suite 397 passed; pyright 0 errors",
+        "diff is format-only (no semantic edits); all paths within declared files list"
+      ]
+    },
+    {
       "id": "RR-0",
       "title": "Robot HITL skeleton: propose → approve → apply → validate",
       "priority": "high",
@@ -799,7 +833,7 @@
       "ref_note": "Infrastructure task for repair robot; not a product ISS from REFACTORING_BACKLOG_ISSUES.md"
     }
   ],
-  "updated_at": "2026-07-28T19:31:36Z",
+  "updated_at": "2026-08-12T00:00:00Z",
   "phases": {
     "Phase 1": {
       "name": "Canonical auth + REF-001 done-for-real",

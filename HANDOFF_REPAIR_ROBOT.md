@@ -1,6 +1,6 @@
 # Handoff: Repair Robot (ccbot_ju1ian)
 
-**Дата снимка:** 2026-08-10  
+**Дата снимка:** 2026-08-12  
 **Репозиторий:** https://github.com/ju1ian0701/ccbot_ju1ian  
 **Локальный клон:** `D:\CCbot_tmux\ccbot\ccbot_ju1ian\`  
 **Инструкция:** `REPAIR_ROBOT_INSTRUCTION.md`  
@@ -223,7 +223,7 @@ pytest  → 383 passed;  pyright  → 0 errors;  ruff  → clean (1 pre-existing
 2. Phase 2 — **CLOSED** (ISS-003, ISS-008, ISS-010).  
 3. Phase 3 — **CLOSED** (ISS-004 #17, ISS-011 #18).  
 4. Phase 4 — **CLOSED** (ISS-009 #19 `65907e5`; ISS-005 #20–#23 `b5638d6`: stores + thin facade, `session.py` 857→649 LOC).  
-5. **Backlog пуст — все ready-задачи DONE.** Debt (только по явному решению): ruff-format hygiene (12 файлов в src/tests + format/check-шум в scripts/agentic — задачи в backlog нет, создать при старте); smoke-тесты Phase 1 (чек-лист в `.agentic/out/notes/2026-08-11-smoke-phase1.md`, отложены); pre-existing race в `discard` capture-registry; I001 pre-existing.  
+5. **ISS-015 IN PROGRESS — ruff-format hygiene** (12 файлов: `.agentic/IMPLEMENTATION_PLAN.md` + 11 в `scripts/agentic/`; `ruff check` чист — check-шума нет; машинный diff `ruff format` идёт через стандартный цикл propose → approve → apply → validate; задача создана в backlog, статус ready). Debt (только по явному решению): smoke-тесты Phase 1 (чек-лист в `.agentic/out/notes/2026-08-11-smoke-phase1.md`, отложены); pre-existing race в `discard` capture-registry; I001 pre-existing.  
 6. Meta (backlog/handoff) — commit immediately; product — only via propose → approve → apply.  
 7. Gate: не мержить product PR при красном validate; env-фиксы — отдельной веткой (как PR #15).
 
