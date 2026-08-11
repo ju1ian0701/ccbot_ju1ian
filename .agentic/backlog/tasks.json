@@ -655,7 +655,7 @@
       "id": "ISS-013",
       "title": "Harden agentic structural-task acceptance criteria",
       "priority": "low",
-      "status": "ready",
+      "status": "DONE",
       "categories": [
         "process",
         "agentic"
@@ -674,7 +674,13 @@
         "validate can check evidence patterns",
         "Demo where validate fails if old path remains",
         "status done impossible without production call-site proof"
-      ]
+      ],
+      "pr": "#25",
+      "merged_commit": "dfaf796",
+      "merged_at": "2026-08-11T00:00:00Z",
+      "status_updated_at": "2026-08-11T00:00:00+00:00",
+      "updated_at": "2026-08-11T00:00:00+00:00",
+      "resolution": "check_evidence (deleted_paths/call_sites/grep/tests) in validate_changes + validate --task; done-gate done_block_reasons blocks done without production proof; evidence_plan carries kind/evidence; README template section; tests/agentic 14 green (suite 397); PR #25 merged dfaf796"
     },
     {
       "id": "ISS-014",
@@ -704,7 +710,7 @@
       "id": "RR-0",
       "title": "Robot HITL skeleton: propose → approve → apply → validate",
       "priority": "high",
-      "status": "ready",
+      "status": "DONE",
       "categories": [
         "process",
         "agentic",
@@ -727,6 +733,12 @@
         "evidence checker fails if old path remains",
         "draft PR only after validate"
       ],
+      "pr": "#25",
+      "merged_commit": "dfaf796",
+      "merged_at": "2026-08-11T00:00:00Z",
+      "status_updated_at": "2026-08-11T00:00:00+00:00",
+      "updated_at": "2026-08-11T00:00:00+00:00",
+      "resolution": "HITL skeleton in production use since Phase 3 (cycles ISS-004 #17 ... ISS-013 #25): propose no-tree-change, approve base_sha freshness, apply approval+feature-branch guards, validate guardrails+quality, draft PR only after green; evidence checker (last open criterion) delivered by ISS-013 (PR #25 dfaf796)",
       "ref_note": "Infrastructure task for repair robot; not a product ISS from REFACTORING_BACKLOG_ISSUES.md"
     }
   ],
