@@ -12,12 +12,12 @@
 
 ## Последний завершённый этап
 
-Последний завершённый этап — **ISS-005 4a: extract `BindingStore` (PR #20, merged `d6bc24a`)**.
+Последний завершённый этап — **ISS-005 (эпик) DONE: SessionManager split into stores + thin facade (4d PR #23, merged `b5638d6`)**. Phase 4 CLOSED.
 
-- Новый `binding_store.py` (125 LOC): владение `thread_bindings` + `group_chat_ids`; 6 операций (bind/unbind/get/iter/set_group_chat_id/resolve_chat_id) + `to_state`/`load_state`/`reset`; persist и логирование остались в фасаде, store чистый;
-- `session.py` (857→853 LOC): поля ушли из dataclass в `_bindings` + property-делегаты (тесты не тронуты); `bind_thread` пишет `window_display_names` в фасаде — осознанная кросс-store координация до 4b;
-- `state.json` байт-в-байт (порядок ключей сохранён); паритет-матрица **17/17** в stub-окружении + edge cases (round-trip, corrupt state); suite **383 passed**;
-- Gap `user_window_offsets` — residual у фасада, решение на старте 4b.
+- Новый `transcript_reader.py` (195 LOC): `ClaudeSession` (перенесён дословно, re-export из `session.py`) + `TranscriptReader` — `projects_path` (dynamic property), `encode_cwd`, `build_session_file_path`, `get_session_direct` (glob fallback), `list_sessions_for_directory`, `read_recent_messages` (byte-range);
+- `session.py` (792→**649 LOC**, старт эпика 857): JSONL-семейство — thin delegates; поля dataclass = `user_window_offsets` (residual) + 4 store-объекта; property-делегаты с сеттерами сохранены;
+- Паритет-матрица **12/12** с реальными JSONL (encode_cwd, direct+glob, list/sort/cap, byte-range read) + edge cases; suite **383 passed**, pyright 0, ruff clean (1 pre-existing I001);
+- Критерии эпика: clear store ownership ✅; external `_save_state` = 0 (ISS-009) ✅; `state.json` байт-в-байт ✅; `session_migration` untouched pure ✅.
 
 ---
 
@@ -164,6 +164,56 @@ pytest tests/ccbot/handlers/test_callback_data.py → 27 passed
 - CRLF-диффы захватывать бинарно (universal newlines съедает `\r` → ложный `patch does not apply`);
 - Мета-коммит шага 23 проверять фактом (`git log --oneline -3`) при возобновлении ветки, а не предполагать (ISS-004 закрыт задним числом).
 
+
+## Phase 4 — SessionManager: split into stores + thin facade (зона Z4)
+
+**Status: CLOSED (2026-08-10)**
+
+| Task | Status | Evidence | PR |
+|------|--------|----------|-----|
+| ISS-009 | DONE | external `_save_state` = 0; TTL/backup сохранены | #19 (merged `65907e5`) |
+| ISS-005 | DONE | split 4a–4d; `session.py` 857→649 LOC | #20–#23 (merged `b5638d6`) |
+
+### Детали Phase 4
+
+| ID | Что | Артефакты |
+|----|-----|-----------|
+| **ISS-009** | `state.json` пишется только через `SessionManager._save_state`; внешних писателей нет | rg `_save_state` = 1 def + internal calls |
+| **ISS-005 4a** | `BindingStore`: `thread_bindings` + `group_chat_ids` | `binding_store.py` (125 LOC); паритет **17/17** |
+| **ISS-005 4b** | `WindowStateStore`: `window_states` + `window_display_names`; `WindowState` re-export | `window_state_store.py` (118 LOC); паритет **14/14** |
+| **ISS-005 4c** | `SessionMapRepository`: `read`/`write`/`exists` + `mutate_locked` (flock RMW дословно) | `session_map_repository.py` (88 LOC); паритет **12/12** |
+| **ISS-005 4d** | `TranscriptReader` (JSONL-семейство) + thin facade; `ClaudeSession` re-export | `transcript_reader.py` (195 LOC); паритет **12/12** |
+
+### Evidence greps (Phase 4 exit)
+
+```text
+rg "class BindingStore|class WindowStateStore|class SessionMapRepository|class TranscriptReader" src/ccbot  → 4 store-модуля
+rg "def (thread_bindings|group_chat_ids|window_states|window_display_names)" src/ccbot/session.py          → property-делегаты с сеттерами
+rg "_save_state" src/ccbot                                                                                 → 1 def + internal calls (external = 0)
+pytest  → 383 passed;  pyright  → 0 errors;  ruff  → clean (1 pre-existing I001)
+```
+
+### PRs (Phase 4)
+
+| PR | Title | State |
+|----|-------|-------|
+| [#19](https://github.com/ju1ian0701/ccbot_ju1ian/pull/19) | ISS-009 single-writer state.json | **MERGED** (`65907e5`) |
+| [#20](https://github.com/ju1ian0701/ccbot_ju1ian/pull/20) | ISS-005 4a extract BindingStore | **MERGED** (`d6bc24a`) |
+| [#21](https://github.com/ju1ian0701/ccbot_ju1ian/pull/21) | ISS-005 4b extract WindowStateStore | **MERGED** (`4b43cef`) |
+| [#22](https://github.com/ju1ian0701/ccbot_ju1ian/pull/22) | ISS-005 4c extract SessionMapRepository | **MERGED** (`6164989`) |
+| [#23](https://github.com/ju1ian0701/ccbot_ju1ian/pull/23) | ISS-005 4d TranscriptReader + thin facade | **MERGED** (`b5638d6`) |
+
+### Уроки Phase 4
+
+- Store-модули — чистые (без persist/логирования); кросс-store логика (`bind_thread`/`load_session_map`/`resolve_stale_ids`) остаётся в фасаде;
+- Тесты пишут `mgr.thread_bindings = {...}` напрямую → property-**сеттеры** обязательны, не только геттеры;
+- Dynamic config lookup (property, не захват в `__init__`) — тестовые фикстуры патчат `config.session_map_file`/`claude_projects_path`;
+- Gap-анализ до propose: `user_window_offsets` не вошёл ни в один store → осознанный residual у фасада (решение фиксировать в дизайне итерации);
+- Validate/apply запускать строго по артефактам (`approval.json`, наличие файла в tree), не по памяти — инцидент 4b (validate до apply);
+- Мета-правки коммитить **до** старта цикла: dirty tree (M HANDOFF) блокирует propose (recurrence ISS-009 → 4a);
+- Свои F401 отслеживать `ruff check` в песочнице до сборки diff (инцидент 4c: `flock`/`LOCK_EX`/`LOCK_UN`);
+- `/tmp` в песочнице неперсистентен — diff-артефакты и патчи дублировать в output.
+
 ---
 
 ## Следующий шаг
@@ -171,9 +221,10 @@ pytest tests/ccbot/handlers/test_callback_data.py → 27 passed
 1. Phase 1 — **CLOSED** (ISS-002, ISS-006, ISS-001, ISS-007).  
 2. Phase 2 — **CLOSED** (ISS-003, ISS-008, ISS-010).  
 3. Phase 3 — **CLOSED** (ISS-004 #17, ISS-011 #18).  
-4. Phase 4 — **IN PROGRESS**: **ISS-009 DONE** (PR #19 `65907e5`); **ISS-005 4a DONE** (PR #20 `d6bc24a`: `BindingStore`); **ISS-005 4b DONE** (PR #21 `4b43cef`: `WindowStateStore`; gap `user_window_offsets` = residual); **ISS-005 4c DONE** (PR #22 `6164989`: `SessionMapRepository`) → следующая **4d thin facade** (финал эпика: JSONL-read семейство `_get_session_direct`/`list_sessions_for_directory`/`resolve_session_for_window`/`get_recent_messages`/`find_users_for_session`/`send_to_window` + `resolve_stale_ids` + агрегирующие `_load_state`/`_save_state`; `session.py` = 792 LOC; решить: выделять ли `TranscriptReader` или оставить JSONL-семейство в фасаде); `session_migration` — pure, не трогаем. Зона одна (Z4) → строго один structural PR за раз.      
-5. Meta (backlog/handoff) — commit immediately; product — only via propose → approve → apply.  
-6. Gate: не мержить product PR при красном validate; env-фиксы — отдельной веткой (как PR #15).
+4. Phase 4 — **CLOSED** (ISS-009 #19 `65907e5`; ISS-005 #20–#23 `b5638d6`: stores + thin facade, `session.py` 857→649 LOC).  
+5. Debt (только по явному решению): ISS-012 hygiene (дубль `IMAGES_DIR` + 12 неформатированных файлов); ISS-014 (KG tracking); smoke-тесты Phase 1; pre-existing race в `discard` capture-registry; I001 pre-existing.  
+6. Meta (backlog/handoff) — commit immediately; product — only via propose → approve → apply.  
+7. Gate: не мержить product PR при красном validate; env-фиксы — отдельной веткой (как PR #15).
 
 ---
 

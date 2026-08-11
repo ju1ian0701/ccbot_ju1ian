@@ -346,7 +346,7 @@
       "id": "ISS-005",
       "title": "Split god-object SessionManager into stores + facade",
       "priority": "high",
-      "status": "in_progress",
+      "status": "DONE",
       "categories": [
         "decomposition",
         "encapsulation"
@@ -395,10 +395,21 @@
           "merged_commit": "6164989",
           "merged_at": "2026-08-10T00:00:00Z",
           "resolution": "SessionMapRepository owns session_map.json file access + flock RMW (mutate_locked verbatim); dynamic config lookup; facade keeps orchestration and private delegates used by tests; load_session_map cross-store stays at facade; parity matrix 12/12; suite 383; PR #22 merged 6164989"
+        },
+        "4d": {
+          "status": "DONE",
+          "pr": "#23",
+          "merged_commit": "b5638d6",
+          "merged_at": "2026-08-10T00:00:00Z",
+          "resolution": "TranscriptReader owns transcript JSONL reads; ClaudeSession re-exported; facade keeps window->session orchestration; session.py 857->649 LOC across epic; parity matrix 12/12 with real JSONL; suite 383; PR #23 merged b5638d6"
         }
       },
       "status_updated_at": "2026-08-10T00:00:00+00:00",
-      "updated_at": "2026-08-10T00:00:00+00:00"
+      "updated_at": "2026-08-10T00:00:00+00:00",
+      "pr": "#23",
+      "merged_commit": "b5638d6",
+      "merged_at": "2026-08-10T00:00:00Z",
+      "resolution": "Split complete: BindingStore (4a #20 d6bc24a), WindowStateStore (4b #21 4b43cef, user_window_offsets residual at facade), SessionMapRepository (4c #22 6164989), TranscriptReader + thin facade (4d #23 b5638d6); session.py 857->649 LOC; state.json byte-for-byte; external _save_state = 0 (ISS-009); session_migration untouched pure; suite 383 green throughout"
     },
     {
       "id": "ISS-006",
@@ -730,6 +741,19 @@
         "ISS-006": "ee8c0b2",
         "ISS-001": "a36b018",
         "ISS-007": "a36b018 (with ISS-001)"
+      }
+    },
+    "Phase 4": {
+      "name": "SessionManager split god-object into stores + facade",
+      "status": "CLOSED",
+      "closed_at": "2026-08-10",
+      "tasks": [
+        "ISS-009",
+        "ISS-005"
+      ],
+      "merged_commits": {
+        "ISS-009": "PR #19 65907e5",
+        "ISS-005": "PRs #20-#23 (d6bc24a, 4b43cef, 6164989, b5638d6)"
       }
     }
   }
