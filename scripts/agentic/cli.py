@@ -44,6 +44,7 @@ from validate_changes import run as run_validate  # noqa: E402
 from propose import (  # noqa: E402
     HITL_HANDLERS,
     PROPOSE_HANDLERS,
+    load_task as svc_load_task,
     register_hitl_commands,
     register_propose_commands,
 )
@@ -99,11 +100,35 @@ def cmd_select(args: argparse.Namespace) -> int:
 
 
 def cmd_validate(args: argparse.Namespace) -> int:
-    report = run_validate(base_ref=args.base_ref, skip_quality=args.skip_quality)
+    evidence = None
+    if args.task:
+        try:
+            task = svc_load_task(args.task)
+        except RuntimeError as exc:
+            print(f"validate_failed: {exc}", file=sys.stderr)
+            return 2
+        evidence = task.get("evidence") or {}
+        if str(task.get("kind") or "") == "structural" and not evidence:
+            print(
+                f"validate_failed: structural task {args.task} has no evidence block",
+                file=sys.stderr,
+            )
+            return 2
+    report = run_validate(
+        base_ref=args.base_ref,
+        skip_quality=args.skip_quality,
+        evidence=evidence,
+    )
     print(json.dumps({"ok": report.get("ok"), "guardrails": report.get("guardrails")}, indent=2))
     for q in report.get("quality") or []:
         status = "OK" if q.get("ok") else "FAIL"
         print(f"[{status}] {' '.join(q.get('cmd') or [])}")
+    evidence_report = report.get("evidence") or {}
+    for c in evidence_report.get("checks") or []:
+        status = "OK" if c.get("ok") else "FAIL"
+        print(
+            f"[{status}] evidence {c.get('check')}: {c.get('target')} ({c.get('detail')})"
+        )
     return 0 if report.get("ok") else 1
 
 
@@ -192,6 +217,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_val = sub.add_parser("validate", help="Guardrails + ruff/pyright/pytest")
     p_val.add_argument("--base-ref", default=None)
     p_val.add_argument("--skip-quality", action="store_true")
+    p_val.add_argument("--task", help="Also check task evidence patterns (ISS-XXX)")
 
     p_sync = sub.add_parser("sync-issues", help="Create GitHub issues from backlog")
     p_sync.add_argument("--apply", action="store_true")

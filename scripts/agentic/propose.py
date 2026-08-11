@@ -862,7 +862,9 @@ def build_evidence_plan(task: dict) -> dict:
 
     return {
         "task_id": task_id_from(task),
+        "kind": task.get("kind") or "",
         "acceptance_criteria": checks,
+        "evidence": task.get("evidence") or {},
         "grep": grep,
         "tests": tests,
         "manual": manual,

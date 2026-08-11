@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import fnmatch
 import os
+import re
 import subprocess
 import sys
 from datetime import datetime, timezone
@@ -166,10 +167,101 @@ def check_guardrails(
     }
 
 
+def _read_text_safe(path: Path) -> str:
+    """Read a source file for pattern matching; unreadable files match nothing."""
+    try:
+        return path.read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return ""
+
+
+def check_evidence(root: Path, evidence: dict[str, Any]) -> dict[str, Any]:
+    """Check structural-task evidence patterns against the working tree.
+
+    Supported keys (all optional):
+      deleted_paths: list[str]  -- each path must NOT exist (old path removed)
+      call_sites:    list[str]  -- each regex must match at least once under src/
+      grep:          list[dict] -- {pattern, path, expect: "present"|"absent"}
+      tests:         list[str]  -- each test file must exist
+
+    Returns {"checks": [...], "ok": bool}; empty evidence is trivially ok.
+    """
+    checks: list[dict[str, Any]] = []
+
+    def add(name: str, target: str, ok: bool, detail: str = "") -> None:
+        checks.append(
+            {"check": name, "target": target, "ok": bool(ok), "detail": detail}
+        )
+
+    for rel in evidence.get("deleted_paths") or []:
+        rel = str(rel)
+        exists = (root / rel).exists()
+        add("deleted_path", rel, not exists, "still exists" if exists else "absent")
+
+    src_dir = root / "src"
+    src_files = sorted(src_dir.rglob("*.py")) if src_dir.is_dir() else []
+    src_cache: dict[Path, str] = {}
+
+    def src_match(pattern: str) -> bool:
+        rx = re.compile(pattern)
+        for f in src_files:
+            if f not in src_cache:
+                src_cache[f] = _read_text_safe(f)
+            if rx.search(src_cache[f]):
+                return True
+        return False
+
+    for pattern in evidence.get("call_sites") or []:
+        pattern = str(pattern)
+        try:
+            found = src_match(pattern)
+        except re.error as exc:
+            add("call_site", pattern, False, f"bad regex: {exc}")
+            continue
+        add(
+            "call_site",
+            pattern,
+            found,
+            "found in src/" if found else "no match in src/",
+        )
+
+    for item in evidence.get("grep") or []:
+        if not isinstance(item, dict):
+            add("grep", str(item), False, "grep entry must be an object")
+            continue
+        pattern = str(item.get("pattern") or "")
+        scope = str(item.get("path") or "src/")
+        expect = str(item.get("expect") or "present")
+        base = root / scope
+        if base.is_file():
+            files = [base]
+        elif base.is_dir():
+            files = sorted(base.rglob("*.py"))
+        else:
+            add("grep", f"{pattern} @ {scope}", False, f"scope not found: {scope}")
+            continue
+        try:
+            rx = re.compile(pattern)
+        except re.error as exc:
+            add("grep", f"{pattern} @ {scope}", False, f"bad regex: {exc}")
+            continue
+        found = any(rx.search(_read_text_safe(f)) for f in files)
+        ok = found if expect == "present" else not found
+        add("grep", f"{pattern} @ {scope}", ok, f"expect={expect} found={found}")
+
+    for rel in evidence.get("tests") or []:
+        rel = str(rel)
+        exists = (root / rel).is_file()
+        add("test_file", rel, exists, "exists" if exists else "missing")
+
+    return {"checks": checks, "ok": all(c["ok"] for c in checks) if checks else True}
+
+
 def run(
     repo_root: Path | None = None,
     base_ref: str | None = None,
     skip_quality: bool = False,
+    evidence: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     root = repo_root or find_repo_root()
     config = load_config(root)
@@ -218,11 +310,16 @@ def run(
             quality.append(_run(cmd, root))
 
     quality_ok = all(s.get("ok") for s in quality) if quality else True
+
+    evidence_report = check_evidence(root, evidence) if evidence is not None else None
+    evidence_ok = evidence_report.get("ok") if evidence_report is not None else True
+
     report = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "guardrails": guard,
         "quality": quality,
-        "ok": bool(guard.get("ok")) and quality_ok,
+        "evidence": evidence_report,
+        "ok": bool(guard.get("ok")) and quality_ok and evidence_ok,
     }
     out = out_dir(root, config)
     write_json(out / config["outputs"]["validation"], report)

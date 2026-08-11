@@ -12,8 +12,30 @@ if str(_SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(_SCRIPT_DIR))
 
 from paths import find_repo_root, load_config, load_json, write_json  # noqa: E402
+from validate_changes import check_evidence  # noqa: E402
 
 VALID = frozenset({"ready", "planned", "in_progress", "done", "blocked", "cancelled"})
+
+
+def done_block_reasons(root: Path, task: dict) -> list[str]:
+    """Reasons that block marking a task done (empty list = allowed).
+
+    Tasks with kind="structural" or an evidence block must pass
+    check_evidence against the working tree; structural tasks without
+    an evidence block are always blocked (false-done guard).
+    """
+    evidence = task.get("evidence") or {}
+    kind = str(task.get("kind") or "")
+    if kind != "structural" and not evidence:
+        return []
+    if kind == "structural" and not evidence:
+        return [f"structural task {task.get('id')} has no evidence block"]
+    report = check_evidence(root, evidence)
+    reasons = []
+    for c in report.get("checks") or []:
+        if not c.get("ok"):
+            reasons.append(f"{c.get('check')}: {c.get('target')} ({c.get('detail')})")
+    return reasons
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -30,11 +52,18 @@ def main(argv: list[str] | None = None) -> int:
     found = False
     for task in data.get("tasks") or []:
         if task.get("id") == args.task_id:
+            found = True
+            if args.status == "done":
+                reasons = done_block_reasons(root, task)
+                if reasons:
+                    print(f"done blocked for {args.task_id}:", file=sys.stderr)
+                    for r in reasons:
+                        print(f"  FAIL {r}", file=sys.stderr)
+                    return 1
             task["status"] = args.status
             task["status_updated_at"] = datetime.now(timezone.utc).isoformat()
             if args.note:
                 task["status_note"] = args.note
-            found = True
             break
     if not found:
         print(f"Unknown task: {args.task_id}", file=sys.stderr)
