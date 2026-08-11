@@ -147,12 +147,30 @@
         "readability"
       ],
       "files": [
-        "src/ccbot/bot.py",
-        "src/ccbot/session.py"
+        "src/ccbot/tmux_manager.py",
+        "src/ccbot/binding_store.py",
+        "src/ccbot/session.py",
+        "src/ccbot/handlers/message_queue.py",
+        "src/ccbot/handlers/status_polling.py",
+        "src/ccbot/handlers/directory_browser.py",
+        "src/ccbot/handlers/notifications.py",
+        "src/ccbot/handlers/command_handlers.py",
+        "src/ccbot/handlers/message_handlers.py",
+        "tests/ccbot/test_tmux_manager.py",
+        "tests/ccbot/test_session_guard.py"
       ],
       "related_nodes": [
-        "file:src/ccbot/bot.py",
-        "file:src/ccbot/session.py"
+        "file:src/ccbot/tmux_manager.py",
+        "file:src/ccbot/binding_store.py",
+        "file:src/ccbot/session.py",
+        "file:src/ccbot/handlers/message_queue.py",
+        "file:src/ccbot/handlers/status_polling.py",
+        "file:src/ccbot/handlers/directory_browser.py",
+        "file:src/ccbot/handlers/notifications.py",
+        "file:src/ccbot/handlers/command_handlers.py",
+        "file:src/ccbot/handlers/message_handlers.py",
+        "file:tests/ccbot/test_tmux_manager.py",
+        "file:tests/ccbot/test_session_guard.py"
       ],
       "depends_on": [
         "REF-001"
@@ -160,7 +178,33 @@
       "estimated_risk": "low",
       "acceptance_criteria": [
         "wid->window_id, tid->thread_id globally"
-      ]
+      ],
+      "kind": "structural",
+      "evidence": {
+        "grep": [
+          {
+            "pattern": "\\bwid\\b",
+            "path": "src",
+            "expect": "absent"
+          },
+          {
+            "pattern": "\\btid\\b",
+            "path": "src",
+            "expect": "absent"
+          }
+        ]
+      },
+      "subphases": {
+        "R7a": {
+          "status": "pending",
+          "scope": "wid -> window_id globally (10 files, 67 hits)"
+        },
+        "R7b": {
+          "status": "pending",
+          "scope": "tid -> thread_id globally (3 files, 26 hits)"
+        }
+      },
+      "updated_at": "2026-08-11T00:00:00+00:00"
     },
     {
       "id": "REF-008",
