@@ -43,7 +43,10 @@ class BindingStore:
         """Serialize owned dicts to state.json sections."""
         return {
             "thread_bindings": {
-                str(uid): {str(tid): window_id for tid, window_id in bindings.items()}
+                str(uid): {
+                    str(thread_id): window_id
+                    for thread_id, window_id in bindings.items()
+                }
                 for uid, bindings in self.thread_bindings.items()
             },
             "group_chat_ids": self.group_chat_ids,
@@ -52,7 +55,9 @@ class BindingStore:
     def load_state(self, state: dict[str, Any]) -> None:
         """Load owned dicts from a parsed state.json dict."""
         self.thread_bindings = {
-            int(uid): {int(tid): window_id for tid, window_id in bindings.items()}
+            int(uid): {
+                int(thread_id): window_id for thread_id, window_id in bindings.items()
+            }
             for uid, bindings in state.get("thread_bindings", {}).items()
         }
         self.group_chat_ids = {
@@ -104,8 +109,7 @@ class BindingStore:
 
         Returns True if the mapping was changed (caller should persist).
         """
-        tid = thread_id or 0
-        key = f"{user_id}:{tid}"
+        key = f"{user_id}:{thread_id or 0}"
         if self.group_chat_ids.get(key) != chat_id:
             self.group_chat_ids[key] = chat_id
             return True
