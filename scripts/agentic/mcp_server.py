@@ -78,6 +78,7 @@ def _err_text(message: str) -> dict[str, Any]:
 # Tool handlers
 # ---------------------------------------------------------------------------
 
+
 def tool_list_tasks(args: dict[str, Any]) -> dict[str, Any]:
     return _ok_text(
         list_tasks(

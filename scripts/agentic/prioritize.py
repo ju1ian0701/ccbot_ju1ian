@@ -6,7 +6,14 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from paths import find_repo_root, load_config, load_json, out_dir, write_json, write_text
+from paths import (
+    find_repo_root,
+    load_config,
+    load_json,
+    out_dir,
+    write_json,
+    write_text,
+)
 
 
 TERMINAL_STATUS = frozenset({"done", "cancelled", "wontfix"})

@@ -138,7 +138,9 @@ def main() -> int:
 
     except Exception as exc:  # noqa: BLE001
         print("FAIL", type(exc).__name__, exc)
-        err = proc.stderr.read().decode("utf-8", errors="replace") if proc.stderr else ""
+        err = (
+            proc.stderr.read().decode("utf-8", errors="replace") if proc.stderr else ""
+        )
         if err:
             print("--- stderr ---")
             print(err[-3000:])

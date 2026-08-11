@@ -54,9 +54,7 @@ def _ensure_dev_env(root: Path) -> dict[str, Any] | None:
     site = root / ".venv" / "Lib" / "site-packages"
     if sys.platform != "win32":
         # Unix venv layout
-        for candidate in (
-            root / ".venv" / "lib",
-        ):
+        for candidate in (root / ".venv" / "lib",):
             if candidate.is_dir():
                 matches = list(candidate.glob("python*/site-packages"))
                 if matches:
@@ -77,7 +75,11 @@ def _git_changed_files(root: Path, base_ref: str | None) -> list[str]:
             check=False,
         )
         if proc.returncode == 0 and proc.stdout.strip():
-            return [ln.strip().replace("\\", "/") for ln in proc.stdout.splitlines() if ln.strip()]
+            return [
+                ln.strip().replace("\\", "/")
+                for ln in proc.stdout.splitlines()
+                if ln.strip()
+            ]
     # Uncommitted + untracked fallback
     proc = subprocess.run(
         ["git", "status", "--porcelain"],
@@ -267,7 +269,11 @@ def run(
     config = load_config(root)
     impl = config.get("implementation") or {}
 
-    base = base_ref or os.environ.get("AGENTIC_BASE_REF") or os.environ.get("GITHUB_BASE_REF")
+    base = (
+        base_ref
+        or os.environ.get("AGENTIC_BASE_REF")
+        or os.environ.get("GITHUB_BASE_REF")
+    )
     if base and not base.startswith("origin/") and os.environ.get("GITHUB_ACTIONS"):
         # workflow often checks out merge ref; optional
         pass

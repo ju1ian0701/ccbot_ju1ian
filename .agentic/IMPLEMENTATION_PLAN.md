@@ -337,6 +337,7 @@ def build_context_pack(graph: dict, task: dict) -> dict:
 
 ```python
 """Minimal xAI Grok client for agentic pipeline stages."""
+
 from __future__ import annotations
 
 import json

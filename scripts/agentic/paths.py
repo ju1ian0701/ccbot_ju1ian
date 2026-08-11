@@ -11,7 +11,9 @@ def find_repo_root(start: Path | None = None) -> Path:
     """Walk parents until pyproject.toml + .agentic/ are found."""
     cur = (start or Path.cwd()).resolve()
     for candidate in [cur, *cur.parents]:
-        if (candidate / "pyproject.toml").is_file() and (candidate / ".agentic").is_dir():
+        if (candidate / "pyproject.toml").is_file() and (
+            candidate / ".agentic"
+        ).is_dir():
             return candidate
     # Fallback: scripts/agentic/../../
     here = Path(__file__).resolve().parent
