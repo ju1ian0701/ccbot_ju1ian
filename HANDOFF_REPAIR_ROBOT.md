@@ -12,7 +12,12 @@
 
 ## Последний завершённый этап
 
-Последний завершённый этап — **ISS-017 DONE: trailing newline propose.py (PR #30 `654d042`)**. Hygiene-дуга ISS-015/016/017 закрыта: `ruff format --check` = **113/113**, backlog пуст.
+Последний завершённый этап — **ISS-018 DONE: ruff I001 import sort, 12 файлов (PR #31 `5374113`)**.
+
+- Машинный `ruff check --select I001 --fix` (4 scripts/agentic + 6 src/ccbot + 2 tests) + одна ручная правка: восстановлен `# noqa: E402` в cli.py (фиксер расщепил `from propose import (...)`, новый блок потерял noqa — предусмотрено acceptance);
+- Гейты: I001 = 0 findings, `ruff check` clean, `ruff format --check` = **113/113**, pyright 0, suite 405, validate `ok: true`, guardrails 12/12.
+
+Предыдущий этап — **ISS-017 DONE: trailing newline propose.py (PR #30 `654d042`)**. Hygiene-дуга ISS-015/016/017 закрыта: `ruff format --check` = **113/113**, backlog пуст.
 
 - Единственный hunk: EOF trailing newline в propose.py (`\ No newline` маркер); сырой `git diff HEAD` прошёл propose без пересборки — dogfood binary staging из ISS-016 доказан делом;
 - Suite 405, pyright 0, ruff clean.
@@ -246,7 +251,7 @@ pytest  → 383 passed;  pyright  → 0 errors;  ruff  → clean (1 pre-existing
 2. Phase 2 — **CLOSED** (ISS-003, ISS-008, ISS-010).  
 3. Phase 3 — **CLOSED** (ISS-004 #17, ISS-011 #18).  
 4. Phase 4 — **CLOSED** (ISS-009 #19 `65907e5`; ISS-005 #20–#23 `b5638d6`: stores + thin facade, `session.py` 857→649 LOC).  
-5. **ISS-018 IN PROGRESS — ruff I001 (12 файлов, машинный `--fix`, контроль E402-фоллаута в cli.py)**; далее **ISS-019 ready — race в `CaptureTaskRegistry.discard`** (stale finally-discard выкидывает новую регистрацию: cancel(A) → register(B) → discard(A) вытесняет B; фикс = identity-checked discard + `asyncio.current_task()` в call site + регрессионный тест). Debt (только по явному решению): smoke-тесты Phase 1 (чек-лист в `.agentic/out/notes/2026-08-11-smoke-phase1.md`, отложены).  
+5. **ISS-019 IN PROGRESS — race в `CaptureTaskRegistry.discard`** (stale finally-discard выкидывает новую регистрацию: cancel(A) → register(B) → discard(A) вытесняет B; фикс = identity-checked discard + `asyncio.current_task()` в call site + регрессионный тест). Debt (только по явному решению): smoke-тесты Phase 1 (чек-лист в `.agentic/out/notes/2026-08-11-smoke-phase1.md`, отложены).  
 6. Meta (backlog/handoff) — commit immediately; product — only via propose → approve → apply.  
 7. Gate: не мержить product PR при красном validate; env-фиксы — отдельной веткой (как PR #15).
 

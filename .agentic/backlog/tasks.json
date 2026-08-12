@@ -868,7 +868,7 @@
       "id": "ISS-018",
       "title": "Sort import blocks (ruff I001) across 12 files",
       "priority": "low",
-      "status": "ready",
+      "status": "DONE",
       "categories": [
         "repo-hygiene"
       ],
@@ -897,7 +897,13 @@
         "ruff format --check: 113 already formatted, 0 would be reformatted",
         "suite 405 green; pyright 0",
         "import reordering only; zero hand edits except possible noqa restore in cli.py"
-      ]
+      ],
+      "pr": "#31",
+      "merged_commit": "5374113",
+      "merged_at": "2026-08-12T00:00:00Z",
+      "status_updated_at": "2026-08-12T00:00:00+00:00",
+      "updated_at": "2026-08-12T00:00:00+00:00",
+      "resolution": "Machine `ruff check --select I001 --fix` across 12 files (4 scripts/agentic, 6 src/ccbot, 2 tests) plus one manual touch: restored `# noqa: E402` in cli.py after the fixer split the propose import block (anticipated in acceptance criteria). Gates: ruff check clean (I001 = 0 findings), ruff format 113/113, pyright OK, suite 405, validate ok:true, guardrails 12/12 changed==considered. PR #31 merged 5374113."
     },
     {
       "id": "ISS-019",
