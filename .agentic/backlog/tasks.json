@@ -909,14 +909,14 @@
       "id": "ISS-019",
       "title": "Fix stale-task evict race in CaptureTaskRegistry.discard",
       "priority": "medium",
-      "status": "ready",
+      "status": "DONE",
       "categories": [
         "concurrency"
       ],
       "files": [
         "src/ccbot/handlers/capture_registry.py",
         "src/ccbot/handlers/message_handlers.py",
-        "tests/ccbot/handlers/test_capture_registry.py"
+        "tests/ccbot/test_capture_registry.py"
       ],
       "related_nodes": [
         "file:src/ccbot/handlers/capture_registry.py",
@@ -931,7 +931,13 @@
         "capture_bash_output finally passes its own task (asyncio.current_task())",
         "regression test: cancel(A) -> register(B) -> discard(A) leaves B registered; discard(B) clears",
         "existing capture-registry tests stay green; suite green; pyright 0"
-      ]
+      ],
+      "pr": "#32",
+      "merged_commit": "f511920",
+      "merged_at": "2026-08-12T00:00:00Z",
+      "status_updated_at": "2026-08-12T00:00:00+00:00",
+      "updated_at": "2026-08-12T00:00:00+00:00",
+      "resolution": "Identity-checked discard: discard(user_id, thread_id, task=None) pops only when registered entry IS the finishing task; capture_bash_output finally passes asyncio.current_task(); +2 regression tests (stale-evict, matching-remove) appended to tests/ccbot/test_capture_registry.py (existing 4 untouched). Gates: ruff clean, pyright 0, suite green (6 capture-registry tests), validate ok. PR #32 merged f511920."
     },
     {
       "id": "RR-0",

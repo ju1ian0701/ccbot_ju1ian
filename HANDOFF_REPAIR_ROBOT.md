@@ -12,7 +12,13 @@
 
 ## Последний завершённый этап
 
-Последний завершённый этап — **ISS-018 DONE: ruff I001 import sort, 12 файлов (PR #31 `5374113`)**.
+Последний завершённый этап — **ISS-019 DONE: identity-checked `CaptureTaskRegistry.discard` (PR #32 `f511920`)**.
+
+- Identity-checked discard: `discard(user_id, thread_id, task=None)` — при `task is None` безусловный pop (legacy); при `task` — pop только если `self._tasks.get(key) is task` (stale finally не выкидывает новую регистрацию);
+- Call site: `capture_bash_output` finally → `capture_tasks.discard(user_id, thread_id, asyncio.current_task())`;
+- +2 regression tests (stale-evict, matching-remove) в `tests/ccbot/test_capture_registry.py` (существующие 4 без правок); suite capture 6/6, ruff/pyright green.
+
+Предыдущий этап — **ISS-018 DONE: ruff I001 import sort, 12 файлов (PR #31 `5374113`)**.
 
 - Машинный `ruff check --select I001 --fix` (4 scripts/agentic + 6 src/ccbot + 2 tests) + одна ручная правка: восстановлен `# noqa: E402` в cli.py (фиксер расщепил `from propose import (...)`, новый блок потерял noqa — предусмотрено acceptance);
 - Гейты: I001 = 0 findings, `ruff check` clean, `ruff format --check` = **113/113**, pyright 0, suite 405, validate `ok: true`, guardrails 12/12.
@@ -251,9 +257,12 @@ pytest  → 383 passed;  pyright  → 0 errors;  ruff  → clean (1 pre-existing
 2. Phase 2 — **CLOSED** (ISS-003, ISS-008, ISS-010).  
 3. Phase 3 — **CLOSED** (ISS-004 #17, ISS-011 #18).  
 4. Phase 4 — **CLOSED** (ISS-009 #19 `65907e5`; ISS-005 #20–#23 `b5638d6`: stores + thin facade, `session.py` 857→649 LOC).  
-5. **ISS-019 IN PROGRESS — race в `CaptureTaskRegistry.discard`** (stale finally-discard выкидывает новую регистрацию: cancel(A) → register(B) → discard(A) вытесняет B; фикс = identity-checked discard + `asyncio.current_task()` в call site + регрессионный тест). Debt (только по явному решению): smoke-тесты Phase 1 (чек-лист в `.agentic/out/notes/2026-08-11-smoke-phase1.md`, отложены).  
-6. Meta (backlog/handoff) — commit immediately; product — only via propose → approve → apply.  
-7. Gate: не мержить product PR при красном validate; env-фиксы — отдельной веткой (как PR #15).
+5. **Нет ready-задач в backlog** (после ISS-019 DONE). Следующий product-цикл — только после явного выбора/добавления ready-задачи.  
+6. **Debt (только по явному решению, без отдельной ISS):**  
+   - smoke-тесты Phase 1 (чек-лист в `.agentic/out/notes/2026-08-11-smoke-phase1.md`, отложены);  
+   - **format-scope validate** — `validate`/`ruff format --check` scope сейчас завязан на full-tree / pre-existing baseline; при hygiene-задачах (ISS-015+) и точечных product-diff полезен scoped format-check (только changed files / allowlist), чтобы residual вне scope не маскировал fail и наоборот. Полноценная ISS — отдельное решение о приоритете; до того — debt-заметка здесь (как smoke Phase 1).  
+7. Meta (backlog/handoff) — commit immediately; product — only via propose → approve → apply.  
+8. Gate: не мержить product PR при красном validate; env-фиксы — отдельной веткой (как PR #15).
 
 ---
 
