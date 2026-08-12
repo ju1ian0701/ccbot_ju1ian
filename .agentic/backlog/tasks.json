@@ -807,7 +807,7 @@
       "id": "ISS-016",
       "title": "Binary-safe diff staging in propose.py",
       "priority": "low",
-      "status": "ready",
+      "status": "DONE",
       "categories": [
         "agentic",
         "process"
@@ -826,6 +826,36 @@
         "staged temp diff is byte-identical to input for LF and CRLF inputs",
         "tests/agentic binary-staging tests green; full suite 397+ green; pyright 0",
         "follow-up unblocked: propose.py EOF trailing newline can be proposed next"
+      ],
+      "pr": "#29",
+      "merged_commit": "8a7b4bf",
+      "merged_at": "2026-08-12T00:00:00Z",
+      "status_updated_at": "2026-08-12T00:00:00+00:00",
+      "updated_at": "2026-08-12T00:00:00+00:00",
+      "resolution": "Bytes diff path: _write_temp_diff wb + byte-exact staging (no trailing-newline append); check_diff_applies/diff_numstat/validate_proposal_diff take bytes, decode only for parsing; create_proposal_artifacts diff_bytes + write_bytes for proposal.diff (apply reads artifact directly = byte-safe E2E); read_bytes for --diff/import/apply; tests/agentic/test_binary_staging.py 8 tests (staged==input: LF/CRLF/git headers/EOF marker/no trailing NL); suite 405; EOF trailing newline of propose.py intentionally left for ISS-017; PR #29 merged 8a7b4bf"
+    },
+    {
+      "id": "ISS-017",
+      "title": "Land propose.py EOF trailing newline (ISS-015 residual)",
+      "priority": "low",
+      "status": "ready",
+      "categories": [
+        "repo-hygiene"
+      ],
+      "files": [
+        "scripts/agentic/propose.py"
+      ],
+      "related_nodes": [],
+      "depends_on": [
+        "ISS-016"
+      ],
+      "estimated_risk": "low",
+      "problem": "scripts/agentic/propose.py misses the trailing newline at EOF (ruff format flags it); the hunk was deferred from ISS-015 because staging mangled '\\ No newline at end of file' hunks. ISS-016 made staging byte-safe.",
+      "solution": "Machine diff: run `ruff format scripts/agentic/propose.py` on the branch, capture `git diff HEAD` binary, route through the standard pipeline; dogfoods the ISS-016 binary staging (EOF-marker hunk + git-format headers + LF diff).",
+      "acceptance_criteria": [
+        "ruff format --check: 0 files would be reformatted (112 already formatted)",
+        "EOF-marker hunk applies through the new binary staging",
+        "suite 405 green; pyright 0; ruff check clean"
       ]
     },
     {
