@@ -52,7 +52,6 @@ from service import (  # noqa: E402
     validate,
 )
 
-
 SERVER_NAME = "ccbot-agentic"
 SERVER_VERSION = "1.0.0"
 PROTOCOL_VERSION = "2024-11-05"

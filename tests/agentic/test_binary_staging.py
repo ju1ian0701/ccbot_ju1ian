@@ -4,9 +4,8 @@ Staging must be byte-exact: text-mode staging strips CR and breaks
 git-format headers and '\\ No newline at end of file' hunks on Windows git.
 """
 
-import pytest
-
 import propose
+import pytest
 
 
 def _git_format_diff() -> bytes:

@@ -24,8 +24,8 @@ Key methods for thread binding access:
 import asyncio
 import json
 import logging
-from dataclasses import dataclass, field
 from collections.abc import Callable, Iterator
+from dataclasses import dataclass, field
 from typing import Any
 
 from .binding_store import BindingStore

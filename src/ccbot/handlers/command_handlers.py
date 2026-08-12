@@ -17,15 +17,15 @@ from telegram import Update
 from telegram.constants import ChatAction
 from telegram.ext import ContextTypes
 
-from ..session import session_manager
 from ..screenshot import text_to_image
-from ..tmux_manager import tmux_manager
+from ..session import session_manager
 from ..session_guard import (
     get_thread_id,
     require_bound_window_id,
     require_session,
     require_user,
 )
+from ..tmux_manager import tmux_manager
 from .cleanup import clear_topic_state
 from .directory_browser import clear_browse_state
 from .history import send_history

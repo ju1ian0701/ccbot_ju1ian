@@ -36,18 +36,20 @@ from analyze_graph import run as run_analyze  # noqa: E402
 from build_context_pack import run as run_context  # noqa: E402
 from paths import find_repo_root  # noqa: E402
 from prioritize import run as run_plan  # noqa: E402
+from propose import (  # noqa: E402
+    HITL_HANDLERS,
+    PROPOSE_HANDLERS,
+    register_hitl_commands,
+    register_propose_commands,
+)
+from propose import (  # noqa: E402
+    load_task as svc_load_task,
+)
 from render_prompt import run as run_render  # noqa: E402
 from service import list_tasks as svc_list_tasks  # noqa: E402
 from service import pipeline_status as svc_pipeline_status  # noqa: E402
 from sync_issues import sync as run_sync  # noqa: E402
 from validate_changes import run as run_validate  # noqa: E402
-from propose import (  # noqa: E402
-    HITL_HANDLERS,
-    PROPOSE_HANDLERS,
-    load_task as svc_load_task,
-    register_hitl_commands,
-    register_propose_commands,
-)
 
 # Keep in sync with build_parser() + PROPOSE_HANDLERS + HITL_HANDLERS.
 _ALL_COMMANDS = (

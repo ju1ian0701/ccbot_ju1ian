@@ -16,7 +16,6 @@ from paths import (
     write_text,
 )
 
-
 FILE_LEVEL_TYPES = frozenset(
     {
         "file",
