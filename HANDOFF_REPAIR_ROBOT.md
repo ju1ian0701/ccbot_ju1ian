@@ -235,7 +235,7 @@ pytest  → 383 passed;  pyright  → 0 errors;  ruff  → clean (1 pre-existing
 2. Phase 2 — **CLOSED** (ISS-003, ISS-008, ISS-010).  
 3. Phase 3 — **CLOSED** (ISS-004 #17, ISS-011 #18).  
 4. Phase 4 — **CLOSED** (ISS-009 #19 `65907e5`; ISS-005 #20–#23 `b5638d6`: stores + thin facade, `session.py` 857→649 LOC).  
-5. **Backlog пуст — все задачи DONE** (ISS-015 #28 `562c687` закрыл hygiene). Debt (только по явному решению): **binary-safe staging в propose.py** (read_bytes/write_bytes; после фикса — доехать trailing newline propose.py маленькой задачей); smoke-тесты Phase 1 (чек-лист в `.agentic/out/notes/2026-08-11-smoke-phase1.md`, отложены); pre-existing race в `discard` capture-registry; I001 pre-existing.  
+5. **ISS-016 IN PROGRESS — binary-safe staging в propose.py** (read_bytes/write_bytes + binary temp; тест staged==input байт-в-байт; после фикса отдельной маленькой задачей доехать trailing newline propose.py — residual ISS-015). Debt (только по явному решению): smoke-тесты Phase 1 (чек-лист в `.agentic/out/notes/2026-08-11-smoke-phase1.md`, отложены); pre-existing race в `discard` capture-registry; I001 pre-existing.  
 6. Meta (backlog/handoff) — commit immediately; product — only via propose → approve → apply.  
 7. Gate: не мержить product PR при красном validate; env-фиксы — отдельной веткой (как PR #15).
 

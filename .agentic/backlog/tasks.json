@@ -804,6 +804,31 @@
       "resolution": "Machine ruff-format diff through full HITL cycle: 12 files +139/-42, zero hand edits. Key lesson: with core.autocrlf=true `git diff HEAD` emits LF-normalized diff that does not apply to CRLF worktree, and propose staging (read_text + text-mode temp write) rewrites any input to all-CRLF which breaks git-format headers (diff --git/index) on git 2.45.1.windows -> difflib-style diff (no git headers) is the working form. Residual: propose.py EOF trailing newline hunk blocked (staging mangles '\\ No newline' hunks) -> debt: binary-safe staging in propose.py, then land the newline. validate green (guardrails + ruff + pyright + pytest 397); ruff format --check: 111 formatted, 1 residual; ruff check clean; PR #28 merged 562c687"
     },
     {
+      "id": "ISS-016",
+      "title": "Binary-safe diff staging in propose.py",
+      "priority": "low",
+      "status": "ready",
+      "categories": [
+        "agentic",
+        "process"
+      ],
+      "files": [
+        "scripts/agentic/propose.py",
+        "tests/agentic/test_binary_staging.py"
+      ],
+      "related_nodes": [],
+      "depends_on": [],
+      "estimated_risk": "low",
+      "problem": "propose staging reads diff via read_text (universal newlines strips CR) and rewrites temp via text-mode NamedTemporaryFile (all CRLF on Windows): git-format headers (diff --git/index) break on git 2.45.1.windows, and '\\ No newline at end of file' hunks gain a spurious CR and never apply. Only difflib-style diffs without EOF hunks survive (ISS-015 workaround; propose.py trailing newline still unlanded).",
+      "solution": "Byte-exact diff path: read_bytes for --diff input and proposal.diff, binary temp staging (write_bytes / 'wb'), write proposal.diff as bytes; keep a decoded str only for parsing (numstat/paths/proposal.md). Add tests/agentic/test_binary_staging.py: staged temp bytes must equal input bytes (CRLF content + git headers + EOF marker).",
+      "acceptance_criteria": [
+        "propose accepts git-format diff (diff --git/index headers) and EOF-marker hunks",
+        "staged temp diff is byte-identical to input for LF and CRLF inputs",
+        "tests/agentic binary-staging tests green; full suite 397+ green; pyright 0",
+        "follow-up unblocked: propose.py EOF trailing newline can be proposed next"
+      ]
+    },
+    {
       "id": "RR-0",
       "title": "Robot HITL skeleton: propose → approve → apply → validate",
       "priority": "high",
