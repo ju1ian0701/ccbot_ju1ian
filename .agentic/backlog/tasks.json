@@ -865,6 +865,69 @@
       "resolution": "Single ruff-format hunk: EOF trailing newline in propose.py ('\\ No newline' marker). Raw `git diff HEAD` output passed propose with zero re-synthesis - dogfood of ISS-016 binary staging (git headers + LF + EOF-marker hunk all accepted). ruff format --check: 113 files already formatted, 0 would be reformatted; ruff check clean; suite 405; PR #30 merged 654d042; hygiene arc (ISS-015/016/017) fully closed"
     },
     {
+      "id": "ISS-018",
+      "title": "Sort import blocks (ruff I001) across 12 files",
+      "priority": "low",
+      "status": "ready",
+      "categories": [
+        "repo-hygiene"
+      ],
+      "files": [
+        "scripts/agentic/analyze_graph.py",
+        "scripts/agentic/cli.py",
+        "scripts/agentic/mcp_server.py",
+        "scripts/agentic/prioritize.py",
+        "src/ccbot/handlers/command_handlers.py",
+        "src/ccbot/handlers/directory_browser.py",
+        "src/ccbot/handlers/message_handlers.py",
+        "src/ccbot/handlers/status_polling.py",
+        "src/ccbot/session.py",
+        "src/ccbot/session_monitor.py",
+        "tests/agentic/test_binary_staging.py",
+        "tests/ccbot/handlers/test_interactive_ui.py"
+      ],
+      "related_nodes": [],
+      "depends_on": [],
+      "estimated_risk": "low",
+      "problem": "12 I001 findings (un-sorted/un-formatted import blocks) sit outside the ruff select gate (E4,E7,E9,F): 4 in scripts/agentic, 6 in src/ccbot, 2 in tests. Pre-existing debt ('I001 pre-existing' in handoff).",
+      "solution": "Machine fix: `ruff check --select I001 --fix`, then verify no E402 fallout (the cli.py fix splits `from propose import (...)` and the new block loses `# noqa: E402`; E402 is in the E4 gate) - restore noqa pointwise if needed; capture git diff binary; standard pipeline.",
+      "acceptance_criteria": [
+        "ruff check --select I001: clean (0 findings)",
+        "ruff check (gate select E4,E7,E9,F): no new findings incl. E402 in scripts/agentic/cli.py",
+        "ruff format --check: 113 already formatted, 0 would be reformatted",
+        "suite 405 green; pyright 0",
+        "import reordering only; zero hand edits except possible noqa restore in cli.py"
+      ]
+    },
+    {
+      "id": "ISS-019",
+      "title": "Fix stale-task evict race in CaptureTaskRegistry.discard",
+      "priority": "medium",
+      "status": "ready",
+      "categories": [
+        "concurrency"
+      ],
+      "files": [
+        "src/ccbot/handlers/capture_registry.py",
+        "src/ccbot/handlers/message_handlers.py",
+        "tests/ccbot/handlers/test_capture_registry.py"
+      ],
+      "related_nodes": [
+        "file:src/ccbot/handlers/capture_registry.py",
+        "file:src/ccbot/handlers/message_handlers.py"
+      ],
+      "depends_on": [],
+      "estimated_risk": "medium",
+      "problem": "discard() pops whatever is registered for (user_id, thread_id) with no identity check. Race: cancel() pops+cancels stale task A, handler registers new task B for the same topic, then A's finally: discard() (message_handlers.py:256) evicts B from the registry - clear_topic_state (cleanup.py:39) can no longer cancel B, leaking a live capture watcher. Same window exists on natural 30s timeout vs concurrent register. Pre-existing race (ISS-010 residual debt).",
+      "solution": "Identity-checked discard: discard(user_id, thread_id, task=None) pops only when the registered entry IS the finishing task; self-cleanup call site passes asyncio.current_task(); regression test: stale discard does not evict newer registration; legacy discard without task keeps popping (backward compat).",
+      "acceptance_criteria": [
+        "discard with mismatched task identity is a no-op",
+        "capture_bash_output finally passes its own task (asyncio.current_task())",
+        "regression test: cancel(A) -> register(B) -> discard(A) leaves B registered; discard(B) clears",
+        "existing capture-registry tests stay green; suite green; pyright 0"
+      ]
+    },
+    {
       "id": "RR-0",
       "title": "Robot HITL skeleton: propose → approve → apply → validate",
       "priority": "high",
