@@ -838,7 +838,7 @@
       "id": "ISS-017",
       "title": "Land propose.py EOF trailing newline (ISS-015 residual)",
       "priority": "low",
-      "status": "ready",
+      "status": "DONE",
       "categories": [
         "repo-hygiene"
       ],
@@ -856,7 +856,13 @@
         "ruff format --check: 0 files would be reformatted (112 already formatted)",
         "EOF-marker hunk applies through the new binary staging",
         "suite 405 green; pyright 0; ruff check clean"
-      ]
+      ],
+      "pr": "#30",
+      "merged_commit": "654d042",
+      "merged_at": "2026-08-12T00:00:00Z",
+      "status_updated_at": "2026-08-12T00:00:00+00:00",
+      "updated_at": "2026-08-12T00:00:00+00:00",
+      "resolution": "Single ruff-format hunk: EOF trailing newline in propose.py ('\\ No newline' marker). Raw `git diff HEAD` output passed propose with zero re-synthesis - dogfood of ISS-016 binary staging (git headers + LF + EOF-marker hunk all accepted). ruff format --check: 113 files already formatted, 0 would be reformatted; ruff check clean; suite 405; PR #30 merged 654d042; hygiene arc (ISS-015/016/017) fully closed"
     },
     {
       "id": "RR-0",

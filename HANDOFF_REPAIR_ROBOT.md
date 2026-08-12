@@ -12,7 +12,12 @@
 
 ## Последний завершённый этап
 
-Последний завершённый этап — **ISS-016 DONE: binary-safe staging в propose.py (PR #29 `8a7b4bf`)**.
+Последний завершённый этап — **ISS-017 DONE: trailing newline propose.py (PR #30 `654d042`)**. Hygiene-дуга ISS-015/016/017 закрыта: `ruff format --check` = **113/113**, backlog пуст.
+
+- Единственный hunk: EOF trailing newline в propose.py (`\ No newline` маркер); сырой `git diff HEAD` прошёл propose без пересборки — dogfood binary staging из ISS-016 доказан делом;
+- Suite 405, pyright 0, ruff clean.
+
+Предыдущий этап — **ISS-016 DONE: binary-safe staging в propose.py (PR #29 `8a7b4bf`)**.
 
 - Байтовый путь diff: `_write_temp_diff` = `bytes` + `NamedTemporaryFile("wb")` (staged == input, без дозаписи `\n`); `check_diff_applies`/`diff_numstat`/`validate_proposal_diff` принимают `bytes`, decode только для парсинга; `create_proposal_artifacts(diff_bytes=...)`, `proposal.diff` пишется через `write_bytes` (apply читает артефакт напрямую → байт-безопасно end-to-end); все чтения diff → `read_bytes`;
 - Новый `tests/agentic/test_binary_staging.py` — 8 тестов (staged == input: LF / CRLF / git-заголовки / EOF-маркер / patch без финального `\n`); suite **397 → 405**;
@@ -241,7 +246,7 @@ pytest  → 383 passed;  pyright  → 0 errors;  ruff  → clean (1 pre-existing
 2. Phase 2 — **CLOSED** (ISS-003, ISS-008, ISS-010).  
 3. Phase 3 — **CLOSED** (ISS-004 #17, ISS-011 #18).  
 4. Phase 4 — **CLOSED** (ISS-009 #19 `65907e5`; ISS-005 #20–#23 `b5638d6`: stores + thin facade, `session.py` 857→649 LOC).  
-5. **ISS-017 IN PROGRESS — trailing newline propose.py** (residual ISS-015; машинный diff `ruff format` через исправленный staging — dogfood ISS-016; после мержа `ruff format --check` = 112/112). Debt (только по явному решению): smoke-тесты Phase 1 (чек-лист в `.agentic/out/notes/2026-08-11-smoke-phase1.md`, отложены); pre-existing race в `discard` capture-registry; I001 pre-existing.  
+5. **Backlog пуст — все задачи DONE** (ISS-017 #30 `654d042` закрыл hygiene на 113/113). Debt (только по явному решению): smoke-тесты Phase 1 (чек-лист в `.agentic/out/notes/2026-08-11-smoke-phase1.md`, отложены); pre-existing race в `discard` capture-registry; I001 pre-existing.  
 6. Meta (backlog/handoff) — commit immediately; product — only via propose → approve → apply.  
 7. Gate: не мержить product PR при красном validate; env-фиксы — отдельной веткой (как PR #15).
 
