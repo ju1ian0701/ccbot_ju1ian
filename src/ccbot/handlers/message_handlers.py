@@ -253,7 +253,7 @@ async def capture_bash_output(
     except asyncio.CancelledError:
         return
     finally:
-        capture_tasks.discard(user_id, thread_id)
+        capture_tasks.discard(user_id, thread_id, asyncio.current_task())
 
 
 async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:

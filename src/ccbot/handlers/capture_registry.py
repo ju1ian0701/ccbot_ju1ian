@@ -29,9 +29,28 @@ class CaptureTaskRegistry:
         if task and not task.done():
             task.cancel()
 
-    def discard(self, user_id: int, thread_id: int) -> None:
-        """Remove the registry entry without cancelling (task self-cleanup)."""
-        self._tasks.pop((user_id, thread_id), None)
+    def discard(
+        self,
+        user_id: int,
+        thread_id: int,
+        task: asyncio.Task[None] | None = None,
+    ) -> None:
+        """Remove registry entry without cancelling (task self-cleanup).
+
+        When ``task`` is None, pop unconditionally (legacy contract used by
+        existing tests and callers that intentionally clear the key).
+
+        When ``task`` is provided, pop only if the registered entry is that
+        same task object (identity check). A finishing stale watcher must not
+        evict a newer registration for the same topic (cancel(A) → register(B)
+        → discard(A) must leave B registered).
+        """
+        key = (user_id, thread_id)
+        if task is None:
+            self._tasks.pop(key, None)
+            return
+        if self._tasks.get(key) is task:
+            self._tasks.pop(key, None)
 
 
 # Process-wide singleton
