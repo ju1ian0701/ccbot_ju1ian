@@ -146,6 +146,11 @@ def write_text(path: Path, text: str) -> None:
     path.write_text(text, encoding="utf-8")
 
 
+def write_bytes(path: Path, data: bytes) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(data)
+
+
 def deep_merge(base: dict, override: dict) -> dict:
     for key, value in override.items():
         if isinstance(value, dict) and isinstance(base.get(key), dict):
@@ -631,28 +636,30 @@ def check_pure_unified_diff(diff_text: str) -> None:
     check_no_diff_comments(diff_text)
 
 
-def _write_temp_diff(diff_text: str) -> Path:
+def _write_temp_diff(diff_bytes: bytes) -> Path:
+    """Stage diff bytes 1:1 — text-mode staging corrupts CRLF patches (ISS-016)."""
     fd = tempfile.NamedTemporaryFile(
-        "w",
-        encoding="utf-8",
+        "wb",
         suffix=".diff",
         delete=False,
     )
     path = Path(fd.name)
 
-    fd.write(diff_text if diff_text.endswith("\n") else diff_text + "\n")
+    fd.write(diff_bytes)
     fd.close()
 
     return path
 
 
-def check_diff_applies(diff_text: str) -> None:
+def check_diff_applies(diff_bytes: bytes) -> None:
+    diff_text = diff_bytes.decode("utf-8")
+
     if _is_empty_diff(diff_text):
         return
 
     check_pure_unified_diff(diff_text)
 
-    tmp_path = _write_temp_diff(diff_text)
+    tmp_path = _write_temp_diff(diff_bytes)
 
     try:
         attempts = [
@@ -703,15 +710,17 @@ def check_diff_applies(diff_text: str) -> None:
         tmp_path.unlink(missing_ok=True)
 
 
-def diff_numstat(diff_text: str) -> list[dict]:
+def diff_numstat(diff_bytes: bytes) -> list[dict]:
     """Parse ``git apply --numstat`` for a unified diff."""
+    diff_text = diff_bytes.decode("utf-8")
+
     if _is_empty_diff(diff_text):
         return []
 
     # Reject fences/comments before git apply --numstat (corrupt patches).
     check_pure_unified_diff(diff_text)
 
-    tmp_path = _write_temp_diff(diff_text)
+    tmp_path = _write_temp_diff(diff_bytes)
 
     try:
         result = run(
@@ -751,8 +760,10 @@ def diff_numstat(diff_text: str) -> list[dict]:
         tmp_path.unlink(missing_ok=True)
 
 
-def validate_proposal_diff(diff_text: str, *, allow_empty: bool = False) -> None:
+def validate_proposal_diff(diff_bytes: bytes, *, allow_empty: bool = False) -> None:
     """Validate that proposal.diff is empty (if allowed) or a usable unified diff."""
+    diff_text = diff_bytes.decode("utf-8")
+
     if _is_empty_diff(diff_text):
         if allow_empty:
             return
@@ -771,7 +782,7 @@ def validate_proposal_diff(diff_text: str, *, allow_empty: bool = False) -> None
             "proposal.diff is not a valid unified diff (missing 'diff --git' headers)"
         )
 
-    check_diff_applies(diff_text)
+    check_diff_applies(diff_bytes)
 
 
 def build_files_json(numstat: list[dict], config: dict) -> dict:
@@ -947,7 +958,7 @@ def create_proposal_artifacts(
     task: dict,
     *,
     base_ref: str,
-    diff_text: str | None = None,
+    diff_bytes: bytes | None = None,
     allow_empty: bool = True,
 ) -> Path:
     config = load_config()
@@ -958,8 +969,10 @@ def create_proposal_artifacts(
     dest.mkdir(parents=True, exist_ok=True)
 
     base_sha = git_base_sha(base_ref)
-    if diff_text is None:
-        diff_text = capture_working_tree_diff(base_ref)
+    if diff_bytes is None:
+        diff_bytes = capture_working_tree_diff(base_ref).encode("utf-8")
+
+    diff_text = diff_bytes.decode("utf-8")
 
     if _is_empty_diff(diff_text):
         if not allow_empty:
@@ -969,12 +982,13 @@ def create_proposal_artifacts(
             )
         # Pure empty file — no # comments / markdown (those break git apply).
         diff_text = ""
+        diff_bytes = b""
 
     # Format guards before any git apply --numstat / --check.
     check_pure_unified_diff(diff_text)
 
-    numstat = diff_numstat(diff_text)
-    check_diff_applies(diff_text)
+    numstat = diff_numstat(diff_bytes)
+    check_diff_applies(diff_bytes)
 
     paths = [item["path"] for item in numstat] or list_changed_paths_from_diff(
         diff_text
@@ -1026,10 +1040,7 @@ def create_proposal_artifacts(
         "max_loc_delta": max_loc,
     }
 
-    write_text(
-        dest / "proposal.diff",
-        diff_text if diff_text.endswith("\n") else diff_text + "\n",
-    )
+    write_bytes(dest / "proposal.diff", diff_bytes)
     write_text(
         dest / "proposal.md", build_proposal_md(task, proposal_id, base_sha, paths)
     )
@@ -1412,7 +1423,8 @@ def apply(
     if not diff_path.is_file():
         raise RuntimeError(f"proposal.diff missing: {diff_path}")
 
-    diff_text = diff_path.read_text(encoding="utf-8")
+    diff_bytes = diff_path.read_bytes()
+    diff_text = diff_bytes.decode("utf-8")
     if _is_empty_diff(diff_text):
         raise RuntimeError("apply blocked: empty proposal.diff")
 
@@ -1500,19 +1512,19 @@ def cmd_propose(args: argparse.Namespace) -> int:
     if not args.skip_context:
         prepare_pipeline_context(task_id)
 
-    diff_text = None
+    diff_bytes = None
     if args.diff_file:
         diff_path = Path(args.diff_file)
         if not diff_path.is_file():
             print(f"propose_failed: diff file not found: {diff_path}", file=sys.stderr)
             return 1
-        diff_text = diff_path.read_text(encoding="utf-8")
+        diff_bytes = diff_path.read_bytes()
 
     try:
         dest = create_proposal_artifacts(
             task,
             base_ref=base_ref,
-            diff_text=diff_text,
+            diff_bytes=diff_bytes,
             allow_empty=bool(args.allow_empty),
         )
     except RuntimeError as exc:
@@ -1604,14 +1616,14 @@ def cmd_import_proposal(args: argparse.Namespace) -> int:
             )
             return 1
 
-        diff_text = diff_path.read_text(encoding="utf-8")
+        diff_bytes = diff_path.read_bytes()
         base_ref = args.base_ref or DEFAULT_BASE_REF
 
         try:
             dest = create_proposal_artifacts(
                 task,
                 base_ref=base_ref,
-                diff_text=diff_text,
+                diff_bytes=diff_bytes,
                 allow_empty=False,
             )
         except RuntimeError as exc:
@@ -1643,12 +1655,13 @@ def cmd_import_proposal(args: argparse.Namespace) -> int:
         )
         return 1
 
-    diff_text = diff_path.read_text(encoding="utf-8")
+    diff_bytes = diff_path.read_bytes()
+    diff_text = diff_bytes.decode("utf-8")
 
     try:
         check_pure_unified_diff(diff_text)
-        numstat = diff_numstat(diff_text)
-        check_diff_applies(diff_text)
+        numstat = diff_numstat(diff_bytes)
+        check_diff_applies(diff_bytes)
     except RuntimeError as exc:
         print(f"import_proposal_failed: {exc}", file=sys.stderr)
         return 1
