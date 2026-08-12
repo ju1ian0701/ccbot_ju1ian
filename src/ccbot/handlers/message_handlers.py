@@ -21,11 +21,11 @@ from telegram.ext import ContextTypes
 from ..config import config
 from ..markdown_v2 import convert_markdown
 from ..session import session_manager
+from ..session_guard import get_thread_id, require_session, require_user
 from ..terminal_parser import extract_bash_output, is_interactive_ui
 from ..tmux_manager import tmux_manager
 from ..transcribe import transcribe_voice
 from ..utils import ccbot_dir
-from ..session_guard import get_thread_id, require_session, require_user
 from .capture_registry import capture_tasks
 from .directory_browser import (
     BROWSE_DIRS_KEY,

@@ -15,7 +15,6 @@ from paths import (
     write_text,
 )
 
-
 TERMINAL_STATUS = frozenset({"done", "cancelled", "wontfix"})
 ACTIVE_STATUS = frozenset({"ready", "planned", "in_progress", "blocked"})
 
