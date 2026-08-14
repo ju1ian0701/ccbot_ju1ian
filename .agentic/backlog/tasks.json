@@ -940,6 +940,69 @@
       "resolution": "Identity-checked discard: discard(user_id, thread_id, task=None) pops only when registered entry IS the finishing task; capture_bash_output finally passes asyncio.current_task(); +2 regression tests (stale-evict, matching-remove) appended to tests/ccbot/test_capture_registry.py (existing 4 untouched). Gates: ruff clean, pyright 0, suite green (6 capture-registry tests), validate ok. PR #32 merged f511920."
     },
     {
+      "id": "ISS-020",
+      "title": "port upstream PR #86 allowed_updates + edit-guards",
+      "priority": "medium",
+      "status": "in_progress",
+      "categories": [
+        "upstream",
+        "telegram"
+      ],
+      "files": [
+        "src/ccbot/main.py",
+        "src/ccbot/bot.py"
+      ],
+      "related_nodes": [
+        "file:src/ccbot/main.py",
+        "file:src/ccbot/bot.py"
+      ],
+      "depends_on": [],
+      "estimated_risk": "low",
+      "problem": "Fork still polls with allowed_updates=[message, callback_query]. Upstream PR #86 (six-ddc/ccbot) showed Telegram silently dropping forum_topic_edited service messages on that minimal subscription (mid-May 2026); topic-rename -> tmux window rename never fires. Broadening the list restores delivery, but also admits edited_message / channel_post, which PTB MessageHandler matches by default — TEXT/PHOTO/VOICE/catch-all would re-process edits and channel posts as new user content.",
+      "solution": "Port upstream PR #86 allowed_updates (8 types) into main.py run_polling, plus a second hunk: exclude filters.UpdateType.EDITED and filters.UpdateType.CHANNEL_POST on the four content handlers in bot.py (TEXT, PHOTO, VOICE, catch-all). Topic closed/edited handlers stay unguarded so forum service messages still reach them.",
+      "acceptance_criteria": [
+        "main.py содержит 8-элементный список allowed_updates (evidence: grep)",
+        "В bot.py у handlers TEXT/PHOTO/VOICE/catch-all присутствуют фильтры-исключения edited/channel_post (evidence: grep)",
+        "ruff check clean; ruff format --check = 113/113 (новые строки комментария PR #86 — до 88 символов, список уже в ruff-стиле; проверить фактом, не предполагать)",
+        "pyright = 0 errors",
+        "pytest suite = 405 passed"
+      ],
+      "evidence": {
+        "grep": [
+          {
+            "pattern": "edited_message",
+            "path": "src/ccbot/main.py",
+            "expect": "present"
+          },
+          {
+            "pattern": "edited_channel_post",
+            "path": "src/ccbot/main.py",
+            "expect": "present"
+          },
+          {
+            "pattern": "my_chat_member",
+            "path": "src/ccbot/main.py",
+            "expect": "present"
+          },
+          {
+            "pattern": "chat_join_request",
+            "path": "src/ccbot/main.py",
+            "expect": "present"
+          },
+          {
+            "pattern": "UpdateType\\.EDITED",
+            "path": "src/ccbot/bot.py",
+            "expect": "present"
+          },
+          {
+            "pattern": "UpdateType\\.CHANNEL_POST",
+            "path": "src/ccbot/bot.py",
+            "expect": "present"
+          }
+        ]
+      }
+    },
+    {
       "id": "RR-0",
       "title": "Robot HITL skeleton: propose → approve → apply → validate",
       "priority": "high",
