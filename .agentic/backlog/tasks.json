@@ -1025,6 +1025,63 @@
       }
     },
     {
+      "id": "ISS-021",
+      "title": "port upstream PR #89 documents handler (require_session rewrite)",
+      "priority": "medium",
+      "status": "in_progress",
+      "categories": [
+        "upstream",
+        "telegram"
+      ],
+      "files": [
+        "src/ccbot/handlers/document.py",
+        "src/ccbot/bot.py"
+      ],
+      "related_nodes": [
+        "file:src/ccbot/bot.py",
+        "file:src/ccbot/handlers/message_handlers.py",
+        "file:src/ccbot/session_guard.py"
+      ],
+      "depends_on": [],
+      "estimated_risk": "low",
+      "problem": "Upstream PR #89 adds document/file uploads (PDF etc.) in a bound topic: download to ~/.ccbot/documents/ and forward '(file attached: <path>)' to the Claude session. The upstream handler still uses the old dual-path (is_user_allowed / _get_thread_id from bot.py, hand-rolled window lookup). Porting it as-is would reintroduce the ISS-001/002 dual SoT.",
+      "solution": "Port PR #89 behavior (document_handler + filters.Document.ALL registration + 20 MB cap + filename sanitize + caption) but rewrite auth/session onto require_user + require_session (same contract as photo_handler / voice_handler). No lazy import from bot.py.",
+      "acceptance_criteria": [
+        "src/ccbot/handlers/document.py exists; bot.py registers MessageHandler(filters.Document.ALL, document_handler) (evidence: grep)",
+        "document_handler uses require_user + require_session; absent: is_user_allowed, _get_thread_id, lazy import from bot.py (evidence: grep)",
+        "files saved under the ccbot documents dir; optional caption preserved; path forwarded as (file attached: <path>)",
+        "files above Telegram 20 MB bot-download cap rejected before getFile",
+        "unsupported-content UX mentions documents/files",
+        "ruff check clean; ruff format --check clean on touched files",
+        "pyright = 0 errors",
+        "pytest suite = 407 passed"
+      ],
+      "evidence": {
+        "grep": [
+          {
+            "pattern": "document_handler",
+            "path": "src/ccbot/bot.py",
+            "expect": "present"
+          },
+          {
+            "pattern": "filters\\.Document\\.ALL",
+            "path": "src/ccbot/bot.py",
+            "expect": "present"
+          },
+          {
+            "pattern": "require_session",
+            "path": "src/ccbot/handlers/document.py",
+            "expect": "present"
+          },
+          {
+            "pattern": "is_user_allowed|_get_thread_id",
+            "path": "src/ccbot/handlers/document.py",
+            "expect": "absent"
+          }
+        ]
+      }
+    },
+    {
       "id": "RR-0",
       "title": "Robot HITL skeleton: propose → approve → apply → validate",
       "priority": "high",
