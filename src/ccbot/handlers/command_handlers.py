@@ -328,5 +328,7 @@ async def unsupported_content_handler(
     logger.debug("Unsupported content from user %d", user.id)
     await safe_reply(
         update.message,
-        "⚠ Only text, photo, and voice messages are supported. Stickers, video, and other media cannot be forwarded to Claude Code.",
+        "⚠ Only text, photo, voice, and document (file) messages are "
+        "supported. Stickers, video, and other media cannot be forwarded "
+        "to Claude Code.",
     )
