@@ -1140,7 +1140,10 @@
         "pyproject [voice] extra for faster-whisper; .env.example documents backend/model/language",
         "ruff check clean; ruff format --check clean on touched files",
         "pyright = 0 errors",
-        "pytest suite = 419 + новые тесты"
+        "pytest suite = 419 + новые тесты",
+        "voice_handler в message_handlers.py: файловое скачивание + finally: file_path.unlink(missing_ok=True); ветки TranscriptionDisabled (« Voice not available») / TranscriptionError («❌ Transcription failed») / generic Exception (logger.exception); каноничная require_user/require_session сохранена",
+        "config.py: whisper_language из CCBOT_WHISPER_LANGUAGE, значения auto|en|ru (дефолт auto); trim/lower; невалидное/пустое → logger.warning + fallback \"auto\" (паттерн whisper_backend)",
+        "гейты: ruff check clean; ruff format --check rc=0; pyright 0 (допустим # type: ignore[import-untyped] для faster_whisper с комментарием); validate ok:true, guardrails 12/12"
       ],
       "evidence": {
         "grep": [
