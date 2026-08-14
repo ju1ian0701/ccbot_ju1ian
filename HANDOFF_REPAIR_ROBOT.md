@@ -12,13 +12,13 @@
 
 ## Последний завершённый этап
 
-Последний завершённый этап — **ISS-019 DONE: identity-checked `CaptureTaskRegistry.discard` (PR #32 `f511920`)**.
+Последний завершённый этап — **ISS-020 DONE: port upstream PR #86 allowed_updates + edit-guards (PR #33 `3e06992`)**.
 
-- Identity-checked discard: `discard(user_id, thread_id, task=None)` — при `task is None` безусловный pop (legacy); при `task` — pop только если `self._tasks.get(key) is task` (stale finally не выкидывает новую регистрацию);
-- Call site: `capture_bash_output` finally → `capture_tasks.discard(user_id, thread_id, asyncio.current_task())`;
-- +2 regression tests (stale-evict, matching-remove) в `tests/ccbot/test_capture_registry.py` (существующие 4 без правок); suite capture 6/6, ruff/pyright green.
+- `main.py`: `allowed_updates` 2 → 8 (`message`, `edited_message`, `channel_post`, `edited_channel_post`, `callback_query`, `my_chat_member`, `chat_member`, `chat_join_request`);
+- `bot.py`: TEXT / PHOTO / VOICE / catch-all — `~filters.UpdateType.EDITED` + `~filters.UpdateType.CHANNEL_POST`; topic closed/edited без guard;
+- Suite 407; residual debt — COMMAND edit-guard (low) и smoke (blocked, чек-лист п. 3).
 
-Предыдущий этап — **ISS-018 DONE: ruff I001 import sort, 12 файлов (PR #31 `5374113`)**.
+Предыдущий этап — **ISS-019 DONE: identity-checked `CaptureTaskRegistry.discard` (PR #32 `f511920`)**.
 
 - Машинный `ruff check --select I001 --fix` (4 scripts/agentic + 6 src/ccbot + 2 tests) + одна ручная правка: восстановлен `# noqa: E402` в cli.py (фиксер расщепил `from propose import (...)`, новый блок потерял noqa — предусмотрено acceptance);
 - Гейты: I001 = 0 findings, `ruff check` clean, `ruff format --check` = **113/113**, pyright 0, suite 405, validate `ok: true`, guardrails 12/12.
@@ -257,10 +257,12 @@ pytest  → 383 passed;  pyright  → 0 errors;  ruff  → clean (1 pre-existing
 2. Phase 2 — **CLOSED** (ISS-003, ISS-008, ISS-010).  
 3. Phase 3 — **CLOSED** (ISS-004 #17, ISS-011 #18).  
 4. Phase 4 — **CLOSED** (ISS-009 #19 `65907e5`; ISS-005 #20–#23 `b5638d6`: stores + thin facade, `session.py` 857→649 LOC).  
-5. **ISS-020 IN PROGRESS — port upstream PR #86 allowed_updates + edit-guards** (`main.py` 8-элементный `allowed_updates`; в `bot.py` у TEXT/PHOTO/VOICE/catch-all — фильтры-исключения edited/channel_post).  
+5. **ISS-020 DONE** (PR #33 `3e06992`). Следующий product-цикл — только после явного выбора/добавления ready-задачи.  
 6. **Debt (только по явному решению, без отдельной ISS):**  
    - smoke-тесты Phase 1 (чек-лист в `.agentic/out/notes/2026-08-11-smoke-phase1.md`, отложены);  
    - **format-scope validate** — `validate`/`ruff format --check` scope сейчас завязан на full-tree / pre-existing baseline; при hygiene-задачах (ISS-015+) и точечных product-diff полезен scoped format-check (только changed files / allowlist), чтобы residual вне scope не маскировал fail и наоборот. Полноценная ISS — отдельное решение о приоритете; до того — debt-заметка здесь (как smoke Phase 1).  
+   - ISS-020 residual: edit-guard для `forward_command_handler` (`filters.COMMAND`) — severity low;  
+   - smoke ISS-020 — чек-лист п. 3 (`.agentic/backlog/smoke-iss-020.md`); blocked: требуется выделенный сервер с живой tmux-сессией.  
 7. Meta (backlog/handoff) — commit immediately; product — only via propose → approve → apply.  
 8. Gate: не мержить product PR при красном validate; env-фиксы — отдельной веткой (как PR #15).
 

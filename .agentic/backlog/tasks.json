@@ -973,6 +973,22 @@
       "status_updated_at": "2026-08-14T00:00:00+00:00",
       "updated_at": "2026-08-14T00:00:00+00:00",
       "resolution": "Ported upstream PR #86 allowed_updates (8 types) into main.py run_polling + edit-guards on TEXT/PHOTO/VOICE/catch-all (filters.UpdateType.EDITED and CHANNEL_POST). Topic closed/edited handlers unguarded. PR #33 merged 3e06992. Suite 407.",
+      "debt": [
+        {
+          "title": "edit-guard for forward_command_handler (filters.COMMAND)",
+          "severity": "low",
+          "files": [
+            "src/ccbot/bot.py"
+          ],
+          "notes": "ISS-020 guarded TEXT/PHOTO/VOICE/catch-all. MessageHandler(filters.COMMAND, forward_command_handler) still matches edited_message / channel_post by default."
+        },
+        {
+          "title": "smoke ISS-020",
+          "status": "blocked",
+          "blocked": "требуется выделенный сервер с живой tmux-сессией",
+          "checklist": "п. 3 — .agentic/backlog/smoke-iss-020.md"
+        }
+      ],
       "evidence": {
         "grep": [
           {
