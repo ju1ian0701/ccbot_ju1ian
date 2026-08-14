@@ -1028,14 +1028,16 @@
       "id": "ISS-021",
       "title": "port upstream PR #89 documents handler (require_session rewrite)",
       "priority": "medium",
-      "status": "in_progress",
+      "status": "DONE",
       "categories": [
         "upstream",
         "telegram"
       ],
       "files": [
         "src/ccbot/handlers/document.py",
-        "src/ccbot/bot.py"
+        "src/ccbot/bot.py",
+        "src/ccbot/handlers/command_handlers.py",
+        "tests/ccbot/handlers/test_document.py"
       ],
       "related_nodes": [
         "file:src/ccbot/bot.py",
@@ -1054,7 +1056,30 @@
         "unsupported-content UX mentions documents/files",
         "ruff check clean; ruff format --check clean on touched files",
         "pyright = 0 errors",
-        "pytest suite = 407 passed"
+        "pytest suite = 419 passed"
+      ],
+      "pr": "#34",
+      "merged_commit": "8120171",
+      "merged_at": "2026-08-14T00:00:00Z",
+      "status_updated_at": "2026-08-14T00:00:00+00:00",
+      "updated_at": "2026-08-14T00:00:00+00:00",
+      "resolution": "Ported upstream PR #89 document handler with require_session rewrite (no is_user_allowed / _get_thread_id). filters.Document.ALL + edit-guards; 20 MB cap; caption + (file attached: path); supported-types UX; +12 tests. PR #34 merged 8120171. Suite 419.",
+      "debt": [
+        {
+          "title": "naming DOCS_DIR vs _MAX_DOC_BYTES",
+          "severity": "cosmetic",
+          "notes": "THERMO review: public DOCS_DIR vs leading-underscore _MAX_DOC_BYTES in document.py. Cosmetics only."
+        },
+        {
+          "title": "import-time mkdir of cache dirs → lazy init",
+          "severity": "low",
+          "notes": "THERMO review candidate: DOCS_DIR.mkdir at import; same pattern as IMAGES_DIR. Lazy init would cover both."
+        },
+        {
+          "title": "time.time() filename collision window → file_unique_id",
+          "severity": "low",
+          "notes": "THERMO review: document filenames use int(time.time()) prefix; collision window under concurrent uploads. Prefer Telegram file_unique_id."
+        }
       ],
       "evidence": {
         "grep": [
