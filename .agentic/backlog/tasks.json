@@ -1107,6 +1107,67 @@
       }
     },
     {
+      "id": "ISS-022",
+      "title": "port upstream PR #53 local whisper backend + CCBOT_WHISPER_LANGUAGE (auto|en|ru)",
+      "priority": "medium",
+      "status": "in_progress",
+      "categories": [
+        "upstream",
+        "telegram"
+      ],
+      "files": [
+        "src/ccbot/transcribe.py",
+        "src/ccbot/config.py",
+        "src/ccbot/handlers/message_handlers.py",
+        "tests/ccbot/test_transcribe.py",
+        ".env.example",
+        "pyproject.toml"
+      ],
+      "related_nodes": [
+        "file:src/ccbot/transcribe.py",
+        "file:src/ccbot/config.py",
+        "file:src/ccbot/handlers/message_handlers.py"
+      ],
+      "depends_on": [],
+      "estimated_risk": "medium",
+      "problem": "Fork transcribes voice only via OpenAI (transcribe_voice + hardcoded gpt-4o-transcribe). Upstream PR #53 adds a local faster-whisper backend (CCBOT_WHISPER_BACKEND openai|local|off) but hardcodes English. This fork needs the port plus CCBOT_WHISPER_LANGUAGE=auto|en|ru (no language=\"en\" hardcode).",
+      "solution": "Port PR #53 dual backend (unified transcribe() entry, optional [voice] extra, env docs). Replace transcribe_voice call sites. Language from CCBOT_WHISPER_LANGUAGE for both local and openai paths. Matrix tests local/openai x auto|en|ru.",
+      "acceptance_criteria": [
+        "transcribe_voice = 0 hits under src/ and tests/ (evidence: grep absent)",
+        "language=\"en\" хардкода нет (evidence: grep absent)",
+        "CCBOT_WHISPER_LANGUAGE accepts auto|en|ru; both local and openai backends honor it (языковая матрица)",
+        "unified transcribe() routes on CCBOT_WHISPER_BACKEND (openai|local|off)",
+        "pyproject [voice] extra for faster-whisper; .env.example documents backend/model/language",
+        "ruff check clean; ruff format --check clean on touched files",
+        "pyright = 0 errors",
+        "pytest suite = 419 + новые тесты"
+      ],
+      "evidence": {
+        "grep": [
+          {
+            "pattern": "transcribe_voice",
+            "path": "src",
+            "expect": "absent"
+          },
+          {
+            "pattern": "transcribe_voice",
+            "path": "tests",
+            "expect": "absent"
+          },
+          {
+            "pattern": "language\\s*=\\s*[\"']en[\"']",
+            "path": "src/ccbot",
+            "expect": "absent"
+          },
+          {
+            "pattern": "CCBOT_WHISPER_LANGUAGE|whisper_language",
+            "path": "src/ccbot/config.py",
+            "expect": "present"
+          }
+        ]
+      }
+    },
+    {
       "id": "RR-0",
       "title": "Robot HITL skeleton: propose → approve → apply → validate",
       "priority": "high",
