@@ -107,6 +107,25 @@ class Config:
             "OPENAI_BASE_URL", "https://api.openai.com/v1"
         )
 
+        # Voice transcription backend: "openai", "local" (faster-whisper), or "off"
+        self.whisper_backend: str = os.getenv("CCBOT_WHISPER_BACKEND", "openai").lower()
+        if self.whisper_backend not in ("local", "openai", "off"):
+            logger.warning(
+                "Unknown CCBOT_WHISPER_BACKEND=%r, defaulting to 'off'",
+                self.whisper_backend,
+            )
+            self.whisper_backend = "off"
+        self.whisper_model: str = os.getenv("CCBOT_WHISPER_MODEL", "small")
+
+        raw_lang = os.getenv("CCBOT_WHISPER_LANGUAGE", "auto").strip().lower()
+        if raw_lang not in ("auto", "en", "ru"):
+            logger.warning(
+                "Unknown CCBOT_WHISPER_LANGUAGE=%r, defaulting to 'auto'",
+                raw_lang,
+            )
+            raw_lang = "auto"
+        self.whisper_language: str = raw_lang
+
         # Scrub sensitive vars from os.environ so child processes never inherit them.
         # Values are already captured in Config attributes above.
         for var in SENSITIVE_ENV_VARS:
