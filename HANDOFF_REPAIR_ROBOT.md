@@ -12,11 +12,15 @@
 
 ## Последний завершённый этап
 
-Последний завершённый этап — **ISS-021 DONE: port upstream PR #89 documents handler (require_session rewrite) (PR #34 `8120171`)**.
+Последний завершённый этап — **ISS-022 DONE: port upstream PR #53 local whisper backend + CCBOT_WHISPER_LANGUAGE (auto|en|ru) (PR #35 `236b13c`)**.
 
-- `handlers/document.py`: `require_user` + `require_session`; `ctx.window_id`; 20 MB cap; caption + `(file attached: <path>)`;
-- `bot.py`: `filters.Document.ALL` + edit-guards; `command_handlers.py` supported-types;
-- +12 tests (`tests/ccbot/handlers/test_document.py`); suite 419.
+- `transcribe.py`: unified `transcribe()`; local faster-whisper + openai; `CCBOT_WHISPER_LANGUAGE` auto|en|ru (без хардкода `language="en"`);
+- `voice_handler`: файловое скачивание + `finally: unlink`; `TranscriptionDisabled` / `TranscriptionError` / generic; сначала 🎤, потом forward;
+- Suite 436; THERMO 7/7.
+
+Предыдущий этап — **ISS-021 DONE: port upstream PR #89 documents handler (require_session rewrite) (PR #34 `8120171`)**.
+
+- `handlers/document.py`: `require_user` + `require_session`; 20 MB cap; caption + `(file attached: <path>)`; suite 419.
 
 Предыдущий этап — **ISS-020 DONE: port upstream PR #86 allowed_updates + edit-guards (PR #33 `3e06992`)**.
 
@@ -259,6 +263,12 @@ pytest  → 383 passed;  pyright  → 0 errors;  ruff  → clean (1 pre-existing
 - Свои F401 отслеживать `ruff check` в песочнице до сборки diff (инцидент 4c: `flock`/`LOCK_EX`/`LOCK_UN`);
 - `/tmp` в песочнице неперсистентен — diff-артефакты и патчи дублировать в output.
 
+### Уроки (операционные, накопились к ISS-022)
+
+- **(а)** Meta-шаг завершён только при пустом `git log origin/main..main` (факт на remote, не локальный orphan-коммит).
+- **(б)** Перед любым вызовом `agentic <cmd>` — сверка флагов через `-h`. Три инцидента: `--notes` обязателен у `request-changes` (×2), позиционный аргумент `approve`.
+- **(в)** GH_TOKEN-разделение: `gh` / token-действия — человек; робот останавливается на `HANDOFF TO HUMAN`.
+
 ---
 
 ## Следующий шаг
@@ -267,7 +277,7 @@ pytest  → 383 passed;  pyright  → 0 errors;  ruff  → clean (1 pre-existing
 2. Phase 2 — **CLOSED** (ISS-003, ISS-008, ISS-010).  
 3. Phase 3 — **CLOSED** (ISS-004 #17, ISS-011 #18).  
 4. Phase 4 — **CLOSED** (ISS-009 #19 `65907e5`; ISS-005 #20–#23 `b5638d6`: stores + thin facade, `session.py` 857→649 LOC).  
-5. **ISS-022 IN PROGRESS — port upstream PR #53 local whisper backend + CCBOT_WHISPER_LANGUAGE (auto|en|ru)** (`transcribe.py` / `config.py` / `message_handlers.py`; `transcribe_voice` = 0; без `language="en"` хардкода).  
+5. **ISS-022 DONE** (PR #35 `236b13c`). Следующий product-цикл — только после явного выбора/добавления ready-задачи.  
 6. **Debt (только по явному решению, без отдельной ISS):**  
    - smoke-тесты Phase 1 (чек-лист в `.agentic/out/notes/2026-08-11-smoke-phase1.md`, отложены);  
    - **format-scope validate** — `validate`/`ruff format --check` scope сейчас завязан на full-tree / pre-existing baseline; при hygiene-задачах (ISS-015+) и точечных product-diff полезен scoped format-check (только changed files / allowlist), чтобы residual вне scope не маскировал fail и наоборот. Полноценная ISS — отдельное решение о приоритете; до того — debt-заметка здесь (как smoke Phase 1).  

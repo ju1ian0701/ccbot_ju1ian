@@ -1110,7 +1110,7 @@
       "id": "ISS-022",
       "title": "port upstream PR #53 local whisper backend + CCBOT_WHISPER_LANGUAGE (auto|en|ru)",
       "priority": "medium",
-      "status": "in_progress",
+      "status": "DONE",
       "categories": [
         "upstream",
         "telegram"
@@ -1140,12 +1140,21 @@
         "pyproject [voice] extra for faster-whisper; .env.example documents backend/model/language",
         "ruff check clean; ruff format --check clean on touched files",
         "pyright = 0 errors",
-        "pytest suite = 419 + новые тесты",
+        "pytest suite = 436",
         "voice_handler в message_handlers.py: файловое скачивание + finally: file_path.unlink(missing_ok=True); ветки TranscriptionDisabled (« Voice not available») / TranscriptionError («❌ Transcription failed») / generic Exception (logger.exception); каноничная require_user/require_session сохранена",
         "config.py: whisper_language из CCBOT_WHISPER_LANGUAGE, значения auto|en|ru (дефолт auto); trim/lower; невалидное/пустое → logger.warning + fallback \"auto\" (паттерн whisper_backend)",
         "гейты: ruff check clean; ruff format --check rc=0; pyright 0 (допустим # type: ignore[import-untyped] для faster_whisper с комментарием); validate ok:true, guardrails 12/12"
       ],
+      "pr": "#35",
+      "merged_commit": "236b13c",
+      "merged_at": "2026-08-14T00:00:00Z",
+      "status_updated_at": "2026-08-14T00:00:00+00:00",
+      "updated_at": "2026-08-14T00:00:00+00:00",
+      "resolution": "Ported upstream PR #53 local whisper backend + CCBOT_WHISPER_LANGUAGE auto|en|ru. transcribe() SoT; transcribe_voice absent; no language=en hardcode; voice_handler file download + finally unlink; require_session canon. PR #35 merged 236b13c. Suite 436. THERMO 7/7.",
       "evidence": {
+        "suite": 436,
+        "pr": "#35",
+        "thermo": "7/7",
         "grep": [
           {
             "pattern": "transcribe_voice",
