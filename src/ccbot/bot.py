@@ -3,6 +3,7 @@
 Handler implementations live under ``ccbot.handlers``:
   - command_handlers: /start /history /screenshot /esc /unbind /usage /forward /topics
   - message_handlers: text / photo / voice + bash capture
+  - document: files (PDF, etc.) downloaded and forwarded as paths (document_handler)
   - callback_router: inline keyboard dispatch
   - notifications: SessionMonitor → Telegram delivery
   - window_bind / screenshot_controls: shared UI helpers
@@ -27,6 +28,7 @@ from telegram.ext import (
 
 from .config import config
 from .handlers.callback_router import callback_handler
+from .handlers.document import document_handler
 from .handlers.command_handlers import (
     esc_command,
     forward_command_handler,
@@ -226,6 +228,15 @@ def create_bot() -> Application:
             & ~filters.UpdateType.EDITED
             & ~filters.UpdateType.CHANNEL_POST,
             voice_handler,
+        )
+    )
+    # Documents (PDF, etc.): download and forward file path to Claude Code
+    application.add_handler(
+        MessageHandler(
+            filters.Document.ALL
+            & ~filters.UpdateType.EDITED
+            & ~filters.UpdateType.CHANNEL_POST,
+            document_handler,
         )
     )
     # Catch-all: non-text content (stickers, video, etc.)
