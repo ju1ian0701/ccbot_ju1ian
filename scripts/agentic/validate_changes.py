@@ -146,6 +146,9 @@ def check_guardrails(
             ignored_hits.append(path)
             continue
         considered.append(path)
+        # template files are documentation, not secrets
+        if Path(path).name in {".env.example", ".env.sample", ".env.template"}:
+            continue
         if _match_any(path, blocked):
             blocked_hits.append(path)
             violations.append(f"blocked path: {path}")

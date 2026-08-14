@@ -567,12 +567,20 @@ def _match_glob(path: str, pattern: str) -> bool:
 
 
 def path_allowed(path: str, config: dict) -> tuple[bool, str]:
-    path = path.replace("\\", "/").lstrip("./")
+    path = path.replace("\\", "/")
+    # Capture basename before lstrip("./"): that charset would turn
+    # ".env.example" into "env.example" and miss the template exemption.
+    basename = Path(path).name
+    path = path.lstrip("./")
 
     guard = config.get("guardrails") or {}
     blocked = list(guard.get("blocked_path_globs") or guard.get("block") or [])
     allowed = list(guard.get("allowed_path_globs") or guard.get("allow") or [])
     ignored = list(guard.get("ignored_path_globs") or [])
+
+    # template files are documentation, not secrets
+    if basename in {".env.example", ".env.sample", ".env.template"}:
+        return True, "env template (documentation, not secrets)"
 
     for pattern in blocked:
         if _match_glob(path, pattern):
