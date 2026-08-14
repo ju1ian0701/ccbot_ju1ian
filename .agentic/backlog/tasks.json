@@ -986,7 +986,7 @@
           "title": "smoke ISS-020",
           "status": "blocked",
           "blocked": "требуется выделенный сервер с живой tmux-сессией",
-          "checklist": "п. 3 — .agentic/backlog/smoke-iss-020.md"
+          "checklist": ".agentic/out/notes/2026-08-14-iss-020-smoke-checklist.md"
         }
       ],
       "evidence": {
