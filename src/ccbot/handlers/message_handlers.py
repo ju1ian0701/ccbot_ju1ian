@@ -3,7 +3,7 @@
 Handlers:
   - text_handler: route user text to bound tmux window / pickers
   - photo_handler: download image and forward path to Claude Code
-  - voice_handler: transcribe via OpenAI and forward text
+  - voice_handler: download voice file, transcribe, show text, then forward
   - capture_bash_output: stream !-prefixed bash command output
 """
 
@@ -18,13 +18,12 @@ from telegram import Bot, Update
 from telegram.constants import ChatAction
 from telegram.ext import ContextTypes
 
-from ..config import config
 from ..markdown_v2 import convert_markdown
 from ..session import session_manager
 from ..session_guard import get_thread_id, require_session, require_user
 from ..terminal_parser import extract_bash_output, is_interactive_ui
 from ..tmux_manager import tmux_manager
-from ..transcribe import transcribe_voice
+from ..transcribe import TranscriptionDisabled, TranscriptionError, transcribe
 from ..utils import ccbot_dir
 from .capture_registry import capture_tasks
 from .directory_browser import (
@@ -51,6 +50,9 @@ logger = logging.getLogger(__name__)
 # Image directory for incoming photos
 IMAGES_DIR = ccbot_dir() / "images"
 IMAGES_DIR.mkdir(parents=True, exist_ok=True)
+
+_AUDIO_DIR = ccbot_dir() / "audio"
+_AUDIO_DIR.mkdir(parents=True, exist_ok=True)
 
 
 async def photo_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -110,20 +112,12 @@ async def photo_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
 
 async def voice_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Handle voice messages: transcribe via OpenAI and forward text to Claude Code."""
+    """Handle voice messages: download, transcribe, show text, then forward."""
     user = await require_user(update, reply_unauthorized=True)
     if user is None:
         return
 
     if not update.message or not update.message.voice:
-        return
-
-    if not config.openai_api_key:
-        await safe_reply(
-            update.message,
-            "⚠ Voice transcription requires an OpenAI API key.\n"
-            "Set `OPENAI_API_KEY` in your `.env` file and restart the bot.",
-        )
         return
 
     chat = update.message.chat
@@ -142,20 +136,35 @@ async def voice_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     if ctx is None:
         return
 
-    # Download voice as in-memory bytes
-    voice_file = await update.message.voice.get_file()
-    ogg_data = bytes(await voice_file.download_as_bytearray())
+    voice = update.message.voice
+    tg_file = await voice.get_file()
+    filename = f"{int(time.time())}_{voice.file_unique_id}.ogg"
+    file_path = _AUDIO_DIR / filename
+    await tg_file.download_to_drive(file_path)
 
-    # Transcribe
     try:
-        text = await transcribe_voice(ogg_data)
-    except ValueError as e:
-        await safe_reply(update.message, f"⚠ {e}")
+        try:
+            await update.message.chat.send_action(ChatAction.TYPING)
+        except Exception as e:
+            logger.warning(
+                "send_action(TYPING) failed, continuing to transcription: %s", e
+            )
+        text = await transcribe(file_path)
+    except TranscriptionDisabled as e:
+        await safe_reply(update.message, f"🎤 Voice not available: {e}")
         return
-    except Exception as e:
-        logger.error("Voice transcription failed: %s", e)
-        await safe_reply(update.message, f"⚠ Transcription failed: {e}")
+    except TranscriptionError as e:
+        await safe_reply(update.message, f"❌ Transcription failed: {e}")
         return
+    except Exception:
+        logger.exception("Unexpected transcription error")
+        await safe_reply(update.message, "❌ Transcription failed unexpectedly.")
+        return
+    finally:
+        file_path.unlink(missing_ok=True)
+
+    # Show transcription first, then forward (package §3.2).
+    await safe_reply(update.message, f'🎤 "{text}"')
 
     try:
         await update.message.chat.send_action(ChatAction.TYPING)
@@ -167,8 +176,6 @@ async def voice_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     if not success:
         await safe_reply(update.message, f"❌ {message}")
         return
-
-    await safe_reply(update.message, f'🎤 "{text}"')
 
 
 def cancel_bash_capture(user_id: int, thread_id: int) -> None:
