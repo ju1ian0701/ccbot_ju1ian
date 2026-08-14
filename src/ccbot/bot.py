@@ -202,16 +202,40 @@ def create_bot() -> Application:
     # Forward any other /command to Claude Code
     application.add_handler(MessageHandler(filters.COMMAND, forward_command_handler))
     application.add_handler(
-        MessageHandler(filters.TEXT & ~filters.COMMAND, text_handler)
+        MessageHandler(
+            filters.TEXT
+            & ~filters.COMMAND
+            & ~filters.UpdateType.EDITED
+            & ~filters.UpdateType.CHANNEL_POST,
+            text_handler,
+        )
     )
     # Photos: download and forward file path to Claude Code
-    application.add_handler(MessageHandler(filters.PHOTO, photo_handler))
+    application.add_handler(
+        MessageHandler(
+            filters.PHOTO
+            & ~filters.UpdateType.EDITED
+            & ~filters.UpdateType.CHANNEL_POST,
+            photo_handler,
+        )
+    )
     # Voice: transcribe via OpenAI and forward text to Claude Code
-    application.add_handler(MessageHandler(filters.VOICE, voice_handler))
+    application.add_handler(
+        MessageHandler(
+            filters.VOICE
+            & ~filters.UpdateType.EDITED
+            & ~filters.UpdateType.CHANNEL_POST,
+            voice_handler,
+        )
+    )
     # Catch-all: non-text content (stickers, video, etc.)
     application.add_handler(
         MessageHandler(
-            ~filters.COMMAND & ~filters.TEXT & ~filters.StatusUpdate.ALL,
+            ~filters.COMMAND
+            & ~filters.TEXT
+            & ~filters.StatusUpdate.ALL
+            & ~filters.UpdateType.EDITED
+            & ~filters.UpdateType.CHANNEL_POST,
             unsupported_content_handler,
         )
     )
