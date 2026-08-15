@@ -24,7 +24,7 @@ from ..session_guard import get_thread_id, require_session, require_user
 from ..terminal_parser import extract_bash_output, is_interactive_ui
 from ..tmux_manager import tmux_manager
 from ..transcribe import TranscriptionDisabled, TranscriptionError, transcribe
-from ..utils import ccbot_dir
+from ..utils import ccbot_dir, ensure_dir
 from .capture_registry import capture_tasks
 from .directory_browser import (
     BROWSE_DIRS_KEY,
@@ -47,12 +47,9 @@ from .message_sender import NO_LINK_PREVIEW, safe_reply, send_with_fallback
 
 logger = logging.getLogger(__name__)
 
-# Image directory for incoming photos
+# Image directory for incoming photos (created lazily on first save)
 IMAGES_DIR = ccbot_dir() / "images"
-IMAGES_DIR.mkdir(parents=True, exist_ok=True)
-
 _AUDIO_DIR = ccbot_dir() / "audio"
-_AUDIO_DIR.mkdir(parents=True, exist_ok=True)
 
 
 async def photo_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -86,7 +83,7 @@ async def photo_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
     # Save to ~/.ccbot/images/<timestamp>_<file_unique_id>.jpg
     filename = f"{int(time.time())}_{photo.file_unique_id}.jpg"
-    file_path = IMAGES_DIR / filename
+    file_path = ensure_dir(IMAGES_DIR) / filename
     await tg_file.download_to_drive(file_path)
 
     # Build the message to send to Claude Code
@@ -139,7 +136,7 @@ async def voice_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     voice = update.message.voice
     tg_file = await voice.get_file()
     filename = f"{int(time.time())}_{voice.file_unique_id}.ogg"
-    file_path = _AUDIO_DIR / filename
+    file_path = ensure_dir(_AUDIO_DIR) / filename
     await tg_file.download_to_drive(file_path)
 
     try:

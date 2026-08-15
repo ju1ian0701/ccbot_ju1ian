@@ -4,6 +4,7 @@ Provides:
   - ccbot_dir(): resolve config directory from CCBOT_DIR env var.
   - atomic_write_json(): crash-safe JSON file writes via temp+rename.
   - read_cwd_from_jsonl(): extract the cwd field from the first JSONL entry.
+  - ensure_dir(): create a directory lazily on first use (no import-time mkdir).
   - flock()/LOCK_EX/LOCK_UN: advisory file locks (fcntl on POSIX; no-op on Windows).
 """
 
@@ -42,6 +43,16 @@ def ccbot_dir() -> Path:
     """Resolve config directory from CCBOT_DIR env var or default ~/.ccbot."""
     raw = os.environ.get(CCBOT_DIR_ENV, "")
     return Path(raw) if raw else Path.home() / ".ccbot"
+
+
+def ensure_dir(path: Path) -> Path:
+    """Create a directory on first use and return it (lazy init helper).
+
+    Used by handlers to avoid import-time mkdir side effects on cache dirs
+    (IMAGES_DIR / _AUDIO_DIR / DOCS_DIR).
+    """
+    path.mkdir(parents=True, exist_ok=True)
+    return path
 
 
 def atomic_write_json(path: Path, data: Any, indent: int = 2) -> None:
