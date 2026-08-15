@@ -12,7 +12,13 @@
 
 ## Последний завершённый этап
 
-Последний завершённый этап — **ISS-022 DONE: port upstream PR #53 local whisper backend + CCBOT_WHISPER_LANGUAGE (auto|en|ru) (PR #35 `236b13c`)**.
+Последний завершённый этап — **ISS-023 DONE: lazy init cache dirs (IMAGES_DIR/DOCS_DIR/_AUDIO_DIR) — no import-time mkdir (PR #36 `353ce24`)**.
+
+- `utils.py`: +`ensure_dir(path) -> Path` рядом с `ccbot_dir()`;
+- `message_handlers.py` / `document.py`: −3 module-level mkdir, 3 call sites на `ensure_dir`; пути/флаги/поведение без изменений;
+- +3 теста `tests/ccbot/test_lazy_dirs.py` (unit ×2 + reload no-side-effect regression); suite 439; validate ok:true, evidence 4/4.
+
+Предыдущий этап — **ISS-022 DONE: port upstream PR #53 local whisper backend + CCBOT_WHISPER_LANGUAGE (auto|en|ru) (PR #35 `236b13c`)**.
 
 - `transcribe.py`: unified `transcribe()`; local faster-whisper + openai; `CCBOT_WHISPER_LANGUAGE` auto|en|ru (без хардкода `language="en"`);
 - `voice_handler`: файловое скачивание + `finally: unlink`; `TranscriptionDisabled` / `TranscriptionError` / generic; сначала 🎤, потом forward;
@@ -268,6 +274,7 @@ pytest  → 383 passed;  pyright  → 0 errors;  ruff  → clean (1 pre-existing
 - **(а)** Meta-шаг завершён только при пустом `git log origin/main..main` (факт на remote, не локальный orphan-коммит).
 - **(б)** Перед любым вызовом `agentic <cmd>` — сверка флагов через `-h`. Три инцидента: `--notes` обязателен у `request-changes` (×2), позиционный аргумент `approve`.
 - **(в)** GH_TOKEN-разделение: `gh` / token-действия — человек; робот останавливается на `HANDOFF TO HUMAN`.
+- **(г)** `uv run` при устаревшем uv.lock регенерирует его ВНУТРИ команды (грязное дерево на propose/validate; 2 срабатывания за ISS-023). Обход: все вызовы agentic CLI через `uv run --no-sync`; устойчивое лечение — закрыть долг №2 (chore-коммит регенерации uv.lock).
 
 ---
 
@@ -277,16 +284,17 @@ pytest  → 383 passed;  pyright  → 0 errors;  ruff  → clean (1 pre-existing
 2. Phase 2 — **CLOSED** (ISS-003, ISS-008, ISS-010).  
 3. Phase 3 — **CLOSED** (ISS-004 #17, ISS-011 #18).  
 4. Phase 4 — **CLOSED** (ISS-009 #19 `65907e5`; ISS-005 #20–#23 `b5638d6`: stores + thin facade, `session.py` 857→649 LOC).  
-5. **ISS-022 DONE** (PR #35 `236b13c`); **ISS-023 IN PROGRESS** — lazy init cache dirs (IMAGES_DIR/DOCS_DIR/_AUDIO_DIR, THERMO P2 debt), full HITL cycle.  
+5. **ISS-023 DONE** (PR #36 `353ce24`). Следующий product-цикл — только после явного выбора/добавления ready-задачи.  
 6. **Debt (только по явному решению, без отдельной ISS):**  
    - smoke-тесты Phase 1 (чек-лист в `.agentic/out/notes/2026-08-11-smoke-phase1.md`, отложены);  
    - **format-scope validate** — `validate`/`ruff format --check` scope сейчас завязан на full-tree / pre-existing baseline; при hygiene-задачах (ISS-015+) и точечных product-diff полезен scoped format-check (только changed files / allowlist), чтобы residual вне scope не маскировал fail и наоборот. Полноценная ISS — отдельное решение о приоритете; до того — debt-заметка здесь (как smoke Phase 1).  
+   - **uv.lock regen (долг №2)** — `uv run` регенерирует устаревший lock внутри команды (грязное дерево на propose/validate). Обход: `uv run --no-sync` + `git checkout uv.lock`. Постоянный фикс — chore-коммит регенерации.  
    - ISS-020 residual: edit-guard для `forward_command_handler` (`filters.COMMAND`) — severity low;  
    - smoke ISS-020 — чек-лист `.agentic/out/notes/2026-08-14-iss-020-smoke-checklist.md`; blocked: требуется выделенный сервер с живой tmux-сессией;  
    - ISS-021 residual (THERMO): naming `DOCS_DIR` vs `_MAX_DOC_BYTES` (косметика);  
-   - ISS-021 residual (THERMO): import-time `mkdir` каталогов → ленивая инициализация (кандидат; затрагивает и `IMAGES_DIR`);  
    - ISS-021 residual (THERMO): коллизионное окно `time.time()` в именах файлов → `file_unique_id` (low);  
-   - smoke ISS-021 — те же серверные предусловия; PDF ≤20 MB (инъекция пути + caption) и >20 MB (отказ, без скачивания); чек-лист `.agentic/out/notes/2026-08-14-iss-020-smoke-checklist.md`.  
+   - smoke ISS-021 — те же серверные предусловия; PDF ≤20 MB (инъекция пути + caption) и >20 MB (отказ, без скачивания); чек-лист `.agentic/out/notes/2026-08-14-iss-020-smoke-checklist.md`;  
+   - `pyright tests/`: 4× `reportOptionalMemberAccess` на `AsyncMock.await_args` в `test_document.py` (Optional в свежих typeshed после uv.lock regen) — env/типстабы, не продукт; каноничный гейт `pyright src/ccbot/` = 0.  
 7. Meta (backlog/handoff) — commit immediately; product — only via propose → approve → apply.  
 8. Gate: не мержить product PR при красном validate; env-фиксы — отдельной веткой (как PR #15).
 
