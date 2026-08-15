@@ -22,15 +22,15 @@ from telegram.ext import ContextTypes
 
 from ..session import session_manager
 from ..session_guard import get_thread_id, require_session, require_user
-from ..utils import ccbot_dir
+from ..utils import ccbot_dir, ensure_dir
 from .message_queue import clear_status_msg_info
 from .message_sender import safe_reply
 
 logger = logging.getLogger(__name__)
 
 # Incoming files are saved here before the path is forwarded to Claude Code.
+# The directory is created lazily on first save (no import-time side effects).
 DOCS_DIR = ccbot_dir() / "documents"
-DOCS_DIR.mkdir(parents=True, exist_ok=True)
 
 # Telegram Bot API caps bot downloads (getFile) at 20 MB; larger files cannot
 # be fetched and must be rejected before attempting the download.
@@ -91,7 +91,7 @@ async def document_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
     original = doc.file_name or f"{doc.file_unique_id}"
     filename = f"{int(time.time())}_{_safe_filename(original)}"
-    file_path = DOCS_DIR / filename
+    file_path = ensure_dir(DOCS_DIR) / filename
 
     try:
         tg_file = await doc.get_file()
