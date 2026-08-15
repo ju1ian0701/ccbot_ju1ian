@@ -1180,6 +1180,64 @@
       }
     },
     {
+      "id": "ISS-023",
+      "title": "Lazy init of cache dirs (IMAGES_DIR/DOCS_DIR/_AUDIO_DIR) — no import-time mkdir",
+      "priority": "low",
+      "status": "in_progress",
+      "categories": [
+        "refactor",
+        "import-time-side-effects"
+      ],
+      "files": [
+        "src/ccbot/utils.py",
+        "src/ccbot/handlers/message_handlers.py",
+        "src/ccbot/handlers/document.py",
+        "tests/ccbot/test_lazy_dirs.py"
+      ],
+      "related_nodes": [
+        "file:src/ccbot/utils.py",
+        "file:src/ccbot/handlers/message_handlers.py",
+        "file:src/ccbot/handlers/document.py"
+      ],
+      "depends_on": [],
+      "estimated_risk": "low",
+      "kind": "structural",
+      "ref_note": "THERMO P2 debt from ISS-021/ISS-022",
+      "problem": "IMAGES_DIR/_AUDIO_DIR (message_handlers.py:52,55) and DOCS_DIR (document.py:33) run mkdir at module import time — import side effects; THERMO P2 debt. config.py:30 config_dir mkdir is out of scope (root dir is the config contract itself); hook.py/utils.py mkdirs are already lazy (inside functions).",
+      "solution": "Add ensure_dir(path) -> Path helper in utils.py next to ccbot_dir(); remove the three module-level mkdir calls; call ensure_dir() at the three save call sites (message_handlers photo/voice, document). Paths, flags (parents=True, exist_ok=True) and behavior unchanged.",
+      "acceptance_criteria": [
+        "No module-level mkdir for IMAGES_DIR/_AUDIO_DIR/DOCS_DIR (evidence: grep absent in src)",
+        "ensure_dir helper exists in utils.py and is used at all three save call sites (evidence: grep present)",
+        "Saved paths unchanged (~/.ccbot/images, ~/.ccbot/audio, ~/.ccbot/documents)",
+        "New tests/ccbot/test_lazy_dirs.py: ensure_dir unit tests + reload no-side-effect regression; suite 436 -> 440",
+        "ruff check clean; ruff format --check clean on touched files; pyright 0 errors"
+      ],
+      "evidence": {
+        "grep": [
+          {
+            "pattern": "(IMAGES_DIR|_AUDIO_DIR|DOCS_DIR)\\.mkdir",
+            "path": "src",
+            "expect": "absent"
+          },
+          {
+            "pattern": "def ensure_dir",
+            "path": "src/ccbot/utils.py",
+            "expect": "present"
+          },
+          {
+            "pattern": "ensure_dir\\(IMAGES_DIR\\)|ensure_dir\\(_AUDIO_DIR\\)",
+            "path": "src/ccbot/handlers/message_handlers.py",
+            "expect": "present"
+          },
+          {
+            "pattern": "ensure_dir\\(DOCS_DIR\\)",
+            "path": "src/ccbot/handlers/document.py",
+            "expect": "present"
+          }
+        ]
+      }
+    },
+    {
       "id": "RR-0",
       "title": "Robot HITL skeleton: propose → approve → apply → validate",
       "priority": "high",

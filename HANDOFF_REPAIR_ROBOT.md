@@ -277,7 +277,7 @@ pytest  → 383 passed;  pyright  → 0 errors;  ruff  → clean (1 pre-existing
 2. Phase 2 — **CLOSED** (ISS-003, ISS-008, ISS-010).  
 3. Phase 3 — **CLOSED** (ISS-004 #17, ISS-011 #18).  
 4. Phase 4 — **CLOSED** (ISS-009 #19 `65907e5`; ISS-005 #20–#23 `b5638d6`: stores + thin facade, `session.py` 857→649 LOC).  
-5. **ISS-022 DONE** (PR #35 `236b13c`). Следующий product-цикл — только после явного выбора/добавления ready-задачи.  
+5. **ISS-022 DONE** (PR #35 `236b13c`); **ISS-023 IN PROGRESS** — lazy init cache dirs (IMAGES_DIR/DOCS_DIR/_AUDIO_DIR, THERMO P2 debt), full HITL cycle.  
 6. **Debt (только по явному решению, без отдельной ISS):**  
    - smoke-тесты Phase 1 (чек-лист в `.agentic/out/notes/2026-08-11-smoke-phase1.md`, отложены);  
    - **format-scope validate** — `validate`/`ruff format --check` scope сейчас завязан на full-tree / pre-existing baseline; при hygiene-задачах (ISS-015+) и точечных product-diff полезен scoped format-check (только changed files / allowlist), чтобы residual вне scope не маскировал fail и наоборот. Полноценная ISS — отдельное решение о приоритете; до того — debt-заметка здесь (как smoke Phase 1).  
