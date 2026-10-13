@@ -9,10 +9,10 @@ Tech stack: Python, python-telegram-bot, tmux, uv.
 ```bash
 uv run ruff check src/ tests/         # Lint — MUST pass before committing
 uv run ruff format src/ tests/        # Format — auto-fix, then verify with --check
-uv run python scripts/typecheck.py    # Type check — MUST be 0 errors (uses venv --pythonpath)
-# equivalent: uv run pyright --pythonpath .venv/Scripts/python.exe --project . src/ccbot/
-uv run python scripts/run_tests.py    # Tests — MUST pass (uv venv; avoids bare-pytest collection ERROR)
-# equivalent: uv run pytest --tb=short -q
+uv run pyright src/ccbot/             # Type check — MUST be 0 errors (venv set in pyproject [tool.pyright])
+uv run pytest --tb=short -q           # Tests — MUST pass (pythonpath set in pyproject [tool.pytest.ini_options])
+# on a fresh checkout first: uv sync --frozen --extra voice --extra dev
+# (scripts/typecheck.py and scripts/run_tests.py do not exist in this repo)
 ./scripts/restart.sh                  # Restart the ccbot service after code changes
 ccbot hook --install                  # Auto-install Codex SessionStart hook
 ```
