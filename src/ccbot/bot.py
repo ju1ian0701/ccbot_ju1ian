@@ -16,7 +16,7 @@ from __future__ import annotations
 import asyncio
 import logging
 
-from telegram import BotCommand
+from telegram import BotCommand, BotCommandScopeAllGroupChats
 from telegram.ext import (
     AIORateLimiter,
     Application,
@@ -101,7 +101,12 @@ __all__ = [
 async def post_init(application: Application) -> None:
     global session_monitor, _status_poll_task
 
-    await application.bot.delete_my_commands()
+    # Register for the default scope and explicitly for group chats: a menu
+    # defined only for the default scope can show up empty in a freshly created
+    # forum group (observed in the 2026-10-12 smoke run).
+    command_scopes = (None, BotCommandScopeAllGroupChats())
+    for scope in command_scopes:
+        await application.bot.delete_my_commands(scope=scope)
 
     bot_commands = [
         BotCommand("start", "Show welcome message"),
@@ -116,7 +121,8 @@ async def post_init(application: Application) -> None:
     for cmd_name, desc in CC_COMMANDS.items():
         bot_commands.append(BotCommand(cmd_name, desc))
 
-    await application.bot.set_my_commands(bot_commands)
+    for scope in command_scopes:
+        await application.bot.set_my_commands(bot_commands, scope=scope)
 
     # Re-resolve stale window IDs from persisted state against live tmux windows
     await session_manager.resolve_stale_ids()

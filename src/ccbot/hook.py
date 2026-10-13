@@ -191,7 +191,16 @@ def hook_main() -> None:
     # TMUX_PANE is set by tmux for every process inside a pane.
     pane_id = os.environ.get("TMUX_PANE", "")
     if not pane_id:
-        logger.warning("TMUX_PANE not set, cannot determine window")
+        # E.g. SessionStart:fork runs without TMUX_PANE; the monitor follows the
+        # fork via the transcript's continued-in record. Log enough to diagnose.
+        logger.warning(
+            "TMUX_PANE not set, cannot determine window "
+            "(session_id=%s, source=%s, cwd=%s, payload_keys=%s)",
+            session_id,
+            payload.get("source", ""),
+            cwd,
+            sorted(payload),
+        )
         return
 
     result = subprocess.run(

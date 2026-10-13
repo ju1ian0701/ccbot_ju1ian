@@ -253,6 +253,7 @@ async def topic_edited_handler(
     old_name = session_manager.get_display_name(window_id)
     await tmux_manager.rename_window(window_id, new_name)
     session_manager.update_display_name(window_id, new_name)
+    await session_manager.rename_session_map_window(window_id, new_name)
     logger.info(
         "Topic renamed: '%s' -> '%s' (window=%s, user=%d, thread=%d)",
         old_name,

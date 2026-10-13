@@ -19,6 +19,12 @@ from .config import config
 
 logger = logging.getLogger(__name__)
 
+# Install hint covering both a dev checkout and a `uv tool` install.
+_VOICE_INSTALL_HINT = (
+    'uv pip install -e ".[voice]" (source checkout) or '
+    "uv tool install --reinstall --with faster-whisper <ccbot source> (uv tool)"
+)
+
 
 class TranscriptionError(Exception):
     """Raised when transcription fails."""
@@ -47,7 +53,7 @@ async def _transcribe_openai(file_path: Path) -> str:
         raise TranscriptionDisabled(
             "Voice transcription requires OPENAI_API_KEY in .env.\n"
             "Or set CCBOT_WHISPER_BACKEND=local for free local transcription "
-            '(requires: uv pip install -e ".[voice]").'
+            f"(requires the voice extra: {_VOICE_INSTALL_HINT})."
         )
     url = f"{config.openai_base_url.rstrip('/')}/audio/transcriptions"
     client = _get_client()
@@ -92,7 +98,7 @@ def _get_local_model() -> Any:
     except ImportError:
         raise TranscriptionDisabled(
             "faster-whisper is not installed. "
-            'Install with: uv pip install -e ".[voice]"\n'
+            f"Install with: {_VOICE_INSTALL_HINT}\n"
             "Or set CCBOT_WHISPER_BACKEND=openai/off."
         )
     logger.info(

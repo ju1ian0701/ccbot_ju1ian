@@ -24,8 +24,11 @@ Key methods for thread binding access:
 import asyncio
 import json
 import logging
+import shutil
+import time
 from collections.abc import Callable, Iterator
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any
 
 from .binding_store import BindingStore
@@ -139,42 +142,100 @@ class SessionManager:
             "window_display_names": window_state["window_display_names"],
             "group_chat_ids": bindings_state["group_chat_ids"],
         }
+        self._backup_valid_state_file()
         atomic_write_json(config.state_file, state)
         logger.debug("State saved to %s", config.state_file)
+
+    def _backup_valid_state_file(self) -> None:
+        """Keep the previous valid state.json as state.json.bak before overwriting.
+
+        Only a file that parses to a JSON object is copied, so a damaged file
+        can never replace the last good backup.
+        """
+        path = config.state_file
+        try:
+            if not path.exists():
+                return
+            if not isinstance(json.loads(path.read_text()), dict):
+                return
+            shutil.copy2(path, path.with_name(f"{path.name}.bak"))
+        except (OSError, ValueError) as e:
+            logger.debug("State backup skipped: %s", e)
 
     def _is_window_id(self, key: str) -> bool:
         """Check if a key looks like a tmux window ID (e.g. '@0', '@12')."""
         return is_window_id(key)
+
+    def _apply_state_file(self, path: Path) -> None:
+        """Parse `path` and apply it to the stores; raises on any bad content."""
+        state = json.loads(path.read_text())
+        if not isinstance(state, dict):
+            raise ValueError(
+                f"state root must be an object, got {type(state).__name__}"
+            )
+        self._window_store.load_state(state)
+        self.user_window_offsets = {
+            int(uid): offsets
+            for uid, offsets in state.get("user_window_offsets", {}).items()
+        }
+        self._bindings.load_state(state)
+
+    def _reset_state(self) -> None:
+        self._window_store.reset()
+        self.user_window_offsets = {}
+        self._bindings.reset()
 
     def _load_state(self) -> None:
         """Load state synchronously during initialization.
 
         Detects old-format state (window_name keys without '@' prefix) and
         logs that startup re-resolution will migrate them once to @id keys.
+
+        A damaged state.json (bad JSON or valid JSON of the wrong shape) never
+        aborts startup: the file is preserved as state.json.corrupt-<ts>, then
+        state.json.bak (last valid state) is tried, else state starts empty.
         """
-        if config.state_file.exists():
+        path = config.state_file
+        if not path.exists():
+            return
+        load_errors = (
+            json.JSONDecodeError,
+            ValueError,
+            TypeError,
+            AttributeError,
+            KeyError,
+        )
+        try:
+            self._apply_state_file(path)
+        except load_errors as e:
+            self._reset_state()
+            corrupt = path.with_name(f"{path.name}.corrupt-{int(time.time())}")
             try:
-                state = json.loads(config.state_file.read_text())
-                self._window_store.load_state(state)
-                self.user_window_offsets = {
-                    int(uid): offsets
-                    for uid, offsets in state.get("user_window_offsets", {}).items()
-                }
-                self._bindings.load_state(state)
+                shutil.copy2(path, corrupt)
+            except OSError as copy_err:
+                logger.error("Could not preserve damaged state file: %s", copy_err)
+                corrupt = None
+            logger.error(
+                "Failed to load state (%s: %s); damaged file preserved as %s",
+                type(e).__name__,
+                e,
+                corrupt,
+            )
+            backup = path.with_name(f"{path.name}.bak")
+            if backup.exists():
+                try:
+                    self._apply_state_file(backup)
+                    logger.warning("Restored state from %s", backup)
+                except load_errors as be:
+                    logger.error("Backup %s is unusable: %s", backup, be)
+                    self._reset_state()
+            return
 
-                if state_needs_legacy_migration(
-                    self.window_states, self.thread_bindings
-                ):
-                    logger.info(
-                        "Detected old-format state (window_name keys), "
-                        "will re-resolve on startup"
-                    )
-
-            except (json.JSONDecodeError, ValueError) as e:
-                logger.warning("Failed to load state: %s", e)
-                self._window_store.reset()
-                self.user_window_offsets = {}
-                self._bindings.reset()
+        if state_needs_legacy_migration(self.window_states, self.thread_bindings):
+            logger.info(
+                "Detected old-format state (window_name keys), "
+                "will re-resolve on startup"
+            )
 
     async def resolve_stale_ids(self) -> None:
         """Re-resolve persisted window IDs against live tmux windows.
@@ -254,6 +315,25 @@ class SessionManager:
 
         if await asyncio.to_thread(self._mutate_session_map_locked, mutate):
             logger.info("session_map override: %s -> session_id=%s", key, session_id)
+
+    async def rename_session_map_window(self, window_id: str, new_name: str) -> None:
+        """Write a renamed window's display name into its session_map entry.
+
+        load_session_map() copies ``window_name`` from session_map into
+        window_display_names on every poll; the hook only writes it at session
+        start, so without this a topic rename is reverted to the old name.
+        """
+        key = f"{config.tmux_session_name}:{window_id}"
+
+        def mutate(session_map: dict[str, dict]) -> bool:
+            info = session_map.get(key)
+            if info is None or info.get("window_name") == new_name:
+                return False
+            info["window_name"] = new_name
+            return True
+
+        if await asyncio.to_thread(self._mutate_session_map_locked, mutate):
+            logger.info("session_map rename: %s -> window_name=%s", key, new_name)
 
     async def _migrate_old_format_session_map_keys(
         self, live_by_name: dict[str, str]
