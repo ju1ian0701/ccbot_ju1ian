@@ -13,7 +13,7 @@ from __future__ import annotations
 import logging
 import re
 import time
-from pathlib import Path
+from pathlib import PureWindowsPath
 
 from telegram import Update
 from telegram.constants import ChatAction
@@ -49,7 +49,9 @@ def _format_size(num_bytes: int) -> str:
 
 def _safe_filename(name: str) -> str:
     """Sanitize a Telegram-provided filename for safe use as a path component."""
-    name = Path(name).name
+    # PureWindowsPath splits on both "/" and "\" on every OS; Path() on Linux
+    # would keep a Windows-style "..\\..\\x" path whole.
+    name = PureWindowsPath(name).name
     name = re.sub(r"[^A-Za-z0-9._-]", "_", name)
     return name.strip("._") or "file"
 
