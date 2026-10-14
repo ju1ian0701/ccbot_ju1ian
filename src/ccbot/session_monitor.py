@@ -5,6 +5,9 @@ Runs an async polling loop that:
   2. Detects session_map changes (new/changed/deleted windows) and cleans up.
   3. Reads new JSONL lines from each session file using byte-offset tracking.
   4. Parses entries via TranscriptParser and emits NewMessage objects to a callback.
+  5. Follows ``continued-in`` records (Claude Code forked the session into a new
+     session_id) by re-pointing the window's session_map entry to the new session,
+     because the SessionStart hook of a forked session may run without TMUX_PANE.
 
 Optimizations: mtime cache skips unchanged files; byte offset avoids re-reading.
 
@@ -84,6 +87,8 @@ class SessionMonitor:
         self._last_session_map: dict[str, str] = {}  # window_key -> session_id
         # In-memory mtime cache for quick file change detection (not persisted)
         self._file_mtimes: dict[str, float] = {}  # session_id -> last_seen_mtime
+        # Session forks seen in transcripts: old session_id -> new session_id
+        self._continuations: dict[str, str] = {}
 
     def set_message_callback(
         self, callback: Callable[[NewMessage], Awaitable[None]]
@@ -362,6 +367,8 @@ class SessionMonitor:
                 )
                 self._file_mtimes[session_info.session_id] = current_mtime
 
+                self._collect_continuations(session_info.session_id, new_entries)
+
                 if new_entries:
                     logger.debug(
                         f"Read {len(new_entries)} new entries for "
@@ -405,6 +412,45 @@ class SessionMonitor:
 
         self.state.save_if_dirty()
         return new_messages
+
+    def _collect_continuations(self, session_id: str, entries: list[dict]) -> None:
+        """Remember ``continued-in`` records: Claude Code forked this session.
+
+        The record is the last line of the old transcript and names the new
+        session (``continuedInSessionId``). Applied by ``_apply_continuations``.
+        """
+        for entry in entries:
+            if entry.get("type") != "continued-in":
+                continue
+            new_id = entry.get("continuedInSessionId")
+            if isinstance(new_id, str) and new_id and new_id != session_id:
+                self._continuations[session_id] = new_id
+
+    async def _apply_continuations(self, current_map: dict[str, str]) -> None:
+        """Re-point session_map entries of forked sessions to the new session_id.
+
+        The hook of a forked session can fire without TMUX_PANE and so never
+        updates session_map; without this the monitor keeps reading the dead
+        transcript and no replies reach Telegram. The new session's file is
+        tracked from its end on the next poll (history is a copy of the old one).
+        """
+        if not self._continuations:
+            return
+        # Deferred import to avoid circular dependency
+        from .session import session_manager
+
+        for old_id, new_id in list(self._continuations.items()):
+            window_ids = [w for w, sid in current_map.items() if sid == old_id]
+            for window_id in window_ids:
+                logger.info(
+                    "Session continued: %s -> %s (window=%s)",
+                    old_id,
+                    new_id,
+                    window_id,
+                )
+                await session_manager.override_session_map_entry(window_id, new_id)
+            # Applied, or the window no longer maps to the old session
+            del self._continuations[old_id]
 
     async def _load_current_session_map(self) -> dict[str, str]:
         """Load current session_map and return window_key -> session_id mapping.
@@ -526,6 +572,9 @@ class SessionMonitor:
 
                 # Check for new messages (all I/O is async)
                 new_messages = await self.check_for_updates(active_session_ids)
+
+                # Follow session forks (continued-in) by updating session_map
+                await self._apply_continuations(current_map)
 
                 for msg in new_messages:
                     status = "complete" if msg.is_complete else "streaming"

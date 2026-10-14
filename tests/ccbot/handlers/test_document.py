@@ -76,6 +76,10 @@ class TestSafeFilename:
         assert _safe_filename("../../etc/passwd") == "passwd"
         assert _safe_filename("..\\..\\windows\\system32\\config") == "config"
 
+    def test_mixed_separators_use_basename(self) -> None:
+        assert _safe_filename("a/b\\c/report.pdf") == "report.pdf"
+        assert _safe_filename("C:\\Users\\x\\report.pdf") == "report.pdf"
+
     def test_special_and_unicode_become_underscore(self) -> None:
         assert _safe_filename("hello world.pdf") == "hello_world.pdf"
         assert _safe_filename("caf\u00e9.pdf") == "caf_.pdf"
