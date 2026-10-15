@@ -61,6 +61,19 @@ session_monitor: SessionMonitor | None = None
 # Status polling task
 _status_poll_task: asyncio.Task | None = None
 
+# Commands handled by the bot itself (shown in the menu). Each name needs a
+# CommandHandler in create_bot(); otherwise the command is forwarded to Claude
+# as plain text (this happened with a menu-only "/kill"). A topic is closed
+# and its window killed by closing the topic in Telegram, not by a command.
+BOT_COMMANDS: dict[str, str] = {
+    "start": "Show welcome message",
+    "history": "Message history for this topic",
+    "screenshot": "Terminal screenshot with control keys",
+    "esc": "Send Escape to interrupt Claude",
+    "unbind": "Unbind topic from session (keeps window running)",
+    "usage": "Show Claude Code usage remaining",
+}
+
 # Claude Code commands shown in bot menu (forwarded via tmux)
 CC_COMMANDS: dict[str, str] = {
     "clear": "↗ Clear conversation history",
@@ -108,15 +121,7 @@ async def post_init(application: Application) -> None:
     for scope in command_scopes:
         await application.bot.delete_my_commands(scope=scope)
 
-    bot_commands = [
-        BotCommand("start", "Show welcome message"),
-        BotCommand("history", "Message history for this topic"),
-        BotCommand("screenshot", "Terminal screenshot with control keys"),
-        BotCommand("esc", "Send Escape to interrupt Claude"),
-        BotCommand("kill", "Kill session and delete topic"),
-        BotCommand("unbind", "Unbind topic from session (keeps window running)"),
-        BotCommand("usage", "Show Claude Code usage remaining"),
-    ]
+    bot_commands = [BotCommand(name, desc) for name, desc in BOT_COMMANDS.items()]
     # Add Claude Code slash commands
     for cmd_name, desc in CC_COMMANDS.items():
         bot_commands.append(BotCommand(cmd_name, desc))
