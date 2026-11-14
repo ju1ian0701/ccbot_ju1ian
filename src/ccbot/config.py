@@ -84,6 +84,17 @@ class Config:
 
         self.monitor_poll_interval = float(os.getenv("MONITOR_POLL_INTERVAL", "2.0"))
 
+        # Telegram HTTP client tuning (optional). The getUpdates long-poll gets
+        # its own small pool; a hung long-poll must not starve the main pool.
+        self.http_pool_size = int(os.getenv("CCBOT_HTTP_POOL_SIZE", "256"))
+        self.http_pool_timeout = float(os.getenv("CCBOT_HTTP_POOL_TIMEOUT", "10.0"))
+        self.get_updates_pool_size = int(os.getenv("CCBOT_GET_UPDATES_POOL_SIZE", "4"))
+
+        # Polling stall watchdog thresholds in seconds (optional).
+        # soft: rebuild the getUpdates HTTP client; hard: exit if Telegram is reachable.
+        self.poll_stall_soft = float(os.getenv("CCBOT_POLL_STALL_SOFT", "90.0"))
+        self.poll_stall_hard = float(os.getenv("CCBOT_POLL_STALL_HARD", "300.0"))
+
         # Display user messages in history and real-time notifications
         # When True, user messages are shown with a 👤 prefix
         self.show_user_messages = (
