@@ -1,7 +1,7 @@
 """Telegram bot application factory — registration and lifecycle only.
 
 Handler implementations live under ``ccbot.handlers``:
-  - command_handlers: /start /new /menu /history /screenshot /esc /unbind /usage /kill /health /forward /topics
+  - command_handlers: /start /new /menu /history /screenshot /esc /unbind /usage /kill /login /health /forward /topics
   - message_handlers: text / photo / voice + bash capture
   - document: files (PDF, etc.) downloaded and forwarded as paths (document_handler)
   - callback_router: inline keyboard dispatch
@@ -45,6 +45,7 @@ from .handlers.command_handlers import (
     health_command,
     history_command,
     kill_command,
+    login_command,
     menu_command,
     new_command,
     screenshot_command,
@@ -99,6 +100,7 @@ BOT_COMMANDS: dict[str, str] = {
     "unbind": "Unbind topic from session (keeps window running)",
     "usage": "Show Claude Code usage remaining",
     "kill": "End this session (closes its tmux window)",
+    "login": "Sign in to Claude Code again",
     "health": "Bot and parser diagnostics",
 }
 
@@ -125,6 +127,7 @@ __all__ = [
     "history_command",
     "is_user_allowed",
     "kill_command",
+    "login_command",
     "menu_command",
     "new_command",
     "photo_handler",
@@ -299,6 +302,7 @@ def create_bot() -> Application:
     application.add_handler(CommandHandler("unbind", unbind_command))
     application.add_handler(CommandHandler("usage", usage_command))
     application.add_handler(CommandHandler("kill", kill_command))
+    application.add_handler(CommandHandler("login", login_command))
     application.add_handler(CommandHandler("health", health_command))
     application.add_handler(CallbackQueryHandler(callback_handler))
     # Topic closed event — auto-kill associated window

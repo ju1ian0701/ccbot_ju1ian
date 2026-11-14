@@ -315,6 +315,108 @@ async def test_text_handler_claude_window_sends_to_tmux() -> None:
     reply.assert_not_awaited()
 
 
+def _login_code_ctx(is_code: bool):
+    """Patches shared by the text_handler login-code tests."""
+    return (
+        patch(
+            f"{_MH}.login_flow.expects_code",
+            new_callable=AsyncMock,
+            return_value=is_code,
+        ),
+        patch(f"{_MH}.login_flow.after_code_sent", new_callable=AsyncMock),
+    )
+
+
+async def test_text_handler_login_code_goes_to_window_and_is_deleted() -> None:
+    from ccbot.handlers.message_handlers import text_handler
+
+    upd = _text_update("123456")
+    ctx = _text_context()
+    user = upd.effective_user
+    sctx = SessionContext(
+        user=user, thread_id=42, window_id="@8", window=_win("claude")
+    )
+    tmux = _tmux()
+    expects, after = _login_code_ctx(True)
+    with (
+        patch(f"{_MH}.require_user", new_callable=AsyncMock, return_value=user),
+        patch(f"{_MH}.require_session", new_callable=AsyncMock, return_value=sctx),
+        patch(f"{_MH}.session_manager") as sm,
+        patch(f"{_MH}.enqueue_status_update", new_callable=AsyncMock),
+        patch(f"{_MH}.tmux_manager", tmux),
+        patch(f"{_MH}.is_interactive_ui", return_value=True),
+        patch(f"{_MH}.handle_interactive_ui", new_callable=AsyncMock) as ui,
+        patch(f"{_MH}.start_bind_flow", new_callable=AsyncMock) as bind,
+        expects as expects_mock,
+        after as after_mock,
+    ):
+        sm.get_window_for_thread.return_value = "@8"
+        sm.send_to_window = AsyncMock(return_value=(True, "ok"))
+        await text_handler(upd, ctx)
+
+    expects_mock.assert_awaited_once_with(user.id, 42, "@8")
+    sm.send_to_window.assert_awaited_once_with("@8", "123456")
+    ui.assert_not_awaited()
+    bind.assert_not_awaited()
+    after_mock.assert_awaited_once_with(ctx.bot, upd.message, user.id, 42)
+
+
+async def test_text_handler_login_code_send_failure_replies_error() -> None:
+    from ccbot.handlers.message_handlers import text_handler
+
+    upd = _text_update("123456")
+    ctx = _text_context()
+    user = upd.effective_user
+    sctx = SessionContext(
+        user=user, thread_id=42, window_id="@8", window=_win("claude")
+    )
+    expects, after = _login_code_ctx(True)
+    with (
+        patch(f"{_MH}.require_user", new_callable=AsyncMock, return_value=user),
+        patch(f"{_MH}.require_session", new_callable=AsyncMock, return_value=sctx),
+        patch(f"{_MH}.session_manager") as sm,
+        patch(f"{_MH}.enqueue_status_update", new_callable=AsyncMock),
+        patch(f"{_MH}.tmux_manager", _tmux()),
+        patch(f"{_MH}.safe_reply", new_callable=AsyncMock) as reply,
+        expects,
+        after as after_mock,
+    ):
+        sm.get_window_for_thread.return_value = "@8"
+        sm.send_to_window = AsyncMock(return_value=(False, "window gone"))
+        await text_handler(upd, ctx)
+
+    reply.assert_awaited_once()
+    assert "window gone" in reply.await_args.args[1]
+    after_mock.assert_not_awaited()
+
+
+async def test_text_handler_not_login_code_skips_login_hand_off() -> None:
+    from ccbot.handlers.message_handlers import text_handler
+
+    upd = _text_update()
+    ctx = _text_context()
+    user = upd.effective_user
+    sctx = SessionContext(
+        user=user, thread_id=42, window_id="@8", window=_win("claude")
+    )
+    expects, after = _login_code_ctx(False)
+    with (
+        patch(f"{_MH}.require_user", new_callable=AsyncMock, return_value=user),
+        patch(f"{_MH}.require_session", new_callable=AsyncMock, return_value=sctx),
+        patch(f"{_MH}.session_manager") as sm,
+        patch(f"{_MH}.enqueue_status_update", new_callable=AsyncMock),
+        patch(f"{_MH}.tmux_manager", _tmux()),
+        expects,
+        after as after_mock,
+    ):
+        sm.get_window_for_thread.return_value = "@8"
+        sm.send_to_window = AsyncMock(return_value=(True, "ok"))
+        await text_handler(upd, ctx)
+
+    sm.send_to_window.assert_awaited_once_with("@8", "hello")
+    after_mock.assert_not_awaited()
+
+
 def test_session_panel_keyboard_callbacks() -> None:
     from ccbot.handlers.session_lifecycle import build_session_panel_keyboard
 

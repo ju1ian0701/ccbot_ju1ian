@@ -13,6 +13,7 @@ from ccbot.handlers.command_handlers import (
     esc_command,
     health_command,
     kill_command,
+    login_command,
     menu_command,
     new_command,
     start_command,
@@ -453,3 +454,73 @@ async def test_menu_in_general_shows_hint() -> None:
         await menu_command(upd, _context())
 
     assert reply.await_args.args[1].startswith("No session in this topic")
+
+
+# ── /login ───────────────────────────────────────────────────────────────
+
+
+@pytest.mark.asyncio
+async def test_login_sends_login_and_replies() -> None:
+    upd = _update()
+    ctx = _context()
+    sctx = _session_ctx()
+    with (
+        patch(f"{_CH}.require_session", new_callable=AsyncMock, return_value=sctx),
+        patch(
+            f"{_CH}.reply_if_claude_not_running",
+            new_callable=AsyncMock,
+            return_value=False,
+        ),
+        patch(f"{_CH}.tmux_manager") as tmux,
+        patch(f"{_CH}.safe_reply", new_callable=AsyncMock) as reply,
+    ):
+        tmux.send_keys = AsyncMock(return_value=True)
+        await login_command(upd, ctx)
+
+    tmux.send_keys.assert_awaited_once_with("@8", "/login")
+    reply.assert_awaited_once()
+    assert "Sent /login" in reply.await_args.args[1]
+
+
+@pytest.mark.asyncio
+async def test_login_unbound_topic_sends_nothing() -> None:
+    upd = _update()
+    ctx = _context()
+    with (
+        patch(f"{_CH}.require_session", new_callable=AsyncMock, return_value=None),
+        patch(f"{_CH}.tmux_manager") as tmux,
+        patch(f"{_CH}.safe_reply", new_callable=AsyncMock) as reply,
+    ):
+        tmux.send_keys = AsyncMock(return_value=True)
+        await login_command(upd, ctx)
+
+    tmux.send_keys.assert_not_called()
+    reply.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_login_bare_shell_shows_guard_and_sends_nothing() -> None:
+    upd = _update()
+    ctx = _context()
+    shell_win = TmuxWindow(
+        window_id="@8", window_name="p", cwd="/t", pane_current_command="bash"
+    )
+    sctx = SessionContext(user=_user(), thread_id=42, window_id="@8", window=shell_win)
+    guard_tmux = MagicMock()
+    guard_tmux.capture_pane = AsyncMock(return_value="$ ")
+    with (
+        patch(f"{_CH}.require_session", new_callable=AsyncMock, return_value=sctx),
+        patch(f"{_CH}.tmux_manager") as tmux,
+        patch("ccbot.handlers.session_lifecycle.tmux_manager", guard_tmux),
+        patch(f"{_CH}.safe_reply", new_callable=AsyncMock) as cmd_reply,
+        patch(
+            "ccbot.handlers.session_lifecycle.safe_reply", new_callable=AsyncMock
+        ) as guard_reply,
+    ):
+        tmux.send_keys = AsyncMock(return_value=True)
+        await login_command(upd, ctx)
+
+    tmux.send_keys.assert_not_called()
+    guard_reply.assert_awaited_once()
+    assert "not running" in guard_reply.await_args.args[1]
+    cmd_reply.assert_not_awaited()

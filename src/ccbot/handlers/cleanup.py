@@ -12,6 +12,7 @@ from typing import Any
 from telegram import Bot
 
 from .capture_registry import capture_tasks
+from . import login_flow
 from .interactive_ui import clear_interactive_msg
 from .message_queue import clear_status_msg_info, clear_tool_msg_ids_for_topic
 
@@ -33,6 +34,7 @@ async def clear_topic_state(
       - _status_msg_info (status message tracking)
       - _tool_msg_ids (tool_use → message_id mapping)
       - _interactive_msgs and _interactive_mode (interactive UI state)
+      - login_flow state (pending /login sign-in)
       - user_data pending state (_pending_thread_id, _pending_thread_text)
     """
     # Cancel any running bash capture task for the topic
@@ -46,6 +48,9 @@ async def clear_topic_state(
 
     # Clear interactive UI state (also deletes message from chat)
     await clear_interactive_msg(user_id, bot, thread_id)
+
+    # Forget any pending /login sign-in for the topic
+    login_flow.forget_topic(user_id, thread_id)
 
     # Clear pending thread state from user_data
     if user_data is not None:

@@ -11,6 +11,7 @@ Provides background polling of terminal status lines for all active users:
   - Consumes Claude Code hook events (hook_reactions) once per poll
   - Clears a stale status message when the screen shows Claude's chrome but
     no status line for several polls
+  - Delivers Claude Code's /login sign-in link to the topic (login_flow)
   - Reports a parser canary: a window whose screen is neither a shell, Claude's
     chrome nor an interactive UI for many polls gets a fallback screenshot
 
@@ -36,7 +37,7 @@ from ..hook_events import EVENTS_FILE_NAME, HookEventReader
 from ..session import session_manager
 from ..terminal_parser import has_chrome, is_interactive_ui, parse_status_line
 from ..tmux_manager import TmuxWindow, tmux_manager
-from . import hook_reactions
+from . import hook_reactions, login_flow
 from .cleanup import clear_topic_state
 from .interactive_ui import (
     clear_interactive_msg,
@@ -93,6 +94,7 @@ def _forget_binding(user_id: int, thread_id: int, window_id: str) -> None:
     _unrecognized_polls.pop(window_id, None)
     _reported_unrecognized.discard(window_id)
     hook_reactions.forget_window(window_id)
+    login_flow.forget_topic(user_id, thread_id)
 
 
 async def _check_screen_recognized(
@@ -108,6 +110,7 @@ async def _check_screen_recognized(
         is_shell_command(window.pane_current_command)
         or has_chrome(pane_text)
         or is_interactive_ui(pane_text)
+        or login_flow.is_login_screen(pane_text)
     )
     if recognized:
         _unrecognized_polls[window_id] = 0
@@ -163,6 +166,11 @@ async def update_status_message(
         return
 
     await _check_screen_recognized(bot, user_id, w, pane_text, thread_id)
+
+    try:
+        await login_flow.on_pane(bot, user_id, thread_id, window_id, pane_text)
+    except Exception as e:
+        logger.debug("Login flow check failed: %s", type(e).__name__)
 
     interactive_window = get_interactive_window(user_id, thread_id)
     should_check_new_ui = True

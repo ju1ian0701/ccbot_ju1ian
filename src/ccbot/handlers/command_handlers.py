@@ -239,6 +239,23 @@ async def esc_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
     await safe_reply(update.message, "⎋ Sent Escape")
 
 
+async def login_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Start Claude Code's /login; the sign-in link is posted to this topic."""
+    ctx = await require_session(update, reply_unauthorized=False)
+    if ctx is None:
+        return
+    assert update.message is not None
+    if await reply_if_claude_not_running(update.message, ctx.window):
+        return
+
+    await tmux_manager.send_keys(ctx.window.window_id, "/login")
+    await safe_reply(
+        update.message,
+        "🔐 Sent /login to Claude Code. Pick a sign-in method with the buttons "
+        "that appear; the sign-in link will be posted here.",
+    )
+
+
 async def usage_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Fetch Claude Code usage stats from TUI and send to Telegram."""
     ctx = await require_session(update, reply_unauthorized=False)
