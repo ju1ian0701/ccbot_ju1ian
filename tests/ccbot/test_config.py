@@ -151,3 +151,19 @@ class TestConfigPollingHealth:
         assert cfg.get_updates_pool_size == 2
         assert cfg.poll_stall_soft == 45.0
         assert cfg.poll_stall_hard == 600.0
+
+
+@pytest.mark.usefixtures("_base_env")
+class TestConfigGroupChatId:
+    def test_unset_is_none(self, monkeypatch):
+        monkeypatch.delenv("CCBOT_GROUP_CHAT_ID", raising=False)
+        assert Config().group_chat_id is None
+
+    def test_set_is_int(self, monkeypatch):
+        monkeypatch.setenv("CCBOT_GROUP_CHAT_ID", "-1003978703836")
+        assert Config().group_chat_id == -1003978703836
+
+    def test_garbage_raises(self, monkeypatch):
+        monkeypatch.setenv("CCBOT_GROUP_CHAT_ID", "my group")
+        with pytest.raises(ValueError, match="CCBOT_GROUP_CHAT_ID must be an integer"):
+            Config()
