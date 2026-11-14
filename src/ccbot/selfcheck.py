@@ -136,6 +136,11 @@ def submit(tmux: _Pane, text: str) -> None:
     tmux.send_key("Enter")
 
 
+# Teardown re-checks for Claude's transcript dir this many times, this far apart.
+_TRANSCRIPT_CLEANUP_PASSES = 3
+_TRANSCRIPT_CLEANUP_DELAY = 0.7
+
+
 def remove_transcript_dir(workdir: Path) -> None:
     """Delete Claude's per-project transcript dir for a selfcheck workdir.
 
@@ -448,6 +453,11 @@ def _teardown(tmux: Tmux, workdir: Path, ccbot_tmp: Path) -> None:
     tmux.kill()
     shutil.rmtree(workdir, ignore_errors=True)
     shutil.rmtree(ccbot_tmp, ignore_errors=True)
+    # Claude flushes its transcript while it dies from the kill above, so the
+    # project dir can (re)appear a moment later: remove it, wait, remove again.
+    for _ in range(_TRANSCRIPT_CLEANUP_PASSES):
+        remove_transcript_dir(workdir)
+        time.sleep(_TRANSCRIPT_CLEANUP_DELAY)
     remove_transcript_dir(workdir)
 
 
