@@ -1,0 +1,45 @@
+
+ ▐▛███▛█   Claude Code v2.1.311
+▝▜██████▀  anthropic/claude-fable-5-2[1m] · API Usage Billing
+ ▝▝   ▝▝   /tmp/ccbot-selfcheck-jkynr85r
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                                                                      ● high · /effort
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+❯ 
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  🤖 anthropic/claude-fable-5-2[1m] 1M | 📁 ccbot-selfcheck-jkynr85r | ⚡️ - · - tokens
+  ⏵⏵ bypass permissions on (shift+tab to cycle) · ← 1 agent

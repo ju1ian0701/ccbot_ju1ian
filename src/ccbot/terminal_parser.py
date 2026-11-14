@@ -113,6 +113,8 @@ UI_PATTERNS: list[UIPattern] = [
         name="Settings",
         top=(
             re.compile(r"^\s*Settings:.*tab to cycle"),
+            # v2.1.311: tab row without colon — "Settings  Status   Config   Usage   Stats"
+            re.compile(r"^\s*Settings\s+Status\s+Config\b"),
             re.compile(r"^\s*Select model"),
         ),
         bottom=(
@@ -400,6 +402,9 @@ class UsageInfo:
     parsed_lines: list[str]  # Cleaned content lines from the modal
 
 
+_RE_USAGE_HEADER = re.compile(r"^Settings:?\s.*\bUsage\b")
+
+
 def parse_usage_output(pane_text: str) -> UsageInfo | None:
     """Extract usage information from Claude Code's /usage settings tab.
 
@@ -421,8 +426,9 @@ def parse_usage_output(pane_text: str) -> UsageInfo | None:
     for i, line in enumerate(lines):
         stripped = line.strip()
         if start_idx is None:
-            # The usage tab header line
-            if "Settings:" in stripped and "Usage" in stripped:
+            # The usage tab header line ("Settings: … Usage …"; v2.1.311 has
+            # no colon: "Settings  Status   Config   Usage   Stats")
+            if _RE_USAGE_HEADER.match(stripped):
                 start_idx = i + 1  # skip the header itself
         else:
             if stripped.startswith("Esc to"):
