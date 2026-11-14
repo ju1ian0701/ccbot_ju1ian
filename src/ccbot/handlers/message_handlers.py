@@ -44,6 +44,7 @@ from .directory_browser import (
 from .interactive_ui import get_interactive_window, handle_interactive_ui
 from .message_queue import clear_status_msg_info, enqueue_status_update
 from .message_sender import NO_LINK_PREVIEW, safe_reply, send_with_fallback
+from .session_lifecycle import reply_if_claude_not_running
 
 logger = logging.getLogger(__name__)
 
@@ -75,6 +76,8 @@ async def photo_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         unbind_if_missing=True,
     )
     if ctx is None:
+        return
+    if await reply_if_claude_not_running(update.message, ctx.window):
         return
 
     # Download the highest-resolution photo
@@ -131,6 +134,8 @@ async def voice_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         unbind_if_missing=True,
     )
     if ctx is None:
+        return
+    if await reply_if_claude_not_running(update.message, ctx.window):
         return
 
     voice = update.message.voice
@@ -403,6 +408,8 @@ async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         return
     window_id = ctx.window_id
     w = ctx.window
+    if await reply_if_claude_not_running(update.message, w):
+        return
 
     # Cosmetic / outbound-Telegram steps below must NEVER abort the handler
     # before the message is injected into tmux. On flaky networks the "typing…"

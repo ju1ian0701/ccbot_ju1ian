@@ -11,6 +11,7 @@ unchanged for backward compatibility with existing Telegram keyboards:
   - Window/session pickers: ``wb:sel:<index>``, ``rs:sel:<index>``
   - Screenshot: ``ss:ref:<window>``, keys ``kb:<key_id>:<window>``
   - Interactive UI: ``aq:<action>:<window>``
+  - Session lifecycle: ``sl:kq|ko|kc|rs:<window>``, cancel ``sl:x``
 
 Always pass payloads through ``safe_callback_data`` when building
 InlineKeyboardButton — never silent ``[:64]`` truncation.
@@ -62,6 +63,16 @@ CB_SESSION_CANCEL = "rs:cancel"  # cancel
 
 # Screenshot control keys
 CB_KEYS_PREFIX = "kb:"  # kb:<key_id>:<window>
+
+# Session lifecycle (end / restart)
+CB_SL_KILL_ASK = "sl:kq:"  # sl:kq:<window>  ask for confirmation (panel button)
+CB_SL_KILL_OK = "sl:ko:"  # sl:ko:<window>  confirmed: end session
+CB_SL_KILL_CLOSE = "sl:kc:"  # sl:kc:<window>  confirmed: end session and close topic
+CB_SL_RESTART = "sl:rs:"  # sl:rs:<window>  start Claude again in the window
+CB_SL_CANCEL = "sl:x"  # dismiss
+CB_SL_PREFIXES = frozenset(
+    {CB_SL_KILL_ASK, CB_SL_KILL_OK, CB_SL_KILL_CLOSE, CB_SL_RESTART}
+)
 
 # Known interactive-UI prefixes (for validation / docs)
 CB_ASK_PREFIXES = frozenset(
@@ -210,6 +221,23 @@ class KeyCallback:
         return f"{CB_KEYS_PREFIX}{self.key_id}:{self.window_id}"
 
 
+@dataclass(frozen=True)
+class LifecycleCallback:
+    """Session lifecycle action: ``sl:<kq|ko|kc|rs>:<window_id>``."""
+
+    prefix: str
+    window_id: str
+
+    def __post_init__(self) -> None:
+        if self.prefix not in CB_SL_PREFIXES:
+            raise ValueError(f"unknown lifecycle prefix: {self.prefix!r}")
+        if not self.window_id:
+            raise ValueError("window_id must be non-empty")
+
+    def to_old_string(self) -> str:
+        return f"{self.prefix}{self.window_id}"
+
+
 # Union of typed payloads (plus plain str for constants like CB_DIR_UP / "noop").
 CallbackPayload = Union[
     str,
@@ -221,6 +249,7 @@ CallbackPayload = Union[
     AskCallback,
     ScreenshotRefreshCallback,
     KeyCallback,
+    LifecycleCallback,
 ]
 
 
@@ -426,3 +455,24 @@ def parse_key(data: str) -> KeyCallback | None:
         return KeyCallback(key_id=key_id, window_id=window_id)
     except ValueError:
         return None
+
+
+# ── Session lifecycle ────────────────────────────────────────────────────
+
+
+def encode_lifecycle(prefix: str, window_id: str) -> str:
+    return safe_callback_data(LifecycleCallback(prefix=prefix, window_id=window_id))
+
+
+def parse_lifecycle(data: str) -> LifecycleCallback | None:
+    """Parse ``sl:<kq|ko|kc|rs>:<window_id>``; None if not lifecycle or invalid."""
+    for prefix in CB_SL_PREFIXES:
+        if data.startswith(prefix):
+            window_id = data[len(prefix) :]
+            if not window_id:
+                return None
+            try:
+                return LifecycleCallback(prefix=prefix, window_id=window_id)
+            except ValueError:
+                return None
+    return None

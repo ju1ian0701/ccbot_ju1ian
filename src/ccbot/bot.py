@@ -1,7 +1,7 @@
 """Telegram bot application factory — registration and lifecycle only.
 
 Handler implementations live under ``ccbot.handlers``:
-  - command_handlers: /start /history /screenshot /esc /unbind /usage /forward /topics
+  - command_handlers: /start /history /screenshot /esc /unbind /usage /kill /forward /topics
   - message_handlers: text / photo / voice + bash capture
   - document: files (PDF, etc.) downloaded and forwarded as paths (document_handler)
   - callback_router: inline keyboard dispatch
@@ -40,6 +40,7 @@ from .handlers.command_handlers import (
     esc_command,
     forward_command_handler,
     history_command,
+    kill_command,
     screenshot_command,
     start_command,
     topic_closed_handler,
@@ -74,8 +75,9 @@ _get_updates_request: TrackedHTTPXRequest | None = None
 
 # Commands handled by the bot itself (shown in the menu). Each name needs a
 # CommandHandler in create_bot(); otherwise the command is forwarded to Claude
-# as plain text (this happened with a menu-only "/kill"). A topic is closed
-# and its window killed by closing the topic in Telegram, not by a command.
+# as plain text (this happened with a menu-only "/kill" before its handler
+# existed). A topic is closed and its window killed by closing the topic in
+# Telegram, or by /kill, which ends the session (window closed, topic kept).
 BOT_COMMANDS: dict[str, str] = {
     "start": "Show welcome message",
     "history": "Message history for this topic",
@@ -83,6 +85,7 @@ BOT_COMMANDS: dict[str, str] = {
     "esc": "Send Escape to interrupt Claude",
     "unbind": "Unbind topic from session (keeps window running)",
     "usage": "Show Claude Code usage remaining",
+    "kill": "End this session (closes its tmux window)",
 }
 
 # Claude Code commands shown in bot menu (forwarded via tmux)
@@ -106,6 +109,7 @@ __all__ = [
     "handle_new_message",
     "history_command",
     "is_user_allowed",
+    "kill_command",
     "photo_handler",
     "post_init",
     "post_shutdown",
@@ -250,6 +254,7 @@ def create_bot() -> Application:
     application.add_handler(CommandHandler("esc", esc_command))
     application.add_handler(CommandHandler("unbind", unbind_command))
     application.add_handler(CommandHandler("usage", usage_command))
+    application.add_handler(CommandHandler("kill", kill_command))
     application.add_handler(CallbackQueryHandler(callback_handler))
     # Topic closed event — auto-kill associated window
     application.add_handler(

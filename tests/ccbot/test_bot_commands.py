@@ -20,10 +20,5 @@ def test_every_bot_menu_command_has_a_handler() -> None:
     assert not missing, f"menu commands without a CommandHandler: {sorted(missing)}"
 
 
-def test_kill_is_not_advertised() -> None:
-    assert "kill" not in BOT_COMMANDS
-    assert "kill" not in CC_COMMANDS
-
-
 def test_bot_and_cc_menu_names_do_not_overlap() -> None:
     assert not set(BOT_COMMANDS) & set(CC_COMMANDS)

@@ -8,6 +8,7 @@ import pytest
 
 from ccbot.handlers.command_handlers import (
     esc_command,
+    kill_command,
     start_command,
     unbind_command,
 )
@@ -171,3 +172,45 @@ async def test_esc_missing_window() -> None:
         await esc_command(upd, ctx)
         tmux.send_keys.assert_not_called()
         reply.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_kill_bound_topic_shows_confirm_keyboard() -> None:
+    upd = _update(thread_id=42)
+    ctx = _context()
+    user = _user()
+    with (
+        patch(
+            f"{_CH}.require_bound_window_id",
+            new_callable=AsyncMock,
+            return_value=(user, 42, "@8"),
+        ),
+        patch(f"{_CH}.session_manager") as sm,
+        patch(f"{_CH}.safe_reply", new_callable=AsyncMock) as reply,
+    ):
+        sm.get_display_name.return_value = "proj"
+        sm.get_window_state.return_value = MagicMock(cwd="/work/proj")
+        await kill_command(upd, ctx)
+
+    reply.assert_awaited_once()
+    assert "End session 'proj'" in reply.await_args.args[1]
+    markup = reply.await_args.kwargs["reply_markup"]
+    data = [b.callback_data for row in markup.inline_keyboard for b in row]
+    assert "sl:ko:@8" in data
+    assert "sl:kc:@8" in data
+    assert "sl:x" in data
+
+
+@pytest.mark.asyncio
+async def test_kill_unbound_topic_no_keyboard() -> None:
+    upd = _update(thread_id=42)
+    ctx = _context()
+    with (
+        patch(
+            f"{_CH}.require_bound_window_id", new_callable=AsyncMock, return_value=None
+        ),
+        patch(f"{_CH}.safe_reply", new_callable=AsyncMock) as reply,
+    ):
+        await kill_command(upd, ctx)
+
+    reply.assert_not_awaited()

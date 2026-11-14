@@ -1,7 +1,7 @@
 """Telegram command and topic lifecycle handlers.
 
 Handlers:
-  - /start, /history, /screenshot, /unbind, /esc, /usage
+  - /start, /history, /screenshot, /unbind, /esc, /usage, /kill
   - topic_closed_handler, topic_edited_handler
   - forward_command_handler (unknown /slash → Claude Code)
   - unsupported_content_handler
@@ -31,6 +31,11 @@ from .directory_browser import clear_browse_state
 from .history import send_history
 from .message_sender import safe_reply
 from .screenshot_controls import build_screenshot_keyboard
+from .session_lifecycle import (
+    build_kill_confirm_keyboard,
+    build_kill_confirm_text,
+    reply_if_claude_not_running,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -115,6 +120,25 @@ async def unbind_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         f"✅ Topic unbound from window '{display}'.\n"
         "The Claude session is still running in tmux.\n"
         "Send a message to bind to a new session.",
+    )
+
+
+async def kill_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Ask for confirmation before ending this topic's Claude session."""
+    bound = await require_bound_window_id(
+        update, reply_unauthorized=False, use_resolve=False
+    )
+    if bound is None:
+        return
+    _user, _thread_id, window_id = bound
+    assert update.message is not None
+
+    display = session_manager.get_display_name(window_id)
+    cwd = session_manager.get_window_state(window_id).cwd
+    await safe_reply(
+        update.message,
+        build_kill_confirm_text(display, cwd),
+        reply_markup=build_kill_confirm_keyboard(window_id),
     )
 
 
@@ -289,6 +313,8 @@ async def forward_command_handler(
 
     ctx = await require_session(update, reply_unauthorized=False, user=user)
     if ctx is None:
+        return
+    if await reply_if_claude_not_running(update.message, ctx.window):
         return
 
     display = session_manager.get_display_name(ctx.window_id)
