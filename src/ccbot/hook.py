@@ -132,6 +132,90 @@ def _install_hook() -> int:
     return 0
 
 
+def _pid_alive(pid: int) -> bool:
+    """Return True if a process with *pid* exists (EPERM counts as alive)."""
+    if pid <= 0:
+        return False
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True
+    return True
+
+
+def _parse_stat_ppid(text: str) -> int:
+    """Extract the ppid from a /proc/<pid>/stat line (comm may hold spaces/parens)."""
+    try:
+        fields_after_comm = text[text.rindex(")") + 1 :].split()
+        return int(fields_after_comm[1])
+    except (ValueError, IndexError):
+        return 0
+
+
+def _ppid(pid: int) -> int:
+    """Return the parent pid of *pid*, or 0 if it cannot be determined."""
+    if os.path.exists("/proc/self/stat"):
+        try:
+            return _parse_stat_ppid(
+                Path(f"/proc/{pid}/stat").read_text(errors="replace")
+            )
+        except OSError:
+            return 0
+    try:
+        result = subprocess.run(
+            ["ps", "-o", "ppid=", "-p", str(pid)],
+            capture_output=True,
+            text=True,
+        )
+        return int(result.stdout.strip() or 0)
+    except (OSError, ValueError):
+        return 0
+
+
+def _is_ancestor(ancestor: int, pid: int) -> bool:
+    """Return True if *ancestor* is a parent (not pid itself) of *pid*, within 64 hops."""
+    if ancestor == pid:
+        return False
+    cur = pid
+    for _ in range(64):
+        cur = _ppid(cur)
+        if cur == ancestor:
+            return True
+        if cur <= 1:
+            return False
+    return False
+
+
+def _looks_like_claude(pid: int) -> bool:
+    """Return True if *pid* looks like a Claude Code process (Linux /proc only)."""
+    try:
+        comm = Path(f"/proc/{pid}/comm").read_text(errors="replace").strip()
+        if comm == "claude":
+            return True
+        argv = Path(f"/proc/{pid}/cmdline").read_bytes().split(b"\0")
+        args = [a.decode("utf-8", errors="replace") for a in argv]
+    except OSError:
+        return False
+    if args and os.path.basename(args[0]) == "claude":
+        return True
+    return any(a.endswith("cli.js") and "claude" in a for a in args[:2])
+
+
+def _count_claude_ancestors(pid: int) -> int:
+    """Count Claude-like processes among *pid* and its ancestors (max 64 steps)."""
+    count = 0
+    cur = pid
+    for _ in range(64):
+        if cur <= 1:
+            break
+        if _looks_like_claude(cur):
+            count += 1
+        cur = _ppid(cur)
+    return count
+
+
 def hook_main() -> None:
     """Process a Claude Code hook event from stdin, or install the hook."""
     # Configure logging for the hook subprocess (main.py logging doesn't apply here)
@@ -186,6 +270,18 @@ def hook_main() -> None:
     if event != "SessionStart":
         logger.debug("Ignoring non-SessionStart event: %s", event)
         return
+
+    # Headless (SDK / `claude -p`) sessions never own a window.
+    entrypoint = os.environ.get("CLAUDE_CODE_ENTRYPOINT", "")
+    if entrypoint.startswith("sdk"):
+        logger.debug("headless session, not registering (session_id=%s)", session_id)
+        return
+
+    # PID of the claude process that launched this hook (newer Claude Code only).
+    try:
+        claude_pid = int(os.environ.get("CLAUDE_PID") or 0)
+    except ValueError:
+        claude_pid = 0
 
     # Get tmux session:window key for the pane running this hook.
     # TMUX_PANE is set by tmux for every process inside a pane.
@@ -249,7 +345,7 @@ def hook_main() -> None:
             flock(lock_f, LOCK_EX)
             logger.debug("Acquired lock on %s", lock_path)
             try:
-                session_map: dict[str, dict[str, str]] = {}
+                session_map: dict[str, dict] = {}
                 if map_file.exists():
                     try:
                         session_map = json.loads(map_file.read_text())
@@ -258,11 +354,59 @@ def hook_main() -> None:
                             "Failed to read existing session_map, starting fresh"
                         )
 
-                session_map[session_window_key] = {
+                # Nested Claude (e.g. `claude -p` run from the window's Bash tool)
+                # inherits TMUX_PANE; it must not take over the window's entry.
+                existing = session_map.get(session_window_key)
+                owner = (
+                    existing.get("claude_pid") if isinstance(existing, dict) else None
+                )
+                if claude_pid:
+                    if (
+                        isinstance(owner, int)
+                        and owner != claude_pid
+                        and _pid_alive(owner)
+                        and _is_ancestor(owner, claude_pid)
+                    ):
+                        logger.info(
+                            "nested Claude session ignored: %s session_id=%s "
+                            "claude_pid=%s is a descendant of owner pid %s",
+                            session_window_key,
+                            session_id,
+                            claude_pid,
+                            owner,
+                        )
+                        return
+                    # No recorded owner (entry from an older hook, or none yet):
+                    # fall back to the process-name heuristic.
+                    if (
+                        not isinstance(owner, int)
+                        and _count_claude_ancestors(claude_pid) >= 2
+                    ):
+                        logger.info(
+                            "nested Claude session ignored: %s session_id=%s "
+                            "claude_pid=%s has a claude ancestor (no recorded owner)",
+                            session_window_key,
+                            session_id,
+                            claude_pid,
+                        )
+                        return
+                elif _count_claude_ancestors(os.getppid()) >= 2:
+                    logger.info(
+                        "nested Claude session ignored: %s session_id=%s "
+                        "(no CLAUDE_PID, claude ancestors >= 2)",
+                        session_window_key,
+                        session_id,
+                    )
+                    return
+
+                entry: dict = {
                     "session_id": session_id,
                     "cwd": cwd,
                     "window_name": window_name,
                 }
+                if claude_pid:
+                    entry["claude_pid"] = claude_pid
+                session_map[session_window_key] = entry
 
                 # Clean up old-format key ("session:window_name") if it exists.
                 # Previous versions keyed by window_name instead of window_id.
