@@ -221,3 +221,38 @@ class TestLifecycleCallback:
             safe_callback_data(
                 LifecycleCallback(prefix=CB_SL_KILL_CLOSE, window_id=long_window)
             )
+
+
+def test_panel_prefixes_are_lifecycle_prefixes() -> None:
+    from ccbot.handlers.callback_data import (
+        CB_SL_ESC,
+        CB_SL_NEW,
+        CB_SL_NEW_HERE,
+        CB_SL_NEW_TOPIC,
+        CB_SL_PREFIXES,
+        CB_SL_SCREENSHOT,
+    )
+
+    assert {CB_SL_NEW_HERE, CB_SL_SCREENSHOT, CB_SL_ESC} <= CB_SL_PREFIXES
+    assert CB_SL_NEW not in CB_SL_PREFIXES
+    assert CB_SL_NEW_TOPIC not in CB_SL_PREFIXES
+
+
+@pytest.mark.parametrize(
+    "prefix",
+    ["sl:nh:", "sl:sc:", "sl:es:"],
+)
+def test_panel_lifecycle_round_trip(prefix: str) -> None:
+    raw = f"{prefix}@12"
+    parsed = parse_lifecycle(raw)
+    assert parsed == LifecycleCallback(prefix=prefix, window_id="@12")
+    assert parsed is not None
+    assert parsed.to_old_string() == raw
+
+
+def test_exact_panel_actions_do_not_parse_as_lifecycle() -> None:
+    from ccbot.handlers.callback_data import CB_SL_NEW, CB_SL_NEW_TOPIC
+
+    assert parse_lifecycle(CB_SL_NEW) is None
+    assert parse_lifecycle(CB_SL_NEW_TOPIC) is None
+    assert parse_lifecycle("sl:nh:") is None

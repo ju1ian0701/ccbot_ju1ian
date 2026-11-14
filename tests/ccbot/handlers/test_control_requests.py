@@ -308,3 +308,14 @@ async def test_poll_loop_survives_iteration_error(monkeypatch):
         await cr.control_poll_loop(MagicMock())
 
     assert calls["process"] == 2
+
+
+async def test_notice_carries_session_panel(env, cwd):
+    await cr.handle_new_session(env.bot, {"cwd": str(cwd)})
+
+    markup = env.send.call_args.kwargs["reply_markup"]
+    data = [b.callback_data for row in markup.inline_keyboard for b in row]
+    assert "sl:sc:@5" in data
+    assert "sl:es:@5" in data
+    assert "sl:new" in data
+    assert "sl:kq:@5" in data

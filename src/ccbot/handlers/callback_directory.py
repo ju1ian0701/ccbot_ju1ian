@@ -8,6 +8,7 @@ from telegram import CallbackQuery, Update, User
 from telegram.ext import ContextTypes
 
 from ..session import session_manager
+from .bind_flow import discard_auto_topic
 from .callback_data import (
     DirPageCallback,
     DirSelectCallback,
@@ -205,3 +206,4 @@ async def _handle_dir_cancel(
     _clear_pending_thread(context)
     await safe_edit(query, "Cancelled")
     await query.answer("Cancelled")
+    await discard_auto_topic(context.bot, context, user.id, topic.pending_tid)

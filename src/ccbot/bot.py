@@ -1,7 +1,7 @@
 """Telegram bot application factory — registration and lifecycle only.
 
 Handler implementations live under ``ccbot.handlers``:
-  - command_handlers: /start /history /screenshot /esc /unbind /usage /kill /health /forward /topics
+  - command_handlers: /start /new /menu /history /screenshot /esc /unbind /usage /kill /health /forward /topics
   - message_handlers: text / photo / voice + bash capture
   - document: files (PDF, etc.) downloaded and forwarded as paths (document_handler)
   - callback_router: inline keyboard dispatch
@@ -45,6 +45,8 @@ from .handlers.command_handlers import (
     health_command,
     history_command,
     kill_command,
+    menu_command,
+    new_command,
     screenshot_command,
     start_command,
     topic_closed_handler,
@@ -89,6 +91,8 @@ _control_task: asyncio.Task | None = None
 # Telegram, or by /kill, which ends the session (window closed, topic kept).
 BOT_COMMANDS: dict[str, str] = {
     "start": "Show welcome message",
+    "new": "Start a new Claude session",
+    "menu": "Session control buttons",
     "history": "Message history for this topic",
     "screenshot": "Terminal screenshot with control keys",
     "esc": "Send Escape to interrupt Claude",
@@ -121,6 +125,8 @@ __all__ = [
     "history_command",
     "is_user_allowed",
     "kill_command",
+    "menu_command",
+    "new_command",
     "photo_handler",
     "post_init",
     "post_shutdown",
@@ -285,6 +291,8 @@ def create_bot() -> Application:
     application.add_error_handler(error_handler)
 
     application.add_handler(CommandHandler("start", start_command))
+    application.add_handler(CommandHandler("new", new_command))
+    application.add_handler(CommandHandler("menu", menu_command))
     application.add_handler(CommandHandler("history", history_command))
     application.add_handler(CommandHandler("screenshot", screenshot_command))
     application.add_handler(CommandHandler("esc", esc_command))

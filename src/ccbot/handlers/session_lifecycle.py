@@ -24,10 +24,15 @@ from ..terminal_parser import has_chrome
 from ..tmux_manager import TmuxWindow, tmux_manager
 from .callback_data import (
     CB_SL_CANCEL,
+    CB_SL_ESC,
     CB_SL_KILL_ASK,
     CB_SL_KILL_CLOSE,
     CB_SL_KILL_OK,
+    CB_SL_NEW,
+    CB_SL_NEW_HERE,
+    CB_SL_NEW_TOPIC,
     CB_SL_RESTART,
+    CB_SL_SCREENSHOT,
     LifecycleCallback,
     safe_callback_data,
 )
@@ -42,6 +47,12 @@ GRACEFUL_EXIT_POLL_INTERVAL = 0.5
 
 NOT_RUNNING_TEXT = (
     "⚠ Claude is not running in this window (shell prompt). Your message was not sent."
+)
+
+NEW_SESSION_TEXT = (
+    "Start a new session?\n"
+    "🔄 Restart here — end this session and start a fresh one in this topic\n"
+    "➕ New topic — keep this session and open another one"
 )
 
 
@@ -105,6 +116,65 @@ def build_not_running_keyboard(window_id: str) -> InlineKeyboardMarkup:
                     ),
                 ),
             ]
+        ]
+    )
+
+
+def build_session_panel_keyboard(window_id: str) -> InlineKeyboardMarkup:
+    """Session control panel shown after a session is bound (and by /menu)."""
+    return InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton(
+                    "📸 Screenshot",
+                    callback_data=safe_callback_data(
+                        LifecycleCallback(prefix=CB_SL_SCREENSHOT, window_id=window_id)
+                    ),
+                ),
+                InlineKeyboardButton(
+                    "⎋ Esc",
+                    callback_data=safe_callback_data(
+                        LifecycleCallback(prefix=CB_SL_ESC, window_id=window_id)
+                    ),
+                ),
+            ],
+            [
+                InlineKeyboardButton(
+                    "🆕 New session", callback_data=safe_callback_data(CB_SL_NEW)
+                ),
+                InlineKeyboardButton(
+                    "⏹ End session",
+                    callback_data=safe_callback_data(
+                        LifecycleCallback(prefix=CB_SL_KILL_ASK, window_id=window_id)
+                    ),
+                ),
+            ],
+        ]
+    )
+
+
+def build_new_session_keyboard(window_id: str) -> InlineKeyboardMarkup:
+    """Choice shown by /new and the "New session" panel button."""
+    return InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton(
+                    "🔄 Restart here",
+                    callback_data=safe_callback_data(
+                        LifecycleCallback(prefix=CB_SL_NEW_HERE, window_id=window_id)
+                    ),
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    "➕ New topic", callback_data=safe_callback_data(CB_SL_NEW_TOPIC)
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    "Cancel", callback_data=safe_callback_data(CB_SL_CANCEL)
+                )
+            ],
         ]
     )
 
