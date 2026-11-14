@@ -25,8 +25,15 @@ from telegram.ext import (
     MessageHandler,
     filters,
 )
+from telegram.request import HTTPXRequest
 
 from .config import config
+from .health import (
+    TrackedHTTPXRequest,
+    error_handler,
+    polling_health,
+    polling_watchdog_loop,
+)
 from .handlers.callback_router import callback_handler
 from .handlers.document import document_handler
 from .handlers.command_handlers import (
@@ -60,6 +67,10 @@ session_monitor: SessionMonitor | None = None
 
 # Status polling task
 _status_poll_task: asyncio.Task | None = None
+
+# Polling stall watchdog task and the getUpdates request it monitors
+_watchdog_task: asyncio.Task | None = None
+_get_updates_request: TrackedHTTPXRequest | None = None
 
 # Commands handled by the bot itself (shown in the menu). Each name needs a
 # CommandHandler in create_bot(); otherwise the command is forwarded to Claude
@@ -112,7 +123,7 @@ __all__ = [
 
 
 async def post_init(application: Application) -> None:
-    global session_monitor, _status_poll_task
+    global session_monitor, _status_poll_task, _watchdog_task
 
     # Register for the default scope and explicitly for group chats: a menu
     # defined only for the default scope can show up empty in a freshly created
@@ -157,9 +168,24 @@ async def post_init(application: Application) -> None:
     _status_poll_task = asyncio.create_task(status_poll_loop(application.bot))
     logger.info("Status polling task started")
 
+    # Start polling stall watchdog (rebuilds getUpdates client, exits if wedged)
+    if _get_updates_request is None:
+        logger.error("getUpdates request missing; polling watchdog not started")
+    else:
+        _watchdog_task = asyncio.create_task(
+            polling_watchdog_loop(
+                _get_updates_request,
+                polling_health,
+                token=config.telegram_bot_token,
+                soft=config.poll_stall_soft,
+                hard=config.poll_stall_hard,
+            )
+        )
+        logger.info("Polling watchdog started")
+
 
 async def post_shutdown(application: Application) -> None:
-    global _status_poll_task
+    global _status_poll_task, _watchdog_task
 
     # Stop status polling
     if _status_poll_task:
@@ -170,6 +196,16 @@ async def post_shutdown(application: Application) -> None:
             pass
         _status_poll_task = None
         logger.info("Status polling stopped")
+
+    # Stop polling watchdog
+    if _watchdog_task:
+        _watchdog_task.cancel()
+        try:
+            await _watchdog_task
+        except asyncio.CancelledError:
+            pass
+        _watchdog_task = None
+        logger.info("Polling watchdog stopped")
 
     # Stop all queue workers
     await shutdown_workers()
@@ -182,14 +218,31 @@ async def post_shutdown(application: Application) -> None:
 
 
 def create_bot() -> Application:
+    global _get_updates_request
+
+    # Separate clients: the main pool is large; getUpdates gets a small pool of
+    # its own, tracked by the stall watchdog (upstream #79).
+    _get_updates_request = TrackedHTTPXRequest(
+        connection_pool_size=config.get_updates_pool_size,
+        pool_timeout=config.http_pool_timeout,
+        health=polling_health,
+    )
     application = (
         Application.builder()
         .token(config.telegram_bot_token)
+        .request(
+            HTTPXRequest(
+                connection_pool_size=config.http_pool_size,
+                pool_timeout=config.http_pool_timeout,
+            )
+        )
+        .get_updates_request(_get_updates_request)
         .rate_limiter(AIORateLimiter(max_retries=5))
         .post_init(post_init)
         .post_shutdown(post_shutdown)
         .build()
     )
+    application.add_error_handler(error_handler)
 
     application.add_handler(CommandHandler("start", start_command))
     application.add_handler(CommandHandler("history", history_command))
