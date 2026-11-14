@@ -17,7 +17,9 @@ from telegram.ext import ContextTypes
 
 from ..session import session_manager
 from ..tmux_manager import tmux_manager
+from .bind_flow import rename_auto_topic
 from .message_sender import safe_edit, safe_send
+from .session_lifecycle import build_session_panel_keyboard
 
 logger = logging.getLogger(__name__)
 
@@ -124,6 +126,10 @@ async def create_and_bind_window(
             await safe_edit(
                 query,
                 f"✅ {message}\n\n{status}. Send messages here.",
+                reply_markup=build_session_panel_keyboard(created_wid),
+            )
+            await rename_auto_topic(
+                context.bot, context, user.id, pending_thread_id, created_wname
             )
 
             # Send pending text if any

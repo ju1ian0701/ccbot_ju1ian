@@ -313,3 +313,20 @@ async def test_text_handler_claude_window_sends_to_tmux() -> None:
 
     sm.send_to_window.assert_awaited_once_with("@8", "hello")
     reply.assert_not_awaited()
+
+
+def test_session_panel_keyboard_callbacks() -> None:
+    from ccbot.handlers.session_lifecycle import build_session_panel_keyboard
+
+    markup = build_session_panel_keyboard("@8")
+    data = [b.callback_data for row in markup.inline_keyboard for b in row]
+    assert data == ["sl:sc:@8", "sl:es:@8", "sl:new", "sl:kq:@8"]
+    assert all(len(d.encode()) <= 64 for d in data)
+
+
+def test_new_session_keyboard_callbacks() -> None:
+    from ccbot.handlers.session_lifecycle import build_new_session_keyboard
+
+    markup = build_new_session_keyboard("@8")
+    data = [b.callback_data for row in markup.inline_keyboard for b in row]
+    assert data == ["sl:nh:@8", "sl:nt", "sl:x"]

@@ -9,9 +9,12 @@ import pytest
 from ccbot.handlers.command_handlers import (
     esc_command,
     kill_command,
+    menu_command,
+    new_command,
     start_command,
     unbind_command,
 )
+from ccbot.handlers.session_lifecycle import NEW_SESSION_TEXT
 from ccbot.session_guard import SessionContext
 from ccbot.tmux_manager import TmuxWindow
 
@@ -214,3 +217,130 @@ async def test_kill_unbound_topic_no_keyboard() -> None:
         await kill_command(upd, ctx)
 
     reply.assert_not_awaited()
+
+
+# ── /new and /menu ────────────────────────────────────────────────────────
+
+
+def _cmd_update(thread_id: int | None) -> MagicMock:
+    upd = _update(thread_id=thread_id)
+    upd.effective_chat = MagicMock(id=-100, type="supergroup")
+    return upd
+
+
+def _cmd_sm(window_id: str | None = "@8") -> MagicMock:
+    sm = MagicMock()
+    sm.get_window_for_thread.return_value = window_id
+    sm.get_display_name.return_value = "proj"
+    sm.get_window_state.return_value = MagicMock(cwd="/t")
+    return sm
+
+
+def _markup_data(markup) -> list[str]:
+    return [b.callback_data for row in markup.inline_keyboard for b in row]
+
+
+async def test_new_in_general_opens_new_topic() -> None:
+    upd = _cmd_update(None)
+    ctx = _context()
+    with (
+        patch(f"{_CH}.require_user", new_callable=AsyncMock, return_value=_user()),
+        patch(f"{_CH}.session_manager", _cmd_sm()),
+        patch(
+            f"{_CH}.start_new_topic_flow", new_callable=AsyncMock, return_value=77
+        ) as flow,
+        patch(f"{_CH}.safe_reply", new_callable=AsyncMock) as reply,
+    ):
+        await new_command(upd, ctx)
+
+    flow.assert_awaited_once_with(ctx.bot, ctx, 1, -100, None)
+    assert reply.await_args.args[0] is upd.message
+    assert "Topic created" in reply.await_args.args[1]
+
+
+async def test_new_in_general_reports_failure() -> None:
+    upd = _cmd_update(None)
+    ctx = _context()
+    with (
+        patch(f"{_CH}.require_user", new_callable=AsyncMock, return_value=_user()),
+        patch(f"{_CH}.session_manager", _cmd_sm()),
+        patch(f"{_CH}.start_new_topic_flow", new_callable=AsyncMock, return_value=None),
+        patch(f"{_CH}.safe_reply", new_callable=AsyncMock) as reply,
+    ):
+        await new_command(upd, ctx)
+
+    assert "Could not create a topic" in reply.await_args.args[1]
+    assert "Manage Topics" in reply.await_args.args[1]
+
+
+async def test_new_in_bound_topic_shows_choice() -> None:
+    upd = _cmd_update(42)
+    with (
+        patch(f"{_CH}.require_user", new_callable=AsyncMock, return_value=_user()),
+        patch(f"{_CH}.session_manager", _cmd_sm("@8")),
+        patch(f"{_CH}.start_bind_flow", new_callable=AsyncMock) as bind,
+        patch(f"{_CH}.safe_reply", new_callable=AsyncMock) as reply,
+    ):
+        await new_command(upd, _context())
+
+    bind.assert_not_awaited()
+    assert reply.await_args.args[1] == NEW_SESSION_TEXT
+    data = _markup_data(reply.await_args.kwargs["reply_markup"])
+    assert "sl:nh:@8" in data
+    assert "sl:nt" in data
+    assert "sl:x" in data
+
+
+async def test_new_in_unbound_topic_starts_bind_flow() -> None:
+    upd = _cmd_update(42)
+    ctx = _context()
+    with (
+        patch(f"{_CH}.require_user", new_callable=AsyncMock, return_value=_user()),
+        patch(f"{_CH}.session_manager", _cmd_sm(None)),
+        patch(f"{_CH}.start_bind_flow", new_callable=AsyncMock) as bind,
+    ):
+        await new_command(upd, ctx)
+
+    bind.assert_awaited_once_with(upd.message, ctx, 1, 42, None)
+
+
+async def test_menu_in_bound_topic_shows_panel() -> None:
+    upd = _cmd_update(42)
+    with (
+        patch(f"{_CH}.require_user", new_callable=AsyncMock, return_value=_user()),
+        patch(f"{_CH}.session_manager", _cmd_sm("@8")),
+        patch(f"{_CH}.safe_reply", new_callable=AsyncMock) as reply,
+    ):
+        await menu_command(upd, _context())
+
+    assert reply.await_args.args[1] == "Session 'proj'\n/t"
+    data = _markup_data(reply.await_args.kwargs["reply_markup"])
+    assert any(d.startswith("sl:sc:@8") for d in data)
+    assert "sl:new" in data
+
+
+async def test_menu_in_unbound_topic_shows_hint() -> None:
+    upd = _cmd_update(42)
+    with (
+        patch(f"{_CH}.require_user", new_callable=AsyncMock, return_value=_user()),
+        patch(f"{_CH}.session_manager", _cmd_sm(None)),
+        patch(f"{_CH}.safe_reply", new_callable=AsyncMock) as reply,
+    ):
+        await menu_command(upd, _context())
+
+    assert reply.await_args.args[1] == (
+        "No session in this topic. Send a message or use /new to start one."
+    )
+    assert "reply_markup" not in reply.await_args.kwargs
+
+
+async def test_menu_in_general_shows_hint() -> None:
+    upd = _cmd_update(None)
+    with (
+        patch(f"{_CH}.require_user", new_callable=AsyncMock, return_value=_user()),
+        patch(f"{_CH}.session_manager", _cmd_sm("@8")),
+        patch(f"{_CH}.safe_reply", new_callable=AsyncMock) as reply,
+    ):
+        await menu_command(upd, _context())
+
+    assert reply.await_args.args[1].startswith("No session in this topic")

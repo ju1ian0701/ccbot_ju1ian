@@ -29,6 +29,7 @@ from ..config import config
 from ..session import session_manager
 from ..tmux_manager import tmux_manager
 from .message_sender import safe_send
+from .session_lifecycle import build_session_panel_keyboard
 from .window_bind import register_new_window
 
 logger = logging.getLogger(__name__)
@@ -197,6 +198,7 @@ async def handle_new_session(bot: Bot, params: dict) -> dict:
                 chat_id,
                 f"🖥 Session started from terminal: {wname}\n{path}",
                 message_thread_id=thread_id,
+                reply_markup=build_session_panel_keyboard(wid),
             )
         except Exception:
             logger.exception("Failed to send session notice to thread %s", thread_id)

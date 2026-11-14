@@ -40,7 +40,12 @@ from .callback_data import (
     CB_SL_KILL_ASK,
     CB_SL_KILL_CLOSE,
     CB_SL_KILL_OK,
+    CB_SL_NEW,
+    CB_SL_NEW_HERE,
+    CB_SL_NEW_TOPIC,
     CB_SL_RESTART,
+    CB_SL_SCREENSHOT,
+    CB_SL_ESC,
     CB_WIN_BIND,
     CB_WIN_CANCEL,
     CB_WIN_NEW,
@@ -66,6 +71,11 @@ from .callback_lifecycle import (
     _handle_kill_ask,
     _handle_kill_confirm,
     _handle_lifecycle_cancel,
+    _handle_new,
+    _handle_new_here,
+    _handle_new_topic,
+    _handle_panel_esc,
+    _handle_panel_screenshot,
     _handle_restart,
 )
 from .callback_screenshot import _handle_key, _handle_screenshot_refresh
@@ -94,6 +104,8 @@ _EXACT_ROUTES: dict[str, RouteHandler] = {
     CB_WIN_NEW: _handle_win_new,
     CB_WIN_CANCEL: _handle_win_cancel,
     CB_SL_CANCEL: _handle_lifecycle_cancel,
+    CB_SL_NEW: _handle_new,
+    CB_SL_NEW_TOPIC: _handle_new_topic,
     "noop": _handle_noop,
 }
 
@@ -117,6 +129,9 @@ _PREFIX_ROUTES: tuple[tuple[str, RouteHandler], ...] = (
     (CB_SL_KILL_OK, _handle_kill_confirm),
     (CB_SL_KILL_CLOSE, _handle_kill_confirm),
     (CB_SL_RESTART, _handle_restart),
+    (CB_SL_NEW_HERE, _handle_new_here),
+    (CB_SL_SCREENSHOT, _handle_panel_screenshot),
+    (CB_SL_ESC, _handle_panel_esc),
 )
 
 

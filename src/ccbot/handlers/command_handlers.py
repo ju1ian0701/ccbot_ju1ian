@@ -1,7 +1,7 @@
 """Telegram command and topic lifecycle handlers.
 
 Handlers:
-  - /start, /history, /screenshot, /unbind, /esc, /usage, /kill
+  - /start, /new, /menu, /history, /screenshot, /unbind, /esc, /usage, /kill
   - topic_closed_handler, topic_edited_handler
   - forward_command_handler (unknown /slash → Claude Code)
   - unsupported_content_handler
@@ -26,14 +26,18 @@ from ..session_guard import (
     require_user,
 )
 from ..tmux_manager import tmux_manager
+from .bind_flow import start_bind_flow, start_new_topic_flow
 from .cleanup import clear_topic_state
 from .directory_browser import clear_browse_state
 from .history import send_history
 from .message_sender import safe_reply
 from .screenshot_controls import build_screenshot_keyboard
 from .session_lifecycle import (
+    NEW_SESSION_TEXT,
     build_kill_confirm_keyboard,
     build_kill_confirm_text,
+    build_new_session_keyboard,
+    build_session_panel_keyboard,
     reply_if_claude_not_running,
 )
 
@@ -51,8 +55,78 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         await safe_reply(
             update.message,
             "🤖 *Claude Code Monitor*\n\n"
-            "Each topic is a session. Create a new topic to start.",
+            "Each topic is a session. Create a new topic or send /new to start.",
         )
+
+
+async def new_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """/new: restart the session of this topic, or start one in a new topic."""
+    user = await require_user(update, reply_unauthorized=False)
+    if user is None or update.message is None:
+        return
+
+    thread_id = get_thread_id(update)
+    chat = update.effective_chat
+    if chat and chat.type in ("group", "supergroup"):
+        session_manager.set_group_chat_id(user.id, thread_id, chat.id)
+
+    if thread_id is None:
+        # General topic: open a new topic and let the user pick a directory there
+        if chat is None:
+            return
+        new_tid = await start_new_topic_flow(
+            context.bot, context, user.id, chat.id, None
+        )
+        if new_tid is None:
+            await safe_reply(
+                update.message,
+                "❌ Could not create a topic (the bot needs the Manage Topics admin right). "
+                "Create a topic manually and write in it.",
+            )
+        else:
+            await safe_reply(
+                update.message, "➕ Topic created — choose a directory there."
+            )
+        return
+
+    window_id = session_manager.get_window_for_thread(user.id, thread_id)
+    if window_id is None:
+        await start_bind_flow(update.message, context, user.id, thread_id, None)
+        return
+
+    await safe_reply(
+        update.message,
+        NEW_SESSION_TEXT,
+        reply_markup=build_new_session_keyboard(window_id),
+    )
+
+
+async def menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """/menu: show the session control panel for this topic."""
+    user = await require_user(update, reply_unauthorized=False)
+    if user is None or update.message is None:
+        return
+
+    thread_id = get_thread_id(update)
+    window_id = (
+        session_manager.get_window_for_thread(user.id, thread_id)
+        if thread_id is not None
+        else None
+    )
+    if window_id is None:
+        await safe_reply(
+            update.message,
+            "No session in this topic. Send a message or use /new to start one.",
+        )
+        return
+
+    display = session_manager.get_display_name(window_id)
+    cwd = session_manager.get_window_state(window_id).cwd
+    await safe_reply(
+        update.message,
+        f"Session '{display}'\n{cwd}",
+        reply_markup=build_session_panel_keyboard(window_id),
+    )
 
 
 async def history_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:

@@ -12,7 +12,6 @@ from __future__ import annotations
 import asyncio
 import logging
 import time
-from pathlib import Path
 
 from telegram import Bot, Update
 from telegram.constants import ChatAction
@@ -25,18 +24,13 @@ from ..terminal_parser import extract_bash_output, is_interactive_ui
 from ..tmux_manager import tmux_manager
 from ..transcribe import TranscriptionDisabled, TranscriptionError, transcribe
 from ..utils import ccbot_dir, ensure_dir
+from .bind_flow import start_bind_flow
 from .capture_registry import capture_tasks
 from .directory_browser import (
-    BROWSE_DIRS_KEY,
-    BROWSE_PAGE_KEY,
-    BROWSE_PATH_KEY,
     STATE_BROWSING_DIRECTORY,
     STATE_KEY,
     STATE_SELECTING_SESSION,
     STATE_SELECTING_WINDOW,
-    UNBOUND_WINDOWS_KEY,
-    build_directory_browser,
-    build_window_picker,
     clear_browse_state,
     clear_session_picker_state,
     clear_window_picker_state,
@@ -343,56 +337,8 @@ async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 
     window_id = session_manager.get_window_for_thread(user.id, thread_id)
     if window_id is None:
-        # Unbound topic — check for unbound windows first
-        all_windows = await tmux_manager.list_windows()
-        bound_ids = {
-            window_id for _, _, window_id in session_manager.iter_thread_bindings()
-        }
-        unbound = [
-            (w.window_id, w.window_name, w.cwd)
-            for w in all_windows
-            if w.window_id not in bound_ids
-        ]
-        logger.debug(
-            "Window picker check: all=%s, bound=%s, unbound=%s",
-            [w.window_name for w in all_windows],
-            bound_ids,
-            [name for _, name, _ in unbound],
-        )
-
-        if unbound:
-            # Show window picker
-            logger.info(
-                "Unbound topic: showing window picker (%d unbound windows, user=%d, thread=%d)",
-                len(unbound),
-                user.id,
-                thread_id,
-            )
-            msg_text, keyboard, win_ids = build_window_picker(unbound)
-            if context.user_data is not None:
-                context.user_data[STATE_KEY] = STATE_SELECTING_WINDOW
-                context.user_data[UNBOUND_WINDOWS_KEY] = win_ids
-                context.user_data["_pending_thread_id"] = thread_id
-                context.user_data["_pending_thread_text"] = text
-            await safe_reply(update.message, msg_text, reply_markup=keyboard)
-            return
-
-        # No unbound windows — show directory browser to create a new session
-        logger.info(
-            "Unbound topic: showing directory browser (user=%d, thread=%d)",
-            user.id,
-            thread_id,
-        )
-        start_path = str(Path.cwd())
-        msg_text, keyboard, subdirs = build_directory_browser(start_path)
-        if context.user_data is not None:
-            context.user_data[STATE_KEY] = STATE_BROWSING_DIRECTORY
-            context.user_data[BROWSE_PATH_KEY] = start_path
-            context.user_data[BROWSE_PAGE_KEY] = 0
-            context.user_data[BROWSE_DIRS_KEY] = subdirs
-            context.user_data["_pending_thread_id"] = thread_id
-            context.user_data["_pending_thread_text"] = text
-        await safe_reply(update.message, msg_text, reply_markup=keyboard)
+        # Unbound topic — window picker or directory browser
+        await start_bind_flow(update.message, context, user.id, thread_id, text)
         return
 
     # Bound topic — live window via shared session guard (unbind if gone).

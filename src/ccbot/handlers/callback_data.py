@@ -12,6 +12,7 @@ unchanged for backward compatibility with existing Telegram keyboards:
   - Screenshot: ``ss:ref:<window>``, keys ``kb:<key_id>:<window>``
   - Interactive UI: ``aq:<action>:<window>``
   - Session lifecycle: ``sl:kq|ko|kc|rs:<window>``, cancel ``sl:x``
+  - Session panel: ``sl:sc|es|nh:<window>``, ``sl:new``, ``sl:nt``
 
 Always pass payloads through ``safe_callback_data`` when building
 InlineKeyboardButton — never silent ``[:64]`` truncation.
@@ -70,8 +71,21 @@ CB_SL_KILL_OK = "sl:ko:"  # sl:ko:<window>  confirmed: end session
 CB_SL_KILL_CLOSE = "sl:kc:"  # sl:kc:<window>  confirmed: end session and close topic
 CB_SL_RESTART = "sl:rs:"  # sl:rs:<window>  start Claude again in the window
 CB_SL_CANCEL = "sl:x"  # dismiss
+CB_SL_NEW = "sl:new"  # panel button: same as /new (exact match)
+CB_SL_NEW_TOPIC = "sl:nt"  # start a session in a brand-new topic (exact match)
+CB_SL_NEW_HERE = "sl:nh:"  # sl:nh:<window>  end this session, start a fresh one here
+CB_SL_SCREENSHOT = "sl:sc:"  # sl:sc:<window>  send a terminal screenshot
+CB_SL_ESC = "sl:es:"  # sl:es:<window>  send Escape
 CB_SL_PREFIXES = frozenset(
-    {CB_SL_KILL_ASK, CB_SL_KILL_OK, CB_SL_KILL_CLOSE, CB_SL_RESTART}
+    {
+        CB_SL_KILL_ASK,
+        CB_SL_KILL_OK,
+        CB_SL_KILL_CLOSE,
+        CB_SL_RESTART,
+        CB_SL_NEW_HERE,
+        CB_SL_SCREENSHOT,
+        CB_SL_ESC,
+    }
 )
 
 # Known interactive-UI prefixes (for validation / docs)
