@@ -7,6 +7,11 @@
 │  - /history: Paginated message history (default: latest page)      │
 │  - /screenshot: Capture tmux pane as PNG                           │
 │  - /esc: Send Escape to interrupt Claude                           │
+│  - /new: create a session (General) or restart/new topic           │
+│  - /menu: session panel (Screenshot, Esc, New, End)                │
+│  - /kill: end session after confirmation                           │
+│  - /health: bot and parser diagnostics                             │
+│  - /login: sign in to Claude Code via Telegram                     │
 │  - Send text → Claude Code via tmux keystrokes                     │
 │  - Forward /commands to Claude Code                                │
 │  - Create sessions via directory browser in unbound topics         │
@@ -72,6 +77,13 @@ Additional modules:
   transcribe.py       ─ Voice-to-text transcription via OpenAI API (gpt-4o-transcribe)
   main.py             ─ CLI entry point
   utils.py            ─ Shared utilities (ccbot_dir, atomic_write_json)
+  markdown_v2.py      ─ Markdown → Telegram MarkdownV2 (telegramify-markdown)
+  telegram_sender.py  ─ split_message (4096-char limit)
+  health.py           ─ getUpdates watchdog, Claude Code version check, /health report
+  hook_events.py      ─ hook_events.jsonl writer/reader (Notification, Stop, StopFailure, SessionEnd)
+  control.py          ─ Request/result files between `ccbot new` and the bot
+  cli_new.py          ─ `ccbot new [DIR]` terminal client
+  selfcheck.py        ─ `ccbot selfcheck`: parser check against the installed Claude Code
 
 Handler modules (handlers/):
   message_sender.py   ─ safe_reply/safe_edit/safe_send + rate_limit_send
@@ -82,11 +94,19 @@ Handler modules (handlers/):
   directory_browser.py─ Directory selection + session picker UI for new topics
   cleanup.py          ─ Topic state cleanup on close/delete
   callback_data.py    ─ Callback data constants
+  session_lifecycle.py─ End/restart session, shell guard, session panels
+  callback_lifecycle.py─ sl:* callbacks (end, restart, /new panel)
+  bind_flow.py        ─ Bind flow for unbound and auto-created topics
+  hook_reactions.py   ─ Reactions to hook events (prompts, Stop, StopFailure, SessionEnd)
+  control_requests.py ─ Executes requests written by `ccbot new`
+  login_flow.py       ─ /login: sign-in method picker and code relay
 
 State files (~/.ccbot/ or $CCBOT_DIR/):
   state.json         ─ thread bindings + window states + display names + read offsets
   session_map.json   ─ hook-generated window_id→session mapping
   monitor_state.json ─ poll progress (byte offset) per JSONL file
+  hook_events.jsonl  ─ hook event log (Notification, Stop, StopFailure, SessionEnd) read by the bot
+  control/           ─ request/result files of `ccbot new`
 ```
 
 ## Key Design Decisions
@@ -94,6 +114,9 @@ State files (~/.ccbot/ or $CCBOT_DIR/):
 - **Topic-centric** — Each Telegram topic binds to one tmux window. No centralized session list; topics *are* the session list.
 - **Window ID-centric** — All internal state keyed by tmux window ID (e.g. `@0`, `@12`), not window names. Window IDs are guaranteed unique within a tmux server session. Window names are kept as display names via `window_display_names` map. Same directory can have multiple windows.
 - **Hook-based session tracking** — Claude Code `SessionStart` hook writes `session_map.json`; monitor reads it each poll cycle to auto-detect session changes.
+- **Hook event channel** — `SessionEnd`, `Notification`, `Stop` and `StopFailure` are appended to `hook_events.jsonl` (recorded only for the window's own session); `hook_reactions` reads them each status poll. A Notification lets the bot report that Claude waits for input even when the parser does not recognize the prompt.
+- **Polling watchdog** — `health.py` rebuilds the getUpdates HTTP client after `CCBOT_POLL_STALL_SOFT` seconds without success; the process exits (for a supervisor restart) only after `CCBOT_POLL_STALL_HARD` seconds while Telegram is still reachable (upstream issue #79).
+- **Nested-session guard** — hooks from a Claude started inside a session (e.g. `claude -p`) are ignored for window ownership, so they cannot take over the window (upstream issue #72).
 - **Tool use ↔ tool result pairing** — `tool_use_id` tracked across poll cycles; tool result edits the original tool_use Telegram message in-place.
 - **MarkdownV2 with fallback** — All messages go through `safe_reply`/`safe_edit`/`safe_send` which convert via `telegramify-markdown` and fall back to plain text on parse failure.
 - **No truncation at parse layer** — Full content preserved; splitting at send layer respects Telegram's 4096 char limit with expandable quote atomicity.
