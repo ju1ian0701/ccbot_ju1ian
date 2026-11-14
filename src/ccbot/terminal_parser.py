@@ -19,6 +19,10 @@ import re
 from dataclasses import dataclass
 from urllib.parse import urlsplit
 
+# Newest Claude Code version these patterns were verified against. Bump it after
+# running the self-check (/health, startup warning) on a new version.
+TESTED_CLAUDE_CODE = "2.1.311"
+
 
 @dataclass
 class InteractiveUIContent:

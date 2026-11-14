@@ -1,7 +1,9 @@
 """Tests for polling health tracking, the stall watchdog, and the error handler."""
 
+import asyncio
 import logging
 import types
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import httpx
 import pytest
@@ -14,7 +16,13 @@ from ccbot.health import (
     PollingHealth,
     TrackedHTTPXRequest,
     WatchdogState,
+    WindowHealth,
+    build_health_report,
+    claude_version,
+    detect_claude_version,
     error_handler,
+    is_newer_than_tested,
+    parse_version,
     probe_telegram,
     watchdog_tick,
 )
@@ -229,3 +237,161 @@ class TestCreateBotWiring:
     def test_error_handler_registered(self):
         application = create_bot()
         assert health.error_handler in application.error_handlers
+
+
+class TestClaudeVersion:
+    def test_parse_version_finds_first_triple(self):
+        assert parse_version("2.1.311 (Claude Code)") == (2, 1, 311)
+
+    def test_parse_version_garbage_is_none(self):
+        assert parse_version("no version here") is None
+        assert parse_version("") is None
+
+    def test_is_newer_than_tested(self):
+        assert is_newer_than_tested("2.1.312") is True
+        assert is_newer_than_tested("3.0.0") is True
+        assert is_newer_than_tested("2.1.311") is False
+        assert is_newer_than_tested("2.0.9") is False
+        assert is_newer_than_tested(None) is False
+
+    @pytest.mark.asyncio
+    async def test_detect_returns_none_when_binary_missing(self):
+        with patch("ccbot.health.shutil.which", return_value=None):
+            assert await detect_claude_version() is None
+        assert claude_version() is None
+
+    @pytest.mark.asyncio
+    async def test_detect_parses_and_caches_output(self):
+        proc = MagicMock()
+        proc.communicate = AsyncMock(return_value=(b"2.1.311 (Claude Code)\n", b""))
+        proc.returncode = 0
+        with (
+            patch("ccbot.health.shutil.which", return_value="/usr/bin/claude"),
+            patch(
+                "ccbot.health.asyncio.create_subprocess_exec",
+                new_callable=AsyncMock,
+                return_value=proc,
+            ),
+        ):
+            assert await detect_claude_version() == "2.1.311"
+        assert claude_version() == "2.1.311"
+
+    @pytest.mark.asyncio
+    async def test_detect_timeout_returns_none(self):
+        proc = MagicMock()
+        proc.communicate = AsyncMock(side_effect=asyncio.TimeoutError)
+        proc.kill = MagicMock()
+        proc.wait = AsyncMock()
+        with (
+            patch("ccbot.health.shutil.which", return_value="/usr/bin/claude"),
+            patch(
+                "ccbot.health.asyncio.create_subprocess_exec",
+                new_callable=AsyncMock,
+                return_value=proc,
+            ),
+        ):
+            assert await detect_claude_version(timeout=0.01) is None
+        proc.kill.assert_called_once()
+
+
+_BOUND_WINDOW = WindowHealth(
+    window_id="@5",
+    name="proj",
+    process="claude",
+    has_chrome=True,
+    has_status=False,
+    interactive=False,
+    unrecognized_polls=0,
+    session_id="4c46f570-aaaa-bbbb-cccc-dddddddddddd",
+)
+_ALL_HOOKS = [
+    ("SessionStart", True),
+    ("SessionEnd", True),
+    ("Notification", True),
+    ("Stop", True),
+    ("StopFailure", True),
+]
+
+
+def _report(**overrides) -> str:
+    kwargs = dict(
+        uptime_seconds=3 * 3600 + 12 * 60,
+        seconds_since_poll_ok=4.0,
+        consecutive_poll_failures=0,
+        client_resets=0,
+        claude_version="2.1.311",
+        hooks=_ALL_HOOKS,
+        window=None,
+        bound_window_id=None,
+        last_event=None,
+        now_wall=1000.0,
+    )
+    kwargs.update(overrides)
+    return build_health_report(**kwargs)
+
+
+class TestBuildHealthReport:
+    def test_bound_window_variant(self):
+        report = _report(
+            window=_BOUND_WINDOW,
+            bound_window_id="@5",
+            last_event=("Stop", 988.0),
+        )
+        lines = report.split("\n")
+        assert lines[0] == "ccbot health"
+        assert lines[1] == "uptime: 3h 12m"
+        assert (
+            lines[2] == "polling: last ok 4s ago, failures in a row 0, client resets 0"
+        )
+        assert lines[3] == "Claude Code: 2.1.311 (tested 2.1.311)"
+        assert lines[4] == (
+            "hooks: SessionStart ok, SessionEnd ok, Notification ok, Stop ok, "
+            "StopFailure ok"
+        )
+        assert lines[5] == (
+            "window: @5 'proj' process=claude chrome=yes status=no "
+            "interactive=no unrecognized_polls=0"
+        )
+        assert lines[6] == "session: 4c46f570 tracked=yes"
+        assert lines[7] == "last hook event: Stop 12s ago"
+
+    def test_unbound_variant(self):
+        report = _report()
+        assert "window: this topic is not bound to a session" in report
+        assert "session:" not in report
+        assert "last hook event" not in report
+
+    def test_stale_binding_variant(self):
+        report = _report(bound_window_id="@9")
+        assert "window: @9 is not running (stale binding)" in report
+
+    def test_untracked_session_and_no_event(self):
+        window = WindowHealth(
+            window_id="@5",
+            name="proj",
+            process="bash",
+            has_chrome=False,
+            has_status=False,
+            interactive=False,
+            unrecognized_polls=31,
+            session_id="",
+        )
+        report = _report(window=window, bound_window_id="@5")
+        assert "session: - tracked=no" in report
+        assert "last hook event: none" in report
+        assert "unrecognized_polls=31" in report
+
+    def test_newer_than_tested_marker(self):
+        report = _report(claude_version="2.2.0")
+        assert "Claude Code: 2.2.0 (tested 2.1.311) — NEWER THAN TESTED" in report
+
+    def test_missing_hook_is_marked(self):
+        hooks = [(name, name != "StopFailure") for name, _ in _ALL_HOOKS]
+        report = _report(hooks=hooks)
+        assert "StopFailure MISSING" in report
+        assert "Stop ok" in report
+
+    def test_unknown_version(self):
+        report = _report(claude_version=None)
+        assert "Claude Code: unknown (tested 2.1.311)" in report
+        assert "NEWER" not in report

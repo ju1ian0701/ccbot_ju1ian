@@ -5,11 +5,21 @@ model picker renders in the terminal, and the status poller detects it
 on its next 1s tick.
 """
 
+import asyncio
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from ccbot.handlers.status_polling import update_status_message
+from ccbot.handlers import status_polling
+from ccbot.handlers.status_polling import (
+    STATUS_CLEAR_POLLS,
+    UNRECOGNIZED_SCREEN_POLLS,
+    parser_state,
+    status_poll_loop,
+    update_status_message,
+)
+from ccbot.hook_events import HookEvent
+from ccbot.tmux_manager import TmuxWindow
 
 
 @pytest.fixture
@@ -139,3 +149,208 @@ class TestStatusPollerSettingsDetection:
             assert keyboard is not None
             # Verify the message text contains model picker content
             assert "Select model" in call_kwargs["text"]
+
+
+# --- Stale status clear, parser canary, hook event consumption -------------
+
+# --- Stale status clear, parser canary, hook event consumption -------------
+
+_SP = "ccbot.handlers.status_polling"
+_CHROME_PANE = (
+    "some output\n"
+    "──────────────────────────────────────\n"
+    "❯ \n"
+    "──────────────────────────────────────\n"
+    "  [Opus 4.6] Context: 50%\n"
+)
+_STATUS_PANE = (
+    "some output\n"
+    "✻ Reading file\n"
+    "──────────────────────────────────────\n"
+    "❯ \n"
+    "──────────────────────────────────────\n"
+    "  [Opus 4.6] Context: 50%\n"
+)
+_PLAIN_PANE = "random screen\nnothing recognizable here\n"
+
+
+@pytest.fixture(autouse=True)
+def _reset_polling_state():
+    status_polling._no_status_polls.clear()
+    status_polling._unrecognized_polls.clear()
+    status_polling._reported_unrecognized.clear()
+    yield
+    status_polling._no_status_polls.clear()
+    status_polling._unrecognized_polls.clear()
+    status_polling._reported_unrecognized.clear()
+
+
+def _tw(command: str = "claude") -> TmuxWindow:
+    return TmuxWindow(
+        window_id="@5", window_name="p", cwd="/t", pane_current_command=command
+    )
+
+
+def _clear_calls(enq: AsyncMock) -> int:
+    return sum(1 for c in enq.await_args_list if c.args[3] is None)
+
+
+class TestStaleStatusClear:
+    @pytest.mark.asyncio
+    async def test_clear_enqueued_once_on_fifth_poll(self, mock_bot: AsyncMock):
+        assert STATUS_CLEAR_POLLS == 5
+        with (
+            patch(f"{_SP}.tmux_manager") as mock_tmux,
+            patch(f"{_SP}.enqueue_status_update", new_callable=AsyncMock) as enq,
+        ):
+            mock_tmux.find_window_by_id = AsyncMock(return_value=_tw())
+            mock_tmux.capture_pane = AsyncMock(return_value=_CHROME_PANE)
+            counts = []
+            for _ in range(6):
+                await update_status_message(mock_bot, 1, "@5", thread_id=42)
+                counts.append(_clear_calls(enq))
+
+        assert counts == [0, 0, 0, 0, 1, 1]
+        clear_call = [c for c in enq.await_args_list if c.args[3] is None][0]
+        assert clear_call.kwargs["thread_id"] == 42
+
+    @pytest.mark.asyncio
+    async def test_status_line_resets_counter(self, mock_bot: AsyncMock):
+        with (
+            patch(f"{_SP}.tmux_manager") as mock_tmux,
+            patch(f"{_SP}.enqueue_status_update", new_callable=AsyncMock) as enq,
+        ):
+            mock_tmux.find_window_by_id = AsyncMock(return_value=_tw())
+            mock_tmux.capture_pane = AsyncMock(return_value=_CHROME_PANE)
+            for _ in range(4):
+                await update_status_message(mock_bot, 1, "@5", thread_id=42)
+            mock_tmux.capture_pane = AsyncMock(return_value=_STATUS_PANE)
+            await update_status_message(mock_bot, 1, "@5", thread_id=42)
+            mock_tmux.capture_pane = AsyncMock(return_value=_CHROME_PANE)
+            for _ in range(4):
+                await update_status_message(mock_bot, 1, "@5", thread_id=42)
+
+        assert _clear_calls(enq) == 0
+
+    @pytest.mark.asyncio
+    async def test_without_chrome_nothing_is_cleared(self, mock_bot: AsyncMock):
+        with (
+            patch(f"{_SP}.tmux_manager") as mock_tmux,
+            patch(f"{_SP}.enqueue_status_update", new_callable=AsyncMock) as enq,
+        ):
+            mock_tmux.find_window_by_id = AsyncMock(return_value=_tw())
+            mock_tmux.capture_pane = AsyncMock(return_value=_PLAIN_PANE)
+            for _ in range(10):
+                await update_status_message(mock_bot, 1, "@5", thread_id=42)
+
+        assert _clear_calls(enq) == 0
+        enq.assert_not_awaited()
+
+
+class TestParserCanary:
+    @pytest.mark.asyncio
+    async def test_unrecognized_screen_reported_once_at_thirtieth_poll(
+        self, mock_bot: AsyncMock
+    ):
+        assert UNRECOGNIZED_SCREEN_POLLS == 30
+        with (
+            patch(f"{_SP}.tmux_manager") as mock_tmux,
+            patch(f"{_SP}.enqueue_status_update", new_callable=AsyncMock),
+            patch(f"{_SP}.send_prompt_screenshot", new_callable=AsyncMock) as shot,
+        ):
+            mock_tmux.find_window_by_id = AsyncMock(return_value=_tw())
+            mock_tmux.capture_pane = AsyncMock(return_value=_PLAIN_PANE)
+            for _ in range(29):
+                await update_status_message(mock_bot, 1, "@5", thread_id=42)
+            shot.assert_not_awaited()
+            await update_status_message(mock_bot, 1, "@5", thread_id=42)
+            shot.assert_awaited_once()
+            assert shot.await_args.args[1:4] == (1, "@5", 42)
+            assert parser_state("@5") == {"no_chrome_polls": 30, "reported": True}
+            for _ in range(5):
+                await update_status_message(mock_bot, 1, "@5", thread_id=42)
+
+        shot.assert_awaited_once()
+        assert parser_state("@5") == {"no_chrome_polls": 35, "reported": True}
+
+    @pytest.mark.asyncio
+    async def test_chrome_resets_and_window_can_be_reported_again(
+        self, mock_bot: AsyncMock
+    ):
+        with (
+            patch(f"{_SP}.tmux_manager") as mock_tmux,
+            patch(f"{_SP}.enqueue_status_update", new_callable=AsyncMock),
+            patch(f"{_SP}.send_prompt_screenshot", new_callable=AsyncMock) as shot,
+        ):
+            mock_tmux.find_window_by_id = AsyncMock(return_value=_tw())
+            mock_tmux.capture_pane = AsyncMock(return_value=_PLAIN_PANE)
+            for _ in range(UNRECOGNIZED_SCREEN_POLLS):
+                await update_status_message(mock_bot, 1, "@5", thread_id=42)
+            assert shot.await_count == 1
+
+            mock_tmux.capture_pane = AsyncMock(return_value=_CHROME_PANE)
+            await update_status_message(mock_bot, 1, "@5", thread_id=42)
+            assert parser_state("@5") == {"no_chrome_polls": 0, "reported": False}
+
+            mock_tmux.capture_pane = AsyncMock(return_value=_PLAIN_PANE)
+            for _ in range(UNRECOGNIZED_SCREEN_POLLS):
+                await update_status_message(mock_bot, 1, "@5", thread_id=42)
+
+        assert shot.await_count == 2
+
+    @pytest.mark.asyncio
+    async def test_shell_window_never_counts(self, mock_bot: AsyncMock):
+        with (
+            patch(f"{_SP}.tmux_manager") as mock_tmux,
+            patch(f"{_SP}.enqueue_status_update", new_callable=AsyncMock),
+            patch(f"{_SP}.send_prompt_screenshot", new_callable=AsyncMock) as shot,
+        ):
+            mock_tmux.find_window_by_id = AsyncMock(return_value=_tw("bash"))
+            mock_tmux.capture_pane = AsyncMock(return_value=_PLAIN_PANE)
+            for _ in range(UNRECOGNIZED_SCREEN_POLLS + 5):
+                await update_status_message(mock_bot, 1, "@5", thread_id=42)
+
+        shot.assert_not_awaited()
+        assert parser_state("@5")["no_chrome_polls"] == 0
+
+    @pytest.mark.asyncio
+    async def test_recognized_interactive_ui_never_counts(
+        self, mock_bot: AsyncMock, sample_pane_settings: str
+    ):
+        with (
+            patch(f"{_SP}.tmux_manager") as mock_tmux,
+            patch(f"{_SP}.handle_interactive_ui", new_callable=AsyncMock) as ui,
+            patch(f"{_SP}.send_prompt_screenshot", new_callable=AsyncMock) as shot,
+        ):
+            ui.return_value = True
+            mock_tmux.find_window_by_id = AsyncMock(return_value=_tw())
+            mock_tmux.capture_pane = AsyncMock(return_value=sample_pane_settings)
+            for _ in range(UNRECOGNIZED_SCREEN_POLLS + 5):
+                await update_status_message(mock_bot, 1, "@5", thread_id=42)
+
+        shot.assert_not_awaited()
+        assert parser_state("@5")["no_chrome_polls"] == 0
+
+
+class TestHookEventConsumption:
+    @pytest.mark.asyncio
+    async def test_loop_hands_new_events_to_reactions(self, mock_bot: AsyncMock):
+        event = HookEvent(ts=1.0, event="Stop", window_id="@5", session_id="s", data={})
+        reader = MagicMock()
+        reader.read_new.return_value = [event]
+        with (
+            patch(f"{_SP}.HookEventReader", return_value=reader),
+            patch(f"{_SP}.handle_hook_event", new_callable=AsyncMock) as handle,
+            patch(f"{_SP}.session_manager") as sm,
+            # Stop the loop after the first iteration's sleep
+            patch(
+                f"{_SP}.asyncio.sleep",
+                new_callable=AsyncMock,
+                side_effect=asyncio.CancelledError,
+            ),
+        ):
+            sm.iter_thread_bindings.return_value = []
+            with pytest.raises(asyncio.CancelledError):
+                await status_poll_loop(mock_bot)
+
+        handle.assert_awaited_once_with(mock_bot, event)

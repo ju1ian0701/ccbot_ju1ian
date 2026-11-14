@@ -1,7 +1,7 @@
 """Telegram bot application factory — registration and lifecycle only.
 
 Handler implementations live under ``ccbot.handlers``:
-  - command_handlers: /start /history /screenshot /esc /unbind /usage /kill /forward /topics
+  - command_handlers: /start /history /screenshot /esc /unbind /usage /kill /health /forward /topics
   - message_handlers: text / photo / voice + bash capture
   - document: files (PDF, etc.) downloaded and forwarded as paths (document_handler)
   - callback_router: inline keyboard dispatch
@@ -31,7 +31,9 @@ from telegram.request import HTTPXRequest
 from .config import config
 from .health import (
     TrackedHTTPXRequest,
+    detect_claude_version,
     error_handler,
+    is_newer_than_tested,
     polling_health,
     polling_watchdog_loop,
 )
@@ -40,6 +42,7 @@ from .handlers.document import document_handler
 from .handlers.command_handlers import (
     esc_command,
     forward_command_handler,
+    health_command,
     history_command,
     kill_command,
     screenshot_command,
@@ -58,6 +61,7 @@ from .handlers.status_polling import status_poll_loop
 from .session import session_manager
 from .session_guard import get_thread_id, is_user_allowed
 from .session_monitor import NewMessage, SessionMonitor
+from .terminal_parser import TESTED_CLAUDE_CODE
 from .transcribe import close_client as close_transcribe_client
 
 # Back-compat alias (older tests patched ccbot.bot._get_thread_id)
@@ -91,6 +95,7 @@ BOT_COMMANDS: dict[str, str] = {
     "unbind": "Unbind topic from session (keeps window running)",
     "usage": "Show Claude Code usage remaining",
     "kill": "End this session (closes its tmux window)",
+    "health": "Bot and parser diagnostics",
 }
 
 # Claude Code commands shown in bot menu (forwarded via tmux)
@@ -110,6 +115,7 @@ __all__ = [
     "create_bot",
     "esc_command",
     "forward_command_handler",
+    "health_command",
     "get_thread_id",
     "handle_new_message",
     "history_command",
@@ -151,6 +157,17 @@ async def post_init(application: Application) -> None:
 
     # Re-resolve stale window IDs from persisted state against live tmux windows
     await session_manager.resolve_stale_ids()
+
+    # Check the installed Claude Code version against the one the parsing was
+    # tested with (informational only: detection never blocks startup)
+    claude_version = await detect_claude_version()
+    if is_newer_than_tested(claude_version):
+        logger.warning(
+            "Claude Code %s is newer than the tested %s; "
+            "terminal parsing may be out of date",
+            claude_version,
+            TESTED_CLAUDE_CODE,
+        )
 
     # Pre-fill global rate limiter bucket on restart.
     # AsyncLimiter starts at _level=0 (full burst capacity), but Telegram's
@@ -274,6 +291,7 @@ def create_bot() -> Application:
     application.add_handler(CommandHandler("unbind", unbind_command))
     application.add_handler(CommandHandler("usage", usage_command))
     application.add_handler(CommandHandler("kill", kill_command))
+    application.add_handler(CommandHandler("health", health_command))
     application.add_handler(CallbackQueryHandler(callback_handler))
     # Topic closed event — auto-kill associated window
     application.add_handler(

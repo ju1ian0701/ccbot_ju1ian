@@ -15,6 +15,9 @@ Key components:
   - TrackedHTTPXRequest: HTTPXRequest that records health and can reset_client()
   - watchdog_tick / polling_watchdog_loop: stall decision logic and its loop
   - error_handler: PTB error handler for network vs. unexpected errors
+  - detect_claude_version / is_newer_than_tested: installed Claude Code version
+    check against the version the terminal patterns were verified with
+  - build_health_report: pure text report for the /health command
 """
 
 from __future__ import annotations
@@ -22,10 +25,12 @@ from __future__ import annotations
 import asyncio
 import logging
 import os
+import re
+import shutil
 import signal
 import threading
 import time
-from collections.abc import Awaitable, Callable
+from collections.abc import Awaitable, Callable, Sequence
 from dataclasses import dataclass, field
 from typing import Any, Protocol
 
@@ -34,6 +39,8 @@ from telegram._utils.types import ODVInput
 from telegram.error import NetworkError
 from telegram.ext import ContextTypes
 from telegram.request import BaseRequest, HTTPXRequest, RequestData
+
+from .terminal_parser import TESTED_CLAUDE_CODE
 
 logger = logging.getLogger(__name__)
 
@@ -242,3 +249,162 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> N
         logger.warning("Telegram network error: %s", error)
         return
     logger.error("Unhandled exception in handler", exc_info=error)
+
+
+_VERSION_RE = re.compile(r"(\d+)\.(\d+)\.(\d+)")
+
+# Result of the last detect_claude_version() call (None when not detected)
+_claude_version: str | None = None
+
+
+def parse_version(text: str) -> tuple[int, ...] | None:
+    """First "N.N.N" found in *text* as a tuple, e.g. "2.1.311 (Claude Code)" -> (2, 1, 311)."""
+    match = _VERSION_RE.search(text)
+    if match is None:
+        return None
+    return tuple(int(part) for part in match.groups())
+
+
+async def detect_claude_version(timeout: float = 5.0) -> str | None:
+    """Run ``claude --version`` and cache the result. Never raises.
+
+    Returns "N.N.N", or None when the binary is missing, fails, or times out.
+    """
+    global _claude_version
+    version: str | None = None
+    try:
+        claude_path = shutil.which("claude")
+        if claude_path is not None:
+            proc = await asyncio.create_subprocess_exec(
+                claude_path,
+                "--version",
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.DEVNULL,
+            )
+            try:
+                out, _ = await asyncio.wait_for(proc.communicate(), timeout=timeout)
+            except (asyncio.TimeoutError, asyncio.CancelledError):
+                proc.kill()
+                await proc.wait()
+                raise
+            if proc.returncode == 0:
+                parsed = parse_version(out.decode("utf-8", errors="replace"))
+                if parsed is not None:
+                    version = ".".join(str(part) for part in parsed)
+    except asyncio.CancelledError:
+        raise
+    except Exception as e:
+        logger.debug("Claude Code version detection failed: %s", e)
+        version = None
+    _claude_version = version
+    return version
+
+
+def claude_version() -> str | None:
+    """Cached result of the last detect_claude_version() call."""
+    return _claude_version
+
+
+def is_newer_than_tested(version: str | None) -> bool:
+    """True if *version* is newer than TESTED_CLAUDE_CODE. Unknown is False."""
+    parsed = parse_version(version or "")
+    tested = parse_version(TESTED_CLAUDE_CODE)
+    if parsed is None or tested is None:
+        return False
+    return parsed > tested
+
+
+@dataclass(frozen=True)
+class WindowHealth:
+    """Parser and process facts about the window bound to a topic."""
+
+    window_id: str
+    name: str
+    process: str
+    has_chrome: bool
+    has_status: bool
+    interactive: bool
+    unrecognized_polls: int
+    session_id: str  # "" when no session is tracked
+
+
+def _fmt_span(seconds: float) -> str:
+    """Human duration: "4s", "3m 5s", "2h 12m", "1d 3h 0m"."""
+    total = max(0, int(seconds))
+    days, rest = divmod(total, 86400)
+    hours, rest = divmod(rest, 3600)
+    minutes, secs = divmod(rest, 60)
+    if days:
+        return f"{days}d {hours}h {minutes}m"
+    if hours:
+        return f"{hours}h {minutes}m"
+    if minutes:
+        return f"{minutes}m {secs}s"
+    return f"{secs}s"
+
+
+def build_health_report(
+    *,
+    uptime_seconds: float,
+    seconds_since_poll_ok: float,
+    consecutive_poll_failures: int,
+    client_resets: int,
+    claude_version: str | None,
+    hooks: Sequence[tuple[str, bool]],
+    window: WindowHealth | None,
+    bound_window_id: str | None,
+    last_event: tuple[str, float] | None,
+    now_wall: float,
+) -> str:
+    """Plain-text /health report. Pure: all values are passed in.
+
+    ``window`` is the live window bound to the topic. ``bound_window_id`` is set
+    when the topic is bound but the window is gone; both None means unbound.
+    """
+    tested = TESTED_CLAUDE_CODE
+    if claude_version is None:
+        version_line = f"Claude Code: unknown (tested {tested})"
+    else:
+        version_line = f"Claude Code: {claude_version} (tested {tested})"
+        if is_newer_than_tested(claude_version):
+            version_line += " — NEWER THAN TESTED"
+
+    hooks_text = ", ".join(
+        f"{name} {'ok' if installed else 'MISSING'}" for name, installed in hooks
+    )
+    lines = [
+        "ccbot health",
+        f"uptime: {_fmt_span(uptime_seconds)}",
+        f"polling: last ok {_fmt_span(seconds_since_poll_ok)} ago, "
+        f"failures in a row {consecutive_poll_failures}, client resets {client_resets}",
+        version_line,
+        f"hooks: {hooks_text}",
+    ]
+
+    if window is None and bound_window_id is None:
+        lines.append("window: this topic is not bound to a session")
+        return "\n".join(lines)
+    if window is None:
+        lines.append(f"window: {bound_window_id} is not running (stale binding)")
+        return "\n".join(lines)
+
+    lines.append(
+        f"window: {window.window_id} '{window.name}' process={window.process} "
+        f"chrome={_yes_no(window.has_chrome)} status={_yes_no(window.has_status)} "
+        f"interactive={_yes_no(window.interactive)} "
+        f"unrecognized_polls={window.unrecognized_polls}"
+    )
+    session_id = window.session_id
+    lines.append(
+        f"session: {session_id[:8] or '-'} tracked={_yes_no(bool(session_id))}"
+    )
+    if last_event is None:
+        lines.append("last hook event: none")
+    else:
+        name, ts = last_event
+        lines.append(f"last hook event: {name} {_fmt_span(now_wall - ts)} ago")
+    return "\n".join(lines)
+
+
+def _yes_no(flag: bool) -> str:
+    return "yes" if flag else "no"
