@@ -402,7 +402,9 @@ class TestLoginFlowHook:
             patch(f"{_SP}.enqueue_status_update", new_callable=AsyncMock),
             patch(f"{_SP}.send_prompt_screenshot", new_callable=AsyncMock) as shot,
             patch(
-                "ccbot.handlers.login_flow.safe_send", new_callable=AsyncMock
+                "ccbot.handlers.login_flow.send_with_fallback",
+                new_callable=AsyncMock,
+                return_value=MagicMock(),
             ) as send,
             patch("ccbot.handlers.login_flow.session_manager") as sm,
         ):

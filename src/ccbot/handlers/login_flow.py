@@ -28,7 +28,7 @@ from telegram import Bot, InlineKeyboardButton, InlineKeyboardMarkup, Message
 from ..session import session_manager
 from ..terminal_parser import is_login_code_prompt, parse_login_url
 from ..tmux_manager import tmux_manager
-from .message_sender import safe_send
+from .message_sender import safe_send, send_with_fallback
 
 logger = logging.getLogger(__name__)
 
@@ -36,6 +36,7 @@ LOGIN_TTL = 600.0  # seconds a login stays "in progress" after the URL was sent
 LOGIN_GONE_POLLS = (
     3  # consecutive polls without the login screen before it counts as closed
 )
+LOGIN_RETRY_INTERVAL = 30.0  # seconds before retrying a failed sign-in link send
 
 _SIGN_IN_TEXT = (
     "🔐 Claude Code is waiting for sign-in.\n"
@@ -64,6 +65,8 @@ class LoginState:
 
 # (user_id, thread_id_or_0) -> LoginState
 _states: dict[tuple[int, int], LoginState] = {}
+# (user_id, thread_id_or_0) -> time.monotonic() of the last failed link send
+_last_failure: dict[tuple[int, int], float] = {}
 
 
 def _key(user_id: int, thread_id: int | None) -> tuple[int, int]:
@@ -98,6 +101,12 @@ async def on_pane(
 
     url = parse_login_url(pane_text)
     if url is not None and (state is None or state.url != url):
+        failed_at = _last_failure.get(key)
+        if (
+            failed_at is not None
+            and time.monotonic() - failed_at < LOGIN_RETRY_INTERVAL
+        ):
+            return
         await _start_login(bot, user_id, thread_id, window_id, url)
         return
 
@@ -127,25 +136,48 @@ async def _start_login(
     window_id: str,
     url: str,
 ) -> None:
-    """Remember a new sign-in and send its link to the topic."""
+    """Remember a new sign-in and send its link to the topic.
+
+    The link is sent as a button first. If Telegram rejects that, it is sent
+    again as a plain link. If both attempts fail, the login is forgotten and the
+    time is recorded so on_pane waits LOGIN_RETRY_INTERVAL before retrying.
+    """
     key = _key(user_id, thread_id)
     _states[key] = LoginState(window_id=window_id, url=url, sent_at=time.monotonic())
-    keyboard = InlineKeyboardMarkup(
-        [[InlineKeyboardButton("🔐 Open sign-in page", url=url)]]
-    )
+    sent = False
     try:
         chat_id = session_manager.resolve_chat_id(user_id, thread_id)
-        await safe_send(
+        keyboard = InlineKeyboardMarkup(
+            [[InlineKeyboardButton("🔐 Open sign-in page", url=url)]]
+        )
+        message = await send_with_fallback(
             bot,
             chat_id,
             _SIGN_IN_TEXT,
             message_thread_id=thread_id,
             reply_markup=keyboard,
         )
+        if message is None:
+            logger.warning("Sign-in link button rejected; sending plain link")
+            plain_text = (
+                _SIGN_IN_TEXT.replace("with the button below", "using the link below")
+                + "\n\n"
+                + url
+            )
+            message = await send_with_fallback(
+                bot, chat_id, plain_text, message_thread_id=thread_id
+            )
+        sent = message is not None
     except Exception as e:
-        # Forget the login so the next poll retries the send
-        _states.pop(key, None)
         logger.warning("Could not send sign-in link: %s", type(e).__name__)
+
+    if sent:
+        _last_failure.pop(key, None)
+        return
+
+    _states.pop(key, None)
+    _last_failure[key] = time.monotonic()
+    logger.warning("Sign-in link not delivered; retry in %ss", LOGIN_RETRY_INTERVAL)
 
 
 async def expects_code(user_id: int, thread_id: int | None, window_id: str) -> bool:
@@ -184,5 +216,7 @@ async def after_code_sent(
 
 
 def forget_topic(user_id: int, thread_id: int | None) -> None:
-    """Drop a topic's login state (its binding was removed)."""
-    _states.pop(_key(user_id, thread_id), None)
+    """Drop a topic's login state and failure timestamp (its binding was removed)."""
+    key = _key(user_id, thread_id)
+    _states.pop(key, None)
+    _last_failure.pop(key, None)

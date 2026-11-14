@@ -7,7 +7,7 @@ from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-from telegram.error import BadRequest, TimedOut
+from telegram.error import BadRequest
 
 from ccbot.handlers import login_flow
 from ccbot.handlers.login_flow import (
@@ -31,8 +31,10 @@ _LF = "ccbot.handlers.login_flow"
 @pytest.fixture(autouse=True)
 def _reset_states():
     login_flow._states.clear()
+    login_flow._last_failure.clear()
     yield
     login_flow._states.clear()
+    login_flow._last_failure.clear()
 
 
 @pytest.fixture
@@ -41,8 +43,20 @@ def bot() -> AsyncMock:
 
 
 @pytest.fixture
+def link():
+    """Mock the sign-in link send (send_with_fallback); succeeds by default."""
+    with (
+        patch(f"{_LF}.send_with_fallback", new_callable=AsyncMock) as send,
+        patch(f"{_LF}.session_manager") as sm,
+    ):
+        sm.resolve_chat_id.return_value = 100
+        send.return_value = MagicMock()
+        yield send
+
+
+@pytest.fixture
 def sender():
-    """Mock the outgoing send and the chat id lookup."""
+    """Mock the plain sends (closed notice, code confirmation) and chat lookup."""
     with (
         patch(f"{_LF}.safe_send", new_callable=AsyncMock) as send,
         patch(f"{_LF}.session_manager") as sm,
@@ -58,15 +72,15 @@ def _url_pane_with_other_url() -> str:
 # ── URL message ──────────────────────────────────────────────────────────
 
 
-async def test_url_screen_sends_one_message_with_url_button(bot, sender) -> None:
+async def test_url_screen_sends_one_message_with_url_button(bot, link) -> None:
     await on_pane(bot, 1, 42, "@1", URL_PANE)
 
-    sender.assert_awaited_once()
-    args = sender.await_args.args
+    link.assert_awaited_once()
+    args = link.await_args.args
     assert args[0] is bot
     assert args[1] == 100
     assert args[2].startswith("🔐 Claude Code is waiting for sign-in.")
-    kwargs = sender.await_args.kwargs
+    kwargs = link.await_args.kwargs
     assert kwargs["message_thread_id"] == 42
     buttons = [b for row in kwargs["reply_markup"].inline_keyboard for b in row]
     assert len(buttons) == 1
@@ -74,63 +88,120 @@ async def test_url_screen_sends_one_message_with_url_button(bot, sender) -> None
     assert buttons[0].url is not None
 
 
-async def test_same_url_on_next_poll_sends_nothing_more(bot, sender) -> None:
+async def test_same_url_on_next_poll_sends_nothing_more(bot, link) -> None:
     await on_pane(bot, 1, 42, "@1", URL_PANE)
     await on_pane(bot, 1, 42, "@1", URL_PANE)
     await on_pane(bot, 1, 42, "@1", URL_PANE)
 
-    sender.assert_awaited_once()
+    link.assert_awaited_once()
 
 
-async def test_different_url_sends_new_message(bot, sender) -> None:
+async def test_different_url_sends_new_message(bot, link) -> None:
     await on_pane(bot, 1, 42, "@1", URL_PANE)
     other = _url_pane_with_other_url()
     assert parse_login_url(other) != parse_login_url(URL_PANE)
 
     await on_pane(bot, 1, 42, "@1", other)
 
-    assert sender.await_count == 2
-    second = sender.await_args.kwargs["reply_markup"].inline_keyboard[0][0]
+    assert link.await_count == 2
+    second = link.await_args.kwargs["reply_markup"].inline_keyboard[0][0]
     assert second.url == parse_login_url(other)
 
 
-async def test_failed_send_forgets_login_and_next_poll_retries(bot, sender) -> None:
-    sender.side_effect = [TimedOut("network"), None]
+async def test_thread_none_does_nothing(bot, link) -> None:
+    await on_pane(bot, 1, None, "@1", URL_PANE)
+
+    link.assert_not_awaited()
+    assert login_flow._states == {}
+
+
+# ── delivery failures ────────────────────────────────────────────────────
+
+
+async def test_button_rejected_sends_plain_link(bot, link) -> None:
+    link.side_effect = [None, MagicMock()]
+    url = parse_login_url(URL_PANE)
 
     await on_pane(bot, 1, 42, "@1", URL_PANE)
+
+    assert link.await_count == 2
+    fallback = link.await_args_list[1]
+    assert "reply_markup" not in fallback.kwargs
+    assert "using the link below" in fallback.args[2]
+    assert url in fallback.args[2]
+    assert (1, 42) in login_flow._states
+    assert (1, 42) not in login_flow._last_failure
+
+
+async def test_both_attempts_fail_then_retry_after_interval(bot, link) -> None:
+    link.side_effect = [None, None]
+    start = 1000.0
+    with patch(f"{_LF}.time.monotonic", return_value=start):
+        await on_pane(bot, 1, 42, "@1", URL_PANE)
+    assert link.await_count == 2
     assert (1, 42) not in login_flow._states
+    assert login_flow._last_failure[(1, 42)] == start
 
-    await on_pane(bot, 1, 42, "@1", URL_PANE)
-    assert sender.await_count == 2
+    link.side_effect = None
+    with patch(f"{_LF}.time.monotonic", return_value=start + 1.0):
+        await on_pane(bot, 1, 42, "@1", URL_PANE)
+    assert link.await_count == 2
+
+    with patch(
+        f"{_LF}.time.monotonic",
+        return_value=start + login_flow.LOGIN_RETRY_INTERVAL + 1,
+    ):
+        await on_pane(bot, 1, 42, "@1", URL_PANE)
+    assert link.await_count == 3
+    assert (1, 42) in login_flow._states
+    assert (1, 42) not in login_flow._last_failure
+
+
+async def test_exception_from_first_attempt_counts_as_failure(bot, link) -> None:
+    link.side_effect = [RuntimeError("boom"), MagicMock()]
+    start = 2000.0
+    with patch(f"{_LF}.time.monotonic", return_value=start):
+        await on_pane(bot, 1, 42, "@1", URL_PANE)
+
+    assert link.await_count == 1
+    assert (1, 42) not in login_flow._states
+    assert (1, 42) in login_flow._last_failure
+
+    with patch(
+        f"{_LF}.time.monotonic",
+        return_value=start + login_flow.LOGIN_RETRY_INTERVAL + 1,
+    ):
+        await on_pane(bot, 1, 42, "@1", URL_PANE)
+    assert link.await_count == 2
     assert (1, 42) in login_flow._states
 
 
-async def test_thread_none_does_nothing(bot, sender) -> None:
-    await on_pane(bot, 1, None, "@1", URL_PANE)
-
-    sender.assert_not_awaited()
-    assert login_flow._states == {}
+async def test_forget_topic_clears_failure_timestamp(bot) -> None:
+    login_flow._last_failure[(1, 42)] = 0.0
+    forget_topic(1, 42)
+    assert (1, 42) not in login_flow._last_failure
 
 
 # ── closing the sign-in screen ───────────────────────────────────────────
 
 
-async def test_screen_gone_reports_closed_once_and_forgets(bot, sender) -> None:
+async def test_screen_gone_reports_closed_once_and_forgets(bot, link, sender) -> None:
     assert LOGIN_GONE_POLLS == 3
     await on_pane(bot, 1, 42, "@1", URL_PANE)
     for _ in range(LOGIN_GONE_POLLS):
         await on_pane(bot, 1, 42, "@1", PLAIN_PANE)
 
-    assert sender.await_count == 2
+    link.assert_awaited_once()
+    sender.assert_awaited_once()
     closed = sender.await_args.args[2]
     assert "Sign-in screen closed" in closed
     assert (1, 42) not in login_flow._states
 
     await on_pane(bot, 1, 42, "@1", PLAIN_PANE)
-    assert sender.await_count == 2
+    sender.assert_awaited_once()
 
 
-async def test_login_screen_resets_gone_counter(bot, sender) -> None:
+async def test_login_screen_resets_gone_counter(bot, link, sender) -> None:
     await on_pane(bot, 1, 42, "@1", URL_PANE)
     await on_pane(bot, 1, 42, "@1", PLAIN_PANE)
     await on_pane(bot, 1, 42, "@1", PLAIN_PANE)
@@ -138,20 +209,22 @@ async def test_login_screen_resets_gone_counter(bot, sender) -> None:
     await on_pane(bot, 1, 42, "@1", PLAIN_PANE)
     await on_pane(bot, 1, 42, "@1", PLAIN_PANE)
 
-    assert sender.await_count == 1
+    link.assert_awaited_once()
+    sender.assert_not_awaited()
     assert login_flow._states[(1, 42)].gone_polls == 2
 
 
 # ── TTL ──────────────────────────────────────────────────────────────────
 
 
-async def test_expired_login_dropped_without_message(bot, sender) -> None:
+async def test_expired_login_dropped_without_message(bot, link, sender) -> None:
     with patch(f"{_LF}.time.monotonic", return_value=1000.0):
         await on_pane(bot, 1, 42, "@1", URL_PANE)
     with patch(f"{_LF}.time.monotonic", return_value=1000.0 + LOGIN_TTL + 1):
         await on_pane(bot, 1, 42, "@1", PLAIN_PANE)
 
-    sender.assert_awaited_once()
+    link.assert_awaited_once()
+    sender.assert_not_awaited()
     assert (1, 42) not in login_flow._states
 
 
@@ -181,7 +254,8 @@ def tmux():
 
 
 async def _start(bot) -> None:
-    with patch(f"{_LF}.safe_send", new_callable=AsyncMock):
+    with patch(f"{_LF}.send_with_fallback", new_callable=AsyncMock) as send:
+        send.return_value = MagicMock()
         with patch(f"{_LF}.session_manager") as sm:
             sm.resolve_chat_id.return_value = 100
             await on_pane(bot, 1, 42, "@1", URL_PANE)
@@ -257,15 +331,26 @@ async def test_logs_never_contain_url_or_code(bot, tmux, caplog) -> None:
     caplog.set_level(logging.DEBUG)
 
     with (
-        patch(f"{_LF}.safe_send", new_callable=AsyncMock) as send,
+        patch(f"{_LF}.send_with_fallback", new_callable=AsyncMock) as link,
         patch(f"{_LF}.session_manager") as sm,
     ):
         sm.resolve_chat_id.return_value = 100
-        # A failing send whose error text carries the URL must not reach the log
-        send.side_effect = RuntimeError(f"boom {url}")
-        await on_pane(bot, 1, 42, "@1", URL_PANE)
-        send.side_effect = None
-        await on_pane(bot, 1, 42, "@1", URL_PANE)
+        # Failure paths: an error carrying the URL, then a rejected send
+        link.side_effect = [RuntimeError(f"boom {url}")]
+        with patch(f"{_LF}.time.monotonic", return_value=0.0):
+            await on_pane(bot, 1, 42, "@1", URL_PANE)
+        link.side_effect = [None, None]
+        with patch(
+            f"{_LF}.time.monotonic", return_value=login_flow.LOGIN_RETRY_INTERVAL + 1
+        ):
+            await on_pane(bot, 1, 42, "@1", URL_PANE)
+        # Success path with the button rejected, then the plain link
+        link.side_effect = [None, MagicMock()]
+        with patch(
+            f"{_LF}.time.monotonic",
+            return_value=2 * login_flow.LOGIN_RETRY_INTERVAL + 2,
+        ):
+            await on_pane(bot, 1, 42, "@1", URL_PANE)
 
     message = MagicMock()
     message.delete = AsyncMock(side_effect=BadRequest(f"cannot delete {code}"))
