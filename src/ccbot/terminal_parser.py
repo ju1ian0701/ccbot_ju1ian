@@ -2,19 +2,22 @@
 
 Parses captured tmux pane content to detect:
   - Interactive UIs (AskUserQuestion, ExitPlanMode, Permission Prompt,
-    RestoreCheckpoint) via regex-based UIPattern matching with top/bottom
-    delimiters.
+    RestoreCheckpoint, LoginMethod) via regex-based UIPattern matching with
+    top/bottom delimiters.
+  - Login flow screens (sign-in URL, code prompt).
   - Status line (spinner characters + working text) by scanning from bottom up.
 
 All Claude Code text patterns live here. To support a new UI type or
 a changed Claude Code version, edit UI_PATTERNS / STATUS_SPINNERS.
 
 Key functions: is_interactive_ui(), extract_interactive_content(),
-parse_status_line(), has_chrome(), strip_pane_chrome(), extract_bash_output().
+parse_login_url(), is_login_code_prompt(), parse_status_line(), has_chrome(),
+strip_pane_chrome(), extract_bash_output().
 """
 
 import re
 from dataclasses import dataclass
+from urllib.parse import urlsplit
 
 
 @dataclass
@@ -115,6 +118,13 @@ UI_PATTERNS: list[UIPattern] = [
             re.compile(r"^\s*Type to filter"),
         ),
     ),
+    UIPattern(
+        # /login: authentication method picker
+        name="LoginMethod",
+        top=(re.compile(r"^\s*Select login method:"),),
+        bottom=(),
+        min_gap=1,
+    ),
 ]
 
 
@@ -191,6 +201,66 @@ def extract_interactive_content(pane_text: str) -> InteractiveUIContent | None:
 def is_interactive_ui(pane_text: str) -> bool:
     """Check if terminal currently shows an interactive UI."""
     return extract_interactive_content(pane_text) is not None
+
+
+# ── Login flow ───────────────────────────────────────────────────────────
+
+# Hosts a sign-in URL may point to; anything else is rejected.
+LOGIN_URL_HOSTS = frozenset(
+    {"claude.com", "claude.ai", "platform.claude.com", "console.anthropic.com"}
+)
+
+_LOGIN_URL_MARKER = "Use the url below to sign in"
+_RE_HTTPS_URL = re.compile(r"^https://\S+$")
+
+
+def parse_login_url(pane_text: str) -> str | None:
+    """Extract the sign-in URL shown by Claude Code's /login URL screen.
+
+    The TUI hard-wraps the URL into several lines with no leading whitespace.
+    Pieces are collected after the marker line (skipping blank lines) until the
+    next blank line or a line containing inner whitespace, then joined.
+    Returns None unless the result is an https URL on an allowed login host.
+    """
+    if not pane_text:
+        return None
+
+    lines = pane_text.split("\n")
+    marker_idx = next(
+        (i for i, line in enumerate(lines) if _LOGIN_URL_MARKER in line), None
+    )
+    if marker_idx is None:
+        return None
+
+    i = marker_idx + 1
+    while i < len(lines) and not lines[i].strip():
+        i += 1
+
+    pieces: list[str] = []
+    while i < len(lines):
+        stripped = lines[i].strip()
+        if not stripped or any(c.isspace() for c in stripped):
+            break
+        pieces.append(stripped)
+        i += 1
+
+    if not pieces:
+        return None
+
+    url = "".join(pieces)
+    if not _RE_HTTPS_URL.match(url):
+        return None
+    if urlsplit(url).hostname not in LOGIN_URL_HOSTS:
+        return None
+    return url
+
+
+def is_login_code_prompt(pane_text: str) -> bool:
+    """True if the pane shows the /login "Paste code here if prompted" prompt."""
+    return any(
+        line.strip().startswith("Paste code here if prompted")
+        for line in pane_text.split("\n")
+    )
 
 
 # ── Status line parsing ─────────────────────────────────────────────────
