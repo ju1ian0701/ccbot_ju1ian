@@ -35,6 +35,7 @@ from .directory_browser import (
     clear_session_picker_state,
     clear_window_picker_state,
 )
+from . import login_flow
 from .interactive_ui import get_interactive_window, handle_interactive_ui
 from .message_queue import clear_status_msg_info, enqueue_status_update
 from .message_sender import NO_LINK_PREVIEW, safe_reply, send_with_fallback
@@ -357,6 +358,10 @@ async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     if await reply_if_claude_not_running(update.message, w):
         return
 
+    # A sign-in code requested by /login goes through the normal path below; the
+    # login screen is not an interactive UI, so the UI precheck is skipped.
+    is_code = await login_flow.expects_code(user.id, thread_id, window_id)
+
     # Cosmetic / outbound-Telegram steps below must NEVER abort the handler
     # before the message is injected into tmux. On flaky networks the "typing…"
     # indicator (send_action) and status enqueue time out (telegram.error.TimedOut);
@@ -380,24 +385,33 @@ async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     # This catches UIs (permission prompts, etc.) that status polling might have missed.
     # capture_pane is a local tmux call, but handle_interactive_ui hits the network —
     # isolate the whole block so a failure can't prevent the injection below.
-    try:
-        pane_text = await tmux_manager.capture_pane(w.window_id)
-        if pane_text and is_interactive_ui(pane_text):
-            # UI detected — show it to user, then send text (acts as Enter)
-            logger.info(
-                "Detected pending interactive UI before sending text (user=%d, thread=%s)",
-                user.id,
-                thread_id,
+    if not is_code:
+        try:
+            pane_text = await tmux_manager.capture_pane(w.window_id)
+            if pane_text and is_interactive_ui(pane_text):
+                # UI detected — show it to user, then send text (acts as Enter)
+                logger.info(
+                    "Detected pending interactive UI before sending text (user=%d, thread=%s)",
+                    user.id,
+                    thread_id,
+                )
+                await handle_interactive_ui(context.bot, user.id, window_id, thread_id)
+                # Small delay to let UI render in Telegram before text arrives
+                await asyncio.sleep(0.3)
+        except Exception as e:
+            logger.warning(
+                "interactive-UI precheck failed, continuing to injection: %s", e
             )
-            await handle_interactive_ui(context.bot, user.id, window_id, thread_id)
-            # Small delay to let UI render in Telegram before text arrives
-            await asyncio.sleep(0.3)
-    except Exception as e:
-        logger.warning("interactive-UI precheck failed, continuing to injection: %s", e)
 
     success, message = await session_manager.send_to_window(window_id, text)
     if not success:
         await safe_reply(update.message, f"❌ {message}")
+        return
+
+    if is_code:
+        await login_flow.after_code_sent(
+            context.bot, update.message, user.id, thread_id
+        )
         return
 
     # Start background capture for ! bash command output

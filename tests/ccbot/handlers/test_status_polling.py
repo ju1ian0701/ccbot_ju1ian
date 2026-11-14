@@ -6,6 +6,7 @@ on its next 1s tick.
 """
 
 import asyncio
+from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -156,6 +157,7 @@ class TestStatusPollerSettingsDetection:
 # --- Stale status clear, parser canary, hook event consumption -------------
 
 _SP = "ccbot.handlers.status_polling"
+FIXTURES = Path(__file__).parent.parent / "fixtures" / "panes" / "2.1.311"
 _CHROME_PANE = (
     "some output\n"
     "──────────────────────────────────────\n"
@@ -354,3 +356,73 @@ class TestHookEventConsumption:
                 await status_poll_loop(mock_bot)
 
         handle.assert_awaited_once_with(mock_bot, event)
+
+
+class TestLoginFlowHook:
+    """update_status_message hands the pane to login_flow and keeps polling."""
+
+    @pytest.mark.asyncio
+    async def test_on_pane_called_with_captured_pane(self, mock_bot: AsyncMock):
+        with (
+            patch(f"{_SP}.tmux_manager") as mock_tmux,
+            patch(f"{_SP}.enqueue_status_update", new_callable=AsyncMock),
+            patch(
+                "ccbot.handlers.login_flow.on_pane", new_callable=AsyncMock
+            ) as on_pane,
+        ):
+            mock_tmux.find_window_by_id = AsyncMock(return_value=_tw())
+            mock_tmux.capture_pane = AsyncMock(return_value=_STATUS_PANE)
+            await update_status_message(mock_bot, 1, "@5", thread_id=42)
+
+        on_pane.assert_awaited_once_with(mock_bot, 1, 42, "@5", _STATUS_PANE)
+
+    @pytest.mark.asyncio
+    async def test_on_pane_error_does_not_stop_polling(self, mock_bot: AsyncMock):
+        with (
+            patch(f"{_SP}.tmux_manager") as mock_tmux,
+            patch(f"{_SP}.enqueue_status_update", new_callable=AsyncMock) as enq,
+            patch(
+                "ccbot.handlers.login_flow.on_pane",
+                new_callable=AsyncMock,
+                side_effect=RuntimeError("boom"),
+            ),
+        ):
+            mock_tmux.find_window_by_id = AsyncMock(return_value=_tw())
+            mock_tmux.capture_pane = AsyncMock(return_value=_STATUS_PANE)
+            await update_status_message(mock_bot, 1, "@5", thread_id=42)
+
+        enq.assert_awaited_once()
+        assert enq.await_args.args[3] == "Reading file"
+
+    @pytest.mark.asyncio
+    async def test_sign_in_url_screen_is_not_unrecognized(self, mock_bot: AsyncMock):
+        url_pane = (FIXTURES / "login_url_w110.txt").read_text(encoding="utf-8")
+        with (
+            patch(f"{_SP}.tmux_manager") as mock_tmux,
+            patch(f"{_SP}.enqueue_status_update", new_callable=AsyncMock),
+            patch(f"{_SP}.send_prompt_screenshot", new_callable=AsyncMock) as shot,
+            patch(
+                "ccbot.handlers.login_flow.send_with_fallback",
+                new_callable=AsyncMock,
+                return_value=MagicMock(),
+            ) as send,
+            patch("ccbot.handlers.login_flow.session_manager") as sm,
+        ):
+            sm.resolve_chat_id.return_value = 100
+            mock_tmux.find_window_by_id = AsyncMock(return_value=_tw())
+            mock_tmux.capture_pane = AsyncMock(return_value=url_pane)
+            for _ in range(UNRECOGNIZED_SCREEN_POLLS + 5):
+                await update_status_message(mock_bot, 1, "@5", thread_id=42)
+
+        shot.assert_not_awaited()
+        send.assert_awaited_once()
+        assert parser_state("@5")["no_chrome_polls"] == 0
+
+    def test_forget_binding_drops_login_state(self):
+        from ccbot.handlers import login_flow
+
+        login_flow._states[(1, 42)] = login_flow.LoginState(
+            window_id="@5", url="https://claude.com/x", sent_at=0.0
+        )
+        status_polling._forget_binding(1, 42, "@5")
+        assert (1, 42) not in login_flow._states
