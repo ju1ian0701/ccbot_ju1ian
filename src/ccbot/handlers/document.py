@@ -25,6 +25,7 @@ from ..session_guard import get_thread_id, require_session, require_user
 from ..utils import ccbot_dir, ensure_dir
 from .message_queue import clear_status_msg_info
 from .message_sender import safe_reply
+from .session_lifecycle import reply_if_claude_not_running
 
 logger = logging.getLogger(__name__)
 
@@ -79,6 +80,8 @@ async def document_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         unbind_if_missing=True,
     )
     if ctx is None:
+        return
+    if await reply_if_claude_not_running(update.message, ctx.window):
         return
 
     doc = update.message.document

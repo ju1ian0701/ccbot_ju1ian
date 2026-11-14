@@ -1,7 +1,8 @@
 """Central callback query router for inline keyboards.
 
 Dispatches all CB_* interactions: history pagination, directory browser,
-window/session pickers, screenshot keys, and interactive UI navigation.
+window/session pickers, screenshot keys, interactive UI navigation, and
+session lifecycle (end / restart confirmation).
 
 Routing is table-driven (ISS-004): ``callback_handler`` performs only
 auth + group-chat capture, then resolves the handler via the
@@ -35,6 +36,11 @@ from .callback_data import (
     CB_SESSION_CANCEL,
     CB_SESSION_NEW,
     CB_SESSION_SELECT,
+    CB_SL_CANCEL,
+    CB_SL_KILL_ASK,
+    CB_SL_KILL_CLOSE,
+    CB_SL_KILL_OK,
+    CB_SL_RESTART,
     CB_WIN_BIND,
     CB_WIN_CANCEL,
     CB_WIN_NEW,
@@ -55,6 +61,12 @@ from .callback_pickers import (
     _handle_win_bind,
     _handle_win_cancel,
     _handle_win_new,
+)
+from .callback_lifecycle import (
+    _handle_kill_ask,
+    _handle_kill_confirm,
+    _handle_lifecycle_cancel,
+    _handle_restart,
 )
 from .callback_screenshot import _handle_key, _handle_screenshot_refresh
 from .callback_topic_guard import RouteHandler
@@ -81,6 +93,7 @@ _EXACT_ROUTES: dict[str, RouteHandler] = {
     CB_SESSION_CANCEL: _handle_session_cancel,
     CB_WIN_NEW: _handle_win_new,
     CB_WIN_CANCEL: _handle_win_cancel,
+    CB_SL_CANCEL: _handle_lifecycle_cancel,
     "noop": _handle_noop,
 }
 
@@ -100,6 +113,10 @@ _PREFIX_ROUTES: tuple[tuple[str, RouteHandler], ...] = (
     (CB_SCREENSHOT_REFRESH, _handle_screenshot_refresh),
     *_ASK_ROUTES,
     (CB_KEYS_PREFIX, _handle_key),
+    (CB_SL_KILL_ASK, _handle_kill_ask),
+    (CB_SL_KILL_OK, _handle_kill_confirm),
+    (CB_SL_KILL_CLOSE, _handle_kill_confirm),
+    (CB_SL_RESTART, _handle_restart),
 )
 
 

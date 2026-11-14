@@ -11,20 +11,28 @@ from ccbot.handlers.callback_data import (
     CB_HISTORY_PREV,
     CB_KEYS_PREFIX,
     CB_SCREENSHOT_REFRESH,
+    CB_SL_CANCEL,
+    CB_SL_KILL_ASK,
+    CB_SL_KILL_CLOSE,
+    CB_SL_KILL_OK,
+    CB_SL_RESTART,
     MAX_CALLBACK_DATA_BYTES,
     AskCallback,
     DirPageCallback,
     DirSelectCallback,
     HistoryCallback,
     KeyCallback,
+    LifecycleCallback,
     ScreenshotRefreshCallback,
     SessionSelectCallback,
     WinBindCallback,
+    encode_lifecycle,
     parse_ask,
     parse_dir_page,
     parse_dir_select,
     parse_history,
     parse_key,
+    parse_lifecycle,
     parse_screenshot_refresh,
     parse_session_select,
     parse_win_bind,
@@ -176,3 +184,40 @@ class TestSafeSerialization:
         assert len(payload.encode("utf-8")) > MAX_CALLBACK_DATA_BYTES
         with pytest.raises(ValueError, match="too long"):
             safe_callback_data(payload)
+
+
+class TestLifecycleCallback:
+    @pytest.mark.parametrize(
+        "prefix", [CB_SL_KILL_ASK, CB_SL_KILL_OK, CB_SL_KILL_CLOSE, CB_SL_RESTART]
+    )
+    def test_round_trip(self, prefix: str):
+        raw = encode_lifecycle(prefix, "@12")
+        assert raw == f"{prefix}@12"
+        assert parse_lifecycle(raw) == LifecycleCallback(prefix=prefix, window_id="@12")
+        assert len(raw.encode("utf-8")) <= MAX_CALLBACK_DATA_BYTES
+
+    def test_to_old_string(self):
+        cb = LifecycleCallback(prefix=CB_SL_KILL_OK, window_id="@3")
+        assert cb.to_old_string() == "sl:ko:@3"
+
+    def test_unknown_prefix_rejected(self):
+        with pytest.raises(ValueError):
+            LifecycleCallback(prefix=CB_SL_CANCEL, window_id="@1")
+        with pytest.raises(ValueError):
+            LifecycleCallback(prefix="sl:zz:", window_id="@1")
+
+    def test_empty_window_rejected(self):
+        with pytest.raises(ValueError):
+            LifecycleCallback(prefix=CB_SL_KILL_OK, window_id="")
+
+    def test_parse_malformed_returns_none(self):
+        assert parse_lifecycle(f"{CB_SL_KILL_OK}") is None
+        assert parse_lifecycle(CB_SL_CANCEL) is None
+        assert parse_lifecycle("db:sel:1") is None
+
+    def test_over_64_bytes_raises(self):
+        long_window = "@" + "9" * 70
+        with pytest.raises(ValueError):
+            safe_callback_data(
+                LifecycleCallback(prefix=CB_SL_KILL_CLOSE, window_id=long_window)
+            )
