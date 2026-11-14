@@ -61,6 +61,18 @@ class Config:
         self.tmux_session_name = os.getenv("TMUX_SESSION_NAME", "ccbot")
         self.tmux_main_window_name = "__main__"
 
+        # Default forum group for sessions created outside Telegram
+        # (`ccbot new`). Unset = use the group the user last wrote in.
+        group_chat_str = os.getenv("CCBOT_GROUP_CHAT_ID", "").strip()
+        self.group_chat_id: int | None = None
+        if group_chat_str:
+            try:
+                self.group_chat_id = int(group_chat_str)
+            except ValueError as e:
+                raise ValueError(
+                    "CCBOT_GROUP_CHAT_ID must be an integer chat id"
+                ) from e
+
         # Claude command to run in new windows
         self.claude_command = os.getenv("CLAUDE_COMMAND", "claude")
 

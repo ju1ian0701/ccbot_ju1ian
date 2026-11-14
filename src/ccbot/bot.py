@@ -7,6 +7,7 @@ Handler implementations live under ``ccbot.handlers``:
   - callback_router: inline keyboard dispatch
   - notifications: SessionMonitor → Telegram delivery
   - window_bind / screenshot_controls: shared UI helpers
+  - control_requests: `ccbot new` requests from the terminal (file spool poller)
 
 Public re-exports keep existing imports (``from ccbot.bot import …``) stable.
 """
@@ -50,6 +51,7 @@ from .handlers.command_handlers import (
 )
 from .handlers.message_handlers import photo_handler, text_handler, voice_handler
 from .handlers.message_queue import shutdown_workers
+from .handlers.control_requests import control_poll_loop
 from .handlers.notifications import handle_new_message
 from .handlers.status_polling import status_poll_loop
 from .session import session_manager
@@ -71,6 +73,9 @@ _status_poll_task: asyncio.Task | None = None
 # Polling stall watchdog task and the getUpdates request it monitors
 _watchdog_task: asyncio.Task | None = None
 _get_updates_request: TrackedHTTPXRequest | None = None
+
+# Terminal control-request poller (`ccbot new`)
+_control_task: asyncio.Task | None = None
 
 # Commands handled by the bot itself (shown in the menu). Each name needs a
 # CommandHandler in create_bot(); otherwise the command is forwarded to Claude
@@ -123,7 +128,7 @@ __all__ = [
 
 
 async def post_init(application: Application) -> None:
-    global session_monitor, _status_poll_task, _watchdog_task
+    global session_monitor, _status_poll_task, _watchdog_task, _control_task
 
     # Register for the default scope and explicitly for group chats: a menu
     # defined only for the default scope can show up empty in a freshly created
@@ -168,6 +173,10 @@ async def post_init(application: Application) -> None:
     _status_poll_task = asyncio.create_task(status_poll_loop(application.bot))
     logger.info("Status polling task started")
 
+    # Start the terminal control-request poller (`ccbot new`)
+    _control_task = asyncio.create_task(control_poll_loop(application.bot))
+    logger.info("Control request poller started")
+
     # Start polling stall watchdog (rebuilds getUpdates client, exits if wedged)
     if _get_updates_request is None:
         logger.error("getUpdates request missing; polling watchdog not started")
@@ -185,7 +194,7 @@ async def post_init(application: Application) -> None:
 
 
 async def post_shutdown(application: Application) -> None:
-    global _status_poll_task, _watchdog_task
+    global _status_poll_task, _watchdog_task, _control_task
 
     # Stop status polling
     if _status_poll_task:
@@ -206,6 +215,16 @@ async def post_shutdown(application: Application) -> None:
             pass
         _watchdog_task = None
         logger.info("Polling watchdog stopped")
+
+    # Stop terminal control-request poller
+    if _control_task:
+        _control_task.cancel()
+        try:
+            await _control_task
+        except asyncio.CancelledError:
+            pass
+        _control_task = None
+        logger.info("Control request poller stopped")
 
     # Stop all queue workers
     await shutdown_workers()
