@@ -2,12 +2,16 @@
 
 from __future__ import annotations
 
+import json
+import time
+from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
 from ccbot.handlers.command_handlers import (
     esc_command,
+    health_command,
     kill_command,
     start_command,
     unbind_command,
@@ -49,6 +53,15 @@ def _context() -> MagicMock:
     ctx.user_data = {}
     ctx.bot = AsyncMock()
     return ctx
+
+
+def _win(window_id: str, command: str) -> TmuxWindow:
+    return TmuxWindow(
+        window_id=window_id,
+        window_name="proj",
+        cwd="/t",
+        pane_current_command=command,
+    )
 
 
 def _session_ctx(
@@ -213,4 +226,100 @@ async def test_kill_unbound_topic_no_keyboard() -> None:
     ):
         await kill_command(upd, ctx)
 
+    reply.assert_not_awaited()
+
+
+_HEALTH_PANE = (
+    "some output\n"
+    "──────────────────────────────────────\n"
+    "❯ \n"
+    "──────────────────────────────────────\n"
+    "  [Opus 4.6] Context: 50%\n"
+)
+
+
+@pytest.fixture
+def hook_settings(tmp_path: Path) -> Path:
+    """A tmp Claude settings file with only the SessionStart hook installed."""
+    settings = tmp_path / "settings.json"
+    settings.write_text(
+        json.dumps(
+            {
+                "hooks": {
+                    "SessionStart": [
+                        {"hooks": [{"type": "command", "command": "ccbot hook"}]}
+                    ]
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    return settings
+
+
+@pytest.mark.asyncio
+async def test_health_bound_topic_reports_window(hook_settings: Path) -> None:
+    upd = _update(thread_id=42)
+    ctx = _context()
+    with (
+        patch(f"{_CH}.require_user", new_callable=AsyncMock, return_value=_user()),
+        patch(f"{_CH}.get_thread_id", return_value=42),
+        patch(f"{_CH}.session_manager") as sm,
+        patch(f"{_CH}.tmux_manager") as tmux,
+        patch(f"{_CH}.safe_reply", new_callable=AsyncMock) as reply,
+        patch("ccbot.hook._CLAUDE_SETTINGS_FILE", hook_settings),
+        patch(
+            f"{_CH}.hook_reactions.last_event_for",
+            return_value=("Stop", time.time() - 12),
+        ),
+    ):
+        sm.get_window_for_thread.return_value = "@5"
+        sm.get_display_name.return_value = "proj"
+        sm.get_window_state.return_value = MagicMock(
+            session_id="4c46f570-aaaa-bbbb-cccc-dddddddddddd"
+        )
+        tmux.find_window_by_id = AsyncMock(return_value=_win("@5", "claude"))
+        tmux.capture_pane = AsyncMock(return_value=_HEALTH_PANE)
+        await health_command(upd, ctx)
+
+    reply.assert_awaited_once()
+    text = reply.await_args.args[1]
+    assert text.startswith("```\nccbot health")
+    assert "window: @5 'proj' process=claude chrome=yes" in text
+    assert "session: 4c46f570 tracked=yes" in text
+    assert "last hook event: Stop 12s ago" in text
+    assert "hooks: SessionStart ok, SessionEnd MISSING" in text
+
+
+@pytest.mark.asyncio
+async def test_health_unbound_topic_has_no_window_lines(hook_settings: Path) -> None:
+    upd = _update(thread_id=42)
+    ctx = _context()
+    with (
+        patch(f"{_CH}.require_user", new_callable=AsyncMock, return_value=_user()),
+        patch(f"{_CH}.get_thread_id", return_value=42),
+        patch(f"{_CH}.session_manager") as sm,
+        patch(f"{_CH}.tmux_manager") as tmux,
+        patch(f"{_CH}.safe_reply", new_callable=AsyncMock) as reply,
+        patch("ccbot.hook._CLAUDE_SETTINGS_FILE", hook_settings),
+    ):
+        sm.get_window_for_thread.return_value = None
+        tmux.find_window_by_id = AsyncMock()
+        await health_command(upd, ctx)
+
+    tmux.find_window_by_id.assert_not_called()
+    text = reply.await_args.args[1]
+    assert "window: this topic is not bound to a session" in text
+    assert "session:" not in text
+
+
+@pytest.mark.asyncio
+async def test_health_unauthorized_no_reply() -> None:
+    upd = _update(user_id=99)
+    ctx = _context()
+    with (
+        patch(f"{_CH}.require_user", new_callable=AsyncMock, return_value=None),
+        patch(f"{_CH}.safe_reply", new_callable=AsyncMock) as reply,
+    ):
+        await health_command(upd, ctx)
     reply.assert_not_awaited()

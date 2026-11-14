@@ -1,7 +1,7 @@
 """Telegram command and topic lifecycle handlers.
 
 Handlers:
-  - /start, /history, /screenshot, /unbind, /esc, /usage, /kill
+  - /start, /history, /screenshot, /unbind, /esc, /usage, /kill, /health
   - topic_closed_handler, topic_edited_handler
   - forward_command_handler (unknown /slash → Claude Code)
   - unsupported_content_handler
@@ -11,12 +11,21 @@ from __future__ import annotations
 
 import asyncio
 import io
+import json
 import logging
+import time
 
 from telegram import Update
 from telegram.constants import ChatAction
 from telegram.ext import ContextTypes
 
+from .. import hook
+from ..health import (
+    WindowHealth,
+    build_health_report,
+    claude_version,
+    polling_health,
+)
 from ..screenshot import text_to_image
 from ..session import session_manager
 from ..session_guard import (
@@ -25,7 +34,9 @@ from ..session_guard import (
     require_session,
     require_user,
 )
+from ..terminal_parser import has_chrome, is_interactive_ui, parse_status_line
 from ..tmux_manager import tmux_manager
+from . import hook_reactions, status_polling
 from .cleanup import clear_topic_state
 from .directory_browser import clear_browse_state
 from .history import send_history
@@ -189,6 +200,69 @@ async def usage_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         if len(trimmed) > 3000:
             trimmed = trimmed[:3000] + "\n... (truncated)"
         await safe_reply(update.message, f"```\n{trimmed}\n```")
+
+
+def _read_hook_settings() -> dict:
+    """Claude Code settings as a dict; missing or corrupt file gives {}."""
+    try:
+        settings = json.loads(hook._CLAUDE_SETTINGS_FILE.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+    return settings if isinstance(settings, dict) else {}
+
+
+async def health_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Report bot, polling, parser and hook diagnostics for this topic."""
+    user = await require_user(update, reply_unauthorized=False)
+    if user is None:
+        return
+    if not update.message:
+        return
+
+    thread_id = get_thread_id(update)
+    bound_window_id = (
+        session_manager.get_window_for_thread(user.id, thread_id)
+        if thread_id is not None
+        else None
+    )
+
+    window: WindowHealth | None = None
+    last_event: tuple[str, float] | None = None
+    if bound_window_id:
+        w = await tmux_manager.find_window_by_id(bound_window_id)
+        if w is not None:
+            pane = await tmux_manager.capture_pane(w.window_id) or ""
+            window = WindowHealth(
+                window_id=bound_window_id,
+                name=session_manager.get_display_name(bound_window_id),
+                process=w.pane_current_command or "?",
+                has_chrome=has_chrome(pane),
+                has_status=parse_status_line(pane) is not None,
+                interactive=is_interactive_ui(pane),
+                unrecognized_polls=status_polling.parser_state(bound_window_id)[
+                    "no_chrome_polls"
+                ],
+                session_id=session_manager.get_window_state(bound_window_id).session_id,
+            )
+            last_event = hook_reactions.last_event_for(bound_window_id)
+
+    settings = _read_hook_settings()
+    hooks = [
+        (name, hook._is_hook_installed(settings, name)) for name in hook._HOOK_EVENTS
+    ]
+    report = build_health_report(
+        uptime_seconds=time.monotonic() - polling_health.started_at,
+        seconds_since_poll_ok=polling_health.seconds_since_ok(),
+        consecutive_poll_failures=polling_health.consecutive_failures,
+        client_resets=polling_health.client_resets,
+        claude_version=claude_version(),
+        hooks=hooks,
+        window=window,
+        bound_window_id=bound_window_id,
+        last_event=last_event,
+        now_wall=time.time(),
+    )
+    await safe_reply(update.message, f"```\n{report}\n```")
 
 
 async def topic_closed_handler(
