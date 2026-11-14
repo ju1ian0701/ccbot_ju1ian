@@ -12,6 +12,7 @@ import ccbot.hook as hook_mod
 from ccbot.hook import (
     _UUID_RE,
     _count_claude_ancestors,
+    _install_hook,
     _is_ancestor,
     _is_hook_installed,
     _parse_stat_ppid,
@@ -29,6 +30,7 @@ def _clear_claude_env(monkeypatch: pytest.MonkeyPatch) -> None:
     """Tests must not depend on the Claude Code session running the suite."""
     monkeypatch.delenv("CLAUDE_CODE_ENTRYPOINT", raising=False)
     monkeypatch.delenv("CLAUDE_PID", raising=False)
+    monkeypatch.delenv("TMUX_PANE", raising=False)
     # Real /proc must not decide the outcome; tests override this where relevant.
     monkeypatch.setattr(hook_mod, "_count_claude_ancestors", lambda pid: 1)
 
@@ -452,3 +454,237 @@ class TestProcessHelpers:
         monkeypatch.setattr(hook_mod, "_looks_like_claude", lambda p: p in claudes)
         assert _count_claude_ancestors(30) == 2
         assert _count_claude_ancestors(20) == 1
+
+
+def _run_event(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    payload: dict,
+    *,
+    env: dict[str, str] | None = None,
+    pane: bool = True,
+) -> None:
+    monkeypatch.setenv("CCBOT_DIR", str(tmp_path))
+    if pane:
+        monkeypatch.setenv("TMUX_PANE", "%0")
+    for key, value in (env or {}).items():
+        monkeypatch.setenv(key, value)
+    _fake_tmux(monkeypatch)
+    monkeypatch.setattr(sys, "argv", ["ccbot", "hook"])
+    monkeypatch.setattr(sys, "stdin", io.StringIO(json.dumps(payload)))
+    hook_main()
+
+
+def _event_payload(event: str, session_id: str = SESSION_A, **extra: object) -> dict:
+    return {
+        "session_id": session_id,
+        "cwd": "/tmp",
+        "hook_event_name": event,
+        **extra,
+    }
+
+
+def _recorded(tmp_path: Path) -> list[dict]:
+    events_file = tmp_path / "hook_events.jsonl"
+    if not events_file.exists():
+        return []
+    return [json.loads(x) for x in events_file.read_text().splitlines()]
+
+
+class TestEventRecording:
+    def test_stop_owned_by_window_is_recorded(
+        self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    ) -> None:
+        map_file = _seed_map(
+            tmp_path,
+            {"session_id": SESSION_A, "cwd": "/tmp", "window_name": "mywin"},
+        )
+        before = map_file.read_text()
+        _run_event(
+            monkeypatch, tmp_path, _event_payload("Stop", last_assistant_message="hi")
+        )
+        records = _recorded(tmp_path)
+        assert len(records) == 1
+        assert records[0]["event"] == "Stop"
+        assert records[0]["window_key"] == "ccbot:@1"
+        assert records[0]["session_id"] == SESSION_A
+        assert map_file.read_text() == before
+
+    def test_stop_from_nested_claude_not_recorded(
+        self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    ) -> None:
+        _seed_map(
+            tmp_path,
+            {"session_id": SESSION_A, "cwd": "/tmp", "window_name": "mywin"},
+        )
+        _run_event(monkeypatch, tmp_path, _event_payload("Stop", session_id=SESSION_B))
+        assert not (tmp_path / "hook_events.jsonl").exists()
+
+    def test_event_without_map_entry_not_recorded(
+        self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    ) -> None:
+        _run_event(monkeypatch, tmp_path, _event_payload("Stop"))
+        assert not (tmp_path / "hook_events.jsonl").exists()
+        assert not (tmp_path / "session_map.json").exists()
+
+    def test_notification_permission_prompt_recorded(
+        self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    ) -> None:
+        _seed_map(
+            tmp_path,
+            {"session_id": SESSION_A, "cwd": "/tmp", "window_name": "mywin"},
+        )
+        _run_event(
+            monkeypatch,
+            tmp_path,
+            _event_payload(
+                "Notification",
+                notification_type="permission_prompt",
+                message="Claude needs permission to run Bash",
+            ),
+        )
+        (record,) = _recorded(tmp_path)
+        assert record["event"] == "Notification"
+        assert record["notification_type"] == "permission_prompt"
+        assert record["message"] == "Claude needs permission to run Bash"
+
+    def test_stop_failure_recorded_with_error(
+        self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    ) -> None:
+        _seed_map(
+            tmp_path,
+            {"session_id": SESSION_A, "cwd": "/tmp", "window_name": "mywin"},
+        )
+        _run_event(
+            monkeypatch, tmp_path, _event_payload("StopFailure", error="rate_limit")
+        )
+        (record,) = _recorded(tmp_path)
+        assert record["event"] == "StopFailure"
+        assert record["error"] == "rate_limit"
+
+    def test_session_end_recorded_with_reason(
+        self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    ) -> None:
+        _seed_map(
+            tmp_path,
+            {"session_id": SESSION_A, "cwd": "/tmp", "window_name": "mywin"},
+        )
+        _run_event(monkeypatch, tmp_path, _event_payload("SessionEnd", reason="clear"))
+        (record,) = _recorded(tmp_path)
+        assert record["event"] == "SessionEnd"
+        assert record["reason"] == "clear"
+
+    def test_sdk_entrypoint_not_recorded(
+        self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    ) -> None:
+        _seed_map(
+            tmp_path,
+            {"session_id": SESSION_A, "cwd": "/tmp", "window_name": "mywin"},
+        )
+        _run_event(
+            monkeypatch,
+            tmp_path,
+            _event_payload("Stop"),
+            env={"CLAUDE_CODE_ENTRYPOINT": "sdk-cli"},
+        )
+        assert not (tmp_path / "hook_events.jsonl").exists()
+
+    def test_missing_tmux_pane_not_recorded(
+        self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    ) -> None:
+        _seed_map(
+            tmp_path,
+            {"session_id": SESSION_A, "cwd": "/tmp", "window_name": "mywin"},
+        )
+        _run_event(monkeypatch, tmp_path, _event_payload("Stop"), pane=False)
+        assert not (tmp_path / "hook_events.jsonl").exists()
+
+    def test_unknown_event_ignored(
+        self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    ) -> None:
+        _seed_map(
+            tmp_path,
+            {"session_id": SESSION_A, "cwd": "/tmp", "window_name": "mywin"},
+        )
+        _run_event(
+            monkeypatch, tmp_path, _event_payload("PreToolUse", tool_name="Bash")
+        )
+        assert not (tmp_path / "hook_events.jsonl").exists()
+        assert not any(tmp_path.glob("*.lock"))
+
+
+class TestInstallAllEvents:
+    ALL_EVENTS = ("SessionStart", "SessionEnd", "Notification", "Stop", "StopFailure")
+    ASYNC_EVENTS = ("Notification", "Stop", "StopFailure")
+
+    @pytest.fixture
+    def settings_file(self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> Path:
+        path = tmp_path / "claude" / "settings.json"
+        monkeypatch.setattr(hook_mod, "_CLAUDE_SETTINGS_FILE", path)
+        monkeypatch.setattr(hook_mod, "_find_ccbot_path", lambda: "/opt/ccbot")
+        return path
+
+    def test_fresh_install_adds_all_events(
+        self, settings_file: Path, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        assert _install_hook() == 0
+        hooks = json.loads(settings_file.read_text())["hooks"]
+        assert set(hooks) == set(self.ALL_EVENTS)
+        for event in self.ALL_EVENTS:
+            (wrapper,) = hooks[event]
+            assert "matcher" not in wrapper
+            (entry,) = wrapper["hooks"]
+            assert entry["command"] == "/opt/ccbot hook"
+            assert entry["timeout"] == 5
+            if event in self.ASYNC_EVENTS:
+                assert entry["async"] is True
+            else:
+                assert "async" not in entry
+        assert "added: SessionStart, SessionEnd" in capsys.readouterr().out
+
+    def test_second_install_is_noop(
+        self, settings_file: Path, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        _install_hook()
+        before = settings_file.read_text()
+        capsys.readouterr()
+        assert _install_hook() == 0
+        assert settings_file.read_text() == before
+        assert "Hook already installed" in capsys.readouterr().out
+
+    def test_upgrade_from_session_start_only(self, settings_file: Path) -> None:
+        settings_file.parent.mkdir(parents=True)
+        settings_file.write_text(
+            json.dumps(
+                {
+                    "hooks": {
+                        "SessionStart": [
+                            {
+                                "hooks": [
+                                    {
+                                        "type": "command",
+                                        "command": "/opt/ccbot hook",
+                                        "timeout": 5,
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            )
+        )
+        assert _install_hook() == 0
+        hooks = json.loads(settings_file.read_text())["hooks"]
+        assert len(hooks["SessionStart"]) == 1
+        for event in ("SessionEnd", "Notification", "Stop", "StopFailure"):
+            assert len(hooks[event]) == 1
+
+    def test_unrelated_stop_hook_preserved(self, settings_file: Path) -> None:
+        other = {"hooks": [{"type": "command", "command": "other-tool notify"}]}
+        settings_file.parent.mkdir(parents=True)
+        settings_file.write_text(json.dumps({"hooks": {"Stop": [other]}}))
+        assert _install_hook() == 0
+        hooks = json.loads(settings_file.read_text())["hooks"]
+        assert hooks["Stop"][0] == other
+        assert len(hooks["Stop"]) == 2
+        assert _is_hook_installed(json.loads(settings_file.read_text()), "Stop")

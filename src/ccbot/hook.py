@@ -1,14 +1,18 @@
-"""Hook subcommand for Claude Code session tracking.
+"""Claude Code hook subcommand: session tracking and hook event recording.
 
-Called by Claude Code's SessionStart hook to maintain a window↔session
-mapping in <CCBOT_DIR>/session_map.json. Also provides `--install` to
-auto-configure the hook in ~/.claude/settings.json.
+Called by Claude Code's hooks. SessionStart maintains a window↔session
+mapping in <CCBOT_DIR>/session_map.json. Notification, Stop, StopFailure
+and SessionEnd are appended as JSON lines to <CCBOT_DIR>/hook_events.jsonl
+(see hook_events.py) so the bot can read session state without parsing the
+terminal; they are recorded only for the session that owns the window.
+Also provides `--install` to auto-configure all of these hooks in
+~/.claude/settings.json.
 
 This module must NOT import config.py (which requires TELEGRAM_BOT_TOKEN),
 since hooks run inside tmux panes where bot env vars are not set.
 Config directory resolution uses utils.ccbot_dir() (shared with config.py).
 
-Key functions: hook_main() (CLI entry), _install_hook().
+Key functions: hook_main() (CLI entry), _record_event(), _install_hook().
 """
 
 import argparse
@@ -21,7 +25,13 @@ import subprocess
 import sys
 from pathlib import Path
 
-from .utils import LOCK_EX, LOCK_UN, flock
+from .hook_events import (
+    EVENTS_FILE_NAME,
+    RECORDED_EVENTS,
+    append_event,
+    build_record,
+)
+from .utils import LOCK_EX, LOCK_UN, ccbot_dir, flock
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +42,11 @@ _CLAUDE_SETTINGS_FILE = Path.home() / ".claude" / "settings.json"
 
 # The hook command suffix for detection
 _HOOK_COMMAND_SUFFIX = "ccbot hook"
+
+# Events installed by --install, in install order. Async events never block Claude.
+_HOOK_EVENTS_SYNC = ("SessionStart", "SessionEnd")
+_HOOK_EVENTS_ASYNC = ("Notification", "Stop", "StopFailure")
+_HOOK_EVENTS = (*_HOOK_EVENTS_SYNC, *_HOOK_EVENTS_ASYNC)
 
 
 def _find_ccbot_path() -> str:
@@ -57,15 +72,15 @@ def _find_ccbot_path() -> str:
     return "ccbot"
 
 
-def _is_hook_installed(settings: dict) -> bool:
-    """Check if ccbot hook is already installed in the settings.
+def _is_hook_installed(settings: dict, event: str = "SessionStart") -> bool:
+    """Check if ccbot hook is already installed for *event* in the settings.
 
     Detects both 'ccbot hook' and full paths like '/path/to/ccbot hook'.
     """
     hooks = settings.get("hooks", {})
-    session_start = hooks.get("SessionStart", [])
+    event_entries = hooks.get(event, [])
 
-    for entry in session_start:
+    for entry in event_entries:
         if not isinstance(entry, dict):
             continue
         inner_hooks = entry.get("hooks", [])
@@ -97,25 +112,29 @@ def _install_hook() -> int:
             print(f"Error reading {settings_file}: {e}", file=sys.stderr)
             return 1
 
-    # Check if already installed
-    if _is_hook_installed(settings):
-        logger.info("Hook already installed in %s", settings_file)
-        print(f"Hook already installed in {settings_file}")
-        return 0
-
     # Find the full path to ccbot
     ccbot_path = _find_ccbot_path()
     hook_command = f"{ccbot_path} hook"
-    hook_config = {"type": "command", "command": hook_command, "timeout": 5}
     logger.info("Installing hook command: %s", hook_command)
 
-    # Install the hook
+    # Add an entry for each event that does not have one yet.
+    # Existing entries (including other tools' hooks) are never modified.
     if "hooks" not in settings:
         settings["hooks"] = {}
-    if "SessionStart" not in settings["hooks"]:
-        settings["hooks"]["SessionStart"] = []
+    added: list[str] = []
+    for event in _HOOK_EVENTS:
+        if _is_hook_installed(settings, event):
+            continue
+        hook_config: dict = {"type": "command", "command": hook_command, "timeout": 5}
+        if event in _HOOK_EVENTS_ASYNC:
+            hook_config["async"] = True
+        settings["hooks"].setdefault(event, []).append({"hooks": [hook_config]})
+        added.append(event)
 
-    settings["hooks"]["SessionStart"].append({"hooks": [hook_config]})
+    if not added:
+        logger.info("Hook already installed in %s", settings_file)
+        print(f"Hook already installed in {settings_file}")
+        return 0
 
     # Write back
     try:
@@ -127,8 +146,8 @@ def _install_hook() -> int:
         print(f"Error writing {settings_file}: {e}", file=sys.stderr)
         return 1
 
-    logger.info("Hook installed successfully in %s", settings_file)
-    print(f"Hook installed successfully in {settings_file}")
+    logger.info("Hook installed in %s: added %s", settings_file, ", ".join(added))
+    print(f"Hook installed successfully in {settings_file} (added: {', '.join(added)})")
     return 0
 
 
@@ -216,6 +235,97 @@ def _count_claude_ancestors(pid: int) -> int:
     return count
 
 
+def _resolve_window(pane_id: str) -> tuple[str, str, str] | None:
+    """Return (tmux_session_name, window_id, window_name) for *pane_id*, or None."""
+    try:
+        result = subprocess.run(
+            [
+                "tmux",
+                "display-message",
+                "-t",
+                pane_id,
+                "-p",
+                "#{session_name}:#{window_id}:#{window_name}",
+            ],
+            capture_output=True,
+            text=True,
+        )
+    except OSError as e:
+        logger.warning("Failed to run tmux display-message (pane=%s): %s", pane_id, e)
+        return None
+    raw_output = result.stdout.strip()
+    # Expected format: "session_name:@id:window_name"
+    parts = raw_output.split(":", 2)
+    if len(parts) < 3:
+        logger.warning(
+            "Failed to parse session:window_id:window_name from tmux (pane=%s, output=%s)",
+            pane_id,
+            raw_output,
+        )
+        return None
+    tmux_session_name, window_id, window_name = parts
+    return tmux_session_name, window_id, window_name
+
+
+def _read_session_map(map_file: Path) -> dict:
+    """Read session_map.json without locking; missing or corrupt file gives {}."""
+    try:
+        data = json.loads(map_file.read_text())
+    except (OSError, ValueError):
+        return {}
+    return data if isinstance(data, dict) else {}
+
+
+def _record_event(payload: dict) -> None:
+    """Append a Notification/Stop/StopFailure/SessionEnd event to hook_events.jsonl.
+
+    Only records events for the session that owns the window, so a nested
+    Claude (e.g. `claude -p` run from the window's Bash tool, which inherits
+    TMUX_PANE) cannot attribute its events to the window's session.
+    Never raises.
+    """
+    event = payload.get("hook_event_name", "")
+    session_id = payload.get("session_id", "")
+
+    if os.environ.get("CLAUDE_CODE_ENTRYPOINT", "").startswith("sdk"):
+        logger.debug("headless session, not recording %s event", event)
+        return
+
+    pane_id = os.environ.get("TMUX_PANE", "")
+    if not pane_id:
+        logger.debug("TMUX_PANE not set, not recording %s event", event)
+        return
+
+    resolved = _resolve_window(pane_id)
+    if resolved is None:
+        return
+    tmux_session_name, window_id, _window_name = resolved
+    session_window_key = f"{tmux_session_name}:{window_id}"
+
+    base_dir = ccbot_dir()
+    session_map = _read_session_map(base_dir / "session_map.json")
+    existing = session_map.get(session_window_key)
+    owner_session_id = (
+        existing.get("session_id") if isinstance(existing, dict) else None
+    )
+    if owner_session_id != session_id:
+        logger.debug(
+            "%s event for %s not owned by window session (session_id=%s), ignoring",
+            event,
+            session_window_key,
+            session_id,
+        )
+        return
+
+    try:
+        append_event(
+            base_dir / EVENTS_FILE_NAME,
+            build_record(payload, session_window_key),
+        )
+    except OSError as e:
+        logger.error("Failed to append hook event: %s", e)
+
+
 def hook_main() -> None:
     """Process a Claude Code hook event from stdin, or install the hook."""
     # Configure logging for the hook subprocess (main.py logging doesn't apply here)
@@ -267,6 +377,10 @@ def hook_main() -> None:
         logger.warning("cwd is not absolute: %s", cwd)
         return
 
+    if event in RECORDED_EVENTS:
+        _record_event(payload)
+        return
+
     if event != "SessionStart":
         logger.debug("Ignoring non-SessionStart event: %s", event)
         return
@@ -299,29 +413,10 @@ def hook_main() -> None:
         )
         return
 
-    result = subprocess.run(
-        [
-            "tmux",
-            "display-message",
-            "-t",
-            pane_id,
-            "-p",
-            "#{session_name}:#{window_id}:#{window_name}",
-        ],
-        capture_output=True,
-        text=True,
-    )
-    raw_output = result.stdout.strip()
-    # Expected format: "session_name:@id:window_name"
-    parts = raw_output.split(":", 2)
-    if len(parts) < 3:
-        logger.warning(
-            "Failed to parse session:window_id:window_name from tmux (pane=%s, output=%s)",
-            pane_id,
-            raw_output,
-        )
+    resolved = _resolve_window(pane_id)
+    if resolved is None:
         return
-    tmux_session_name, window_id, window_name = parts
+    tmux_session_name, window_id, window_name = resolved
     # Key uses window_id for uniqueness
     session_window_key = f"{tmux_session_name}:{window_id}"
 
@@ -334,8 +429,6 @@ def hook_main() -> None:
     )
 
     # Read-modify-write with file locking to prevent concurrent hook races
-    from .utils import ccbot_dir
-
     map_file = ccbot_dir() / "session_map.json"
     map_file.parent.mkdir(parents=True, exist_ok=True)
 
