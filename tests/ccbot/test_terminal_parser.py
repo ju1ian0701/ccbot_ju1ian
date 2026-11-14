@@ -263,3 +263,28 @@ class TestExtractBashOutput:
         result = extract_bash_output(pane, "echo hi")
         assert result is not None
         assert not result.endswith("\n")
+
+
+class TestHasChrome:
+    def test_separator_near_bottom(self):
+        from ccbot.terminal_parser import has_chrome
+
+        pane = "\n".join(["output", "─" * 40, "❯ ", "─" * 40, "  status bar"])
+        assert has_chrome(pane) is True
+
+    def test_plain_shell_has_no_chrome(self):
+        from ccbot.terminal_parser import has_chrome
+
+        assert has_chrome("user@host:~$ ls\nfile.txt\nuser@host:~$ ") is False
+
+    def test_short_or_far_separator_is_not_chrome(self):
+        from ccbot.terminal_parser import has_chrome
+
+        assert has_chrome("─" * 19) is False
+        far = "\n".join(["─" * 40] + ["line"] * 11)
+        assert has_chrome(far) is False
+
+    def test_empty(self):
+        from ccbot.terminal_parser import has_chrome
+
+        assert has_chrome("") is False

@@ -10,7 +10,7 @@ All Claude Code text patterns live here. To support a new UI type or
 a changed Claude Code version, edit UI_PATTERNS / STATUS_SPINNERS.
 
 Key functions: is_interactive_ui(), extract_interactive_content(),
-parse_status_line(), strip_pane_chrome(), extract_bash_output().
+parse_status_line(), has_chrome(), strip_pane_chrome(), extract_bash_output().
 """
 
 import re
@@ -198,6 +198,32 @@ def is_interactive_ui(pane_text: str) -> bool:
 # Spinner characters Claude Code uses in its status line
 STATUS_SPINNERS = frozenset(["·", "✻", "✽", "✶", "✳", "✢"])
 
+# Chrome separator: a line made only of ``─``, at least this long, looked for
+# in the last _CHROME_SEARCH_LINES lines of the pane.
+_CHROME_MIN_WIDTH = 20
+_CHROME_SEARCH_LINES = 10
+
+
+def _find_chrome_index(lines: list[str]) -> int | None:
+    """Index of the topmost chrome separator near the bottom of the pane."""
+    search_start = max(0, len(lines) - _CHROME_SEARCH_LINES)
+    for i in range(search_start, len(lines)):
+        stripped = lines[i].strip()
+        if len(stripped) >= _CHROME_MIN_WIDTH and all(c == "─" for c in stripped):
+            return i
+    return None
+
+
+def has_chrome(pane_text: str) -> bool:
+    """True if the pane shows Claude Code's bottom chrome (prompt separator).
+
+    Independent of spinner/status parsing: tells "Claude's TUI is on screen"
+    apart from a plain shell or an unrecognized layout.
+    """
+    if not pane_text:
+        return False
+    return _find_chrome_index(pane_text.split("\n")) is not None
+
 
 def parse_status_line(pane_text: str) -> str | None:
     """Extract the Claude Code status line from terminal output.
@@ -215,14 +241,7 @@ def parse_status_line(pane_text: str) -> str | None:
     lines = pane_text.split("\n")
 
     # Find the chrome separator: topmost ──── line in the last 10 lines
-    chrome_idx: int | None = None
-    search_start = max(0, len(lines) - 10)
-    for i in range(search_start, len(lines)):
-        stripped = lines[i].strip()
-        if len(stripped) >= 20 and all(c == "─" for c in stripped):
-            chrome_idx = i
-            break
-
+    chrome_idx = _find_chrome_index(lines)
     if chrome_idx is None:
         return None  # No chrome visible — can't determine status
 
@@ -255,12 +274,8 @@ def strip_pane_chrome(lines: list[str]) -> list[str]:
     This function finds the topmost ``────`` separator in the last 10 lines
     and strips everything from there down.
     """
-    search_start = max(0, len(lines) - 10)
-    for i in range(search_start, len(lines)):
-        stripped = lines[i].strip()
-        if len(stripped) >= 20 and all(c == "─" for c in stripped):
-            return lines[:i]
-    return lines
+    chrome_idx = _find_chrome_index(lines)
+    return lines if chrome_idx is None else lines[:chrome_idx]
 
 
 def extract_bash_output(pane_text: str, command: str) -> str | None:
