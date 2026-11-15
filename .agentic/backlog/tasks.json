@@ -1282,7 +1282,7 @@
       "id": "ISS-024",
       "title": "CCBot improvement plan, phases 0-7 (self-healing polling, /new /kill /login /menu, ccbot new, selfcheck, hook events)",
       "priority": "high",
-      "status": "IN_REVIEW",
+      "status": "DONE",
       "categories": [
         "feature",
         "reliability",
@@ -1301,12 +1301,14 @@
         "Phases 0-7 merged into local branch integration (26 commits over main, 59 files)",
         "Suite 472 -> 839 tests",
         "Deployed to live bot (ccbot.service) from integration, hooks installed",
-        "integration and 11 phase branches pushed to origin; PR integration -> main opened"
+        "integration and 11 phase branches pushed to origin; PR #39 integration -> main merged (squash)"
       ],
       "pr": "#39",
-      "resolution": "Phases 1-7 done on branches feat/polling-health, fix/nested-claude-hook, feat/session-lifecycle, feat/hook-events, feat/new-session, feat/cli-new, feat/hook-reactions, feat/login-parser, feat/login-command, feat/selfcheck, docs/new-features, merged to integration (4b95e09). PR #39 awaits merge; merged_commit to be filled after merge. Notes: second-brain/inbox/ccbot-new-features-and-terminal-sessions.md; plan ~/test/план доработки CCBot.md (section 8). Rollback to 31bf2f4 described in the note.",
-      "status_updated_at": "2026-11-15T00:00:00+00:00",
-      "updated_at": "2026-11-15T00:00:00+00:00"
+      "resolution": "Phases 1-7 done on branches feat/polling-health, fix/nested-claude-hook, feat/session-lifecycle, feat/hook-events, feat/new-session, feat/cli-new, feat/hook-reactions, feat/login-parser, feat/login-command, feat/selfcheck, docs/new-features, merged to integration (4b95e09). PR #39 merged into main as a84fa71 (squash). Notes: second-brain/inbox/ccbot-new-features-and-terminal-sessions.md; plan ~/test/план доработки CCBot.md (section 8). Rollback to 31bf2f4 described in the note.",
+      "status_updated_at": "2026-11-15T11:17:43+00:00",
+      "updated_at": "2026-11-15T11:17:43+00:00",
+      "merged_commit": "a84fa71",
+      "merged_at": "2026-11-15T11:17:43Z"
     },
     {
       "id": "ISS-025",
@@ -1420,7 +1422,7 @@
       "updated_at": "2026-11-15T00:00:00+00:00"
     }
   ],
-  "updated_at": "2026-11-15T00:00:00+00:00",
+  "updated_at": "2026-11-15T11:17:43+00:00",
   "phases": {
     "Phase 1": {
       "name": "Canonical auth + REF-001 done-for-real",
