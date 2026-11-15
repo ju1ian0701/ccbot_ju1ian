@@ -16,7 +16,7 @@
 **Доработка CCBot, фазы 0–7 (ISS-024)** — ветка `integration` (4b95e09, 26 коммитов поверх `main` 31bf2f4, 59 файлов, 839 тестов против 472).
 
 - Добавлено: самовосстанавливающийся polling (upstream #79), игнор хуков вложенных/headless-сессий (#72), `/login` (#76), `/kill`, `/new`, `/menu`, `/health`, `ccbot new [DIR]`, `ccbot selfcheck`, события хуков в `~/.ccbot/hook_events.jsonl`, защита от ввода в shell после выхода Claude. Исправлен разбор `/usage` для Claude Code 2.1.311.
-- GitHub: `integration` и 11 фазовых веток (`feat/*`, `fix/nested-claude-hook`, `docs/new-features`) отправлены в `origin`; **PR #39** `integration` → `main` ждёт merge. После merge — заполнить `merged_commit` в ISS-024 и сменить статус на `DONE`.
+- GitHub: `integration` и 11 фазовых веток (`feat/*`, `fix/nested-claude-hook`, `docs/new-features`) отправлены в `origin`; **PR #39** `integration` → `main` смержен 2026-11-15 (squash, `a84fa71`); ISS-024 — `DONE`.
 - Сервер: сборка из `integration` развёрнута в живой бот (`ccbot.service`, systemd --user). Откат: `uv tool install --force ... "git+https://github.com/ju1ian0701/ccbot_ju1ian@31bf2f4"`, затем восстановить `~/.claude/settings.json` и `~/.ccbot/.env` из `*.bak-*` и `systemctl --user restart ccbot`.
 - Инструменты: `gh` 2.104.0 в `~/.local/bin`. Токен GitHub лежит в `~/.git-credentials` (fine-grained, без scope `read:org`), поэтому `gh auth login` не проходит — использовать `GH_TOKEN=<токен из ~/.git-credentials> gh ...`.
 - `DISABLE_AUTOUPDATER=1`: после ручного обновления Claude Code запускать `ccbot selfcheck`.
