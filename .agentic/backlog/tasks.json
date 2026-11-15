@@ -1277,9 +1277,150 @@
       "updated_at": "2026-08-11T00:00:00+00:00",
       "resolution": "HITL skeleton in production use since Phase 3 (cycles ISS-004 #17 ... ISS-013 #25): propose no-tree-change, approve base_sha freshness, apply approval+feature-branch guards, validate guardrails+quality, draft PR only after green; evidence checker (last open criterion) delivered by ISS-013 (PR #25 dfaf796)",
       "ref_note": "Infrastructure task for repair robot; not a product ISS from REFACTORING_BACKLOG_ISSUES.md"
+    },
+    {
+      "id": "ISS-024",
+      "title": "CCBot improvement plan, phases 0-7 (self-healing polling, /new /kill /login /menu, ccbot new, selfcheck, hook events)",
+      "priority": "high",
+      "status": "IN_REVIEW",
+      "categories": [
+        "feature",
+        "reliability",
+        "security"
+      ],
+      "files": [
+        "src/ccbot/",
+        "tests/",
+        "docs/"
+      ],
+      "related_nodes": [],
+      "depends_on": [],
+      "estimated_risk": "medium",
+      "problem": "Upstream #79 (stalled polling), #72 (nested claude -p hijacks window), #76 (login), no session lifecycle commands, parser silently breaks on new Claude Code screens (/usage on 2.1.311).",
+      "acceptance_criteria": [
+        "Phases 0-7 merged into local branch integration (26 commits over main, 59 files)",
+        "Suite 472 -> 839 tests",
+        "Deployed to live bot (ccbot.service) from integration, hooks installed",
+        "integration and 11 phase branches pushed to origin; PR integration -> main opened"
+      ],
+      "pr": "#39",
+      "resolution": "Phases 1-7 done on branches feat/polling-health, fix/nested-claude-hook, feat/session-lifecycle, feat/hook-events, feat/new-session, feat/cli-new, feat/hook-reactions, feat/login-parser, feat/login-command, feat/selfcheck, docs/new-features, merged to integration (4b95e09). PR #39 awaits merge; merged_commit to be filled after merge. Notes: second-brain/inbox/ccbot-new-features-and-terminal-sessions.md; plan ~/test/план доработки CCBot.md (section 8). Rollback to 31bf2f4 described in the note.",
+      "status_updated_at": "2026-11-15T00:00:00+00:00",
+      "updated_at": "2026-11-15T00:00:00+00:00"
+    },
+    {
+      "id": "ISS-025",
+      "title": "Verify /login and /menu live in Telegram",
+      "priority": "medium",
+      "status": "TODO",
+      "categories": [
+        "verification"
+      ],
+      "files": [],
+      "related_nodes": [],
+      "depends_on": [
+        "ISS-024"
+      ],
+      "estimated_risk": "low",
+      "problem": "/login and /menu are not confirmed by the live journal (only unit-tested).",
+      "acceptance_criteria": [
+        "/login delivers sign-in link button, code is passed back, code message is deleted",
+        "/menu shows session panel",
+        "Result recorded here"
+      ],
+      "status_updated_at": "2026-11-15T00:00:00+00:00",
+      "updated_at": "2026-11-15T00:00:00+00:00"
+    },
+    {
+      "id": "ISS-026",
+      "title": "Run ccbot selfcheck --with-prompt",
+      "priority": "low",
+      "status": "TODO",
+      "categories": [
+        "verification"
+      ],
+      "files": [],
+      "related_nodes": [],
+      "depends_on": [
+        "ISS-024"
+      ],
+      "estimated_risk": "low",
+      "problem": "selfcheck --with-prompt was never run (spends tokens).",
+      "acceptance_criteria": [
+        "Run once on installed Claude Code; result recorded",
+        "Repeat after every manual Claude Code update (DISABLE_AUTOUPDATER=1 is set)"
+      ],
+      "status_updated_at": "2026-11-15T00:00:00+00:00",
+      "updated_at": "2026-11-15T00:00:00+00:00"
+    },
+    {
+      "id": "ISS-027",
+      "title": "systemd WatchdogSec for ccbot.service",
+      "priority": "low",
+      "status": "TODO",
+      "categories": [
+        "reliability"
+      ],
+      "files": [],
+      "related_nodes": [],
+      "depends_on": [
+        "ISS-024"
+      ],
+      "estimated_risk": "medium",
+      "problem": "Plan step on systemd WatchdogSec not done; stall recovery relies on the in-process watchdog only.",
+      "acceptance_criteria": [
+        "Watchdog configured and verified: stalled bot is restarted by systemd",
+        "KillMode=process kept so tmux sessions survive restarts"
+      ],
+      "status_updated_at": "2026-11-15T00:00:00+00:00",
+      "updated_at": "2026-11-15T00:00:00+00:00"
+    },
+    {
+      "id": "ISS-028",
+      "title": "Phase 8: structural decisions via hooks",
+      "priority": "medium",
+      "status": "TODO",
+      "categories": [
+        "feature"
+      ],
+      "files": [],
+      "related_nodes": [],
+      "depends_on": [
+        "ISS-024"
+      ],
+      "estimated_risk": "high",
+      "problem": "Phase 8 of the improvement plan (structural decisions through hooks) was not started.",
+      "acceptance_criteria": [
+        "Scope agreed against plan section 8 before implementation"
+      ],
+      "status_updated_at": "2026-11-15T00:00:00+00:00",
+      "updated_at": "2026-11-15T00:00:00+00:00"
+    },
+    {
+      "id": "ISS-029",
+      "title": "Upstream PR to six-ddc/ccbot: /usage parser fix for Claude Code 2.1.311",
+      "priority": "low",
+      "status": "TODO",
+      "categories": [
+        "upstream"
+      ],
+      "files": [
+        "src/ccbot/terminal_parser.py"
+      ],
+      "related_nodes": [],
+      "depends_on": [
+        "ISS-024"
+      ],
+      "estimated_risk": "low",
+      "problem": "Fix ba0e7d1 (tab row lost its colon) exists only in the fork.",
+      "acceptance_criteria": [
+        "Fix extracted into a separate branch from upstream/main and PR opened upstream"
+      ],
+      "status_updated_at": "2026-11-15T00:00:00+00:00",
+      "updated_at": "2026-11-15T00:00:00+00:00"
     }
   ],
-  "updated_at": "2026-08-12T00:00:00Z",
+  "updated_at": "2026-11-15T00:00:00+00:00",
   "phases": {
     "Phase 1": {
       "name": "Canonical auth + REF-001 done-for-real",
