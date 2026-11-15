@@ -88,18 +88,30 @@ ALLOWED_USERS=your_telegram_user_id
 
 **Optional:**
 
-| Variable                | Default    | Description                                      |
-| ----------------------- | ---------- | ------------------------------------------------ |
-| `CCBOT_DIR`             | `~/.ccbot` | Config/state directory (`.env` loaded from here) |
-| `TMUX_SESSION_NAME`     | `ccbot`    | Tmux session name                                |
-| `CLAUDE_COMMAND`        | `claude`   | Command to run in new windows                    |
-| `MONITOR_POLL_INTERVAL` | `2.0`      | Polling interval in seconds                      |
-| `CCBOT_SHOW_HIDDEN_DIRS` | `false` | Show hidden (dot) directories in directory browser |
-| `OPENAI_API_KEY` | _(none)_ | OpenAI API key for voice message transcription |
-| `OPENAI_BASE_URL` | `https://api.openai.com/v1` | OpenAI API base URL (for proxies or compatible APIs) |
+| Variable                       | Default                     | Description                                                                 |
+| ------------------------------ | --------------------------- | --------------------------------------------------------------------------- |
+| `CCBOT_DIR`                    | `~/.ccbot`                  | Config/state directory (`.env` loaded from here)                            |
+| `TMUX_SESSION_NAME`            | `ccbot`                     | Tmux session name                                                           |
+| `CCBOT_GROUP_CHAT_ID`          | _(unset)_                   | Forum group for sessions created with `ccbot new`; unset = the group the user last wrote in |
+| `CLAUDE_COMMAND`               | `claude`                    | Command to run in new windows                                               |
+| `CLAUDE_CONFIG_DIR`            | `~/.claude`                 | Claude Code config dir; sessions are read from its `projects/` subdirectory |
+| `CCBOT_CLAUDE_PROJECTS_PATH`   | _(unset)_                   | Explicit projects dir (takes priority over `CLAUDE_CONFIG_DIR`)             |
+| `MONITOR_POLL_INTERVAL`        | `2.0`                       | Polling interval in seconds                                                 |
+| `CCBOT_SHOW_USER_MESSAGES`     | `true`                      | Show user messages (with a 👤 prefix) in history and notifications          |
+| `CCBOT_SHOW_TOOL_CALLS`        | `true`                      | Show tool_use/tool_result notifications                                     |
+| `CCBOT_SHOW_HIDDEN_DIRS`       | `false`                     | Show hidden (dot) directories in directory browser                          |
+| `CCBOT_HTTP_POOL_SIZE`         | `256`                       | Connection pool size of the main Telegram HTTP client                       |
+| `CCBOT_HTTP_POOL_TIMEOUT`      | `10.0`                      | Seconds to wait for a free connection in either Telegram pool               |
+| `CCBOT_GET_UPDATES_POOL_SIZE`  | `4`                         | Connection pool size of the `getUpdates` long-poll client                   |
+| `CCBOT_POLL_STALL_SOFT`        | `90.0`                      | Seconds without a successful `getUpdates` before the HTTP client is rebuilt |
+| `CCBOT_POLL_STALL_HARD`        | `300.0`                     | Seconds of stalled polling (Telegram reachable) before the process exits    |
+| `OPENAI_API_KEY`               | _(none)_                    | OpenAI API key for voice message transcription                              |
+| `OPENAI_BASE_URL`              | `https://api.openai.com/v1` | OpenAI API base URL (for proxies or compatible APIs)                        |
+| `CCBOT_WHISPER_BACKEND`        | `openai`                    | Voice transcription backend: `openai`, `local` (faster-whisper) or `off`    |
+| `CCBOT_WHISPER_MODEL`          | `small`                     | Whisper model name for the `local` backend                                  |
+| `CCBOT_WHISPER_LANGUAGE`       | `auto`                      | Transcription language: `auto`, `en` or `ru`                                |
 
-Message formatting is always HTML via `chatgpt-md-converter` (`chatgpt_md_converter` package).
-There is no runtime formatter switch to MarkdownV2.
+Messages are converted from Markdown to Telegram MarkdownV2 (`markdown_v2.py`, using `telegramify-markdown`). If Telegram rejects the formatting, the message is sent as plain text.
 
 > If running on a VPS where there's no interactive terminal to approve permissions, consider:
 >
@@ -115,6 +127,8 @@ Auto-install via CLI:
 ccbot hook --install
 ```
 
+This adds five hooks to `~/.claude/settings.json`: `SessionStart`, `SessionEnd`, `Notification`, `Stop` and `StopFailure`. The install is idempotent: events that already have a ccbot hook are skipped, and other tools' hooks are never modified. Re-run it after upgrading ccbot.
+
 Or manually add to `~/.claude/settings.json`:
 
 ```json
@@ -124,12 +138,32 @@ Or manually add to `~/.claude/settings.json`:
       {
         "hooks": [{ "type": "command", "command": "ccbot hook", "timeout": 5 }]
       }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [{ "type": "command", "command": "ccbot hook", "timeout": 5 }]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [{ "type": "command", "command": "ccbot hook", "timeout": 5, "async": true }]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [{ "type": "command", "command": "ccbot hook", "timeout": 5, "async": true }]
+      }
+    ],
+    "StopFailure": [
+      {
+        "hooks": [{ "type": "command", "command": "ccbot hook", "timeout": 5, "async": true }]
+      }
     ]
   }
 }
 ```
 
-This writes window-session mappings to `$CCBOT_DIR/session_map.json` (`~/.ccbot/` by default), so the bot automatically tracks which Claude session is running in each tmux window — even after `/clear` or session restarts.
+`SessionStart` writes window-session mappings to `$CCBOT_DIR/session_map.json` (`~/.ccbot/` by default), so the bot automatically tracks which Claude session is running in each tmux window — even after `/clear` or session restarts. The other four events are appended to `$CCBOT_DIR/hook_events.jsonl` and let the bot react without parsing the terminal: a `Notification` asking for input is reported as "Claude is waiting for you" even when the terminal parser does not recognize the prompt, `Stop` clears a stale status message when a turn ends, `StopFailure` reports API errors, and `SessionEnd` tells you when a session has ended.
 
 ## Usage
 
@@ -145,12 +179,19 @@ uv run ccbot
 
 **Bot commands:**
 
-| Command       | Description                     |
-| ------------- | ------------------------------- |
-| `/start`      | Show welcome message            |
-| `/history`    | Message history for this topic  |
-| `/screenshot` | Capture terminal screenshot     |
-| `/esc`        | Send Escape to interrupt Claude |
+| Command       | Description                                                          |
+| ------------- | -------------------------------------------------------------------- |
+| `/start`      | Show welcome message                                                 |
+| `/new`        | Start a new Claude session (see below)                               |
+| `/menu`       | Session control buttons: Screenshot, Esc, New session, End session   |
+| `/history`    | Message history for this topic                                       |
+| `/screenshot` | Terminal screenshot with control keys                                |
+| `/esc`        | Send Escape to interrupt Claude                                      |
+| `/unbind`     | Unbind topic from session (keeps the tmux window running)            |
+| `/usage`      | Show Claude Code usage remaining                                     |
+| `/kill`       | End this session (closes its tmux window), after confirmation        |
+| `/health`     | Bot and parser diagnostics for this topic                            |
+| `/login`      | Sign in to Claude Code again                                         |
 
 **Claude Code commands (forwarded via tmux):**
 
@@ -161,8 +202,19 @@ uv run ccbot
 | `/cost`    | Show token/cost usage        |
 | `/help`    | Show Claude Code help        |
 | `/memory`  | Edit CLAUDE.md               |
+| `/model`   | Switch AI model              |
 
 Any unrecognized `/command` is also forwarded to Claude Code as-is (e.g. `/review`, `/doctor`, `/init`).
+
+**Session commands in detail:**
+
+- `/new` — in the General topic the bot creates a new topic and opens the directory browser there. In a topic that already has a session it offers **Restart here** (end the session and start a fresh one in the same directory and topic) or **New topic**. In an empty topic it starts the normal bind flow.
+- `/kill` — asks for confirmation, then ends the session (the tmux window is closed). The confirmation also offers **End and close topic**.
+- `/menu` — shows the session panel (Screenshot, Esc, New session, End session). The same panel is attached to the "session created" message.
+- `/health` — shows bot uptime, Telegram polling state, the installed Claude Code version compared with the tested one, which hooks are installed, and the parser state for the topic's window.
+- `/login` — sends `/login` to Claude Code. The sign-in method picker appears in Telegram with navigation buttons. When Claude Code shows the sign-in URL, the bot posts it as an **Open sign-in page** button. Send the code as a message: the bot passes it to Claude Code and deletes your message.
+
+Creating, closing and deleting topics requires the bot to be a group admin with the **Manage Topics** right.
 
 ### Topic Workflow
 
@@ -214,8 +266,51 @@ The monitor polls session JSONL files every 2 seconds and sends notifications fo
 Notifications are delivered to the topic bound to the session's window.
 
 Formatting note:
-- Telegram messages are rendered with parse mode `HTML` using `chatgpt-md-converter`
-- Long messages are split with HTML tag awareness to preserve code blocks and formatting
+- Messages are converted to Telegram MarkdownV2 by `markdown_v2.py` (`telegramify-markdown`), with automatic fallback to plain text
+- Messages longer than Telegram's 4096-character limit are split by `telegram_sender.split_message`
+
+## Terminal Commands
+
+Besides the bot itself, the `ccbot` command has these subcommands:
+
+| Command                        | Description                                                                 |
+| ------------------------------ | --------------------------------------------------------------------------- |
+| `ccbot`                        | Start the Telegram bot                                                      |
+| `ccbot hook --install`         | Install the Claude Code hooks into `~/.claude/settings.json` (see Hook Setup) |
+| `ccbot new [DIR]`              | Create a Claude session and a bound Telegram topic through the running bot  |
+| `ccbot selfcheck`              | Check the terminal parser against the installed Claude Code                 |
+
+`ccbot new [DIR]` flags (`DIR` defaults to the current directory):
+
+| Flag                 | Description                                                              |
+| -------------------- | ------------------------------------------------------------------------ |
+| `--name NAME`        | Topic and window name                                                    |
+| `--resume SESSION_ID`| Resume an existing Claude session                                        |
+| `--user-id ID`       | Telegram user id (needed when `ALLOWED_USERS` has several users)         |
+| `--attach`           | Attach to the new tmux window (`switch-client` inside tmux)              |
+| `--timeout SECONDS`  | Seconds to wait for the bot's answer (default `20`)                      |
+
+`ccbot new` does not create the window itself. It writes a request file into `<CCBOT_DIR>/control/` and waits for the running bot to create the tmux window and the Telegram topic bound to it. The bot must be running; otherwise the command fails after the timeout. The forum group is `CCBOT_GROUP_CHAT_ID` if set, otherwise the group the user last wrote in.
+
+`ccbot selfcheck` starts a real Claude Code in a separate tmux server (its own socket, never the bot's) and checks which parser patterns still match its screens. Flags:
+
+| Flag                 | Description                                                                          |
+| -------------------- | ------------------------------------------------------------------------------------ |
+| `--command CMD`      | Command that starts Claude (default: `CLAUDE_COMMAND`, else `claude`)                |
+| `--save-dir DIR`     | Write each captured pane as `<check>.txt`                                            |
+| `--with-prompt`      | Also send one prompt (spends model tokens) to check the status line                  |
+| `--timeout SECONDS`  | Seconds to wait for each expected screen (default `30`)                              |
+| `--keep`             | Do not tear down the tmux server and temp directories (for debugging)                |
+
+The checks are `startup`, `usage`, `model` and `status` (status only with `--with-prompt`). The command exits with 1 if a check fails.
+
+## Reliability and Updates
+
+- **Telegram polling watchdog** — if `getUpdates` stalls, the HTTP client is rebuilt. The process exits so that a supervisor restarts it only when Telegram is reachable while polling is still stalled (upstream ccbot issue #79). Run the bot under a supervisor such as systemd with `Restart=always`.
+- **Nested Claude sessions** — a `claude -p` started from inside a session (for example from its Bash tool) no longer takes over the window's session (upstream ccbot issue #72).
+- **Shell guard** — if Claude has exited and the window shows a shell prompt, messages are not typed into the shell. The bot offers **Restart Claude** or **End session** instead.
+- **Unrecognized screens** — when Claude waits for input on a screen the parser does not know, the bot sends a screenshot with control keys.
+- **After a Claude Code update** — run `ccbot selfcheck`. On a failure, update `UI_PATTERNS` and `STATUS_SPINNERS` in `terminal_parser.py`, add the captured pane (`--save-dir`) as a test fixture, then bump `TESTED_CLAUDE_CODE`. To make updates deliberate, disable Claude Code's auto-update with `DISABLE_AUTOUPDATER=1`.
 
 ## Running Claude Code in tmux
 
@@ -243,6 +338,8 @@ The window must be in the `ccbot` tmux session (configurable via `TMUX_SESSION_N
 | `$CCBOT_DIR/state.json`         | Thread bindings, window states, display names, and per-user read offsets |
 | `$CCBOT_DIR/session_map.json`   | Hook-generated `{tmux_session:window_id: {session_id, cwd, window_name}}` mappings |
 | `$CCBOT_DIR/monitor_state.json` | Monitor byte offsets per session (prevents duplicate notifications)     |
+| `$CCBOT_DIR/hook_events.jsonl` | Hook event log (Notification, Stop, StopFailure, SessionEnd) read by the bot |
+| `$CCBOT_DIR/control/`          | Request/result files of `ccbot new` (written by the CLI, answered by the bot) |
 | `~/.claude/projects/`           | Claude Code session data (read-only)                                    |
 
 ## File Structure
@@ -259,11 +356,17 @@ src/ccbot/
 ├── monitor_state.py       # Monitor state persistence (byte offsets)
 ├── transcript_parser.py   # Claude Code JSONL transcript parsing
 ├── terminal_parser.py     # Terminal pane parsing (interactive UI + status line)
-├── html_converter.py      # Markdown → Telegram HTML conversion + HTML-aware splitting
+├── markdown_v2.py         # Markdown → Telegram MarkdownV2 conversion (telegramify-markdown)
+├── telegram_sender.py     # split_message: long messages split at the 4096-character limit
 ├── screenshot.py          # Terminal text → PNG image with ANSI color support
 ├── transcribe.py          # Voice-to-text transcription via OpenAI API
 ├── utils.py               # Shared utilities (atomic JSON writes, JSONL helpers)
 ├── tmux_manager.py        # Tmux window management (list, create, send keys, kill)
+├── hook_events.py         # Hook event channel (hook_events.jsonl writer and reader)
+├── health.py              # Polling watchdog, Claude Code version check, /health report
+├── control.py             # Request/result files between `ccbot new` and the bot
+├── cli_new.py             # `ccbot new` terminal client
+├── selfcheck.py           # `ccbot selfcheck` parser check against real Claude Code
 ├── fonts/                 # Bundled fonts for screenshot rendering
 └── handlers/
     ├── __init__.py        # Handler module exports
@@ -274,6 +377,11 @@ src/ccbot/
     ├── message_queue.py   # Per-user message queue + worker (merge, rate limit)
     ├── message_sender.py  # safe_reply / safe_edit / safe_send helpers
     ├── response_builder.py # Response message building (format tool_use, thinking, etc.)
+    ├── session_lifecycle.py # End/restart session, shell guard, session panels
+    ├── callback_lifecycle.py # sl:* callbacks (end, restart, /new panel)
+    ├── bind_flow.py       # Bind flow for unbound topics and auto-created topics
+    ├── hook_reactions.py  # Reactions to hook events (prompts, Stop, StopFailure, SessionEnd)
+    ├── control_requests.py # Executes requests from `ccbot new`
     └── status_polling.py  # Terminal status line polling
 ```
 

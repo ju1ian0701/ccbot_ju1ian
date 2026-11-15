@@ -117,3 +117,53 @@ class TestConfigOpenAI:
         monkeypatch.setenv("OPENAI_API_KEY", "sk-secret")
         Config()
         assert os.environ.get("OPENAI_API_KEY") is None
+
+
+@pytest.mark.usefixtures("_base_env")
+class TestConfigPollingHealth:
+    _VARS = (
+        "CCBOT_HTTP_POOL_SIZE",
+        "CCBOT_HTTP_POOL_TIMEOUT",
+        "CCBOT_GET_UPDATES_POOL_SIZE",
+        "CCBOT_POLL_STALL_SOFT",
+        "CCBOT_POLL_STALL_HARD",
+    )
+
+    def test_polling_health_defaults(self, monkeypatch):
+        for var in self._VARS:
+            monkeypatch.delenv(var, raising=False)
+        cfg = Config()
+        assert cfg.http_pool_size == 256
+        assert cfg.http_pool_timeout == 10.0
+        assert cfg.get_updates_pool_size == 4
+        assert cfg.poll_stall_soft == 90.0
+        assert cfg.poll_stall_hard == 300.0
+
+    def test_polling_health_env_overrides(self, monkeypatch):
+        monkeypatch.setenv("CCBOT_HTTP_POOL_SIZE", "128")
+        monkeypatch.setenv("CCBOT_HTTP_POOL_TIMEOUT", "3.5")
+        monkeypatch.setenv("CCBOT_GET_UPDATES_POOL_SIZE", "2")
+        monkeypatch.setenv("CCBOT_POLL_STALL_SOFT", "45")
+        monkeypatch.setenv("CCBOT_POLL_STALL_HARD", "600")
+        cfg = Config()
+        assert cfg.http_pool_size == 128
+        assert cfg.http_pool_timeout == 3.5
+        assert cfg.get_updates_pool_size == 2
+        assert cfg.poll_stall_soft == 45.0
+        assert cfg.poll_stall_hard == 600.0
+
+
+@pytest.mark.usefixtures("_base_env")
+class TestConfigGroupChatId:
+    def test_unset_is_none(self, monkeypatch):
+        monkeypatch.delenv("CCBOT_GROUP_CHAT_ID", raising=False)
+        assert Config().group_chat_id is None
+
+    def test_set_is_int(self, monkeypatch):
+        monkeypatch.setenv("CCBOT_GROUP_CHAT_ID", "-1003978703836")
+        assert Config().group_chat_id == -1003978703836
+
+    def test_garbage_raises(self, monkeypatch):
+        monkeypatch.setenv("CCBOT_GROUP_CHAT_ID", "my group")
+        with pytest.raises(ValueError, match="CCBOT_GROUP_CHAT_ID must be an integer"):
+            Config()

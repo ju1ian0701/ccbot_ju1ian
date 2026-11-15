@@ -11,6 +11,7 @@ from telegram.ext import ContextTypes
 from ..session import session_manager
 from ..session_guard import get_thread_id
 from ..tmux_manager import tmux_manager
+from .bind_flow import discard_auto_topic
 from .callback_data import (
     SessionSelectCallback,
     WinBindCallback,
@@ -120,6 +121,7 @@ async def _handle_session_cancel(
         context.user_data.pop("_selected_path", None)
     await safe_edit(query, "Cancelled")
     await query.answer("Cancelled")
+    await discard_auto_topic(context.bot, context, user.id, topic.pending_tid)
 
 
 async def _handle_win_bind(
@@ -228,3 +230,4 @@ async def _handle_win_cancel(
     _clear_pending_thread(context)
     await safe_edit(query, "Cancelled")
     await query.answer("Cancelled")
+    await discard_auto_topic(context.bot, context, user.id, topic.pending_tid)

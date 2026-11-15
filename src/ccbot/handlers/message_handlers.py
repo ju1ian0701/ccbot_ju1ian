@@ -12,7 +12,6 @@ from __future__ import annotations
 import asyncio
 import logging
 import time
-from pathlib import Path
 
 from telegram import Bot, Update
 from telegram.constants import ChatAction
@@ -25,25 +24,22 @@ from ..terminal_parser import extract_bash_output, is_interactive_ui
 from ..tmux_manager import tmux_manager
 from ..transcribe import TranscriptionDisabled, TranscriptionError, transcribe
 from ..utils import ccbot_dir, ensure_dir
+from .bind_flow import start_bind_flow
 from .capture_registry import capture_tasks
 from .directory_browser import (
-    BROWSE_DIRS_KEY,
-    BROWSE_PAGE_KEY,
-    BROWSE_PATH_KEY,
     STATE_BROWSING_DIRECTORY,
     STATE_KEY,
     STATE_SELECTING_SESSION,
     STATE_SELECTING_WINDOW,
-    UNBOUND_WINDOWS_KEY,
-    build_directory_browser,
-    build_window_picker,
     clear_browse_state,
     clear_session_picker_state,
     clear_window_picker_state,
 )
+from . import login_flow
 from .interactive_ui import get_interactive_window, handle_interactive_ui
 from .message_queue import clear_status_msg_info, enqueue_status_update
 from .message_sender import NO_LINK_PREVIEW, safe_reply, send_with_fallback
+from .session_lifecycle import reply_if_claude_not_running
 
 logger = logging.getLogger(__name__)
 
@@ -75,6 +71,8 @@ async def photo_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         unbind_if_missing=True,
     )
     if ctx is None:
+        return
+    if await reply_if_claude_not_running(update.message, ctx.window):
         return
 
     # Download the highest-resolution photo
@@ -131,6 +129,8 @@ async def voice_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         unbind_if_missing=True,
     )
     if ctx is None:
+        return
+    if await reply_if_claude_not_running(update.message, ctx.window):
         return
 
     voice = update.message.voice
@@ -338,56 +338,8 @@ async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 
     window_id = session_manager.get_window_for_thread(user.id, thread_id)
     if window_id is None:
-        # Unbound topic — check for unbound windows first
-        all_windows = await tmux_manager.list_windows()
-        bound_ids = {
-            window_id for _, _, window_id in session_manager.iter_thread_bindings()
-        }
-        unbound = [
-            (w.window_id, w.window_name, w.cwd)
-            for w in all_windows
-            if w.window_id not in bound_ids
-        ]
-        logger.debug(
-            "Window picker check: all=%s, bound=%s, unbound=%s",
-            [w.window_name for w in all_windows],
-            bound_ids,
-            [name for _, name, _ in unbound],
-        )
-
-        if unbound:
-            # Show window picker
-            logger.info(
-                "Unbound topic: showing window picker (%d unbound windows, user=%d, thread=%d)",
-                len(unbound),
-                user.id,
-                thread_id,
-            )
-            msg_text, keyboard, win_ids = build_window_picker(unbound)
-            if context.user_data is not None:
-                context.user_data[STATE_KEY] = STATE_SELECTING_WINDOW
-                context.user_data[UNBOUND_WINDOWS_KEY] = win_ids
-                context.user_data["_pending_thread_id"] = thread_id
-                context.user_data["_pending_thread_text"] = text
-            await safe_reply(update.message, msg_text, reply_markup=keyboard)
-            return
-
-        # No unbound windows — show directory browser to create a new session
-        logger.info(
-            "Unbound topic: showing directory browser (user=%d, thread=%d)",
-            user.id,
-            thread_id,
-        )
-        start_path = str(Path.cwd())
-        msg_text, keyboard, subdirs = build_directory_browser(start_path)
-        if context.user_data is not None:
-            context.user_data[STATE_KEY] = STATE_BROWSING_DIRECTORY
-            context.user_data[BROWSE_PATH_KEY] = start_path
-            context.user_data[BROWSE_PAGE_KEY] = 0
-            context.user_data[BROWSE_DIRS_KEY] = subdirs
-            context.user_data["_pending_thread_id"] = thread_id
-            context.user_data["_pending_thread_text"] = text
-        await safe_reply(update.message, msg_text, reply_markup=keyboard)
+        # Unbound topic — window picker or directory browser
+        await start_bind_flow(update.message, context, user.id, thread_id, text)
         return
 
     # Bound topic — live window via shared session guard (unbind if gone).
@@ -403,6 +355,12 @@ async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         return
     window_id = ctx.window_id
     w = ctx.window
+    if await reply_if_claude_not_running(update.message, w):
+        return
+
+    # A sign-in code requested by /login goes through the normal path below; the
+    # login screen is not an interactive UI, so the UI precheck is skipped.
+    is_code = await login_flow.expects_code(user.id, thread_id, window_id)
 
     # Cosmetic / outbound-Telegram steps below must NEVER abort the handler
     # before the message is injected into tmux. On flaky networks the "typing…"
@@ -427,24 +385,33 @@ async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     # This catches UIs (permission prompts, etc.) that status polling might have missed.
     # capture_pane is a local tmux call, but handle_interactive_ui hits the network —
     # isolate the whole block so a failure can't prevent the injection below.
-    try:
-        pane_text = await tmux_manager.capture_pane(w.window_id)
-        if pane_text and is_interactive_ui(pane_text):
-            # UI detected — show it to user, then send text (acts as Enter)
-            logger.info(
-                "Detected pending interactive UI before sending text (user=%d, thread=%s)",
-                user.id,
-                thread_id,
+    if not is_code:
+        try:
+            pane_text = await tmux_manager.capture_pane(w.window_id)
+            if pane_text and is_interactive_ui(pane_text):
+                # UI detected — show it to user, then send text (acts as Enter)
+                logger.info(
+                    "Detected pending interactive UI before sending text (user=%d, thread=%s)",
+                    user.id,
+                    thread_id,
+                )
+                await handle_interactive_ui(context.bot, user.id, window_id, thread_id)
+                # Small delay to let UI render in Telegram before text arrives
+                await asyncio.sleep(0.3)
+        except Exception as e:
+            logger.warning(
+                "interactive-UI precheck failed, continuing to injection: %s", e
             )
-            await handle_interactive_ui(context.bot, user.id, window_id, thread_id)
-            # Small delay to let UI render in Telegram before text arrives
-            await asyncio.sleep(0.3)
-    except Exception as e:
-        logger.warning("interactive-UI precheck failed, continuing to injection: %s", e)
 
     success, message = await session_manager.send_to_window(window_id, text)
     if not success:
         await safe_reply(update.message, f"❌ {message}")
+        return
+
+    if is_code:
+        await login_flow.after_code_sent(
+            context.bot, update.message, user.id, thread_id
+        )
         return
 
     # Start background capture for ! bash command output

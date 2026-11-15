@@ -2,19 +2,26 @@
 
 Parses captured tmux pane content to detect:
   - Interactive UIs (AskUserQuestion, ExitPlanMode, Permission Prompt,
-    RestoreCheckpoint) via regex-based UIPattern matching with top/bottom
-    delimiters.
+    RestoreCheckpoint, LoginMethod) via regex-based UIPattern matching with
+    top/bottom delimiters.
+  - Login flow screens (sign-in URL, code prompt).
   - Status line (spinner characters + working text) by scanning from bottom up.
 
 All Claude Code text patterns live here. To support a new UI type or
 a changed Claude Code version, edit UI_PATTERNS / STATUS_SPINNERS.
 
 Key functions: is_interactive_ui(), extract_interactive_content(),
-parse_status_line(), strip_pane_chrome(), extract_bash_output().
+parse_login_url(), is_login_code_prompt(), parse_status_line(), has_chrome(),
+strip_pane_chrome(), extract_bash_output().
 """
 
 import re
 from dataclasses import dataclass
+from urllib.parse import urlsplit
+
+# Newest Claude Code version these patterns were verified against. Bump it after
+# running the self-check (/health, startup warning) on a new version.
+TESTED_CLAUDE_CODE = "2.1.311"
 
 
 @dataclass
@@ -106,6 +113,8 @@ UI_PATTERNS: list[UIPattern] = [
         name="Settings",
         top=(
             re.compile(r"^\s*Settings:.*tab to cycle"),
+            # v2.1.311: tab row without colon — "Settings  Status   Config   Usage   Stats"
+            re.compile(r"^\s*Settings\s+Status\s+Config\b"),
             re.compile(r"^\s*Select model"),
         ),
         bottom=(
@@ -114,6 +123,13 @@ UI_PATTERNS: list[UIPattern] = [
             re.compile(r"Enter to confirm"),
             re.compile(r"^\s*Type to filter"),
         ),
+    ),
+    UIPattern(
+        # /login: authentication method picker
+        name="LoginMethod",
+        top=(re.compile(r"^\s*Select login method:"),),
+        bottom=(),
+        min_gap=1,
     ),
 ]
 
@@ -193,10 +209,96 @@ def is_interactive_ui(pane_text: str) -> bool:
     return extract_interactive_content(pane_text) is not None
 
 
+# ── Login flow ───────────────────────────────────────────────────────────
+
+# Hosts a sign-in URL may point to; anything else is rejected.
+LOGIN_URL_HOSTS = frozenset(
+    {"claude.com", "claude.ai", "platform.claude.com", "console.anthropic.com"}
+)
+
+_LOGIN_URL_MARKER = "Use the url below to sign in"
+_RE_HTTPS_URL = re.compile(r"^https://\S+$")
+
+
+def parse_login_url(pane_text: str) -> str | None:
+    """Extract the sign-in URL shown by Claude Code's /login URL screen.
+
+    The TUI hard-wraps the URL into several lines with no leading whitespace.
+    Pieces are collected after the marker line (skipping blank lines) until the
+    next blank line or a line containing inner whitespace, then joined.
+    Returns None unless the result is an https URL on an allowed login host.
+    """
+    if not pane_text:
+        return None
+
+    lines = pane_text.split("\n")
+    marker_idx = next(
+        (i for i, line in enumerate(lines) if _LOGIN_URL_MARKER in line), None
+    )
+    if marker_idx is None:
+        return None
+
+    i = marker_idx + 1
+    while i < len(lines) and not lines[i].strip():
+        i += 1
+
+    pieces: list[str] = []
+    while i < len(lines):
+        stripped = lines[i].strip()
+        if not stripped or any(c.isspace() for c in stripped):
+            break
+        pieces.append(stripped)
+        i += 1
+
+    if not pieces:
+        return None
+
+    url = "".join(pieces)
+    if not _RE_HTTPS_URL.match(url):
+        return None
+    if urlsplit(url).hostname not in LOGIN_URL_HOSTS:
+        return None
+    return url
+
+
+def is_login_code_prompt(pane_text: str) -> bool:
+    """True if the pane shows the /login "Paste code here if prompted" prompt."""
+    return any(
+        line.strip().startswith("Paste code here if prompted")
+        for line in pane_text.split("\n")
+    )
+
+
 # ── Status line parsing ─────────────────────────────────────────────────
 
 # Spinner characters Claude Code uses in its status line
 STATUS_SPINNERS = frozenset(["·", "✻", "✽", "✶", "✳", "✢"])
+
+# Chrome separator: a line made only of ``─``, at least this long, looked for
+# in the last _CHROME_SEARCH_LINES lines of the pane.
+_CHROME_MIN_WIDTH = 20
+_CHROME_SEARCH_LINES = 10
+
+
+def _find_chrome_index(lines: list[str]) -> int | None:
+    """Index of the topmost chrome separator near the bottom of the pane."""
+    search_start = max(0, len(lines) - _CHROME_SEARCH_LINES)
+    for i in range(search_start, len(lines)):
+        stripped = lines[i].strip()
+        if len(stripped) >= _CHROME_MIN_WIDTH and all(c == "─" for c in stripped):
+            return i
+    return None
+
+
+def has_chrome(pane_text: str) -> bool:
+    """True if the pane shows Claude Code's bottom chrome (prompt separator).
+
+    Independent of spinner/status parsing: tells "Claude's TUI is on screen"
+    apart from a plain shell or an unrecognized layout.
+    """
+    if not pane_text:
+        return False
+    return _find_chrome_index(pane_text.split("\n")) is not None
 
 
 def parse_status_line(pane_text: str) -> str | None:
@@ -215,14 +317,7 @@ def parse_status_line(pane_text: str) -> str | None:
     lines = pane_text.split("\n")
 
     # Find the chrome separator: topmost ──── line in the last 10 lines
-    chrome_idx: int | None = None
-    search_start = max(0, len(lines) - 10)
-    for i in range(search_start, len(lines)):
-        stripped = lines[i].strip()
-        if len(stripped) >= 20 and all(c == "─" for c in stripped):
-            chrome_idx = i
-            break
-
+    chrome_idx = _find_chrome_index(lines)
     if chrome_idx is None:
         return None  # No chrome visible — can't determine status
 
@@ -255,12 +350,8 @@ def strip_pane_chrome(lines: list[str]) -> list[str]:
     This function finds the topmost ``────`` separator in the last 10 lines
     and strips everything from there down.
     """
-    search_start = max(0, len(lines) - 10)
-    for i in range(search_start, len(lines)):
-        stripped = lines[i].strip()
-        if len(stripped) >= 20 and all(c == "─" for c in stripped):
-            return lines[:i]
-    return lines
+    chrome_idx = _find_chrome_index(lines)
+    return lines if chrome_idx is None else lines[:chrome_idx]
 
 
 def extract_bash_output(pane_text: str, command: str) -> str | None:
@@ -311,6 +402,9 @@ class UsageInfo:
     parsed_lines: list[str]  # Cleaned content lines from the modal
 
 
+_RE_USAGE_HEADER = re.compile(r"^Settings:?\s.*\bUsage\b")
+
+
 def parse_usage_output(pane_text: str) -> UsageInfo | None:
     """Extract usage information from Claude Code's /usage settings tab.
 
@@ -332,8 +426,9 @@ def parse_usage_output(pane_text: str) -> UsageInfo | None:
     for i, line in enumerate(lines):
         stripped = line.strip()
         if start_idx is None:
-            # The usage tab header line
-            if "Settings:" in stripped and "Usage" in stripped:
+            # The usage tab header line ("Settings: … Usage …"; v2.1.311 has
+            # no colon: "Settings  Status   Config   Usage   Stats")
+            if _RE_USAGE_HEADER.match(stripped):
                 start_idx = i + 1  # skip the header itself
         else:
             if stripped.startswith("Esc to"):

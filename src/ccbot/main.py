@@ -1,9 +1,14 @@
 """Application entry point — CLI dispatcher and bot bootstrap.
 
-Handles two execution modes:
+Handles three execution modes:
   1. `ccbot hook` — delegates to hook.hook_main() for Claude Code hook processing.
-  2. Default — configures logging, initializes tmux session, and starts the
+  2. `ccbot new [DIR]` — delegates to cli_new.new_main(); asks the running bot
+     to create a session and a Telegram topic (no bot state is touched here).
+  3. Default — configures logging, initializes tmux session, and starts the
      Telegram bot polling loop via bot.create_bot().
+  4. `ccbot selfcheck` — delegates to selfcheck.selfcheck_main(); starts a real
+     Claude Code in a throw-away tmux server and reports which terminal parser
+     patterns still match (run by hand after a Claude Code update).
 """
 
 import logging
@@ -18,10 +23,23 @@ def main() -> None:
 
             hook_main()
             return
+        if sys.argv[1] == "new":
+            from .cli_new import new_main
+
+            sys.exit(new_main(sys.argv[2:]))
+        if sys.argv[1] == "selfcheck":
+            from .selfcheck import selfcheck_main
+
+            sys.exit(selfcheck_main(sys.argv[2:]))
         # Reject anything else: silently falling through to "start the bot"
         # means a typo (or `ccbot --help`) launches a second bot instance
         # that races the real one for Telegram updates.
-        usage = "Usage: ccbot        start the Telegram bot\n       ccbot hook   run as Claude Code SessionStart hook"
+        usage = (
+            "Usage: ccbot        start the Telegram bot\n"
+            "       ccbot hook   run as Claude Code SessionStart hook\n"
+            "       ccbot new [DIR]   create a session + Telegram topic via the running bot\n"
+            "       ccbot selfcheck   verify the terminal parser against the installed Claude Code"
+        )
         if sys.argv[1] in ("-h", "--help"):
             print(usage)
             return

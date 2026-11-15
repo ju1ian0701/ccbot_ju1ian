@@ -1,6 +1,12 @@
 """Create a tmux window and bind it to a Telegram forum topic.
 
-Shared by directory-confirm, session-new, and session-select callback flows.
+Shared by directory-confirm, session-new, session-select callback flows, and
+the terminal-initiated `ccbot new` request handler.
+
+Core responsibilities:
+  - create_and_bind_window(): Telegram callback flow (create window, bind topic).
+  - register_new_window(): wait for the SessionStart hook of a freshly created
+    window and fix up --resume bookkeeping (reusable by any creation path).
 """
 
 from __future__ import annotations
@@ -11,9 +17,69 @@ from telegram.ext import ContextTypes
 
 from ..session import session_manager
 from ..tmux_manager import tmux_manager
+from .bind_flow import rename_auto_topic
 from .message_sender import safe_edit, safe_send
+from .session_lifecycle import build_session_panel_keyboard
 
 logger = logging.getLogger(__name__)
+
+
+async def register_new_window(
+    window_id: str,
+    window_name: str,
+    path: str,
+    resume_session_id: str | None = None,
+) -> bool:
+    """Wait for the hook to register a freshly created window; fix up --resume.
+
+    Returns hook_ok (True if the SessionStart hook registered the window in time).
+    """
+    # Wait for Claude Code's SessionStart hook to register in session_map.
+    # Resume sessions take longer to start (loading session state), so use
+    # a longer timeout to avoid silently dropping messages.
+    hook_timeout = 15.0 if resume_session_id else 5.0
+    hook_ok = await session_manager.wait_for_session_map_entry(
+        window_id, timeout=hook_timeout
+    )
+
+    # --resume: messages keep writing to the resumed session's JSONL, and
+    # current Claude Code reports the original session_id in the
+    # SessionStart hook (source="resume"), so normally nothing to fix up.
+    # If the hook timed out or reported a different id (older CC versions),
+    # force both window_state AND session_map to the resumed id —
+    # session_map drives the monitor's watch list, and load_session_map()
+    # would revert a window_state-only override on the next poll cycle.
+    if resume_session_id:
+        ws = session_manager.get_window_state(window_id)
+        if not hook_ok:
+            logger.warning(
+                "Hook timed out for resume window %s, "
+                "manually setting session_id=%s cwd=%s",
+                window_id,
+                resume_session_id,
+                path,
+            )
+            session_manager.set_window_session(
+                window_id,
+                resume_session_id,
+                cwd=str(path),
+                window_name=window_name,
+            )
+        elif ws.session_id != resume_session_id:
+            logger.info(
+                "Resume override: window %s session_id %s -> %s",
+                window_id,
+                ws.session_id,
+                resume_session_id,
+            )
+            session_manager.set_window_session(window_id, resume_session_id)
+        await session_manager.override_session_map_entry(
+            window_id,
+            resume_session_id,
+            cwd=str(path),
+            window_name=window_name,
+        )
+    return hook_ok
 
 
 async def create_and_bind_window(
@@ -46,51 +112,9 @@ async def create_and_bind_window(
             pending_thread_id,
             resume_session_id,
         )
-        # Wait for Claude Code's SessionStart hook to register in session_map.
-        # Resume sessions take longer to start (loading session state), so use
-        # a longer timeout to avoid silently dropping messages.
-        hook_timeout = 15.0 if resume_session_id else 5.0
-        hook_ok = await session_manager.wait_for_session_map_entry(
-            created_wid, timeout=hook_timeout
+        await register_new_window(
+            created_wid, created_wname, selected_path, resume_session_id
         )
-
-        # --resume: messages keep writing to the resumed session's JSONL, and
-        # current Claude Code reports the original session_id in the
-        # SessionStart hook (source="resume"), so normally nothing to fix up.
-        # If the hook timed out or reported a different id (older CC versions),
-        # force both window_state AND session_map to the resumed id —
-        # session_map drives the monitor's watch list, and load_session_map()
-        # would revert a window_state-only override on the next poll cycle.
-        if resume_session_id:
-            ws = session_manager.get_window_state(created_wid)
-            if not hook_ok:
-                logger.warning(
-                    "Hook timed out for resume window %s, "
-                    "manually setting session_id=%s cwd=%s",
-                    created_wid,
-                    resume_session_id,
-                    selected_path,
-                )
-                session_manager.set_window_session(
-                    created_wid,
-                    resume_session_id,
-                    cwd=str(selected_path),
-                    window_name=created_wname,
-                )
-            elif ws.session_id != resume_session_id:
-                logger.info(
-                    "Resume override: window %s session_id %s -> %s",
-                    created_wid,
-                    ws.session_id,
-                    resume_session_id,
-                )
-                session_manager.set_window_session(created_wid, resume_session_id)
-            await session_manager.override_session_map_entry(
-                created_wid,
-                resume_session_id,
-                cwd=str(selected_path),
-                window_name=created_wname,
-            )
 
         if pending_thread_id is not None:
             # Thread bind flow: bind thread to newly created window
@@ -102,6 +126,10 @@ async def create_and_bind_window(
             await safe_edit(
                 query,
                 f"✅ {message}\n\n{status}. Send messages here.",
+                reply_markup=build_session_panel_keyboard(created_wid),
+            )
+            await rename_auto_topic(
+                context.bot, context, user.id, pending_thread_id, created_wname
             )
 
             # Send pending text if any

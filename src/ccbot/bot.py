@@ -1,12 +1,13 @@
 """Telegram bot application factory — registration and lifecycle only.
 
 Handler implementations live under ``ccbot.handlers``:
-  - command_handlers: /start /history /screenshot /esc /unbind /usage /forward /topics
+  - command_handlers: /start /new /menu /history /screenshot /esc /unbind /usage /kill /login /health /forward /topics
   - message_handlers: text / photo / voice + bash capture
   - document: files (PDF, etc.) downloaded and forwarded as paths (document_handler)
   - callback_router: inline keyboard dispatch
   - notifications: SessionMonitor → Telegram delivery
   - window_bind / screenshot_controls: shared UI helpers
+  - control_requests: `ccbot new` requests from the terminal (file spool poller)
 
 Public re-exports keep existing imports (``from ccbot.bot import …``) stable.
 """
@@ -25,14 +26,28 @@ from telegram.ext import (
     MessageHandler,
     filters,
 )
+from telegram.request import HTTPXRequest
 
 from .config import config
+from .health import (
+    TrackedHTTPXRequest,
+    detect_claude_version,
+    error_handler,
+    is_newer_than_tested,
+    polling_health,
+    polling_watchdog_loop,
+)
 from .handlers.callback_router import callback_handler
 from .handlers.document import document_handler
 from .handlers.command_handlers import (
     esc_command,
     forward_command_handler,
+    health_command,
     history_command,
+    kill_command,
+    login_command,
+    menu_command,
+    new_command,
     screenshot_command,
     start_command,
     topic_closed_handler,
@@ -43,11 +58,13 @@ from .handlers.command_handlers import (
 )
 from .handlers.message_handlers import photo_handler, text_handler, voice_handler
 from .handlers.message_queue import shutdown_workers
+from .handlers.control_requests import control_poll_loop
 from .handlers.notifications import handle_new_message
 from .handlers.status_polling import status_poll_loop
 from .session import session_manager
 from .session_guard import get_thread_id, is_user_allowed
 from .session_monitor import NewMessage, SessionMonitor
+from .terminal_parser import TESTED_CLAUDE_CODE
 from .transcribe import close_client as close_transcribe_client
 
 # Back-compat alias (older tests patched ccbot.bot._get_thread_id)
@@ -61,17 +78,30 @@ session_monitor: SessionMonitor | None = None
 # Status polling task
 _status_poll_task: asyncio.Task | None = None
 
+# Polling stall watchdog task and the getUpdates request it monitors
+_watchdog_task: asyncio.Task | None = None
+_get_updates_request: TrackedHTTPXRequest | None = None
+
+# Terminal control-request poller (`ccbot new`)
+_control_task: asyncio.Task | None = None
+
 # Commands handled by the bot itself (shown in the menu). Each name needs a
 # CommandHandler in create_bot(); otherwise the command is forwarded to Claude
-# as plain text (this happened with a menu-only "/kill"). A topic is closed
-# and its window killed by closing the topic in Telegram, not by a command.
+# as plain text (this happened with a menu-only "/kill" before its handler
+# existed). A topic is closed and its window killed by closing the topic in
+# Telegram, or by /kill, which ends the session (window closed, topic kept).
 BOT_COMMANDS: dict[str, str] = {
     "start": "Show welcome message",
+    "new": "Start a new Claude session",
+    "menu": "Session control buttons",
     "history": "Message history for this topic",
     "screenshot": "Terminal screenshot with control keys",
     "esc": "Send Escape to interrupt Claude",
     "unbind": "Unbind topic from session (keeps window running)",
     "usage": "Show Claude Code usage remaining",
+    "kill": "End this session (closes its tmux window)",
+    "login": "Sign in to Claude Code again",
+    "health": "Bot and parser diagnostics",
 }
 
 # Claude Code commands shown in bot menu (forwarded via tmux)
@@ -91,10 +121,15 @@ __all__ = [
     "create_bot",
     "esc_command",
     "forward_command_handler",
+    "health_command",
     "get_thread_id",
     "handle_new_message",
     "history_command",
     "is_user_allowed",
+    "kill_command",
+    "login_command",
+    "menu_command",
+    "new_command",
     "photo_handler",
     "post_init",
     "post_shutdown",
@@ -112,7 +147,7 @@ __all__ = [
 
 
 async def post_init(application: Application) -> None:
-    global session_monitor, _status_poll_task
+    global session_monitor, _status_poll_task, _watchdog_task, _control_task
 
     # Register for the default scope and explicitly for group chats: a menu
     # defined only for the default scope can show up empty in a freshly created
@@ -131,6 +166,17 @@ async def post_init(application: Application) -> None:
 
     # Re-resolve stale window IDs from persisted state against live tmux windows
     await session_manager.resolve_stale_ids()
+
+    # Check the installed Claude Code version against the one the parsing was
+    # tested with (informational only: detection never blocks startup)
+    claude_version = await detect_claude_version()
+    if is_newer_than_tested(claude_version):
+        logger.warning(
+            "Claude Code %s is newer than the tested %s; "
+            "terminal parsing may be out of date",
+            claude_version,
+            TESTED_CLAUDE_CODE,
+        )
 
     # Pre-fill global rate limiter bucket on restart.
     # AsyncLimiter starts at _level=0 (full burst capacity), but Telegram's
@@ -157,9 +203,28 @@ async def post_init(application: Application) -> None:
     _status_poll_task = asyncio.create_task(status_poll_loop(application.bot))
     logger.info("Status polling task started")
 
+    # Start the terminal control-request poller (`ccbot new`)
+    _control_task = asyncio.create_task(control_poll_loop(application.bot))
+    logger.info("Control request poller started")
+
+    # Start polling stall watchdog (rebuilds getUpdates client, exits if wedged)
+    if _get_updates_request is None:
+        logger.error("getUpdates request missing; polling watchdog not started")
+    else:
+        _watchdog_task = asyncio.create_task(
+            polling_watchdog_loop(
+                _get_updates_request,
+                polling_health,
+                token=config.telegram_bot_token,
+                soft=config.poll_stall_soft,
+                hard=config.poll_stall_hard,
+            )
+        )
+        logger.info("Polling watchdog started")
+
 
 async def post_shutdown(application: Application) -> None:
-    global _status_poll_task
+    global _status_poll_task, _watchdog_task, _control_task
 
     # Stop status polling
     if _status_poll_task:
@@ -170,6 +235,26 @@ async def post_shutdown(application: Application) -> None:
             pass
         _status_poll_task = None
         logger.info("Status polling stopped")
+
+    # Stop polling watchdog
+    if _watchdog_task:
+        _watchdog_task.cancel()
+        try:
+            await _watchdog_task
+        except asyncio.CancelledError:
+            pass
+        _watchdog_task = None
+        logger.info("Polling watchdog stopped")
+
+    # Stop terminal control-request poller
+    if _control_task:
+        _control_task.cancel()
+        try:
+            await _control_task
+        except asyncio.CancelledError:
+            pass
+        _control_task = None
+        logger.info("Control request poller stopped")
 
     # Stop all queue workers
     await shutdown_workers()
@@ -182,21 +267,43 @@ async def post_shutdown(application: Application) -> None:
 
 
 def create_bot() -> Application:
+    global _get_updates_request
+
+    # Separate clients: the main pool is large; getUpdates gets a small pool of
+    # its own, tracked by the stall watchdog (upstream #79).
+    _get_updates_request = TrackedHTTPXRequest(
+        connection_pool_size=config.get_updates_pool_size,
+        pool_timeout=config.http_pool_timeout,
+        health=polling_health,
+    )
     application = (
         Application.builder()
         .token(config.telegram_bot_token)
+        .request(
+            HTTPXRequest(
+                connection_pool_size=config.http_pool_size,
+                pool_timeout=config.http_pool_timeout,
+            )
+        )
+        .get_updates_request(_get_updates_request)
         .rate_limiter(AIORateLimiter(max_retries=5))
         .post_init(post_init)
         .post_shutdown(post_shutdown)
         .build()
     )
+    application.add_error_handler(error_handler)
 
     application.add_handler(CommandHandler("start", start_command))
+    application.add_handler(CommandHandler("new", new_command))
+    application.add_handler(CommandHandler("menu", menu_command))
     application.add_handler(CommandHandler("history", history_command))
     application.add_handler(CommandHandler("screenshot", screenshot_command))
     application.add_handler(CommandHandler("esc", esc_command))
     application.add_handler(CommandHandler("unbind", unbind_command))
     application.add_handler(CommandHandler("usage", usage_command))
+    application.add_handler(CommandHandler("kill", kill_command))
+    application.add_handler(CommandHandler("login", login_command))
+    application.add_handler(CommandHandler("health", health_command))
     application.add_handler(CallbackQueryHandler(callback_handler))
     # Topic closed event — auto-kill associated window
     application.add_handler(

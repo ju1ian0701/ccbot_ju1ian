@@ -1,7 +1,7 @@
 """Telegram command and topic lifecycle handlers.
 
 Handlers:
-  - /start, /history, /screenshot, /unbind, /esc, /usage
+  - /start, /new, /menu, /history, /screenshot, /unbind, /esc, /usage, /kill, /health
   - topic_closed_handler, topic_edited_handler
   - forward_command_handler (unknown /slash → Claude Code)
   - unsupported_content_handler
@@ -11,12 +11,21 @@ from __future__ import annotations
 
 import asyncio
 import io
+import json
 import logging
+import time
 
 from telegram import Update
 from telegram.constants import ChatAction
 from telegram.ext import ContextTypes
 
+from .. import hook
+from ..health import (
+    WindowHealth,
+    build_health_report,
+    claude_version,
+    polling_health,
+)
 from ..screenshot import text_to_image
 from ..session import session_manager
 from ..session_guard import (
@@ -25,12 +34,23 @@ from ..session_guard import (
     require_session,
     require_user,
 )
+from ..terminal_parser import has_chrome, is_interactive_ui, parse_status_line
 from ..tmux_manager import tmux_manager
+from . import hook_reactions, status_polling
+from .bind_flow import start_bind_flow, start_new_topic_flow
 from .cleanup import clear_topic_state
 from .directory_browser import clear_browse_state
 from .history import send_history
 from .message_sender import safe_reply
 from .screenshot_controls import build_screenshot_keyboard
+from .session_lifecycle import (
+    NEW_SESSION_TEXT,
+    build_kill_confirm_keyboard,
+    build_kill_confirm_text,
+    build_new_session_keyboard,
+    build_session_panel_keyboard,
+    reply_if_claude_not_running,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -46,8 +66,78 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         await safe_reply(
             update.message,
             "🤖 *Claude Code Monitor*\n\n"
-            "Each topic is a session. Create a new topic to start.",
+            "Each topic is a session. Create a new topic or send /new to start.",
         )
+
+
+async def new_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """/new: restart the session of this topic, or start one in a new topic."""
+    user = await require_user(update, reply_unauthorized=False)
+    if user is None or update.message is None:
+        return
+
+    thread_id = get_thread_id(update)
+    chat = update.effective_chat
+    if chat and chat.type in ("group", "supergroup"):
+        session_manager.set_group_chat_id(user.id, thread_id, chat.id)
+
+    if thread_id is None:
+        # General topic: open a new topic and let the user pick a directory there
+        if chat is None:
+            return
+        new_tid = await start_new_topic_flow(
+            context.bot, context, user.id, chat.id, None
+        )
+        if new_tid is None:
+            await safe_reply(
+                update.message,
+                "❌ Could not create a topic (the bot needs the Manage Topics admin right). "
+                "Create a topic manually and write in it.",
+            )
+        else:
+            await safe_reply(
+                update.message, "➕ Topic created — choose a directory there."
+            )
+        return
+
+    window_id = session_manager.get_window_for_thread(user.id, thread_id)
+    if window_id is None:
+        await start_bind_flow(update.message, context, user.id, thread_id, None)
+        return
+
+    await safe_reply(
+        update.message,
+        NEW_SESSION_TEXT,
+        reply_markup=build_new_session_keyboard(window_id),
+    )
+
+
+async def menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """/menu: show the session control panel for this topic."""
+    user = await require_user(update, reply_unauthorized=False)
+    if user is None or update.message is None:
+        return
+
+    thread_id = get_thread_id(update)
+    window_id = (
+        session_manager.get_window_for_thread(user.id, thread_id)
+        if thread_id is not None
+        else None
+    )
+    if window_id is None:
+        await safe_reply(
+            update.message,
+            "No session in this topic. Send a message or use /new to start one.",
+        )
+        return
+
+    display = session_manager.get_display_name(window_id)
+    cwd = session_manager.get_window_state(window_id).cwd
+    await safe_reply(
+        update.message,
+        f"Session '{display}'\n{cwd}",
+        reply_markup=build_session_panel_keyboard(window_id),
+    )
 
 
 async def history_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -118,6 +208,25 @@ async def unbind_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     )
 
 
+async def kill_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Ask for confirmation before ending this topic's Claude session."""
+    bound = await require_bound_window_id(
+        update, reply_unauthorized=False, use_resolve=False
+    )
+    if bound is None:
+        return
+    _user, _thread_id, window_id = bound
+    assert update.message is not None
+
+    display = session_manager.get_display_name(window_id)
+    cwd = session_manager.get_window_state(window_id).cwd
+    await safe_reply(
+        update.message,
+        build_kill_confirm_text(display, cwd),
+        reply_markup=build_kill_confirm_keyboard(window_id),
+    )
+
+
 async def esc_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send Escape key to interrupt Claude."""
     ctx = await require_session(update, reply_unauthorized=False)
@@ -128,6 +237,23 @@ async def esc_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
     # Send Escape control character (no enter)
     await tmux_manager.send_keys(ctx.window.window_id, "\x1b", enter=False)
     await safe_reply(update.message, "⎋ Sent Escape")
+
+
+async def login_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Start Claude Code's /login; the sign-in link is posted to this topic."""
+    ctx = await require_session(update, reply_unauthorized=False)
+    if ctx is None:
+        return
+    assert update.message is not None
+    if await reply_if_claude_not_running(update.message, ctx.window):
+        return
+
+    await tmux_manager.send_keys(ctx.window.window_id, "/login")
+    await safe_reply(
+        update.message,
+        "🔐 Sent /login to Claude Code. Pick a sign-in method with the buttons "
+        "that appear; the sign-in link will be posted here.",
+    )
 
 
 async def usage_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -165,6 +291,69 @@ async def usage_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         if len(trimmed) > 3000:
             trimmed = trimmed[:3000] + "\n... (truncated)"
         await safe_reply(update.message, f"```\n{trimmed}\n```")
+
+
+def _read_hook_settings() -> dict:
+    """Claude Code settings as a dict; missing or corrupt file gives {}."""
+    try:
+        settings = json.loads(hook._CLAUDE_SETTINGS_FILE.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+    return settings if isinstance(settings, dict) else {}
+
+
+async def health_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Report bot, polling, parser and hook diagnostics for this topic."""
+    user = await require_user(update, reply_unauthorized=False)
+    if user is None:
+        return
+    if not update.message:
+        return
+
+    thread_id = get_thread_id(update)
+    bound_window_id = (
+        session_manager.get_window_for_thread(user.id, thread_id)
+        if thread_id is not None
+        else None
+    )
+
+    window: WindowHealth | None = None
+    last_event: tuple[str, float] | None = None
+    if bound_window_id:
+        w = await tmux_manager.find_window_by_id(bound_window_id)
+        if w is not None:
+            pane = await tmux_manager.capture_pane(w.window_id) or ""
+            window = WindowHealth(
+                window_id=bound_window_id,
+                name=session_manager.get_display_name(bound_window_id),
+                process=w.pane_current_command or "?",
+                has_chrome=has_chrome(pane),
+                has_status=parse_status_line(pane) is not None,
+                interactive=is_interactive_ui(pane),
+                unrecognized_polls=status_polling.parser_state(bound_window_id)[
+                    "no_chrome_polls"
+                ],
+                session_id=session_manager.get_window_state(bound_window_id).session_id,
+            )
+            last_event = hook_reactions.last_event_for(bound_window_id)
+
+    settings = _read_hook_settings()
+    hooks = [
+        (name, hook._is_hook_installed(settings, name)) for name in hook._HOOK_EVENTS
+    ]
+    report = build_health_report(
+        uptime_seconds=time.monotonic() - polling_health.started_at,
+        seconds_since_poll_ok=polling_health.seconds_since_ok(),
+        consecutive_poll_failures=polling_health.consecutive_failures,
+        client_resets=polling_health.client_resets,
+        claude_version=claude_version(),
+        hooks=hooks,
+        window=window,
+        bound_window_id=bound_window_id,
+        last_event=last_event,
+        now_wall=time.time(),
+    )
+    await safe_reply(update.message, f"```\n{report}\n```")
 
 
 async def topic_closed_handler(
@@ -289,6 +478,8 @@ async def forward_command_handler(
 
     ctx = await require_session(update, reply_unauthorized=False, user=user)
     if ctx is None:
+        return
+    if await reply_if_claude_not_running(update.message, ctx.window):
         return
 
     display = session_manager.get_display_name(ctx.window_id)

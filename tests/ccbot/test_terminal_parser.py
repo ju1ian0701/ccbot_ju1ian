@@ -263,3 +263,81 @@ class TestExtractBashOutput:
         result = extract_bash_output(pane, "echo hi")
         assert result is not None
         assert not result.endswith("\n")
+
+
+class TestHasChrome:
+    def test_separator_near_bottom(self):
+        from ccbot.terminal_parser import has_chrome
+
+        pane = "\n".join(["output", "─" * 40, "❯ ", "─" * 40, "  status bar"])
+        assert has_chrome(pane) is True
+
+    def test_plain_shell_has_no_chrome(self):
+        from ccbot.terminal_parser import has_chrome
+
+        assert has_chrome("user@host:~$ ls\nfile.txt\nuser@host:~$ ") is False
+
+    def test_short_or_far_separator_is_not_chrome(self):
+        from ccbot.terminal_parser import has_chrome
+
+        assert has_chrome("─" * 19) is False
+        far = "\n".join(["─" * 40] + ["line"] * 11)
+        assert has_chrome(far) is False
+
+    def test_empty(self):
+        from ccbot.terminal_parser import has_chrome
+
+        assert has_chrome("") is False
+
+
+class TestClaudeCode2_1_311Screens:
+    """Real panes captured by `ccbot selfcheck` on Claude Code 2.1.311."""
+
+    @staticmethod
+    def _pane(name: str) -> str:
+        from pathlib import Path
+
+        return (
+            Path(__file__).parent / "fixtures" / "panes" / "2.1.311" / name
+        ).read_text()
+
+    def test_usage_tab_without_colon_is_parsed(self):
+        from ccbot.terminal_parser import parse_usage_output
+
+        usage = parse_usage_output(self._pane("usage_api_billing.txt"))
+        assert usage is not None
+        assert "Session" in usage.parsed_lines
+        assert any(line.startswith("Total cost:") for line in usage.parsed_lines)
+        assert not any("Esc to" in line for line in usage.parsed_lines)
+
+    def test_usage_tab_is_a_settings_dialog(self):
+        from ccbot.terminal_parser import extract_interactive_content
+
+        content = extract_interactive_content(self._pane("usage_api_billing.txt"))
+        assert content is not None
+        assert content.name == "Settings"
+
+    def test_model_picker_is_a_settings_dialog(self):
+        from ccbot.terminal_parser import extract_interactive_content
+
+        content = extract_interactive_content(self._pane("model_picker.txt"))
+        assert content is not None
+        assert content.name == "Settings"
+        assert "Select model" in content.content
+
+    def test_idle_prompt_has_chrome_and_no_dialog(self):
+        from ccbot.terminal_parser import extract_interactive_content, has_chrome
+
+        pane = self._pane("startup_prompt.txt")
+        assert has_chrome(pane) is True
+        assert extract_interactive_content(pane) is None
+
+    def test_old_header_with_colon_still_parsed(self):
+        from ccbot.terminal_parser import parse_usage_output
+
+        pane = (
+            "Settings: Status  Config  Usage (tab to cycle)\n  42% used\nEsc to cancel"
+        )
+        usage = parse_usage_output(pane)
+        assert usage is not None
+        assert usage.parsed_lines == ["42% used"]

@@ -9,6 +9,24 @@
 
 ---
 
+## 0. Обновление 2026-11-15 (имеет приоритет над разделами 3–4, написанными 2026-07-15)
+
+Разделы 3–4 ниже описывают состояние на июль (код не закоммичен, push не делался) — оно устарело: REF/ISS закрыты и смержены, дальше шла доработка бота.
+
+**Доработка CCBot, фазы 0–7 (ISS-024)** — ветка `integration` (4b95e09, 26 коммитов поверх `main` 31bf2f4, 59 файлов, 839 тестов против 472).
+
+- Добавлено: самовосстанавливающийся polling (upstream #79), игнор хуков вложенных/headless-сессий (#72), `/login` (#76), `/kill`, `/new`, `/menu`, `/health`, `ccbot new [DIR]`, `ccbot selfcheck`, события хуков в `~/.ccbot/hook_events.jsonl`, защита от ввода в shell после выхода Claude. Исправлен разбор `/usage` для Claude Code 2.1.311.
+- GitHub: `integration` и 11 фазовых веток (`feat/*`, `fix/nested-claude-hook`, `docs/new-features`) отправлены в `origin`; **PR #39** `integration` → `main` ждёт merge. После merge — заполнить `merged_commit` в ISS-024 и сменить статус на `DONE`.
+- Сервер: сборка из `integration` развёрнута в живой бот (`ccbot.service`, systemd --user). Откат: `uv tool install --force ... "git+https://github.com/ju1ian0701/ccbot_ju1ian@31bf2f4"`, затем восстановить `~/.claude/settings.json` и `~/.ccbot/.env` из `*.bak-*` и `systemctl --user restart ccbot`.
+- Инструменты: `gh` 2.104.0 в `~/.local/bin`. Токен GitHub лежит в `~/.git-credentials` (fine-grained, без scope `read:org`), поэтому `gh auth login` не проходит — использовать `GH_TOKEN=<токен из ~/.git-credentials> gh ...`.
+- `DISABLE_AUTOUPDATER=1`: после ручного обновления Claude Code запускать `ccbot selfcheck`.
+
+**Открыто (backlog):** ISS-025 проверить `/login` и `/menu` вживую; ISS-026 `ccbot selfcheck --with-prompt`; ISS-027 systemd `WatchdogSec`; ISS-028 фаза 8 (структурные решения через хуки); ISS-029 PR в апстрим `six-ddc/ccbot` с исправлением `/usage`.
+
+**Источники:** `~/second-brain/inbox/ccbot-new-features-and-terminal-sessions.md`, `~/test/план доработки CCBot.md` (раздел 8), `~/test/минусы CCBot (исправлено).md`.
+
+---
+
 ## 1. Цель проекта
 
 ### 1.1. Продукт
